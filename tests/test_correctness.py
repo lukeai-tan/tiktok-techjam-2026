@@ -84,3 +84,27 @@ def test_no_padding_causal_matches():
         ref = baseline(x, None)
         opt = optimized(x, None)
     assert compare_outputs(ref, opt, rtol=RTOL, atol=ATOL).passed
+
+
+def test_zero_padding_ratio_preserves_no_mask_fast_path():
+    cfg = TransformerConfig(1, 16, 64, 4, 128, 1, False)
+    _, mask = generate_random_case(
+        cfg,
+        torch.device("cpu"),
+        torch.float32,
+        seed=3,
+        padding_ratio=0.0,
+        input_scale=1.0,
+    )
+    assert mask is None
+
+
+def test_explicit_all_valid_mask_matches_none_on_cpu():
+    cfg = TransformerConfig(2, 33, 64, 4, 128, 1, True)
+    _, optimized = _make(cfg)
+    x = torch.randn(2, 33, 64)
+    all_valid = torch.ones(2, 33, dtype=torch.bool)
+    with torch.inference_mode():
+        without_mask = optimized(x, None)
+        with_mask = optimized(x, all_valid)
+    assert compare_outputs(without_mask, with_mask, rtol=RTOL, atol=ATOL).passed
