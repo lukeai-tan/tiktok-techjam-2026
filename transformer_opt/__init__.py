@@ -1,12 +1,11 @@
-"""Optimization support for the TikTok TechJam 2026 Transformer benchmark.
+"""Custom GPU kernels and dispatch for the Transformer benchmark."""
 
-The optimized model itself lives in ``torch_transformer_benchmark.py`` as
-``UserOptimizedTransformer`` (the competition's designated integration point).
-This package holds optional, reusable pieces:
+from .config import ATTENTION_BACKENDS, triton_attention_support
+from .dispatch import AttentionDispatch, attention_forward
 
-    triton_impl  - optional GPU-only fused LayerNorm kernel (opt-in)
-"""
-
-from . import triton_impl
-
-__all__ = ["triton_impl"]
+__all__ = [
+    "ATTENTION_BACKENDS",
+    "AttentionDispatch",
+    "attention_forward",
+    "triton_attention_support",
+]
