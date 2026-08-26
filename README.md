@@ -1,151 +1,180 @@
-# Transformer Layer GPU Optimization (TikTok TechJam 2026)
+# Transformer Layer GPU Kernel — TikTok TechJam 2026
 
-Optimize the runtime of a Transformer encoder stack on a target GPU while
-keeping the output numerically equivalent to the reference PyTorch baseline.
+A repository-owned Triton attention kernel for the Track 3 Transformer
+benchmark. It fuses QK, online softmax, masking, and P@V without materializing
+the quadratic attention matrix, then routes unsupported cases to explicit,
+auditable fallbacks.
 
-The official benchmark script (`torch_transformer_benchmark.py`) is the single
-source of truth: it defines the baseline, copies identical weights into both
-models, and compares them under the competition's tolerance. Our work is the
-`UserOptimizedTransformer` class inside that script.
+## Verified result
 
-## The workload
+On an NVIDIA GeForce RTX 5070 Ti under WSL2, the current provisional float32
+matrix completed **7/7 PASS**, with **0 failed elements across 35 accuracy
+trials / 13,117,440 output elements**. Every optimized timing call used the
+custom Triton kernel.
 
-A pre-LayerNorm Transformer encoder, `num_layers` blocks then a final norm:
+| case | baseline median | optimized median | speedup |
+| --- | ---: | ---: | ---: |
+| tiny overhead | 0.325 ms | 0.262 ms | 1.242x |
+| medium throughput | 0.319 ms | 0.238 ms | 1.336x |
+| medium + padding | 0.652 ms | 0.498 ms | 1.309x |
+| long causal | 0.679 ms | 0.474 ms | 1.432x |
+| long causal + padding | 0.830 ms | 0.530 ms | 1.566x |
+| long attention | 0.814 ms | 0.525 ms | 1.550x |
+| wide model | 0.236 ms | 0.208 ms | 1.138x |
 
-```
-# per block:
-x = x + Attention(norm1(x))                       # MHA: q/k/v/out projections
-x = x + ffn_out(GELU(ffn_in(norm2(x)), 'none'))   # position-wise FFN
-# after all blocks:
-x = final_norm(x)
-```
+Geometric-mean end-to-end speedup: **1.360x**. The long-attention incremental
+peak allocation fell from 78 MiB to 22 MiB (71.8%). The largest observed absolute
+error was **0.000997663**, within the executable atol=0.001 OR rtol=0.01
+contract.
 
-with optional **causal** masking and a **`valid_token_mask`** (padding): invalid
-key positions are masked out and padded output rows are zeroed.
+Raw samples, environment metadata, implementation fingerprint, and dispatch
+counts are in
+[the matrix artifact](docs/results/rtx-5070-ti-2026-08-27.json).
+[Profiler evidence](docs/results/rtx-5070-ti-2026-08-27-profile.json)
+records _attention_fwd ten times for five two-layer forwards.
 
-### Correctness rule (from the script)
+The matrix is explicitly **provisional**: the final organizer shape list is not
+present in this repository. See [the requirements](docs/REQUIREMENTS.md) for
+the evidence boundary.
 
-Per element, the optimized output passes when
+## What is implemented
 
-```
-abs(opt - ref) <= atol   OR   abs(opt - ref) <= rtol * abs(ref)
-```
+The checked-in reference is a pre-LayerNorm Transformer:
 
-with **`atol = 0.001`, `rtol = 0.01`** (the script's defaults; stricter than the
-2%/0.002 stated in the prompt PDF; we target the stricter one). A raw relative
-error is meaningless where `ref ≈ 0`, which is exactly why the rule is an OR with
-an absolute floor.
+~~~text
+x = x + Attention(LayerNorm(x))
+x = x + Linear(GELU(Linear(LayerNorm(x)), approximate="none"))
+~~~
 
-## Optimizations (all correctness-preserving)
+UserOptimizedTransformer preserves the exact parameter structure and strict
+weight copy while replacing explicit attention with:
 
-1. **Fused scaled-dot-product attention** (`F.scaled_dot_product_attention`):
-   dispatches to FlashAttention / memory-efficient kernels on CUDA and never
-   materializes the `(S, S)` score matrix. Masks are folded to keep the fast
-   path whenever possible:
-   - no padding, non-causal → no mask
-   - no padding, causal → `is_causal=True` (flash)
-   - padding, non-causal → cheap `[B,1,1,S]` key-padding mask
-   - padding, causal → combined `[B,1,S,S]` boolean mask
-2. **Exact structural match**: pre-norm residuals, exact-erf GELU, padded-row
-   zeroing reproduced so valid rows are computed identically to the baseline.
-3. **Strict-weight compatibility**: `UserOptimizedTransformer` subclasses the
-   baseline, inheriting identical submodule/parameter names, so the harness's
-   `copy_model_weights(..., strict=True)` succeeds unchanged.
-4. **Optional Triton fused LayerNorm** (`transformer_opt/triton_impl.py`,
-   opt-in via `TRANSFORMER_OPT_TRITON_LN=1`): single-pass mean/var/affine, GPU
-   only, gated behind the accuracy check.
-5. **Reduced precision (fp16/bf16)** on GPU to engage tensor cores; the tolerance
-   permits it and the harness verifies it.
-6. `torch.compile` is available in the script (`--compile-user`) as a stacking
-   win on top of the above.
+- projection-friendly [B,S,H,D] input/output layout;
+- tiled QK and P@V in one Triton launch;
+- fp32 online-softmax state and accumulator;
+- causal and prefix-padding bounds inside the kernel;
+- no [B,H,S,S] score, probability, or dense combined-mask allocation;
+- a measured fixed launch policy for head dimensions 16/32/64/128;
+- observable auto, triton, sdpa, and reference routing.
 
-## Setup
+The primary end-to-end custom path uses the benchmark-default float32 and
+follows its TF32 toggle. Direct fp16 kernel tests pass, but the model's auto
+mode keeps fp16/bf16 on exact reference-style math because fused
+low-precision differences compound beyond this unusually strict deep-stack
+tolerance. Forced modes remain available for honest comparison.
 
-```bash
-python -m venv .venv && source .venv/bin/activate
+Algorithm, bounds, numerical choices, dispatch rules, and rejected
+optimizations are documented in [the kernel design](docs/KERNEL_DESIGN.md).
 
-# Target GPU machine (match your driver's CUDA version):
-pip install torch --index-url https://download.pytorch.org/whl/cu124 numpy pytest
+## Known-good target environment
 
-# CPU-only development / correctness:
-pip install torch --index-url https://download.pytorch.org/whl/cpu numpy pytest
-```
+| component | version |
+| --- | --- |
+| GPU | NVIDIA GeForce RTX 5070 Ti, compute capability 12.0, 16,303 MiB |
+| OS | WSL2 Ubuntu |
+| Python | 3.14.4 |
+| PyTorch | 2.13.0+cu130 |
+| CUDA runtime | 13.0 |
+| Triton | 3.7.1 |
 
-## Quick start on a free GPU (Google Colab)
+PyTorch publishes separate CPU/CUDA wheels, so choose the matching index.
 
-No local GPU needed. Open `notebooks/colab_benchmark.ipynb` in
-[Google Colab](https://colab.research.google.com/), set
-`Runtime → Change runtime type → GPU`, and run the cells. It uploads the two
-files it needs (`torch_transformer_benchmark.py`, `sweep.py`), verifies the GPU,
-then runs the accuracy check and the shape sweep in fp16/bf16. Colab already has
-CUDA PyTorch + Triton, so there is nothing to install.
+### WSL CUDA setup
 
-## Reproduce results
+~~~bash
+# Inside Ubuntu. A compiler and matching Python headers are needed for Triton's
+# small first-use driver shim.
+sudo apt update
+sudo apt install -y build-essential python3-dev python3-venv
 
-```bash
-# Correctness (CPU-friendly): optimized vs baseline across shapes/causal/padding
-pytest tests/ -q
+python3 -m venv ~/.venvs/tiktok-techjam-2026
+~/.venvs/tiktok-techjam-2026/bin/python -m pip install --upgrade pip
+~/.venvs/tiktok-techjam-2026/bin/python -m pip install +  torch==2.13.0 --index-url https://download.pytorch.org/whl/cu130
+~/.venvs/tiktok-techjam-2026/bin/python -m pip install +  numpy==2.5.2 pytest==9.1.1
+~~~
 
-# Grid sweep (auto-selects CUDA+fp16 on a GPU, CPU+fp32 otherwise):
-python sweep.py                    # full grid
-python sweep.py --quick            # tiny grid, fast sanity check
-python sweep.py --dtype bfloat16   # or --compile / --causal / --triton-ln
+The verified minimal WSL image had no sudo-capable compiler. It uses a
+user-scoped Zig 0.16.0 fallback plus extracted libpython3.14-dev headers.
+tools/triton-cc prefers gcc/clang and otherwise uses that fallback. Set
+TRITON_PYTHON_DEV_ROOT if the extracted headers live elsewhere.
 
-# Official benchmark, GPU with tensor cores (the real deliverable):
-python torch_transformer_benchmark.py --device cuda --dtype float16 \
-    --batch-size 8 --seq-len 512 --d-model 512 --heads 8 \
-    --ffn-dim 2048 --layers 6
+From Windows, scripts/run-wsl.ps1 finds the Ubuntu user and uses
+~/.venvs/tiktok-techjam-2026. Override it when needed:
 
-# Long-sequence stress (where fused attention wins most):
-python torch_transformer_benchmark.py --device cuda --dtype bfloat16 --seq-len 2048
+~~~powershell
+$env:TIKTOK_TECHJAM_PYTHON = "/path/to/venv/bin/python"
+~~~
 
-# Causal + padding path:
-python torch_transformer_benchmark.py --device cuda --dtype float16 \
-    --causal --padding-ratio 0.4
+### CPU-only development
 
-# Optional: enable Triton fused LayerNorm and/or torch.compile
-TRANSFORMER_OPT_TRITON_LN=1 python torch_transformer_benchmark.py --device cuda \
-    --dtype float16 --compile-user --compile-mode max-autotune
-```
+~~~bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+python -m pip install numpy==2.5.2 pytest==9.1.1
+python -m pytest tests -q
+~~~
 
-The script prints per-trial accuracy (`failed=0/...` ⇒ pass) then baseline vs
-optimized median latency, throughput (token/s), and the speedup.
+GPU tests skip on CPU; they do not become GPU evidence.
 
-## Baseline results (CPU, fp32; development machine, no GPU)
+## Reproduce
 
-CPU numbers only prove correctness and that the fused path already helps; **the
-GPU numbers are the real deliverable** (see `docs/TECH_REPORT.md`).
+From Windows PowerShell:
 
-| config | accuracy | max_abs | baseline | optimized | speedup |
-| --- | --- | --- | --- | --- | --- |
-| B4 S512 d512 H8 ffn2048 L6 | PASS 0 failed | 1.9e-06 | 651.9 ms | 431.0 ms | **1.51x** |
-| B8 S256 d256 H8 ffn1024 L4 causal+pad0.4 | PASS 0 failed | 1.4e-06 | 150.5 ms | 85.2 ms | **1.77x** |
+~~~powershell
+# Entire CPU + GPU suite on the verified WSL environment
+powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 -m pytest tests -q
 
-`pytest tests/`: 22 passed (shapes × causal × padding, plus strict-copy guard).
+# One direct benchmark using the competition integration point
+powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 torch_transformer_benchmark.py --device cuda --dtype float32 --attention-backend auto --accuracy-trials 5
 
-## Limitations & next steps
+# Full manifest: raw samples and explicit PASS/FAIL/OOM/ERROR accounting
+powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 benchmarks/run_matrix.py --device cuda --attention-backend auto --accuracy-trials 5 --out results/matrix.json
 
-- Triton fused-LayerNorm is **GPU-only and unrun on the CPU dev box**; opt-in and
-  gated by the accuracy check. Not on by default to keep results honest.
-- No hand-written fused attention: we rely on PyTorch SDPA, which is near-optimal
-  for common shapes. A bespoke Triton attention (online softmax + fused output
-  projection) is the next lever for unusual `(S, d, H)` shapes.
-- `--compile-user` is wired but not yet tuned per shape.
-- GPU result tables in the tech report are placeholders until run on hardware.
+# Profiler proof
+powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 benchmarks/profile_cases.py --case long-causal-padding --dtype float32 --attention-backend auto --steps 5 --out results/profile.json --trace results/profile-trace.json
+~~~
 
-## Layout
+The matrix runner fails closed:
 
-```
-torch_transformer_benchmark.py     official harness + UserOptimizedTransformer (our code)
-tensorflow_transformer_benchmark.py official TF harness (unused; PyTorch track)
-sweep.py                           grid benchmark: baseline vs optimized, saves results/*.json
+- unexpected exceptions are ERROR;
+- allocation failures are OOM;
+- numerical failures are FAIL;
+- zero executed cases fail;
+- only a nonempty all-PASS result exits zero.
+
+sweep.py remains as a compatibility entry point for the same runner.
+
+## Repository layout
+
+~~~text
+torch_transformer_benchmark.py        reference + required optimized class
 transformer_opt/
-  __init__.py
-  triton_impl.py                   optional GPU fused LayerNorm
-notebooks/
-  colab_benchmark.ipynb            free-GPU runner (upload + sweep)
-tests/
-  test_correctness.py              optimized vs baseline across shapes
+  config.py                           support envelope and launch policy
+  dispatch.py                         custom/SDPA/reference routing
+  kernels/attention.py                Triton fused attention
+benchmarks/
+  official_shapes.json                provisional machine-readable matrix
+  run_matrix.py                       fail-closed correctness/performance runner
+  profile_cases.py                    profiler proof
+  reference/manifest.json             frozen benchmark fingerprint
+tests/                                CPU contract + direct/end-to-end GPU tests
 docs/
-  TECH_REPORT.md
-```
+  REQUIREMENTS.md                     source-of-truth and acceptance criteria
+  KERNEL_DESIGN.md                    kernel algorithm and trade-offs
+  TECH_REPORT.md                      measured technical report
+  results/                            curated raw evidence
+DEMO_RUNBOOK.md                       public walkthrough sequence
+~~~
+
+## Limitations
+
+- The final organizer matrix and any post-workshop benchmark revision remain
+  external unknowns and must be reconciled before submission.
+- The kernel is forward/inference only.
+- Tuning evidence is specific to the RTX 5070 Ti.
+- Float16/bfloat16 deep-stack auto runs prioritize exact benchmark correctness
+  over fused speed.
+- There is no production deployment because Track 3 explicitly excludes it.
+
+For a short public demo, follow [the demo runbook](DEMO_RUNBOOK.md).

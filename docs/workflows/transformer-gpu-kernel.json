@@ -1,0 +1,165 @@
+{
+  "task_id": "transformer-gpu-kernel-001",
+  "title": "Implement and validate a custom Transformer GPU kernel",
+  "status": "completed",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": "docs/PROJECT_CONTEXT.md",
+    "project_context_reviewed": true,
+    "prd_update_task_id": "task-docs",
+    "contradictions": [
+      "Track prose allows 0.02 relative and 0.002 absolute error while the checked-in executable benchmark requires 0.01 and 0.001; the stricter executable rule governs.",
+      "The final organizer shape matrix is unavailable; the checked-in matrix is explicitly provisional."
+    ]
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "roles": [
+    {
+      "role": "Planning and Decomposition Agent",
+      "file": "00_Core_Orchestration/Planning_and_Decomposition_Agent.md",
+      "why": "Freezes requirements, interfaces, and evidence gates"
+    },
+    {
+      "role": "Machine Learning Engineer",
+      "file": "11_Data_Analytics_and_AI/Machine_Learning_Engineer.md",
+      "why": "Owns numerical semantics and Transformer integration"
+    },
+    {
+      "role": "Performance Test Engineer",
+      "file": "09_Quality_Assurance_and_Testing/Performance_Test_Engineer.md",
+      "why": "Owns GPU measurement and profiler evidence"
+    },
+    {
+      "role": "QA Engineer",
+      "file": "09_Quality_Assurance_and_Testing/QA_Engineer.md",
+      "why": "Owns correctness, dispatch, and negative-path validation"
+    },
+    {
+      "role": "Technical Writer",
+      "file": "13_Documentation_Support_and_Enablement/Technical_Writer.md",
+      "why": "Closes requirements, design, report, and demo artifacts"
+    },
+    {
+      "role": "Release Gatekeeper",
+      "file": "00_Core_Orchestration/Release_Gatekeeper.md",
+      "why": "Issues the evidence-backed submit or hold decision"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-contract",
+      "title": "Freeze the current executable contract and provenance",
+      "role": "Planning and Decomposition Agent",
+      "write_scope": ["docs/REQUIREMENTS.md", "docs/PROJECT_CONTEXT.md", "benchmarks/reference", "benchmarks/official_shapes.json"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-2", "AC-4"],
+      "validation": ["JSON parse", "workflow validation", "reference checksum verification"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "observation"]
+    },
+    {
+      "id": "task-benchmark-integrity",
+      "title": "Make benchmark result accounting reproducible and fail-closed",
+      "role": "QA Engineer",
+      "write_scope": ["benchmarks", "sweep.py", "tools", "tests/test_sweep_integrity.py"],
+      "depends_on": ["task-contract"],
+      "acceptance_criteria": ["AC-4", "AC-5"],
+      "validation": ["CPU unit tests", "negative-path result tests", "environment capture smoke test"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["implementation", "verification"]
+    },
+    {
+      "id": "task-kernel",
+      "title": "Implement Triton online-softmax attention",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["transformer_opt/kernels", "transformer_opt/dispatch.py", "transformer_opt/config.py", "transformer_opt/__init__.py", "torch_transformer_benchmark.py"],
+      "depends_on": ["task-contract"],
+      "acceptance_criteria": ["AC-1", "AC-2", "AC-3"],
+      "validation": ["direct CUDA kernel tests", "end-to-end CUDA tests", "dispatch tests"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "decision"]
+    },
+    {
+      "id": "task-performance",
+      "title": "Profile, tune, and capture target-GPU evidence",
+      "role": "Performance Test Engineer",
+      "write_scope": ["benchmarks", "docs/results"],
+      "depends_on": ["task-benchmark-integrity", "task-kernel"],
+      "acceptance_criteria": ["AC-1", "AC-2", "AC-5"],
+      "validation": ["full provisional matrix", "profiler kernel-name check", "raw timing review"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["verification", "observation"]
+    },
+    {
+      "id": "task-docs",
+      "title": "Finalize design, reproduction, report, and demo documentation",
+      "role": "Technical Writer",
+      "write_scope": ["README.md", "docs", "DEMO_RUNBOOK.md", "requirements.txt", ".github/workflows/test.yml"],
+      "depends_on": ["task-performance"],
+      "acceptance_criteria": ["AC-5", "AC-6"],
+      "validation": ["placeholder scan", "documented command replay", "docs-source consistency review"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "handoff", "verification"]
+    },
+    {
+      "id": "task-graph-closure",
+      "title": "Complete knowledge graph closure and validation",
+      "role": "Planning and Decomposition Agent",
+      "write_scope": [],
+      "depends_on": ["task-docs"],
+      "acceptance_criteria": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+      "validation": ["repo-memory-graph rebuild", "repo-memory-graph validate", "context freshness check"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["handoff", "verification"]
+    },
+    {
+      "id": "task-release-gate",
+      "title": "Review final evidence and issue release decision",
+      "role": "Release Gatekeeper",
+      "write_scope": [],
+      "depends_on": ["task-graph-closure"],
+      "acceptance_criteria": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+      "validation": ["diff review", "clean-environment tests", "claim-to-evidence audit"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["verification", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-kernel-quality",
+      "sequence": ["Machine Learning Engineer", "QA Engineer", "Machine Learning Engineer"],
+      "max_iterations": 3,
+      "finding_condition": "A reproducible numerical, bounds, dispatch, or benchmark-integrity defect remains",
+      "acceptance_condition": "All applicable acceptance criteria pass with target-device evidence or an external blocker is explicit",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "finalization": {
+    "prd_update_task_id": "task-docs",
+    "project_context_update_task_id": "task-docs",
+    "graph_closure_task_id": "task-graph-closure",
+    "release_gatekeeper_task_id": "task-release-gate",
+    "final_report_sections": [
+      "What changed in code",
+      "What changed in PRD/docs",
+      "What was tested",
+      "Measured results and profiler evidence",
+      "Unresolved clarification or inconsistency"
+    ]
+  }
+}
