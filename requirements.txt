@@ -1,0 +1,13 @@
+# Core. Install a CUDA build of torch on the target GPU machine:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+# For CPU-only development / correctness testing:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+numpy>=1.24
+
+# Optional GPU fused-kernel backend (ships with CUDA torch wheels; only used
+# when a GPU is present). Safe to omit for CPU development.
+# triton>=2.2
+
+# Dev / testing.
+pytest>=7.0
