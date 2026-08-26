@@ -1,4 +1,4 @@
-# Transformer Layer GPU Optimization — TikTok TechJam 2026
+# Transformer Layer GPU Optimization (TikTok TechJam 2026)
 
 Optimize the runtime of a Transformer encoder stack on a target GPU while
 keeping the output numerically equivalent to the reference PyTorch baseline.
@@ -32,13 +32,13 @@ abs(opt - ref) <= atol   OR   abs(opt - ref) <= rtol * abs(ref)
 ```
 
 with **`atol = 0.001`, `rtol = 0.01`** (the script's defaults; stricter than the
-2%/0.002 stated in the prompt PDF — we target the stricter one). A raw relative
+2%/0.002 stated in the prompt PDF; we target the stricter one). A raw relative
 error is meaningless where `ref ≈ 0`, which is exactly why the rule is an OR with
 an absolute floor.
 
 ## Optimizations (all correctness-preserving)
 
-1. **Fused scaled-dot-product attention** (`F.scaled_dot_product_attention`) —
+1. **Fused scaled-dot-product attention** (`F.scaled_dot_product_attention`):
    dispatches to FlashAttention / memory-efficient kernels on CUDA and never
    materializes the `(S, S)` score matrix. Masks are folded to keep the fast
    path whenever possible:
@@ -46,13 +46,13 @@ an absolute floor.
    - no padding, causal → `is_causal=True` (flash)
    - padding, non-causal → cheap `[B,1,1,S]` key-padding mask
    - padding, causal → combined `[B,1,S,S]` boolean mask
-2. **Exact structural match** — pre-norm residuals, exact-erf GELU, padded-row
+2. **Exact structural match**: pre-norm residuals, exact-erf GELU, padded-row
    zeroing reproduced so valid rows are computed identically to the baseline.
-3. **Strict-weight compatibility** — `UserOptimizedTransformer` subclasses the
+3. **Strict-weight compatibility**: `UserOptimizedTransformer` subclasses the
    baseline, inheriting identical submodule/parameter names, so the harness's
    `copy_model_weights(..., strict=True)` succeeds unchanged.
 4. **Optional Triton fused LayerNorm** (`transformer_opt/triton_impl.py`,
-   opt-in via `TRANSFORMER_OPT_TRITON_LN=1`) — single-pass mean/var/affine, GPU
+   opt-in via `TRANSFORMER_OPT_TRITON_LN=1`): single-pass mean/var/affine, GPU
    only, gated behind the accuracy check.
 5. **Reduced precision (fp16/bf16)** on GPU to engage tensor cores; the tolerance
    permits it and the harness verifies it.
@@ -111,7 +111,7 @@ TRANSFORMER_OPT_TRITON_LN=1 python torch_transformer_benchmark.py --device cuda 
 The script prints per-trial accuracy (`failed=0/...` ⇒ pass) then baseline vs
 optimized median latency, throughput (token/s), and the speedup.
 
-## Baseline results (CPU, fp32 — development machine, no GPU)
+## Baseline results (CPU, fp32; development machine, no GPU)
 
 CPU numbers only prove correctness and that the fused path already helps; **the
 GPU numbers are the real deliverable** (see `docs/TECH_REPORT.md`).
@@ -121,13 +121,13 @@ GPU numbers are the real deliverable** (see `docs/TECH_REPORT.md`).
 | B4 S512 d512 H8 ffn2048 L6 | PASS 0 failed | 1.9e-06 | 651.9 ms | 431.0 ms | **1.51x** |
 | B8 S256 d256 H8 ffn1024 L4 causal+pad0.4 | PASS 0 failed | 1.4e-06 | 150.5 ms | 85.2 ms | **1.77x** |
 
-`pytest tests/` — 22 passed (shapes × causal × padding, plus strict-copy guard).
+`pytest tests/`: 22 passed (shapes × causal × padding, plus strict-copy guard).
 
 ## Limitations & next steps
 
 - Triton fused-LayerNorm is **GPU-only and unrun on the CPU dev box**; opt-in and
   gated by the accuracy check. Not on by default to keep results honest.
-- No hand-written fused attention — we rely on PyTorch SDPA, which is near-optimal
+- No hand-written fused attention: we rely on PyTorch SDPA, which is near-optimal
   for common shapes. A bespoke Triton attention (online softmax + fused output
   projection) is the next lever for unusual `(S, d, H)` shapes.
 - `--compile-user` is wired but not yet tuned per shape.
