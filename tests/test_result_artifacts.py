@@ -31,6 +31,13 @@ ORGANIZER_VALIDATION_PATH = (
     / "results"
     / "rtx-5070-ti-2026-08-27-organizer-validation.json"
 )
+FINAL_EVALUATOR_PATH = (
+    ROOT
+    / "docs"
+    / "results"
+    / "rtx-5070-ti-2026-08-28-final-evaluator-baseline.json"
+)
+FINAL_EVALUATOR_MATRIX_PATH = ROOT / "benchmarks" / "final_evaluator_shapes.json"
 ORGANIZER_VALIDATION_MATRIX_PATH = (
     ROOT / "benchmarks" / "organizer_validation_matrix.json"
 )
@@ -254,3 +261,71 @@ def test_organizer_validation_artifact_is_complete_green_and_fail_closed():
     assert skipped[0]["skip_authorized"] is True
     assert skipped[0]["skip_counted_as_pass"] is False
     assert skipped[0]["source_dimensions"] == [32, 1024, 16, 100000]
+
+
+def test_final_evaluator_artifact_is_complete_green_and_current():
+    evidence = _load(FINAL_EVALUATOR_PATH)
+    current_fingerprint, _ = implementation_fingerprint()
+
+    assert evidence["status"] == "PASS"
+    assert evidence["matrix"] == {
+        "path": "benchmarks/final_evaluator_shapes.json",
+        "sha256": _text_sha256(FINAL_EVALUATOR_MATRIX_PATH),
+        "status": "organizer-published-final-shapes",
+    }
+    assert evidence["environment"]["git"]["dirty"] is False
+    assert evidence["environment"]["git"]["implementation_sha256"] == (
+        current_fingerprint
+    )
+    for path_key, hash_key in (
+        ("manifest_path", "manifest_sha256"),
+        ("runner_path", "runner_sha256"),
+        ("validation_runner_path", "validation_runner_sha256"),
+    ):
+        path = ROOT / evidence["organizer_sources"][path_key]
+        assert evidence["organizer_sources"][hash_key] == _text_sha256(path)
+
+    summary = evidence["summary"]
+    assert summary["requested"] == 14
+    assert summary["executable"] == summary["passed"] == 13
+    assert summary["counts"] == {
+        "ERROR": 0,
+        "FAIL": 0,
+        "OOM": 0,
+        "PASS": 13,
+        "SKIPPED_RESOURCE": 1,
+    }
+    assert summary["total_compared_elements"] == 938_885_120
+    assert summary["total_failed_elements"] == 0
+    assert summary["skipped_counted_as_pass"] is False
+    assert summary["geometric_mean_speedup"] > 1.0
+
+    executable = [
+        result for result in evidence["results"] if result["status"] == "PASS"
+    ]
+    skipped = [
+        result
+        for result in evidence["results"]
+        if result["status"] == "SKIPPED_RESOURCE"
+    ]
+    assert [result["case_id"].split("-")[1] for result in evidence["results"]] == [
+        f"{index:02d}" for index in range(1, 15)
+    ]
+    assert len(executable) == 13
+    assert all(
+        result["parsed"]["accuracy"]["failed_elements"] == 0
+        and sum(result["attention_backend_counts"].values()) == 112
+        for result in executable
+    )
+    assert len(skipped) == 1
+    assert skipped[0]["source_dimensions"] == [
+        32,
+        1024,
+        16,
+        100000,
+        2,
+        True,
+        1024,
+    ]
+    assert skipped[0]["skip_authorized"] is True
+    assert skipped[0]["skip_counted_as_pass"] is False
