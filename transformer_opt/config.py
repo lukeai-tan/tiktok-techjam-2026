@@ -60,6 +60,16 @@ def prefer_triton_attention(
 
 def attention_launch_config(head_dim: int, seq_len: int) -> AttentionLaunchConfig:
     """Return a conservative launch configuration for the target GPU family."""
+    if head_dim == 64 and seq_len <= 128:
+        # The larger short-sequence tile spills heavily for IEEE fp32 dot
+        # products on the RTX 5070 Ti. Halving both tile axes removes those
+        # spills while leaving every other measured shape unchanged.
+        return AttentionLaunchConfig(
+            block_m=32,
+            block_n=64,
+            num_warps=4,
+            num_stages=2,
+        )
     if head_dim <= 64:
         return AttentionLaunchConfig(
             block_m=64,

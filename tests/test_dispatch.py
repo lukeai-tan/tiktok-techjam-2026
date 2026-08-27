@@ -6,6 +6,7 @@ import pytest
 import torch
 
 from transformer_opt import attention_forward, triton_attention_support
+from transformer_opt.config import attention_launch_config
 from transformer_opt.kernels import triton_available
 
 
@@ -132,6 +133,24 @@ def test_cuda_bfloat16_auto_uses_reference_math():
     assert output.shape == q.shape
     assert decision.selected == "reference"
     assert "executable tolerance" in decision.reason
+
+
+def test_head_dim_64_short_sequence_uses_spill_avoiding_tiles():
+    launch = attention_launch_config(head_dim=64, seq_len=128)
+    assert (launch.block_m, launch.block_n, launch.num_warps, launch.num_stages) == (
+        32,
+        64,
+        4,
+        2,
+    )
+
+
+def test_spill_avoiding_tiles_do_not_expand_to_neighboring_shapes():
+    narrower = attention_launch_config(head_dim=32, seq_len=128)
+    longer = attention_launch_config(head_dim=64, seq_len=129)
+
+    assert (narrower.block_m, narrower.block_n) == (64, 128)
+    assert (longer.block_m, longer.block_n) == (64, 64)
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
