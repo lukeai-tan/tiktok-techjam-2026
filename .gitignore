@@ -6,3 +6,4 @@ __pycache__/
 /results/
 .DS_Store
 *:Zone.Identifier
+colab_bundle.zip
