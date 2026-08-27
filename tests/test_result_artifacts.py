@@ -14,6 +14,12 @@ from tools.capture_environment import implementation_fingerprint
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _text_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 MATRIX_PATH = ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-27.json"
 PROFILE_PATH = ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-27-profile.json"
 ORGANIZER_DEFAULT_PATH = (
@@ -152,9 +158,7 @@ def test_organizer_default_artifact_uses_untouched_harness_and_current_submissio
     }
     assert evidence["organizer_arguments"] == ["--device", "cuda"]
     runner_path = ROOT / evidence["submission"]["runner_path"]
-    assert evidence["submission"]["runner_sha256"] == hashlib.sha256(
-        runner_path.read_bytes()
-    ).hexdigest()
+    assert evidence["submission"]["runner_sha256"] == _text_sha256(runner_path)
     assert evidence["parsed"]["accuracy"]["status"] == "PASS"
     assert evidence["parsed"]["accuracy"]["failed_elements"] == 0
     assert evidence["parsed"]["accuracy"]["total_elements"] == 2_621_440
@@ -189,21 +193,19 @@ def test_organizer_validation_artifact_is_complete_green_and_fail_closed():
     assert evidence["matrix"]["path"] == (
         "benchmarks/organizer_validation_matrix.json"
     )
-    assert evidence["matrix"]["sha256"] == hashlib.sha256(
-        ORGANIZER_VALIDATION_MATRIX_PATH.read_bytes()
-    ).hexdigest()
+    assert evidence["matrix"]["sha256"] == _text_sha256(
+        ORGANIZER_VALIDATION_MATRIX_PATH
+    )
     manifest_path = ROOT / evidence["organizer_sources"]["manifest_path"]
-    assert evidence["organizer_sources"]["manifest_sha256"] == hashlib.sha256(
-        manifest_path.read_bytes()
-    ).hexdigest()
+    assert evidence["organizer_sources"]["manifest_sha256"] == _text_sha256(
+        manifest_path
+    )
     for path_key, hash_key in (
         ("runner_path", "runner_sha256"),
         ("validation_runner_path", "validation_runner_sha256"),
     ):
         path = ROOT / evidence["organizer_sources"][path_key]
-        assert evidence["organizer_sources"][hash_key] == hashlib.sha256(
-            path.read_bytes()
-        ).hexdigest()
+        assert evidence["organizer_sources"][hash_key] == _text_sha256(path)
     assert evidence["environment"]["git"]["implementation_sha256"] == (
         current_fingerprint
     )

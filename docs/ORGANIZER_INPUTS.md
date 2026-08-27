@@ -1,6 +1,6 @@
 # Track 3 Organizer Inputs
 
-Audit date: 2026-08-27 (Asia/Singapore)
+Audit date: 2026-08-28 (Asia/Singapore)
 
 ## Received and frozen
 
@@ -69,23 +69,61 @@ The versioned policy is `benchmarks/organizer_validation_matrix.json`; the raw
 evidence is
 `docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json`.
 
+## Published final shape table
+
+The organizer's live information document was last updated on 2026-08-27 and
+now contains a Track 3 Section 3.7 appendix titled `Test shapes`. The table was
+verified in the rendered organizer page on 2026-08-28 and transcribed in source
+order to `benchmarks/final_evaluator_shapes.json`:
+
+| Row | Batch | QKV dim | Heads | Sequence | Layers | Causal | FFN dim |
+| ---: | ---: | ---: | ---: | ---: | ---: | :---: | ---: |
+| 1 | 64 | 128 | 4 | 128 | 4 | true | 128 |
+| 2 | 1 | 128 | 4 | 128 | 4 | true | 128 |
+| 3 | 4 | 128 | 4 | 128 | 4 | true | 128 |
+| 4 | 16 | 128 | 4 | 128 | 4 | true | 128 |
+| 5 | 128 | 128 | 4 | 128 | 4 | true | 128 |
+| 6 | 10000 | 128 | 4 | 128 | 4 | true | 128 |
+| 7 | 64 | 32 | 4 | 128 | 4 | true | 32 |
+| 8 | 64 | 1024 | 4 | 128 | 4 | true | 1024 |
+| 9 | 64 | 128 | 1 | 128 | 4 | true | 128 |
+| 10 | 64 | 128 | 2 | 128 | 4 | true | 128 |
+| 11 | 64 | 128 | 16 | 128 | 4 | true | 128 |
+| 12 | 64 | 128 | 4 | 32 | 4 | true | 128 |
+| 13 | 64 | 128 | 4 | 1024 | 4 | true | 128 |
+| 14 | 32 | 1024 | 16 | 100000 | 2 | true | 1024 |
+
+The selected PyTorch harness is used for execution. Because the table omits
+dtype and padding, the final-shape run uses that harness's float32 and no-padding
+defaults plus its stricter 0.001 absolute OR 0.01 relative comparator. Row 14
+exactly matches the supplied TensorFlow harness's designated 100000-token
+quadratic stress dimensions, so its source-authorized resource preflight is
+retained and excluded from the pass count. The prior seven-case project matrix
+is now held-out coverage, not a substitute for these rows.
+
+Run the final rows independently from the broader source-derived validation:
+
+```powershell
+& $python benchmarks/run_organizer_validation.py `
+  --matrix benchmarks/final_evaluator_shapes.json `
+  --out results/final-evaluator-validation.json
+```
+
 ## Still needed from the organizer
 
-One material input remains outstanding:
-
-1. **The final evaluator matrix or test harness for the selected PyTorch path.**
-   The brief promises that all shape combinations will be provided, but the
-   supplied PyTorch script exposes a configurable single case rather than a
-   frozen matrix. The TensorFlow defaults cannot be assumed to be that matrix.
-
-The following clarifications should accompany that file if they are not encoded
-in it:
+The published dimensions resolve the largest prior input gap, but the table
+does not encode:
 
 - required dtypes, padding ratios, and causal/non-causal cases;
 - whether backward/gradient execution is evaluated;
 - whether compilation time, model construction, and first-run autotuning count
   toward timing; and
 - whether evaluator rules differ from the supplied scripts after the workshop.
+
+The page still displayed PyTorch and TensorFlow attachment links on 2026-08-28,
+but the read-only attachment widget did not expose their bytes for a fresh
+checksum. Current attachment-byte identity therefore remains unknown; the
+two frozen 2026-08-27 downloads remain the only byte-verified harness inputs.
 
 No dataset, pretrained weights, tokenizer, or external model asset is needed:
 both supplied scripts generate model weights and inputs locally. No TensorFlow

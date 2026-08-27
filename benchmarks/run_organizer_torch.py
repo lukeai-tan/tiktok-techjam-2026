@@ -82,6 +82,11 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _text_sha256(path: Path) -> str:
+    """Hash repository text independently of checkout line endings."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def verify_organizer_download() -> str:
     """Fail before execution unless the supplied PyTorch bytes are frozen."""
     manifest = json.loads(ORGANIZER_MANIFEST_PATH.read_text(encoding="utf-8"))
@@ -191,7 +196,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "class": "torch_transformer_benchmark.UserOptimizedTransformer",
             "injection_point": "UserOptimizedTransformer",
             "runner_path": display_path(RUNNER_PATH),
-            "runner_sha256": _sha256(RUNNER_PATH),
+            "runner_sha256": _text_sha256(RUNNER_PATH),
         },
         "organizer_arguments": organizer_args,
         "exit_code": exit_code,

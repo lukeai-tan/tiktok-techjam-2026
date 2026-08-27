@@ -1,15 +1,20 @@
 # Transformer GPU Kernel Requirements
 
 Status: implementation contract reconciled with the two participant-supplied
-organizer downloads received on 2026-08-27. PyTorch is the selected framework.
-The final PyTorch evaluator shape combinations have not been supplied;
-`benchmarks/official_shapes.json` therefore remains explicitly provisional.
+organizer downloads received on 2026-08-27 and the 14-row Track 3 test-shape
+table published in the organizer document's Section 3.7. PyTorch is the
+selected framework. `benchmarks/final_evaluator_shapes.json` preserves the
+published row order and records every execution assumption required because
+the table omits framework, dtype, padding, tolerance, timing, and backward
+requirements. `benchmarks/official_shapes.json` remains a project-owned
+held-out matrix rather than the final organizer matrix.
 
 ## Source-of-truth order
 
 1. The untouched organizer PyTorch download identified by
    `benchmarks/reference/organizer_downloads.json`.
-2. A final organizer evaluator/shape list, once available.
+2. The organizer's final shape table identified by
+   `benchmarks/final_evaluator_shapes.json` and its live source metadata.
 3. The older result-linked snapshot identified by
    `benchmarks/reference/manifest.json`.
 4. Track 3 in `docs/hackathon-details.md`, lines 674-780.
@@ -34,12 +39,22 @@ description.
   dimension signal into the selected PyTorch harness. Its 28 executable cases
   all pass; the TensorFlow source's designated 100000-token quadratic stress
   case is the only authorized resource skip and is never counted as a pass.
+- The organizer document now publishes 14 exact rows covering batch size,
+  QKV/model width, heads, sequence length, layers, causal mode, and FFN width.
+  Thirteen rows are executable on the selected PyTorch path. Row 14 is the
+  exact 100000-token stress dimensions that the supplied TensorFlow harness
+  explicitly permits resource-preflighting; it remains an authorized skip and
+  is not counted as a pass.
+- The final table does not state dtype or padding. Until the organizer says
+  otherwise, final-shape validation uses the selected PyTorch harness defaults:
+  float32 and no padding, with the stricter executable comparator below.
 
 The files are not interchangeable evaluator specifications. PyTorch defaults
 to one configurable float32 case and the stricter 0.001/0.01 OR rule;
 TensorFlow defaults to a float16 compact dimension sweep and the prose-level
-0.002/0.02 OR rule. See `docs/ORGANIZER_INPUTS.md` for the exact differences and
-the remaining organizer input.
+0.002/0.02 OR rule. The final table supplies dimensions but does not resolve
+those framework-level differences. See `docs/ORGANIZER_INPUTS.md` for the exact
+differences and remaining clarifications.
 
 ## Required behavior
 
@@ -86,6 +101,7 @@ Correctness validation must cover:
 - no mask, all-valid mask, partial prefix padding, and minimum one-token prefix;
 - multiple seeds and input scales;
 - sequence lengths on and immediately around tile boundaries;
+- every executable row in the final organizer shape table;
 - custom-kernel positive dispatch and unsupported-shape fallback dispatch.
 
 ## Kernel and dispatch contract
@@ -155,6 +171,10 @@ dispatcher and may fall back to SDPA until measured.
 - **AC-8:** Every feasible case derived from the two supplied contracts passes
   in an isolated process, and skip accounting accepts only the exact
   source-authorized 100000-token stress case.
+- **AC-9:** The 14 published final-shape rows are preserved in source order;
+  all 13 executable rows pass the untouched selected PyTorch comparator in
+  isolated processes, and the exact 100000-token resource skip is excluded
+  from the pass count.
 
 ## Deliverables
 
@@ -171,12 +191,16 @@ dispatcher and may fall back to SDPA until measured.
 
 ## Open organizer questions
 
-- Final mandatory PyTorch shape combinations, dtypes, padding, and causal modes.
+- Required dtypes and padding modes for the final 14-row shape table.
 - Whether timing includes model construction/compilation or steady-state forward
   only.
 - Whether gradients/backward are evaluated.
 - Exact dependency and source-file modification restrictions.
 - Whether a later workshop/evaluator revision supersedes either supplied file.
+- Whether the current live download attachments are byte-identical to the two
+  files frozen on 2026-08-27; the attachment UI was visible on 2026-08-28 but
+  did not expose bytes for a fresh checksum through the read-only browser path.
 
-These unknowns do not block implementing and validating the current contract,
-but they block claiming final organizer-matrix completeness.
+These unknowns do not block validating the published dimensions under the
+selected PyTorch defaults, but they block claiming that every unstated
+evaluator policy is known.

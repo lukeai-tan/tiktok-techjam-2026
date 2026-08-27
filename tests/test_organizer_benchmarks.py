@@ -5,14 +5,17 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
 import torch
 
 from benchmarks.run_organizer_torch import (
+    _text_sha256 as organizer_runner_text_sha256,
     install_submission,
     load_organizer_benchmark,
     verify_organizer_download,
 )
 from benchmarks.run_organizer_validation import (
+    _text_sha256 as validation_runner_text_sha256,
     load_and_expand_matrix,
     organizer_arguments,
     result_exit_code,
@@ -25,6 +28,7 @@ MANIFEST_PATH = ROOT / "benchmarks" / "reference" / "organizer_downloads.json"
 ORGANIZER_TORCH = ROOT / "benchmarks" / "torch_transformer_benchmark.py"
 ORGANIZER_TENSORFLOW = ROOT / "benchmarks" / "tensorflow_transformer_benchmark.py"
 VALIDATION_MATRIX = ROOT / "benchmarks" / "organizer_validation_matrix.json"
+FINAL_EVALUATOR_MATRIX = ROOT / "benchmarks" / "final_evaluator_shapes.json"
 SUBMISSION_TORCH = ROOT / "torch_transformer_benchmark.py"
 
 PROTECTED_TORCH_DEFINITIONS = (
@@ -50,6 +54,18 @@ def _manifest() -> dict:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_repository_text_hashes_ignore_checkout_line_endings(tmp_path):
+    lf_path = tmp_path / "lf.txt"
+    crlf_path = tmp_path / "crlf.txt"
+    lf_path.write_bytes(b"first\nsecond\n")
+    crlf_path.write_bytes(b"first\r\nsecond\r\n")
+
+    expected = organizer_runner_text_sha256(lf_path)
+    assert organizer_runner_text_sha256(crlf_path) == expected
+    assert validation_runner_text_sha256(lf_path) == expected
+    assert validation_runner_text_sha256(crlf_path) == expected
 
 
 def _top_level_definitions(path: Path) -> dict[str, str]:
@@ -199,6 +215,85 @@ def test_validation_matrix_exercises_pytorch_modes_under_strict_contract():
     assert arguments[arguments.index("--accuracy-trials") + 1] == "5"
     assert arguments[arguments.index("--atol") + 1] == "0.001"
     assert arguments[arguments.index("--rtol") + 1] == "0.01"
+
+
+def test_final_evaluator_matrix_preserves_published_row_order_and_values():
+    matrix, cases = load_and_expand_matrix(FINAL_EVALUATOR_MATRIX)
+    expected_dimensions = [
+        [64, 128, 4, 128, 4, True, 128],
+        [1, 128, 4, 128, 4, True, 128],
+        [4, 128, 4, 128, 4, True, 128],
+        [16, 128, 4, 128, 4, True, 128],
+        [128, 128, 4, 128, 4, True, 128],
+        [10000, 128, 4, 128, 4, True, 128],
+        [64, 32, 4, 128, 4, True, 32],
+        [64, 1024, 4, 128, 4, True, 1024],
+        [64, 128, 1, 128, 4, True, 128],
+        [64, 128, 2, 128, 4, True, 128],
+        [64, 128, 16, 128, 4, True, 128],
+        [64, 128, 4, 32, 4, True, 128],
+        [64, 128, 4, 1024, 4, True, 128],
+        [32, 1024, 16, 100000, 2, True, 1024],
+    ]
+
+    assert matrix["status"] == "organizer-published-final-shapes"
+    assert matrix["source"]["section"] == "3.7 Appendix - Test shapes"
+    assert matrix["source_omissions"] == [
+        "framework",
+        "dtype",
+        "padding ratio",
+        "correctness tolerance",
+        "timing protocol",
+        "backward or gradient requirement",
+    ]
+    assert [case["source_row"] for case in cases] == list(range(1, 15))
+    assert [case["source_dimensions"] for case in cases] == expected_dimensions
+    assert all(case["dtype"] == "float32" for case in cases)
+    assert all(case["padding_ratio"] == 0.0 for case in cases)
+    assert sum(case["execution"] == "run" for case in cases) == 13
+    skipped = [case for case in cases if case["execution"] == "skip_resource"]
+    assert len(skipped) == 1
+    assert skipped[0]["source_row"] == 14
+    assert skipped[0]["skip_authorized"] is True
+
+
+def test_final_evaluator_matrix_rejects_transcription_drift(tmp_path):
+    payload = json.loads(FINAL_EVALUATOR_MATRIX.read_text(encoding="utf-8"))
+    payload["explicit_cases"][0]["source_dimensions"][0] = 63
+    altered = tmp_path / "altered-final-shapes.json"
+    altered.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="source dimensions do not match config"):
+        load_and_expand_matrix(altered)
+
+
+def test_final_evaluator_matrix_rejects_unauthorized_skip(tmp_path):
+    payload = json.loads(FINAL_EVALUATOR_MATRIX.read_text(encoding="utf-8"))
+    payload["explicit_cases"][0]["execution"] = "skip_resource"
+    payload["explicit_cases"][0]["skip_authorized"] = True
+    payload["explicit_cases"][-1]["execution"] = "run"
+    payload["explicit_cases"][-1].pop("skip_authorized")
+    altered = tmp_path / "altered-final-skip.json"
+    altered.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(
+        ValueError, match="resource skip must target the exact final-row stress dimensions"
+    ):
+        load_and_expand_matrix(altered)
+
+
+def test_final_evaluator_matrix_rejects_stress_shape_drift(tmp_path):
+    payload = json.loads(FINAL_EVALUATOR_MATRIX.read_text(encoding="utf-8"))
+    stress = payload["explicit_cases"][-1]
+    stress["source_dimensions"][3] = 99_999
+    stress["config"]["seq_len"] = 99_999
+    altered = tmp_path / "altered-final-stress.json"
+    altered.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(
+        ValueError, match="resource skip must target the exact final-row stress dimensions"
+    ):
+        load_and_expand_matrix(altered)
 
 
 def test_validation_exit_accounting_is_fail_closed():

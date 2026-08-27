@@ -43,10 +43,13 @@ OOM_MARKERS = (
     "cuda outofmemoryerror",
     "cudnn_status_alloc_failed",
 )
+FINAL_STRESS_SOURCE_ROW = 14
+FINAL_STRESS_DIMENSIONS = (32, 1024, 16, 100000, 2, True, 1024)
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _text_sha256(path: Path) -> str:
+    """Hash repository text independently of checkout line endings."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -80,6 +83,100 @@ def _validate_config(config: dict[str, Any]) -> None:
         raise ValueError("case config causal must be boolean")
 
 
+def _validate_case_set(cases: Sequence[dict[str, Any]]) -> None:
+    identifiers = [case.get("id") for case in cases]
+    if any(
+        not isinstance(identifier, str) or not identifier for identifier in identifiers
+    ):
+        raise ValueError("every validation case must have a non-empty id")
+    if len(set(identifiers)) != len(identifiers):
+        raise ValueError("validation case ids must be unique")
+    skipped = [case for case in cases if case["execution"] == "skip_resource"]
+    if len(skipped) != 1 or not skipped[0].get("skip_authorized"):
+        raise ValueError("exactly one source-authorized resource skip is permitted")
+
+
+def _load_explicit_cases(
+    matrix: dict[str, Any], source: dict[str, Any]
+) -> list[dict[str, Any]]:
+    raw_cases = matrix.get("explicit_cases")
+    if not isinstance(raw_cases, list) or not raw_cases:
+        raise ValueError("explicit validation matrix must define cases")
+
+    cases: list[dict[str, Any]] = []
+    source_rows: list[int] = []
+    for raw_case in raw_cases:
+        if not isinstance(raw_case, dict):
+            raise ValueError("explicit validation cases must be objects")
+        case = dict(raw_case)
+        if case.get("source_contract") != "organizer-final-shape-table":
+            raise ValueError("explicit cases must identify the final organizer shape table")
+        source_row = case.get("source_row")
+        if not isinstance(source_row, int) or isinstance(source_row, bool):
+            raise ValueError("explicit case source_row must be an integer")
+        source_rows.append(source_row)
+        _validate_config(case.get("config") or {})
+        if case.get("dtype") not in DTYPES:
+            raise ValueError(f"invalid dtype for {case.get('id')}")
+        padding_ratio = case.get("padding_ratio")
+        if not isinstance(padding_ratio, (int, float)) or not 0 <= padding_ratio < 1:
+            raise ValueError(f"invalid padding ratio for {case.get('id')}")
+        execution = case.get("execution")
+        if execution not in {"run", "skip_resource"}:
+            raise ValueError(f"invalid execution policy for {case.get('id')}")
+        expected_dimensions = [
+            case["config"]["batch_size"],
+            case["config"]["d_model"],
+            case["config"]["num_heads"],
+            case["config"]["seq_len"],
+            case["config"]["num_layers"],
+            case["config"]["causal"],
+            case["config"]["ffn_dim"],
+        ]
+        if case.get("source_dimensions") != expected_dimensions:
+            raise ValueError(
+                f"source dimensions do not match config for {case.get('id')}"
+            )
+        if execution == "skip_resource":
+            if case.get("skip_authorized") is not True:
+                raise ValueError("resource skip must be explicitly source-authorized")
+            tf_contract = source.get("tensorflow_contract") or {}
+            compact_cases = tf_contract.get("compact_cases") or []
+            if (
+                not tf_contract.get("stress_case_may_be_preflight_skipped")
+                or not compact_cases
+                or tuple(compact_cases[-1])
+                != (
+                    FINAL_STRESS_DIMENSIONS[0],
+                    FINAL_STRESS_DIMENSIONS[1],
+                    FINAL_STRESS_DIMENSIONS[2],
+                    FINAL_STRESS_DIMENSIONS[3],
+                )
+            ):
+                raise ValueError("source contract does not authorize the final stress skip")
+            if (
+                source_row != FINAL_STRESS_SOURCE_ROW
+                or tuple(expected_dimensions) != FINAL_STRESS_DIMENSIONS
+            ):
+                raise ValueError(
+                    "resource skip must target the exact final-row stress dimensions"
+                )
+            if not isinstance(case.get("description"), str) or not case[
+                "description"
+            ].strip():
+                raise ValueError("resource skip must explain its authorization")
+        elif case.get("skip_authorized"):
+            raise ValueError("executable cases cannot declare skip authorization")
+        cases.append(case)
+
+    if source_rows != list(range(1, len(cases) + 1)):
+        raise ValueError("explicit cases must preserve consecutive source row order")
+    if len(cases) != FINAL_STRESS_SOURCE_ROW:
+        raise ValueError("final organizer matrix must contain exactly 14 source rows")
+    _validate_case_set(cases)
+    return cases
+
+
 def load_and_expand_matrix(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Load the versioned policy and expand source-derived TensorFlow shapes."""
     matrix = _load_json(path)
@@ -102,6 +199,9 @@ def load_and_expand_matrix(path: Path) -> tuple[dict[str, Any], list[dict[str, A
             "the untouched organizer CLI cannot override the injected class's "
             "default auto attention policy"
         )
+
+    if "explicit_cases" in matrix:
+        return matrix, _load_explicit_cases(matrix, source)
 
     source_default = source["pytorch_contract"]["default_case"]
     cases: list[dict[str, Any]] = []
@@ -220,14 +320,7 @@ def load_and_expand_matrix(path: Path) -> tuple[dict[str, Any], list[dict[str, A
                 }
             )
 
-    identifiers = [case.get("id") for case in cases]
-    if any(not isinstance(identifier, str) or not identifier for identifier in identifiers):
-        raise ValueError("every validation case must have a non-empty id")
-    if len(set(identifiers)) != len(identifiers):
-        raise ValueError("validation case ids must be unique")
-    skipped = [case for case in cases if case["execution"] == "skip_resource"]
-    if len(skipped) != 1 or not skipped[0].get("skip_authorized"):
-        raise ValueError("exactly one source-authorized resource skip is permitted")
+    _validate_case_set(cases)
     return matrix, cases
 
 
@@ -606,16 +699,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "status": "PASS" if result_exit_code(results) == 0 else "FAIL",
         "matrix": {
             "path": str(args.matrix.resolve().relative_to(REPO_ROOT)).replace("\\", "/"),
-            "sha256": _sha256(args.matrix),
+            "sha256": _text_sha256(args.matrix),
             "status": matrix["status"],
         },
         "organizer_sources": {
             "manifest_path": "benchmarks/reference/organizer_downloads.json",
-            "manifest_sha256": _sha256(ORGANIZER_MANIFEST_PATH),
+            "manifest_sha256": _text_sha256(ORGANIZER_MANIFEST_PATH),
             "runner_path": "benchmarks/run_organizer_torch.py",
-            "runner_sha256": _sha256(ORGANIZER_RUNNER_PATH),
+            "runner_sha256": _text_sha256(ORGANIZER_RUNNER_PATH),
             "validation_runner_path": "benchmarks/run_organizer_validation.py",
-            "validation_runner_sha256": _sha256(RUNNER_PATH),
+            "validation_runner_sha256": _text_sha256(RUNNER_PATH),
         },
         "parameters": {
             **defaults,
