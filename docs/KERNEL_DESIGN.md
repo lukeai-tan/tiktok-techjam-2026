@@ -128,13 +128,16 @@ The measured fixed policy avoids per-process autotuning overhead:
 
 | head dimension | sequence | BLOCK_M | BLOCK_N | warps | stages |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| <= 64 | <= 128 | 64 | 128 | 4 | 2 |
+| <= 32 | <= 128 | 64 | 128 | 4 | 2 |
+| 64 | <= 128 | 32 | 64 | 4 | 2 |
 | <= 64 | 129-512 | 64 | 64 | 4 | 2 |
 | <= 64 | > 512 | 64 | 64 | 4 | 3 |
 | 128 | any | 32 | 64 | 4 | 2 |
 
-Short sequences use one K/V tile where practical, reducing both loop overhead
-and online-rescaling drift.
+Short head-dimension-32 sequences use one K/V tile where practical, reducing
+both loop overhead and online-rescaling drift. Head-dimension-64 short sequences
+use smaller tiles to avoid the register spilling measured with IEEE fp32 dots on
+the target GPU.
 
 ## Measured design decisions
 
