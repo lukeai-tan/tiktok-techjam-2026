@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-08-27T17:06:07.634657+00:00",
+  "created_at_utc": "2026-08-27T17:45:46.111938+00:00",
   "status": "PASS",
   "matrix": {
     "path": "benchmarks/final_evaluator_shapes.json",
@@ -31,7 +31,7 @@
     "selected_case_ids": null
   },
   "environment": {
-    "captured_at_utc": "2026-08-27T17:04:50.237870+00:00",
+    "captured_at_utc": "2026-08-27T17:44:42.533931+00:00",
     "command": [
       "python",
       "benchmarks/run_organizer_validation.py",
@@ -45,11 +45,11 @@
       "docs/results/rtx-5070-ti-2026-08-28-final-evaluator-baseline.json"
     ],
     "git": {
-      "commit": "9945c104d2c52795c09e6a549d1fd392e3f90e4d",
+      "commit": "e3878813890c37080dfe7044ff92bd236ae8e0ec",
       "dirty": false,
       "changed_path_count": 0,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "6aad87cf141fcd47a2a95e2d5b9d014755b71966e3eec976ca3c0efafdea6525",
+      "implementation_sha256": "83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -85,7 +85,7 @@
     "disk": {
       "path": ".",
       "total_bytes": 999125151744,
-      "free_bytes": 438909829120
+      "free_bytes": 438799478784
     },
     "framework": {
       "torch": "2.13.0+cu130",
@@ -126,7 +126,7 @@
     "total_failed_elements": 0,
     "max_abs_error": 0.00114846,
     "max_relative_error": 3080.38,
-    "geometric_mean_speedup": 1.4399571204146961,
+    "geometric_mean_speedup": 1.426692077402334,
     "attention_backend_counts": {
       "triton": 1008,
       "sdpa": 0,
@@ -159,7 +159,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.608391599962488,
+      "duration_seconds": 2.5188889000564814,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -207,20 +207,20 @@
           "total_elements": 5242880
         },
         "baseline": {
-          "median_ms": 1.8587,
-          "mean_ms": 2.2274,
-          "p90_ms": 3.4963,
-          "min_ms": 1.3692,
-          "tokens_per_second": 4407296.19
+          "median_ms": 1.4976,
+          "mean_ms": 1.9371,
+          "p90_ms": 2.5879,
+          "min_ms": 1.2993,
+          "tokens_per_second": 5469968.71
         },
         "optimized": {
-          "median_ms": 1.3854,
-          "mean_ms": 1.7257,
-          "p90_ms": 2.2724,
-          "min_ms": 1.3529,
-          "tokens_per_second": 5912991.18
+          "median_ms": 1.2421,
+          "mean_ms": 1.4253,
+          "p90_ms": 1.5505,
+          "min_ms": 1.2249,
+          "tokens_per_second": 6595048.62
         },
-        "speedup_median": 1.342
+        "speedup_median": 1.206
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -246,9 +246,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=1.8587 ms | mean=2.2274 ms | p90=3.4963 ms | min=1.3692 ms | throughput=4407296.19 token/s",
-        "optimized: median=1.3854 ms | mean=1.7257 ms | p90=2.2724 ms | min=1.3529 ms | throughput=5912991.18 token/s",
-        "speedup  : 1.342x based on median latency"
+        "baseline : median=1.4976 ms | mean=1.9371 ms | p90=2.5879 ms | min=1.2993 ms | throughput=5469968.71 token/s",
+        "optimized: median=1.2421 ms | mean=1.4253 ms | p90=1.5505 ms | min=1.2249 ms | throughput=6595048.62 token/s",
+        "speedup  : 1.206x based on median latency"
       ],
       "stderr": []
     },
@@ -277,7 +277,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.5957283000461757,
+      "duration_seconds": 2.4856084000784904,
       "organizer_arguments": [
         "--batch-size",
         "1",
@@ -325,20 +325,20 @@
           "total_elements": 81920
         },
         "baseline": {
-          "median_ms": 2.1783,
-          "mean_ms": 2.4268,
-          "p90_ms": 4.0372,
-          "min_ms": 1.1252,
-          "tokens_per_second": 58760.45
+          "median_ms": 1.8304,
+          "mean_ms": 2.1222,
+          "p90_ms": 3.5689,
+          "min_ms": 1.3964,
+          "tokens_per_second": 69930.07
         },
         "optimized": {
-          "median_ms": 1.2082,
-          "mean_ms": 1.6319,
-          "p90_ms": 3.2959,
-          "min_ms": 0.4533,
-          "tokens_per_second": 105943.42
+          "median_ms": 1.1358,
+          "mean_ms": 1.2892,
+          "p90_ms": 2.1052,
+          "min_ms": 0.6292,
+          "tokens_per_second": 112698.28
         },
-        "speedup_median": 1.803
+        "speedup_median": 1.612
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -364,9 +364,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=2.1783 ms | mean=2.4268 ms | p90=4.0372 ms | min=1.1252 ms | throughput=58760.45 token/s",
-        "optimized: median=1.2082 ms | mean=1.6319 ms | p90=3.2959 ms | min=0.4533 ms | throughput=105943.42 token/s",
-        "speedup  : 1.803x based on median latency"
+        "baseline : median=1.8304 ms | mean=2.1222 ms | p90=3.5689 ms | min=1.3964 ms | throughput=69930.07 token/s",
+        "optimized: median=1.1358 ms | mean=1.2892 ms | p90=2.1052 ms | min=0.6292 ms | throughput=112698.28 token/s",
+        "speedup  : 1.612x based on median latency"
       ],
       "stderr": []
     },
@@ -395,7 +395,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.4434648000169545,
+      "duration_seconds": 2.365432499907911,
       "organizer_arguments": [
         "--batch-size",
         "4",
@@ -443,20 +443,20 @@
           "total_elements": 327680
         },
         "baseline": {
-          "median_ms": 1.8275,
-          "mean_ms": 2.0814,
-          "p90_ms": 3.2421,
-          "min_ms": 0.9038,
-          "tokens_per_second": 280158.63
+          "median_ms": 1.7116,
+          "mean_ms": 2.0208,
+          "p90_ms": 3.6554,
+          "min_ms": 0.8662,
+          "tokens_per_second": 299126.93
         },
         "optimized": {
-          "median_ms": 0.8158,
-          "mean_ms": 0.9529,
-          "p90_ms": 1.1331,
-          "min_ms": 0.3922,
-          "tokens_per_second": 627610.96
+          "median_ms": 0.8853,
+          "mean_ms": 1.0999,
+          "p90_ms": 1.5773,
+          "min_ms": 0.4473,
+          "tokens_per_second": 578358.54
         },
-        "speedup_median": 2.24
+        "speedup_median": 1.933
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -482,9 +482,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=1.8275 ms | mean=2.0814 ms | p90=3.2421 ms | min=0.9038 ms | throughput=280158.63 token/s",
-        "optimized: median=0.8158 ms | mean=0.9529 ms | p90=1.1331 ms | min=0.3922 ms | throughput=627610.96 token/s",
-        "speedup  : 2.240x based on median latency"
+        "baseline : median=1.7116 ms | mean=2.0208 ms | p90=3.6554 ms | min=0.8662 ms | throughput=299126.93 token/s",
+        "optimized: median=0.8853 ms | mean=1.0999 ms | p90=1.5773 ms | min=0.4473 ms | throughput=578358.54 token/s",
+        "speedup  : 1.933x based on median latency"
       ],
       "stderr": []
     },
@@ -513,7 +513,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.4280539001338184,
+      "duration_seconds": 2.3887812001630664,
       "organizer_arguments": [
         "--batch-size",
         "16",
@@ -561,20 +561,20 @@
           "total_elements": 1310720
         },
         "baseline": {
-          "median_ms": 1.8163,
-          "mean_ms": 1.9455,
-          "p90_ms": 2.4903,
-          "min_ms": 0.9522,
-          "tokens_per_second": 1127594.36
+          "median_ms": 1.5104,
+          "mean_ms": 1.934,
+          "p90_ms": 3.1954,
+          "min_ms": 1.0656,
+          "tokens_per_second": 1355932.21
         },
         "optimized": {
-          "median_ms": 0.8356,
-          "mean_ms": 1.103,
-          "p90_ms": 1.6834,
-          "min_ms": 0.5149,
-          "tokens_per_second": 2450933.49
+          "median_ms": 0.9646,
+          "mean_ms": 1.2245,
+          "p90_ms": 1.809,
+          "min_ms": 0.5174,
+          "tokens_per_second": 2123107.0
         },
-        "speedup_median": 2.174
+        "speedup_median": 1.566
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -600,9 +600,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=1.8163 ms | mean=1.9455 ms | p90=2.4903 ms | min=0.9522 ms | throughput=1127594.36 token/s",
-        "optimized: median=0.8356 ms | mean=1.1030 ms | p90=1.6834 ms | min=0.5149 ms | throughput=2450933.49 token/s",
-        "speedup  : 2.174x based on median latency"
+        "baseline : median=1.5104 ms | mean=1.9340 ms | p90=3.1954 ms | min=1.0656 ms | throughput=1355932.21 token/s",
+        "optimized: median=0.9646 ms | mean=1.2245 ms | p90=1.8090 ms | min=0.5174 ms | throughput=2123107.00 token/s",
+        "speedup  : 1.566x based on median latency"
       ],
       "stderr": []
     },
@@ -631,7 +631,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.5877429998945445,
+      "duration_seconds": 2.565507899969816,
       "organizer_arguments": [
         "--batch-size",
         "128",
@@ -679,20 +679,20 @@
           "total_elements": 10485760
         },
         "baseline": {
-          "median_ms": 3.0516,
-          "mean_ms": 3.4604,
-          "p90_ms": 4.8901,
-          "min_ms": 2.9097,
-          "tokens_per_second": 5368902.27
+          "median_ms": 2.9682,
+          "mean_ms": 3.3181,
+          "p90_ms": 5.1648,
+          "min_ms": 2.7387,
+          "tokens_per_second": 5519828.88
         },
         "optimized": {
-          "median_ms": 2.8092,
-          "mean_ms": 3.1351,
-          "p90_ms": 4.3682,
-          "min_ms": 2.4987,
-          "tokens_per_second": 5832298.72
+          "median_ms": 2.5948,
+          "mean_ms": 3.0678,
+          "p90_ms": 4.8239,
+          "min_ms": 2.3783,
+          "tokens_per_second": 6314049.9
         },
-        "speedup_median": 1.086
+        "speedup_median": 1.144
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -718,9 +718,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=3.0516 ms | mean=3.4604 ms | p90=4.8901 ms | min=2.9097 ms | throughput=5368902.27 token/s",
-        "optimized: median=2.8092 ms | mean=3.1351 ms | p90=4.3682 ms | min=2.4987 ms | throughput=5832298.72 token/s",
-        "speedup  : 1.086x based on median latency"
+        "baseline : median=2.9682 ms | mean=3.3181 ms | p90=5.1648 ms | min=2.7387 ms | throughput=5519828.88 token/s",
+        "optimized: median=2.5948 ms | mean=3.0678 ms | p90=4.8239 ms | min=2.3783 ms | throughput=6314049.90 token/s",
+        "speedup  : 1.144x based on median latency"
       ],
       "stderr": []
     },
@@ -749,7 +749,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 43.61536590009928,
+      "duration_seconds": 30.901868999935687,
       "organizer_arguments": [
         "--batch-size",
         "10000",
@@ -797,20 +797,20 @@
           "total_elements": 819200000
         },
         "baseline": {
-          "median_ms": 769.3575,
-          "mean_ms": 764.7459,
-          "p90_ms": 794.994,
-          "min_ms": 708.7296,
-          "tokens_per_second": 1663726.0
+          "median_ms": 528.1644,
+          "mean_ms": 527.2372,
+          "p90_ms": 546.1795,
+          "min_ms": 498.4223,
+          "tokens_per_second": 2423487.85
         },
         "optimized": {
-          "median_ms": 713.9038,
-          "mean_ms": 711.944,
-          "p90_ms": 767.8555,
-          "min_ms": 646.0472,
-          "tokens_per_second": 1792958.64
+          "median_ms": 494.1977,
+          "mean_ms": 494.4468,
+          "p90_ms": 504.0247,
+          "min_ms": 478.4121,
+          "tokens_per_second": 2590056.53
         },
-        "speedup_median": 1.078
+        "speedup_median": 1.069
       },
       "attention_backend_counts": {
         "triton": 0,
@@ -836,9 +836,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=769.3575 ms | mean=764.7459 ms | p90=794.9940 ms | min=708.7296 ms | throughput=1663726.00 token/s",
-        "optimized: median=713.9038 ms | mean=711.9440 ms | p90=767.8555 ms | min=646.0472 ms | throughput=1792958.64 token/s",
-        "speedup  : 1.078x based on median latency"
+        "baseline : median=528.1644 ms | mean=527.2372 ms | p90=546.1795 ms | min=498.4223 ms | throughput=2423487.85 token/s",
+        "optimized: median=494.1977 ms | mean=494.4468 ms | p90=504.0247 ms | min=478.4121 ms | throughput=2590056.53 token/s",
+        "speedup  : 1.069x based on median latency"
       ],
       "stderr": []
     },
@@ -867,7 +867,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.291870699962601,
+      "duration_seconds": 2.2514895000495017,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -915,20 +915,20 @@
           "total_elements": 1310720
         },
         "baseline": {
-          "median_ms": 1.4766,
-          "mean_ms": 1.8046,
-          "p90_ms": 2.4254,
-          "min_ms": 1.096,
-          "tokens_per_second": 5547970.33
+          "median_ms": 1.4314,
+          "mean_ms": 1.9185,
+          "p90_ms": 3.2827,
+          "min_ms": 1.0624,
+          "tokens_per_second": 5722972.28
         },
         "optimized": {
-          "median_ms": 1.1846,
-          "mean_ms": 1.6746,
-          "p90_ms": 2.8948,
-          "min_ms": 0.9682,
-          "tokens_per_second": 6915181.04
+          "median_ms": 1.3786,
+          "mean_ms": 1.6144,
+          "p90_ms": 2.1518,
+          "min_ms": 1.0884,
+          "tokens_per_second": 5942363.54
         },
-        "speedup_median": 1.246
+        "speedup_median": 1.038
       },
       "attention_backend_counts": {
         "triton": 0,
@@ -954,9 +954,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=1.4766 ms | mean=1.8046 ms | p90=2.4254 ms | min=1.0960 ms | throughput=5547970.33 token/s",
-        "optimized: median=1.1846 ms | mean=1.6746 ms | p90=2.8948 ms | min=0.9682 ms | throughput=6915181.04 token/s",
-        "speedup  : 1.246x based on median latency"
+        "baseline : median=1.4314 ms | mean=1.9185 ms | p90=3.2827 ms | min=1.0624 ms | throughput=5722972.28 token/s",
+        "optimized: median=1.3786 ms | mean=1.6144 ms | p90=2.1518 ms | min=1.0884 ms | throughput=5942363.54 token/s",
+        "speedup  : 1.038x based on median latency"
       ],
       "stderr": []
     },
@@ -985,7 +985,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 3.4433339000679553,
+      "duration_seconds": 3.3721510998439044,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -1033,20 +1033,20 @@
           "total_elements": 41943040
         },
         "baseline": {
-          "median_ms": 17.9142,
-          "mean_ms": 18.1898,
-          "p90_ms": 19.0193,
-          "min_ms": 16.8507,
-          "tokens_per_second": 457289.85
+          "median_ms": 17.2808,
+          "mean_ms": 17.2441,
+          "p90_ms": 17.6541,
+          "min_ms": 16.402,
+          "tokens_per_second": 474053.44
         },
         "optimized": {
-          "median_ms": 17.7872,
-          "mean_ms": 18.0264,
-          "p90_ms": 19.2929,
-          "min_ms": 16.6055,
-          "tokens_per_second": 460556.33
+          "median_ms": 17.1294,
+          "mean_ms": 16.9363,
+          "p90_ms": 17.4911,
+          "min_ms": 16.1168,
+          "tokens_per_second": 478241.41
         },
-        "speedup_median": 1.007
+        "speedup_median": 1.009
       },
       "attention_backend_counts": {
         "triton": 0,
@@ -1072,9 +1072,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=17.9142 ms | mean=18.1898 ms | p90=19.0193 ms | min=16.8507 ms | throughput=457289.85 token/s",
-        "optimized: median=17.7872 ms | mean=18.0264 ms | p90=19.2929 ms | min=16.6055 ms | throughput=460556.33 token/s",
-        "speedup  : 1.007x based on median latency"
+        "baseline : median=17.2808 ms | mean=17.2441 ms | p90=17.6541 ms | min=16.4020 ms | throughput=474053.44 token/s",
+        "optimized: median=17.1294 ms | mean=16.9363 ms | p90=17.4911 ms | min=16.1168 ms | throughput=478241.41 token/s",
+        "speedup  : 1.009x based on median latency"
       ],
       "stderr": []
     },
@@ -1103,7 +1103,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.5272770000156015,
+      "duration_seconds": 2.3369183000177145,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -1151,20 +1151,20 @@
           "total_elements": 5242880
         },
         "baseline": {
-          "median_ms": 2.6827,
-          "mean_ms": 3.1102,
-          "p90_ms": 5.5936,
-          "min_ms": 1.4951,
-          "tokens_per_second": 3053653.65
+          "median_ms": 1.3112,
+          "mean_ms": 1.8161,
+          "p90_ms": 2.8972,
+          "min_ms": 1.05,
+          "tokens_per_second": 6247711.91
         },
         "optimized": {
-          "median_ms": 1.6581,
-          "mean_ms": 1.9571,
-          "p90_ms": 3.0357,
-          "min_ms": 1.3565,
-          "tokens_per_second": 4940701.9
+          "median_ms": 1.1866,
+          "mean_ms": 1.6226,
+          "p90_ms": 3.0071,
+          "min_ms": 1.1771,
+          "tokens_per_second": 6903525.78
         },
-        "speedup_median": 1.618
+        "speedup_median": 1.105
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -1190,9 +1190,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=2.6827 ms | mean=3.1102 ms | p90=5.5936 ms | min=1.4951 ms | throughput=3053653.65 token/s",
-        "optimized: median=1.6581 ms | mean=1.9571 ms | p90=3.0357 ms | min=1.3565 ms | throughput=4940701.90 token/s",
-        "speedup  : 1.618x based on median latency"
+        "baseline : median=1.3112 ms | mean=1.8161 ms | p90=2.8972 ms | min=1.0500 ms | throughput=6247711.91 token/s",
+        "optimized: median=1.1866 ms | mean=1.6226 ms | p90=3.0071 ms | min=1.1771 ms | throughput=6903525.78 token/s",
+        "speedup  : 1.105x based on median latency"
       ],
       "stderr": []
     },
@@ -1221,7 +1221,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.555653400020674,
+      "duration_seconds": 2.419226699974388,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -1269,20 +1269,20 @@
           "total_elements": 5242880
         },
         "baseline": {
-          "median_ms": 1.629,
-          "mean_ms": 1.9628,
-          "p90_ms": 3.0253,
-          "min_ms": 1.2107,
-          "tokens_per_second": 5028827.38
+          "median_ms": 1.551,
+          "mean_ms": 2.1023,
+          "p90_ms": 4.0471,
+          "min_ms": 1.2547,
+          "tokens_per_second": 5281889.91
         },
         "optimized": {
-          "median_ms": 3.6001,
-          "mean_ms": 4.1821,
-          "p90_ms": 5.7306,
-          "min_ms": 3.4691,
-          "tokens_per_second": 2275515.08
+          "median_ms": 0.912,
+          "mean_ms": 1.1224,
+          "p90_ms": 1.2887,
+          "min_ms": 0.872,
+          "tokens_per_second": 8982771.4
         },
-        "speedup_median": 0.452
+        "speedup_median": 1.701
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -1301,16 +1301,16 @@
         "trial 01/5: PASS | max_abs=0.000962138 | max_rel=150.097 | failed=0/1048576",
         "trial 02/5: PASS | max_abs=0.000893116 | max_rel=1858.64 | failed=0/1048576",
         "trial 03/5: PASS | max_abs=0.0010339 | max_rel=67.1981 | failed=0/1048576",
-        "trial 04/5: PASS | max_abs=0.00102794 | max_rel=180.925 | failed=0/1048576",
-        "trial 05/5: PASS | max_abs=0.000903964 | max_rel=114.539 | failed=0/1048576",
+        "trial 04/5: PASS | max_abs=0.00102794 | max_rel=134.36 | failed=0/1048576",
+        "trial 05/5: PASS | max_abs=0.000903964 | max_rel=92.2882 | failed=0/1048576",
         "summary: PASS | max_abs=0.0010339 | max_rel=1858.64 | failed=0/5242880",
         "",
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=1.6290 ms | mean=1.9628 ms | p90=3.0253 ms | min=1.2107 ms | throughput=5028827.38 token/s",
-        "optimized: median=3.6001 ms | mean=4.1821 ms | p90=5.7306 ms | min=3.4691 ms | throughput=2275515.08 token/s",
-        "speedup  : 0.452x based on median latency"
+        "baseline : median=1.5510 ms | mean=2.1023 ms | p90=4.0471 ms | min=1.2547 ms | throughput=5281889.91 token/s",
+        "optimized: median=0.9120 ms | mean=1.1224 ms | p90=1.2887 ms | min=0.8720 ms | throughput=8982771.40 token/s",
+        "speedup  : 1.701x based on median latency"
       ],
       "stderr": []
     },
@@ -1339,7 +1339,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.6049671000801027,
+      "duration_seconds": 2.5229251999408007,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -1387,20 +1387,20 @@
           "total_elements": 5242880
         },
         "baseline": {
-          "median_ms": 6.7313,
-          "mean_ms": 6.8934,
-          "p90_ms": 8.091,
-          "min_ms": 5.738,
-          "tokens_per_second": 1217004.77
+          "median_ms": 6.6684,
+          "mean_ms": 6.9984,
+          "p90_ms": 8.3101,
+          "min_ms": 5.762,
+          "tokens_per_second": 1228477.64
         },
         "optimized": {
-          "median_ms": 6.5157,
-          "mean_ms": 6.7666,
-          "p90_ms": 8.1527,
-          "min_ms": 5.6034,
-          "tokens_per_second": 1257262.41
+          "median_ms": 6.469,
+          "mean_ms": 6.8606,
+          "p90_ms": 8.5981,
+          "min_ms": 5.5913,
+          "tokens_per_second": 1266348.76
         },
-        "speedup_median": 1.033
+        "speedup_median": 1.031
       },
       "attention_backend_counts": {
         "triton": 0,
@@ -1426,9 +1426,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=6.7313 ms | mean=6.8934 ms | p90=8.0910 ms | min=5.7380 ms | throughput=1217004.77 token/s",
-        "optimized: median=6.5157 ms | mean=6.7666 ms | p90=8.1527 ms | min=5.6034 ms | throughput=1257262.41 token/s",
-        "speedup  : 1.033x based on median latency"
+        "baseline : median=6.6684 ms | mean=6.9984 ms | p90=8.3101 ms | min=5.7620 ms | throughput=1228477.64 token/s",
+        "optimized: median=6.4690 ms | mean=6.8606 ms | p90=8.5981 ms | min=5.5913 ms | throughput=1266348.76 token/s",
+        "speedup  : 1.031x based on median latency"
       ],
       "stderr": []
     },
@@ -1457,7 +1457,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 2.4432665000203997,
+      "duration_seconds": 2.365274399984628,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -1506,19 +1506,19 @@
         },
         "baseline": {
           "median_ms": 1.6213,
-          "mean_ms": 1.944,
-          "p90_ms": 2.8912,
-          "min_ms": 1.0116,
-          "tokens_per_second": 1263162.05
+          "mean_ms": 2.2533,
+          "p90_ms": 4.4179,
+          "min_ms": 0.9648,
+          "tokens_per_second": 1263186.99
         },
         "optimized": {
-          "median_ms": 0.8941,
-          "mean_ms": 1.066,
-          "p90_ms": 1.2597,
-          "min_ms": 0.6647,
-          "tokens_per_second": 2290663.73
+          "median_ms": 1.0831,
+          "mean_ms": 1.1885,
+          "p90_ms": 1.4846,
+          "min_ms": 0.7519,
+          "tokens_per_second": 1890833.91
         },
-        "speedup_median": 1.813
+        "speedup_median": 1.497
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -1544,9 +1544,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=1.6213 ms | mean=1.9440 ms | p90=2.8912 ms | min=1.0116 ms | throughput=1263162.05 token/s",
-        "optimized: median=0.8941 ms | mean=1.0660 ms | p90=1.2597 ms | min=0.6647 ms | throughput=2290663.73 token/s",
-        "speedup  : 1.813x based on median latency"
+        "baseline : median=1.6213 ms | mean=2.2533 ms | p90=4.4179 ms | min=0.9648 ms | throughput=1263186.99 token/s",
+        "optimized: median=1.0831 ms | mean=1.1885 ms | p90=1.4846 ms | min=0.7519 ms | throughput=1890833.91 token/s",
+        "speedup  : 1.497x based on median latency"
       ],
       "stderr": []
     },
@@ -1575,7 +1575,7 @@
       "dtype": "float32",
       "padding_ratio": 0.0,
       "status": "PASS",
-      "duration_seconds": 5.9222657000645995,
+      "duration_seconds": 5.760989000089467,
       "organizer_arguments": [
         "--batch-size",
         "64",
@@ -1623,20 +1623,20 @@
           "total_elements": 41943040
         },
         "baseline": {
-          "median_ms": 102.5063,
-          "mean_ms": 103.307,
-          "p90_ms": 106.0516,
-          "min_ms": 101.1044,
-          "tokens_per_second": 639336.59
+          "median_ms": 102.4249,
+          "mean_ms": 101.3511,
+          "p90_ms": 104.5154,
+          "min_ms": 97.4225,
+          "tokens_per_second": 639844.63
         },
         "optimized": {
-          "median_ms": 21.2346,
-          "mean_ms": 21.4835,
-          "p90_ms": 22.9417,
-          "min_ms": 20.0055,
-          "tokens_per_second": 3086289.52
+          "median_ms": 22.0748,
+          "mean_ms": 22.2867,
+          "p90_ms": 23.6637,
+          "min_ms": 20.3807,
+          "tokens_per_second": 2968817.36
         },
-        "speedup_median": 4.827
+        "speedup_median": 4.64
       },
       "attention_backend_counts": {
         "triton": 112,
@@ -1662,9 +1662,9 @@
         "=== Performance benchmark ===",
         "timing excludes random-data generation and uses a fixed input",
         "CUDA latency is measured with torch.cuda.Event on the current stream",
-        "baseline : median=102.5063 ms | mean=103.3070 ms | p90=106.0516 ms | min=101.1044 ms | throughput=639336.59 token/s",
-        "optimized: median=21.2346 ms | mean=21.4835 ms | p90=22.9417 ms | min=20.0055 ms | throughput=3086289.52 token/s",
-        "speedup  : 4.827x based on median latency"
+        "baseline : median=102.4249 ms | mean=101.3511 ms | p90=104.5154 ms | min=97.4225 ms | throughput=639844.63 token/s",
+        "optimized: median=22.0748 ms | mean=22.2867 ms | p90=23.6637 ms | min=20.3807 ms | throughput=2968817.36 token/s",
+        "speedup  : 4.640x based on median latency"
       ],
       "stderr": []
     },
