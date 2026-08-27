@@ -136,6 +136,33 @@ def test_low_precision_auto_uses_correctness_first_reference(
     }
 
 
+@pytest.mark.parametrize(
+    "batch_size,causal,expected_backend",
+    [
+        (8, False, "triton"),
+        (9, False, "sdpa"),
+        (1, True, "sdpa"),
+    ],
+)
+def test_deep_stack_auto_uses_accuracy_guard(
+    batch_size,
+    causal,
+    expected_backend,
+):
+    config = TransformerConfig(batch_size, 32, 128, 4, 512, 6, causal)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(batch_size, 32, 128, device="cuda", dtype=torch.float32)
+    # The untouched organizer supplies an all-valid mask even at padding_ratio=0.
+    valid_mask = torch.ones(batch_size, 32, device="cuda", dtype=torch.bool)
+
+    with torch.inference_mode():
+        output = model(x, valid_mask)
+
+    assert output.shape == x.shape
+    assert model.attention_backend_counts[expected_backend] == config.num_layers
+    assert sum(model.attention_backend_counts.values()) == config.num_layers
+
+
 @pytest.mark.skipif(not hasattr(torch, "compile"), reason="torch.compile unavailable")
 def test_reduce_overhead_accuracy_preserves_cudagraph_outputs():
     """Regression: a second compiled call must not invalidate the reference."""

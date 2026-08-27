@@ -25,8 +25,11 @@ jobs:
       - name: Validate JSON manifests
         run: |
           python -m json.tool benchmarks/official_shapes.json >/dev/null
+          python -m json.tool benchmarks/organizer_validation_matrix.json >/dev/null
           python -m json.tool benchmarks/reference/manifest.json >/dev/null
+          python -m json.tool benchmarks/reference/organizer_downloads.json >/dev/null
           python -m json.tool docs/workflows/transformer-gpu-kernel.json >/dev/null
+          python -m json.tool notebooks/colab_benchmark.ipynb >/dev/null
       - name: Compile Python sources
         run: python -m compileall -q torch_transformer_benchmark.py transformer_opt benchmarks tools sweep.py
       - name: Run portable contract suite

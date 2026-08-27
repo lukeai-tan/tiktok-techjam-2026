@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "status": "organizer-contract-derived",
+  "description": "Fail-closed validation of the selected PyTorch submission across the supplied PyTorch contract and every feasible shape emitted by the supplied TensorFlow compact benchmark.",
+  "source_manifest": "benchmarks/reference/organizer_downloads.json",
+  "defaults": {
+    "device": "cuda",
+    "attention_backend": "auto",
+    "accuracy_trials": 5,
+    "rtol": 0.01,
+    "atol": 0.001,
+    "warmup": 3,
+    "repeats": 10,
+    "benchmark_rounds": 2,
+    "seed": 1234,
+    "input_scale": 1.0
+  },
+  "pytorch_cases": [
+    {
+      "id": "pytorch-default-fp32",
+      "description": "Exact supplied PyTorch default configuration.",
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 8,
+        "seq_len": 128,
+        "d_model": 512,
+        "num_heads": 8,
+        "ffn_dim": 2048,
+        "num_layers": 6,
+        "causal": false
+      }
+    },
+    {
+      "id": "pytorch-default-causal-fp32",
+      "description": "Supplied PyTorch default dimensions with causal attention.",
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 8,
+        "seq_len": 128,
+        "d_model": 512,
+        "num_heads": 8,
+        "ffn_dim": 2048,
+        "num_layers": 6,
+        "causal": true
+      }
+    },
+    {
+      "id": "pytorch-default-padding-fp32",
+      "description": "Supplied PyTorch default dimensions with variable prefix padding.",
+      "dtype": "float32",
+      "padding_ratio": 0.3,
+      "config": {
+        "batch_size": 8,
+        "seq_len": 128,
+        "d_model": 512,
+        "num_heads": 8,
+        "ffn_dim": 2048,
+        "num_layers": 6,
+        "causal": false
+      }
+    },
+    {
+      "id": "pytorch-default-causal-padding-fp32",
+      "description": "Supplied PyTorch default dimensions with causal attention and prefix padding.",
+      "dtype": "float32",
+      "padding_ratio": 0.3,
+      "config": {
+        "batch_size": 8,
+        "seq_len": 128,
+        "d_model": 512,
+        "num_heads": 8,
+        "ffn_dim": 2048,
+        "num_layers": 6,
+        "causal": true
+      }
+    },
+    {
+      "id": "pytorch-default-fp16",
+      "description": "Supplied PyTorch default dimensions in float16.",
+      "dtype": "float16",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 8,
+        "seq_len": 128,
+        "d_model": 512,
+        "num_heads": 8,
+        "ffn_dim": 2048,
+        "num_layers": 6,
+        "causal": false
+      }
+    },
+    {
+      "id": "pytorch-default-bf16",
+      "description": "Supplied PyTorch default dimensions in bfloat16.",
+      "dtype": "bfloat16",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 8,
+        "seq_len": 128,
+        "d_model": 512,
+        "num_heads": 8,
+        "ffn_dim": 2048,
+        "num_layers": 6,
+        "causal": false
+      }
+    }
+  ],
+  "tensorflow_shape_translation": {
+    "description": "Run each feasible compact TensorFlow shape through the selected PyTorch harness in both the selected contract dtype and the TensorFlow default dtype.",
+    "execution_dtypes": ["float32", "float16"],
+    "ffn_multiplier": 4,
+    "num_layers": 6,
+    "causal": false,
+    "padding_ratio": 0.0,
+    "stress_case": [32, 1024, 16, 100000],
+    "stress_dtype": "float16",
+    "stress_status": "SKIPPED_RESOURCE",
+    "stress_reason": "The supplied TensorFlow benchmark designates this 100000-token explicit-attention case for resource preflight skipping because its quadratic baseline exceeds the configured memory budget. It is not counted as a pass."
+  }
+}

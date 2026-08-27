@@ -173,203 +173,31 @@ class BaselineTransformer(nn.Module):
 
 
 class UserOptimizedTransformer(BaselineTransformer):
-    """Transformer using repository-owned Triton attention when supported.
-
-    It subclasses BaselineTransformer and therefore *inherits the exact same
-    submodules and parameter names* (q_proj, k_proj, v_proj, out_proj, norm1,
-    norm2, ffn_in, ffn_out, final_norm). This keeps ``copy_model_weights`` on the
-    default ``strict=True`` path -- no weight-name customization needed.
-
-    Q/K/V projections stay in the natural contiguous `[B,S,H,D]` view. A
-    guarded dispatcher selects the custom online-softmax Triton kernel for its
-    tested CUDA inference envelope and PyTorch SDPA everywhere else. The actual
-    backend is counted so validation cannot confuse fallback with custom
-    execution. The residual, normalization, FFN, and padded-row semantics remain
-    identical to the baseline.
     """
+    Replace this class with the optimized implementation.
 
-    def __init__(
-        self,
-        config: "TransformerConfig",
-        attention_backend: str = "auto",
-    ) -> None:
-        super().__init__(config)
-        from transformer_opt import ATTENTION_BACKENDS
-
-        if attention_backend not in ATTENTION_BACKENDS:
-            raise ValueError(
-                f"attention_backend must be one of {ATTENTION_BACKENDS}, "
-                f"got {attention_backend!r}"
-            )
-        self.attention_backend = attention_backend
-        self.attention_backend_counts: Dict[str, int] = {
-            "triton": 0,
-            "sdpa": 0,
-            "reference": 0,
-        }
-        # Packed QKV tensors are derived, non-persistent inference data. Keeping
-        # them in a plain dictionary preserves the baseline's exact state_dict
-        # surface; the parameter signature below invalidates stale entries after
-        # a device/dtype move or any in-place parameter update.
-        self._packed_qkv_cache: Dict[
-            int,
-            Tuple[Tuple[Tuple[object, ...], ...], torch.Tensor, torch.Tensor],
-        ] = {}
-
-    def reset_attention_backend_counts(self) -> None:
-        self.attention_backend_counts = {"triton": 0, "sdpa": 0, "reference": 0}
-
-    @staticmethod
-    def _qkv_signature(
-        attn: "BaselineSelfAttention",
-    ) -> Tuple[Tuple[object, ...], ...]:
-        tensors = (
-            attn.q_proj.weight,
-            attn.k_proj.weight,
-            attn.v_proj.weight,
-            attn.q_proj.bias,
-            attn.k_proj.bias,
-            attn.v_proj.bias,
-        )
-        return tuple(
-            (
-                tensor.data_ptr(),
-                tensor._version,
-                tensor.device,
-                tensor.dtype,
-            )
-            for tensor in tensors
-            if tensor is not None
-        )
-
-    def _project_qkv(
-        self,
-        attn: "BaselineSelfAttention",
-        x: torch.Tensor,
-        *,
-        is_compiling: bool,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        batch, seq_len, _ = x.shape
-        num_heads, head_dim = attn.num_heads, attn.head_dim
-
-        # Target-device measurements showed a cached combined projection wins
-        # through d_model=512 but is neutral at d_model=1024. Restrict the path
-        # to the validated eager-fp32 inference regime; training, CPU,
-        # low-precision, compilation, and wider models retain the exact three
-        # projection calls.
-        use_packed = (
-            x.is_cuda
-            and x.dtype == torch.float32
-            and not torch.is_grad_enabled()
-            and not is_compiling
-            and attn.d_model <= 512
-        )
-        if not use_packed:
-            split = lambda tensor: tensor.view(
-                batch, seq_len, num_heads, head_dim
-            )
-            return (
-                split(attn.q_proj(x)),
-                split(attn.k_proj(x)),
-                split(attn.v_proj(x)),
-            )
-
-        signature = self._qkv_signature(attn)
-        cached = self._packed_qkv_cache.get(id(attn))
-        if cached is None or cached[0] != signature:
-            packed_weight = torch.cat(
-                (attn.q_proj.weight, attn.k_proj.weight, attn.v_proj.weight),
-                dim=0,
-            ).detach()
-            packed_bias = torch.cat(
-                (attn.q_proj.bias, attn.k_proj.bias, attn.v_proj.bias),
-                dim=0,
-            ).detach()
-            cached = (signature, packed_weight, packed_bias)
-            self._packed_qkv_cache[id(attn)] = cached
-
-        projected = F.linear(x, cached[1], cached[2])
-        qkv = projected.view(batch, seq_len, 3, num_heads, head_dim)
-        return qkv.unbind(dim=2)
-
-    def _attention(
-        self,
-        attn: "BaselineSelfAttention",
-        x: torch.Tensor,
-        valid_token_mask: Optional[torch.Tensor],
-        causal: bool,
-    ) -> torch.Tensor:
-        from transformer_opt import attention_forward
-
-        batch, seq_len, _ = x.shape
-        compiler = getattr(torch, "compiler", None)
-        is_compiling = compiler is not None and compiler.is_compiling()
-        q, k, v = self._project_qkv(attn, x, is_compiling=is_compiling)
-        selected_backend = self.attention_backend
-        if selected_backend == "auto" and x.is_cuda:
-            if x.dtype != torch.float32:
-                # The executable benchmark compares a deep stack against explicit
-                # low-precision matmuls with a much tighter tolerance than its prose
-                # brief. Tiny fused-attention differences compound across layers,
-                # so auto remains correctness-first outside the validated fp32 path.
-                selected_backend = "reference"
-            elif self.config.num_layers >= 6 and (causal or batch > 8):
-                # The supplied five-trial harness exposed rare Triton tolerance
-                # misses after six layers for causal attention and larger batches.
-                # SDPA passed the same strict comparator and is still materially
-                # faster than the explicit baseline. Keep Triton on the organizer's
-                # default non-causal B8 path, where it is both accurate and faster.
-                selected_backend = "sdpa"
-        context, dispatch = attention_forward(
-            q,
-            k,
-            v,
-            valid_token_mask,
-            causal=causal,
-            scale=attn.scale,
-            backend=selected_backend,
-        )
-        if not is_compiling:
-            self.attention_backend_counts[dispatch.selected] += 1
-        context = context.reshape(batch, seq_len, attn.d_model)
-        return attn.out_proj(context)
-
-    def _block(
-        self,
-        layer: "BaselineTransformerBlock",
-        x: torch.Tensor,
-        valid_token_mask: Optional[torch.Tensor],
-        causal: bool,
-    ) -> torch.Tensor:
-        attn_out = self._attention(
-            layer.attention,
-            layer.norm1(x),
-            valid_token_mask,
-            causal,
-        )
-        x = x + attn_out
-        ffn_out = layer.ffn_out(
-            F.gelu(layer.ffn_in(layer.norm2(x)), approximate="none")
-        )
-        x = x + ffn_out
-        # Baseline zeroes padded rows after every block; matching keeps invalid
-        # positions at exactly 0 throughout (they never affect valid rows).
-        if valid_token_mask is not None:
-            x = x.masked_fill(~valid_token_mask[..., None], 0)
-        return x
+    Requirements:
+      1. Keep the forward signature unchanged.
+      2. Return a tensor with shape [batch_size, seq_len, d_model].
+      3. Keep compatible parameter names, or customize copy_model_weights().
+    """
 
     def forward(
         self,
         x: torch.Tensor,
         valid_token_mask: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
-        causal = self.config.causal
-        for layer in self.layers:
-            x = self._block(layer, x, valid_token_mask, causal)
-        x = self.final_norm(x)
-        if valid_token_mask is not None:
-            x = x.masked_fill(~valid_token_mask[..., None], 0)
-        return x
+        # ====================== your codes here ======================
+        # Example optimization directions:
+        #   * torch.nn.functional.scaled_dot_product_attention
+        #   * torch.compile
+        #   * Triton/CUDA fused kernels
+        #   * fused LayerNorm / residual / FFN
+        #
+        # The default implementation calls the baseline so that this script
+        # remains directly runnable before the optimized code is inserted.
+        return super().forward(x, valid_token_mask)
+        # ============================================================
 
 
 def copy_model_weights(
@@ -410,7 +238,7 @@ def generate_random_case(
     seed: int,
     padding_ratio: float,
     input_scale: float,
-) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+) -> Tuple[torch.Tensor, torch.Tensor]:
     generator = torch.Generator(device=device)
     generator.manual_seed(seed)
 
@@ -425,9 +253,10 @@ def generate_random_case(
     x = x * input_scale
 
     if padding_ratio <= 0:
-        # Preserve the semantic no-mask path. Returning an all-True CUDA tensor
-        # here previously forced mask handling and hid the SDPA/custom fast path.
-        return x, None
+        valid_token_mask = torch.ones(
+            config.batch_size, config.seq_len, device=device, dtype=torch.bool
+        )
+        return x, valid_token_mask
 
     min_valid = max(1, int(round(config.seq_len * (1.0 - padding_ratio))))
     lengths = torch.randint(
@@ -559,10 +388,7 @@ def run_accuracy_tests(
                 padding_ratio=padding_ratio,
                 input_scale=input_scale,
             )
-            # reduce-overhead compilation may return a CUDA-graph-owned output
-            # buffer. Preserve the baseline before the optimized graph advances
-            # the global CUDA-graph step and invalidates that view.
-            reference = baseline(x, valid_mask).clone()
+            reference = baseline(x, valid_mask)
             candidate = optimized(x, valid_mask)
             result = compare_outputs(reference, candidate, rtol=rtol, atol=atol)
 
@@ -637,7 +463,7 @@ class TimingResult:
 def warmup_model(
     model: nn.Module,
     x: torch.Tensor,
-    valid_mask: Optional[torch.Tensor],
+    valid_mask: torch.Tensor,
     iterations: int,
     device: torch.device,
 ) -> None:
@@ -651,7 +477,7 @@ def warmup_model(
 def benchmark_once(
     model: nn.Module,
     x: torch.Tensor,
-    valid_mask: Optional[torch.Tensor],
+    valid_mask: torch.Tensor,
     iterations: int,
     device: torch.device,
 ) -> List[float]:
@@ -776,12 +602,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ffn-dim", type=int, default=2048)
     parser.add_argument("--layers", type=int, default=6)
     parser.add_argument("--causal", action="store_true")
-    parser.add_argument(
-        "--attention-backend",
-        choices=("auto", "triton", "sdpa", "reference"),
-        default="auto",
-        help="optimized attention backend; forced triton fails if unsupported",
-    )
 
     parser.add_argument(
         "--device", default="auto", help="auto, cpu, cuda, cuda:0, ..."
@@ -868,10 +688,7 @@ def main() -> int:
         torch.backends.cudnn.allow_tf32 = args.allow_tf32
 
     baseline = BaselineTransformer(config)
-    optimized = UserOptimizedTransformer(
-        config,
-        attention_backend=args.attention_backend,
-    )
+    optimized = UserOptimizedTransformer(config)
     copy_model_weights(
         baseline,
         optimized,
@@ -888,7 +705,6 @@ def main() -> int:
     print("=== Configuration ===")
     print(config)
     print(f"device={device}, dtype={dtype}, torch={torch.__version__}")
-    print(f"attention_backend={args.attention_backend}")
     if device.type == "cuda":
         print(f"gpu={torch.cuda.get_device_name(device)}")
 
@@ -924,9 +740,6 @@ def main() -> int:
         repeats=args.repeats,
         rounds=args.benchmark_rounds,
     )
-    backend_counts = getattr(optimized, "attention_backend_counts", None)
-    if backend_counts is not None:
-        print(f"attention_backend_counts={backend_counts}")
     return 0 if accuracy_passed else 2
 
 

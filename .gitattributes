@@ -1,1 +1,3 @@
 /tools/triton-cc text eol=lf
+/benchmarks/torch_transformer_benchmark.py -text
+/benchmarks/tensorflow_transformer_benchmark.py -text
