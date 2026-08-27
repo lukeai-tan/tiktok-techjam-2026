@@ -1,0 +1,103 @@
+{
+  "device": "cuda",
+  "dtype": "torch.float16",
+  "compile": false,
+  "triton_ln": false,
+  "causal": false,
+  "padding_ratio": 0.0,
+  "torch": "2.11.0+cu128",
+  "gpu": "Tesla T4",
+  "rows": [
+    {
+      "label": "B1_S128_d512_H8_L6",
+      "dtype": "float16",
+      "passed": false,
+      "failed": 241,
+      "total": 65536,
+      "max_abs": 0.005859375,
+      "baseline_ms": 4.878159999847412,
+      "optimized_ms": 3.1076639890670776,
+      "speedup": 1.569719254401065,
+      "baseline_tok_s": 26239.401742461054,
+      "optimized_tok_s": 41188.49413910597
+    },
+    {
+      "label": "B8_S128_d512_H8_L6",
+      "dtype": "float16",
+      "passed": false,
+      "failed": 406,
+      "total": 524288,
+      "max_abs": 0.0078125,
+      "baseline_ms": 4.715120077133179,
+      "optimized_ms": 2.9496960639953613,
+      "speedup": 1.598510482041513,
+      "baseline_tok_s": 217173.68449768052,
+      "optimized_tok_s": 347154.4110931188
+    },
+    {
+      "label": "B32_S64_d512_H8_L6",
+      "dtype": "float16",
+      "passed": false,
+      "failed": 1138,
+      "total": 1048576,
+      "max_abs": 0.0078125,
+      "baseline_ms": 6.8568642139434814,
+      "optimized_ms": 5.31168007850647,
+      "speedup": 1.2909030876482088,
+      "baseline_tok_s": 298678.803619208,
+      "optimized_tok_s": 385565.38980710856
+    },
+    {
+      "label": "B2_S1024_d512_H8_L6",
+      "dtype": "float16",
+      "passed": false,
+      "failed": 465,
+      "total": 1048576,
+      "max_abs": 0.0078125,
+      "baseline_ms": 22.462831497192383,
+      "optimized_ms": 8.14793586730957,
+      "speedup": 2.7568738712482723,
+      "baseline_tok_s": 91172.83367664395,
+      "optimized_tok_s": 251352.0029308042
+    },
+    {
+      "label": "B1_S4096_d512_H8_L6",
+      "dtype": "float16",
+      "passed": false,
+      "failed": 852,
+      "total": 2097152,
+      "max_abs": 0.0078125,
+      "baseline_ms": 141.96861267089844,
+      "optimized_ms": 34.626943588256836,
+      "speedup": 4.099946398937871,
+      "baseline_tok_s": 28851.447675234078,
+      "optimized_tok_s": 118289.38900022038
+    },
+    {
+      "label": "B4_S256_d1024_H16_L6",
+      "dtype": "float16",
+      "passed": false,
+      "failed": 951,
+      "total": 1048576,
+      "max_abs": 0.0078125,
+      "baseline_ms": 13.899408340454102,
+      "optimized_ms": 10.1080641746521,
+      "speedup": 1.3750811332707524,
+      "baseline_tok_s": 73672.2006374658,
+      "optimized_tok_s": 101305.2531431167
+    },
+    {
+      "label": "B2_S512_d2048_H16_L4",
+      "dtype": "float16",
+      "passed": false,
+      "failed": 220,
+      "total": 2097152,
+      "max_abs": 0.005859375,
+      "baseline_ms": 32.42417526245117,
+      "optimized_ms": 27.15430450439453,
+      "speedup": 1.19407128461728,
+      "baseline_tok_s": 31581.373827134583,
+      "optimized_tok_s": 37710.411615745135
+    }
+  ]
+}
