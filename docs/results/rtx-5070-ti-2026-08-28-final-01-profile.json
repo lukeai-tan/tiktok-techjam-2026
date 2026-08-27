@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-08-27T17:17:06.038584+00:00",
+  "created_at_utc": "2026-08-27T17:48:41.143036+00:00",
   "case": {
     "id": "final-01-b64-d128-h4-s128",
     "source_row": 1,
@@ -27,7 +27,7 @@
     {
       "name": "_attention_fwd",
       "count": 40,
-      "self_device_time_us": 6552.466000000003,
+      "self_device_time_us": 7008.677000000006,
       "cpu_time_total_us": 0.0
     }
   ],
@@ -35,193 +35,193 @@
     {
       "name": "optimized_transformer",
       "count": 10,
-      "self_device_time_us": 16066.238000000003,
+      "self_device_time_us": 14909.338000000002,
       "cpu_time_total_us": 0.0
     },
     {
       "name": "_attention_fwd",
       "count": 40,
-      "self_device_time_us": 6552.466000000003,
-      "cpu_time_total_us": 0.0
-    },
-    {
-      "name": "aten::native_layer_norm",
-      "count": 90,
-      "self_device_time_us": 5190.670999999995,
-      "cpu_time_total_us": 4966.5999999999985
-    },
-    {
-      "name": "_ZN2at6native53_GLOBAL__N__e58679f9_20_layer_norm_kernel_cu_3ff0b71f28vectorized_layer_norm_kernelIffLb0EEEviT0_PKT_S6_S6_PS3_S7_PS4_",
-      "count": 90,
-      "self_device_time_us": 5190.670999999995,
+      "self_device_time_us": 7008.677000000006,
       "cpu_time_total_us": 0.0
     },
     {
       "name": "aten::addmm",
       "count": 160,
-      "self_device_time_us": 2989.854999999996,
-      "cpu_time_total_us": 2886.2000000000025
+      "self_device_time_us": 2693.346999999995,
+      "cpu_time_total_us": 3405.500000000003
+    },
+    {
+      "name": "aten::native_layer_norm",
+      "count": 90,
+      "self_device_time_us": 1887.8149999999941,
+      "cpu_time_total_us": 4002.7999999999943
+    },
+    {
+      "name": "_ZN2at6native53_GLOBAL__N__e58679f9_20_layer_norm_kernel_cu_3ff0b71f28vectorized_layer_norm_kernelIffLb0EEEviT0_PKT_S6_S6_PS3_S7_PS4_",
+      "count": 90,
+      "self_device_time_us": 1887.8149999999941,
+      "cpu_time_total_us": 0.0
     },
     {
       "name": "_ZN7cutlass7Kernel2I50cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4EEvNT_6ParamsE",
       "count": 120,
-      "self_device_time_us": 1536.6420000000026,
+      "self_device_time_us": 1400.0029999999979,
       "cpu_time_total_us": 0.0
     },
     {
       "name": "_ZN7cutlass7Kernel2I51cutlass_80_tensorop_s1688gemm_64x256_16x4_tn_align4EEvNT_6ParamsE",
       "count": 40,
-      "self_device_time_us": 1453.2129999999934,
+      "self_device_time_us": 1293.3439999999973,
       "cpu_time_total_us": 0.0
     },
     {
       "name": "aten::add",
       "count": 80,
-      "self_device_time_us": 364.579999999999,
-      "cpu_time_total_us": 976.7999999999893
+      "self_device_time_us": 387.1130000000103,
+      "cpu_time_total_us": 989.0000000000018
     },
     {
       "name": "_ZN2at6native29vectorized_elementwise_kernelILi4ENS0_15CUDAFunctor_addIfEESt5arrayIPcLy3EEEEviT0_T1_",
       "count": 80,
-      "self_device_time_us": 364.579999999999,
+      "self_device_time_us": 387.1130000000103,
       "cpu_time_total_us": 0.0
     },
     {
       "name": "aten::gelu",
       "count": 40,
-      "self_device_time_us": 144.3909999999978,
-      "cpu_time_total_us": 485.39999999999327
+      "self_device_time_us": 151.49099999999999,
+      "cpu_time_total_us": 461.6999999999912
     },
     {
       "name": "_ZN2at6native29vectorized_elementwise_kernelILi4EZZZNS0_18GeluCUDAKernelImplERNS_18TensorIteratorBaseENS0_8GeluTypeEENKUlvE0_clEvENKUlvE0_clEvEUlfE_St5arrayIPcLy2EEEEviT0_T1_",
       "count": 40,
-      "self_device_time_us": 144.3909999999978,
+      "self_device_time_us": 151.49099999999999,
       "cpu_time_total_us": 0.0
     },
     {
       "name": "Activity Buffer Request",
       "count": 1,
-      "self_device_time_us": 24.161000000000058,
-      "cpu_time_total_us": 347.39999999999986
+      "self_device_time_us": 23.873000000000502,
+      "cpu_time_total_us": 332.4000000000001
     },
     {
       "name": "cuLaunchKernelEx",
       "count": 40,
-      "self_device_time_us": 11.552000000001499,
-      "cpu_time_total_us": 436.0999999999949
+      "self_device_time_us": 11.648999999999432,
+      "cpu_time_total_us": 343.99999999999454
     },
     {
       "name": "optimized_transformer",
       "count": 10,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 18533.0
+      "cpu_time_total_us": 18923.0
     },
     {
       "name": "aten::layer_norm",
       "count": 90,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 5184.999999999994
+      "cpu_time_total_us": 4234.299999999997
     },
     {
       "name": "aten::empty",
       "count": 270,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 595.7000000000139
+      "cpu_time_total_us": 711.1999999999978
     },
     {
       "name": "cudaLaunchKernel",
       "count": 210,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 3508.50000000001
+      "cpu_time_total_us": 2443.3999999999855
     },
     {
       "name": "aten::view",
       "count": 580,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 212.29999999998972
+      "cpu_time_total_us": 204.00000000000045
     },
     {
       "name": "aten::linear",
       "count": 160,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 4506.600000000004
+      "cpu_time_total_us": 5111.200000000012
     },
     {
       "name": "aten::t",
       "count": 160,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 727.8000000000084
+      "cpu_time_total_us": 709.1999999999784
     },
     {
       "name": "aten::transpose",
       "count": 160,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 492.59999999998945
+      "cpu_time_total_us": 450.1000000000022
     },
     {
       "name": "aten::as_strided",
       "count": 280,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 121.90000000000055
+      "cpu_time_total_us": 126.99999999998909
     },
     {
       "name": "cudaDeviceGetAttribute",
       "count": 160,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 35.60000000000127
+      "cpu_time_total_us": 41.400000000003274
     },
     {
       "name": "cudaMemsetAsync",
       "count": 160,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 21.49999999996453
+      "cpu_time_total_us": 25.400000000003274
     },
     {
       "name": "cuLaunchKernel",
       "count": 160,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 1156.6000000000113
+      "cpu_time_total_us": 1235.0
     },
     {
       "name": "aten::unbind",
       "count": 40,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 457.40000000000146
+      "cpu_time_total_us": 471.9999999999909
     },
     {
       "name": "aten::select",
       "count": 120,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 300.10000000000946
+      "cpu_time_total_us": 323.1000000000013
     },
     {
       "name": "aten::empty_like",
       "count": 40,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 218.69999999999436
+      "cpu_time_total_us": 247.79999999999973
     },
     {
       "name": "aten::empty_strided",
       "count": 40,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 133.3999999999951
+      "cpu_time_total_us": 154.39999999999327
     },
     {
       "name": "aten::reshape",
       "count": 40,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 105.0999999999949
+      "cpu_time_total_us": 386.99999999999636
     },
     {
       "name": "cudaDeviceSynchronize",
       "count": 1,
       "self_device_time_us": 0.0,
-      "cpu_time_total_us": 3404.4000000000015
+      "cpu_time_total_us": 869.5
     }
   ],
   "trace_path": "results\\rtx-5070-ti-final-01-profile-trace.json",
   "environment": {
-    "captured_at_utc": "2026-08-27T17:17:06.093242+00:00",
+    "captured_at_utc": "2026-08-27T17:48:41.194539+00:00",
     "command": [
       "benchmarks\\profile_cases.py",
       "--manifest",
@@ -240,11 +240,11 @@
       "results\\rtx-5070-ti-final-01-profile-trace.json"
     ],
     "git": {
-      "commit": "a593a3b39e7fd3604729053608d1bebbd0318a7b",
+      "commit": "438fb128fa428620fa7b07377d4c96bc4ab3600e",
       "dirty": false,
       "changed_path_count": 0,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "6aad87cf141fcd47a2a95e2d5b9d014755b71966e3eec976ca3c0efafdea6525",
+      "implementation_sha256": "83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -280,7 +280,7 @@
     "disk": {
       "path": ".",
       "total_bytes": 999125151744,
-      "free_bytes": 438872195072
+      "free_bytes": 438815834112
     },
     "framework": {
       "torch": "2.13.0+cu130",
