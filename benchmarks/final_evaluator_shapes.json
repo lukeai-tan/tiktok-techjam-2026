@@ -31,7 +31,8 @@
     "PyTorch is the selected framework, so the untouched PyTorch harness remains authoritative.",
     "The table omits dtype and padding; validation uses the selected PyTorch harness defaults of float32 and no padding.",
     "The stricter supplied PyTorch comparator remains authoritative: atol 0.001 OR rtol 0.01, with zero failed elements.",
-    "The exact 100000-token stress dimensions retain the supplied TensorFlow benchmark's explicit resource-preflight authorization and are not counted as a pass."
+    "Row 14's batch, QKV-dimension, head-count, and 100000-token sequence axes match the supplied TensorFlow stress case; that source's explicit resource-preflight authorization is retained and the skip is not counted as a pass.",
+    "The table omits timing policy; warmup 3, repeats 10, and benchmark rounds 2 are repository validation settings, not organizer-specified values."
   ],
   "defaults": {
     "device": "cuda",
@@ -296,7 +297,7 @@
     {
       "id": "final-14-b32-d1024-h16-s100000-resource-skip",
       "source_row": 14,
-      "description": "The final table's exact 100000-token stress dimensions match the supplied TensorFlow benchmark case that explicitly permits resource preflight when its quadratic baseline exceeds the configured memory budget; this skip is not counted as a pass.",
+      "description": "This final row's batch, QKV-dimension, head-count, and 100000-token sequence axes match the supplied TensorFlow stress case that explicitly permits resource preflight when its quadratic baseline exceeds the configured memory budget. The final row's layer, causal, and FFN values remain those published in the final table; this skip is not counted as a pass.",
       "source_contract": "organizer-final-shape-table",
       "source_dimensions": [32, 1024, 16, 100000, 2, true, 1024],
       "dtype": "float32",

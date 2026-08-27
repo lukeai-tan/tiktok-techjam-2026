@@ -95,11 +95,15 @@ order to `benchmarks/final_evaluator_shapes.json`:
 
 The selected PyTorch harness is used for execution. Because the table omits
 dtype and padding, the final-shape run uses that harness's float32 and no-padding
-defaults plus its stricter 0.001 absolute OR 0.01 relative comparator. Row 14
-exactly matches the supplied TensorFlow harness's designated 100000-token
-quadratic stress dimensions, so its source-authorized resource preflight is
-retained and excluded from the pass count. The prior seven-case project matrix
-is now held-out coverage, not a substitute for these rows.
+defaults plus its stricter 0.001 absolute OR 0.01 relative comparator. Row 14's
+batch, QKV-dimension, head-count, and sequence-length axes exactly match the
+supplied TensorFlow harness's designated 100000-token quadratic stress case, so
+its source-authorized resource preflight is retained and excluded from the pass
+count. Row 14's layer, causal, and FFN values remain the final table's published
+values and differ from the TensorFlow configuration. Warmup 3, repeats 10, and
+benchmark rounds 2 are repository validation settings because the table omits a
+timing policy; they are not organizer-specified values. The prior seven-case
+project matrix is held-out coverage, not a substitute for these rows.
 
 Run the final rows independently from the broader source-derived validation:
 
@@ -114,7 +118,8 @@ Run the final rows independently from the broader source-derived validation:
 The published dimensions resolve the largest prior input gap, but the table
 does not encode:
 
-- required dtypes, padding ratios, and causal/non-causal cases;
+- required dtypes and padding ratios, and whether additional non-causal cases
+  are required beyond the 14 published causal rows;
 - whether backward/gradient execution is evaluated;
 - whether compilation time, model construction, and first-run autotuning count
   toward timing; and

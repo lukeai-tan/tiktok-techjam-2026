@@ -41,10 +41,11 @@ description.
   case is the only authorized resource skip and is never counted as a pass.
 - The organizer document now publishes 14 exact rows covering batch size,
   QKV/model width, heads, sequence length, layers, causal mode, and FFN width.
-  Thirteen rows are executable on the selected PyTorch path. Row 14 is the
-  exact 100000-token stress dimensions that the supplied TensorFlow harness
-  explicitly permits resource-preflighting; it remains an authorized skip and
-  is not counted as a pass.
+  Thirteen rows are executable on the selected PyTorch path. Row 14's batch,
+  QKV-dimension, head-count, and 100000-token sequence axes match the supplied
+  TensorFlow stress case that explicitly permits resource-preflighting; it
+  remains an authorized skip and is not counted as a pass. Its layer, causal,
+  and FFN values remain the distinct values published in the final table.
 - The final table does not state dtype or padding. Until the organizer says
   otherwise, final-shape validation uses the selected PyTorch harness defaults:
   float32 and no padding, with the stricter executable comparator below.
@@ -192,6 +193,8 @@ dispatcher and may fall back to SDPA until measured.
 ## Open organizer questions
 
 - Required dtypes and padding modes for the final 14-row shape table.
+- Whether additional non-causal rows are required beyond the published causal
+  rows.
 - Whether timing includes model construction/compilation or steady-state forward
   only.
 - Whether gradients/backward are evaluated.
