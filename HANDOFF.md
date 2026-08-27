@@ -1,284 +1,179 @@
-# Transformer GPU Kernel Implementation Handoff
+# Transformer GPU Kernel Handoff
 
 Updated: 2026-08-27 (Asia/Singapore)
 
-## Objective and user intent
+## Objective and current verdict
 
-Implement Track 3, **"Implement a GPU Kernel for a Transformer Layer,"** as a
-real repository-owned GPU implementation, not merely a branch or a wrapper
-around PyTorch SDPA. The user first requested a documentation/code audit and a
-temporary plan, then explicitly requested that the plan be carried out
-completely. They have now requested this handoff so work can continue in a new
-chat.
+Implement TikTok TechJam 2026 Track 3 as a real repository-owned GPU kernel,
+not a wrapper that relabels a framework fallback. The repository is **PASS for
+the checked-in/provisional executable contract** and **HOLD for final external
+submission**.
 
-The implementation is complete for the checked-in/provisional contract. A
-compiled-mode review found and fixed a CUDA-graph output-lifetime defect, added
-regression coverage, and regenerated the target-GPU evidence against the final
-implementation fingerprint.
+The remaining holds are explicit in `docs/TRACK3_COMPLIANCE.md`:
+
+1. obtain and reconcile the final organizer benchmark/shape combinations;
+2. make the GitHub repository public (the unauthenticated URL returned 404 on
+   2026-08-27); and
+3. record/upload the public YouTube demo and publish the Devpost entry.
+
+Do not claim final organizer-matrix completeness or public-video completion
+until those actions are independently verified.
 
 ## Repository and Git state
 
-- Repository: `C:\Users\jared\Downloads\GitHub\tiktok-techjam-2026`
 - Remote: `https://github.com/lukeai-tan/tiktok-techjam-2026`
 - Branch: `feat/transformer-gpu-kernel-implementation`
-- Branch base commit: `3c7a05205f1090f7f074312ed82e3e6753d16b92`
-- The implementation is organized as segmented commits on the feature branch;
-  use `git log --oneline origin/main..HEAD` for the exact pushed chain.
+- Change-set base commit: `d287d82e8796bc17ba08af63f3d6de44673e29c0`.
+- The completed work is segmented into target-GPU implementation/evidence,
+  secure Colab reproduction, and submission-audit documentation commits.
+- The worktree should be clean after those commits; verify it before making
+  further changes.
+- The owner explicitly authorized committing and pushing this branch on
+  2026-08-27. Publishing the Devpost/YouTube entries or changing repository
+  visibility remains a separate external action.
 
-Current tracked/untracked scope includes the Triton implementation, dispatcher,
-benchmark tools, tests, docs, CI, notebook, scripts, curated results, and this
-handoff. `transformer_opt/triton_impl.py` is intentionally deleted because its
-standalone LayerNorm was measured slower than native PyTorch.
+## Read first
 
-## Source-of-truth and evidence boundary
+1. `docs/REQUIREMENTS.md` - executable contract and acceptance criteria.
+2. `docs/TRACK3_COMPLIANCE.md` - every Track 3 clause, evidence, and external
+   hold.
+3. `docs/KERNEL_DESIGN.md` - algorithm, packed projection, support envelope,
+   and rejected tuning.
+4. `docs/TECH_REPORT.md` - environment, methods, measurements, and AI use.
+5. `benchmarks/reference/manifest.json` - frozen checked-in benchmark provenance.
+6. `benchmarks/official_shapes.json` - seven-case provisional matrix.
+7. `docs/RELEASE_GATE.md` - current pass/hold decision.
 
-Read these first:
-
-1. `docs/REQUIREMENTS.md` - current executable contract and acceptance criteria.
-2. `docs/PROJECT_CONTEXT.md` - architecture, decisions, and verified status.
-3. `benchmarks/reference/manifest.json` - frozen Git-blob provenance.
-4. `benchmarks/official_shapes.json` - seven-case **provisional** matrix.
-5. `docs/TEMP_TRANSFORMER_GPU_KERNEL_PLAN.md` - historical audit/plan; its old
-   HOLD text describes the pre-implementation repository.
-6. `docs/RELEASE_GATE.md` - evidence-backed current-contract verdict.
-7. `docs/workflows/transformer-gpu-kernel.json` - completed workflow record.
-
-The final organizer benchmark/shape list is not present in the repository.
-Current work is complete only for the checked-in/provisional contract. Do not
-claim final organizer-matrix completeness until new organizer material is
-reconciled and rerun.
+The obsolete temporary implementation plan was removed after its requirements
+and decisions were incorporated into permanent documentation.
 
 ## Implemented architecture
 
-### Custom kernel
+### Repository-owned Triton attention
 
-- `transformer_opt/kernels/attention.py` contains `_attention_fwd`, a Triton
-  forward attention kernel.
-- Input/output layout is `[B, S, H, D]`.
-- It fuses QK, online softmax, causal/key-padding masking, and P@V.
-- It does not materialize a dense `[B,H,S,S]` score/probability tensor or dense
-  causal mask.
-- Softmax state/output accumulation is fp32; score rounding intentionally
-  follows the checked-in reference's dtype boundaries.
-- Float32 follows `torch.backends.cuda.matmul.allow_tf32`; IEEE mode is tested.
+- `transformer_opt/kernels/attention.py` defines `_attention_fwd`.
+- Layout is `[B,S,H,D]`; arbitrary batch/sequence/head strides are supported
+  with unit final stride.
+- One tiled launch performs QK, fp32 online softmax, causal/prefix-padding
+  masking, and P@V.
+- The custom path never materializes a dense `[B,H,S,S]` score/probability
+  tensor or combined causal mask.
+- Reference score-rounding boundaries and the float32 TF32 toggle are preserved.
 - All-masked rows return finite zeros.
 
-### Support envelope and dispatch
+### Packed QKV inference
 
-- `transformer_opt/config.py`: CUDA compute capability >= 8.0; head dimensions
-  16/32/64/128; sequence length <= 8192; fp32/fp16; final stride 1; forward
-  inference only.
-- `transformer_opt/dispatch.py`: auditable `auto`, `triton`, `sdpa`, and
-  `reference` paths.
-- Forced Triton fails clearly when unavailable/unsupported; no swallowed compile
-  errors or silent custom claims.
-- `UserOptimizedTransformer` records actual backend counts in eager execution.
-- End-to-end automatic low-precision model runs use explicit reference math for
-  strict numerical safety; direct fp16 Triton attention remains tested.
-- QKV/output/FFN GEMMs and LayerNorm remain vendor PyTorch/cuBLAS operations.
+- For eager CUDA float32 inference through `d_model=512`, three Q/K/V
+  projections are replaced by one vendor GEMM using derived packed weights.
+- The cache signature covers parameter data pointers, mutation versions,
+  devices, and dtypes. Loading, mutation, or a device/dtype move rebuilds it.
+- Packed tensors are non-persistent and do not alter baseline state-dict keys.
+- Training, compilation, CPU, low precision, and wider shapes use the original
+  separate projections.
 
-### Benchmark/evidence tooling
+### Dispatch and numerical safety
 
-- `benchmarks/run_matrix.py`: manifest-driven, correctness-before-timing,
-  alternating model order, raw CUDA-event samples, explicit PASS/FAIL/OOM/ERROR,
-  zero-case failure, peak memory, dispatch counts, environment and content
-  fingerprint.
-- `benchmarks/profile_cases.py`: profiler proof for `_attention_fwd`.
-- `tools/capture_environment.py`: redacted environment/revision capture and
-  implementation fingerprint.
-- `sweep.py`: compatibility wrapper around the fail-closed matrix runner.
-- `scripts/run-wsl.ps1`: authoritative PowerShell-to-WSL runner.
-- `tools/triton-cc`: compiler shim preferring gcc/clang and falling back to Zig.
+- `transformer_opt/config.py` declares compute capability >= 8.0, head widths
+  16/32/64/128, sequence <= 8192, fp32/fp16, unit final stride, and inference.
+- `transformer_opt/dispatch.py` exposes `auto`, `triton`, `sdpa`, and
+  `reference`; forced Triton rejects unsupported inputs clearly.
+- Measured auto policy uses SDPA for unmasked non-causal float32 sequences <=128
+  with head dimension <=32 and Triton for the other validated fp32 regimes.
+- End-to-end fp16/bf16 auto mode uses reference-style attention because fused
+  differences compounded beyond the unusually strict executable tolerance.
+- Backend counters and profiler events prevent silent fallback from being
+  presented as custom execution.
 
-## Verified target environment
+### Benchmark and provenance
 
-- GPU: NVIDIA GeForce RTX 5070 Ti, compute capability 12.0, 16,303 MiB.
-- Host path: Windows + WSL2 Ubuntu.
-- WSL Python: 3.14.4.
-- Venv: `/home/jared/.venvs/tiktok-techjam-2026`.
-- PyTorch: 2.13.0+cu130; CUDA runtime 13.0.
-- Triton: 3.7.1.
-- Driver reported earlier: 610.47.
-- CPU: AMD Ryzen 7 9850X3D.
-- WSL kernel: 6.6.114.1.
+- `benchmarks/run_matrix.py`: correctness before timing, alternating order, raw
+  CUDA-event samples, peak allocation, backend counts, and explicit
+  PASS/FAIL/OOM/ERROR accounting.
+- `benchmarks/profile_cases.py`: independent `_attention_fwd` profiler proof.
+- `tools/capture_environment.py`: schema-2 cross-platform implementation hash,
+  redacted paths, CPU/GPU/driver/runtime/disk capture.
+- Curated artifacts fail tests if they do not match the current implementation.
+- The Colab notebook uses anonymous Git access first and a temporary
+  `GIT_ASKPASS` prompt for private access; it never embeds a token in a URL.
 
-The minimal WSL image has no system C compiler/Python headers. User-scoped
-bootstrap already exists:
+## Current target evidence
 
-- Zig 0.16.0: `/home/jared/.local/opt/zig-x86_64-linux-0.16.0`
-- Zig link: `/home/jared/.local/bin/zig`
-- extracted Python headers: `/home/jared/.local/opt/python3.14-dev`
+Environment:
 
-Use the wrapper; do not reinstall unless it actually fails:
+- AMD Ryzen 9 9950X, 16 cores / 32 logical processors;
+- NVIDIA GeForce RTX 5070 Ti, compute capability 12.0, 16,303 MiB;
+- NVIDIA driver 610.88;
+- native Windows 11 build 26200;
+- Python 3.12.10;
+- PyTorch 2.13.0+cu130, CUDA runtime 13.0;
+- Triton 3.7.1 (`triton-windows==3.7.1.post27`).
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 <python args>
-```
-
-## Final curated custom result
-
-The post-fix target-GPU evidence is:
+Curated matrix:
 
 - 7 requested / 7 completed / 7 PASS; 0 FAIL/OOM/ERROR.
-- 35 accuracy trials; 13,117,440 elements; zero failed elements.
-- Maximum absolute error: `0.0009976625442504883`.
-- Every timing call selected Triton; no SDPA/reference timing fallback.
-- 90 raw CUDA samples per model/case (10 warmup, 30 repeats x 3 rounds).
-- Median end-to-end speedup range: 1.138x to 1.566x.
-- Geometric-mean speedup: 1.360x.
-- Long-attention incremental peak allocation: 78 MiB to 22 MiB (71.8%).
-- Profiler: `_attention_fwd` count 10 for five two-layer forwards; fallback
-  counts zero.
+- 35 trials; 13,117,440 elements; zero failed elements.
+- Maximum absolute error: `0.0009923577308654785`.
+- Timing selected SDPA for two short unmasked cases and Triton for the other
+  five masked, causal, long, or wider-head cases.
+- 90 raw samples per model/case after 10 warmups.
+- Median speedup range: 1.236x to 1.741x.
+- Geometric-mean end-to-end speedup: 1.498x.
+- Long-attention incremental allocation: 78 MiB to 22 MiB (71.8%).
 
-Artifacts:
+Profiler:
+
+- `_attention_fwd`: count 10 for five two-layer forwards.
+- Backend counts: Triton 10, SDPA 0, reference 0.
+- `addmm`: count 40, consistent with packed QKV (the separate-QKV design used
+  60 across the same five forwards).
+
+Artifacts and implementation fingerprint:
 
 - `docs/results/rtx-5070-ti-2026-08-27.json`
 - `docs/results/rtx-5070-ti-2026-08-27-profile.json`
+- `314dfa1615fe17b610d4851dd2a55377561f34b5a409762bf7fe43a4e5c196de`
 
-Both artifacts and the current implementation carry fingerprint
-`a36abc1d440e7d5318348854a673f832c5d9ae649e295ffeae01cd599d478eb5`.
-`tests/test_result_artifacts.py` fails closed if this relationship becomes stale.
+The prior WSL evidence was replaced because the implementation changed and the
+Ubuntu distribution is no longer installed on this host. The current artifacts
+were freshly generated under native Windows; they were not manually migrated.
 
-## Latest compile and backend-comparison investigation
+## Rejected work
 
-### CUDA-graph accuracy bug found and fixed
+- Standalone Triton LayerNorm: only 0.46x-0.69x native CUDA performance.
+- Residual/LayerNorm fusion: LayerNorm is a small measured share relative to
+  its support and numerical risk.
+- Custom output/FFN GEMMs: no profile evidence to justify replacing cuBLAS.
+- Causal loop-frontier pruning: correct but neutral in controlled end-to-end
+  measurements on this GPU.
+- Alternate tile/stage policy: favorable microbenchmarks did not improve the
+  full matrix, so the simpler existing launch policy was restored.
+- Default `torch.compile`: useful as an optional comparison, but it weakens
+  eager dispatch observability and did not improve the custom/baseline ratio in
+  the prior controlled sample.
 
-Running both models with `torch.compile(..., mode="reduce-overhead")` initially
-failed during accuracy comparison with:
+## Validation commands
 
-```text
-RuntimeError: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run
-```
+The current native target run passes 66/66 tests.
 
-Cause: the compiled baseline returned a CUDA-graph-owned buffer that the next
-compiled model invocation invalidated. Fix in `run_accuracy_tests()`:
-
-```python
-reference = baseline(x, valid_mask).clone()
-```
-
-This is the change that advanced the implementation fingerprint to `a36abc...`.
-
-The same representative compiled command then passed 3/3 trials with zero
-failed elements and measured 1.124x compiled-baseline-to-compiled-optimized
-speedup (0.1115 ms vs 0.0992 ms median):
+With the native environment from README:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 torch_transformer_benchmark.py --device cuda --dtype float32 --batch-size 2 --seq-len 128 --d-model 256 --heads 8 --ffn-dim 1024 --layers 2 --attention-backend auto --accuracy-trials 3 --warmup 3 --repeats 10 --benchmark-rounds 2 --compile-baseline --compile-user --compile-mode reduce-overhead
+$python = ".venv\Scripts\python.exe"
+& $python -m pytest tests -q
+& $python -m compileall -q torch_transformer_benchmark.py transformer_opt benchmarks tools sweep.py
+& $python -m json.tool benchmarks/official_shapes.json > $null
+& $python -m json.tool benchmarks/reference/manifest.json > $null
+& $python -m json.tool docs/workflows/transformer-gpu-kernel.json > $null
+& $python -m json.tool notebooks/colab_benchmark.ipynb > $null
+git diff --check
 ```
 
-Backend counters are zero under compilation because Python-side counter mutation
-is deliberately suppressed while Dynamo is compiling. Do not cite those zero
-counts as evidence of fallback or custom execution. Eager profiler evidence is
-the authoritative custom-kernel proof.
+Verify the frozen reference from Git bytes, not a PowerShell text pipeline:
 
-The eager counterpart passed and measured 1.245x in that short representative
-run (0.3427 ms vs 0.2752 ms). These short runs are evaluation notes, not curated
-competition claims. Compilation is not enabled by default because it adds a
-second optimization system, weakens dispatch observability, and did not improve
-the custom-vs-baseline ratio in this sample.
+```powershell
+& $python -c "import hashlib,subprocess,json; m=json.load(open('benchmarks/reference/manifest.json')); b=subprocess.check_output(['git','cat-file','blob',m['git_blob_oid']]); assert hashlib.sha256(b).hexdigest()==m['sha256']; print('reference checksum: PASS')"
+```
 
-### SDPA comparator
-
-A full scratch SDPA matrix was run after the clone fix:
-
-- path: ignored `results/rtx-5070-ti-sdpa-comparison.json`
-- fingerprint: current `a36abc...`
-- result: 7/7 PASS, all timing calls SDPA, 1.201x geomean versus eager baseline.
-- custom Triton measured 1.360x geomean and was materially faster in
-  masked/causal/long-attention regimes; SDPA was slightly faster for one short
-  no-mask regime.
-
-The scratch SDPA artifact remains ignored by design; headline claims use only
-the curated custom artifacts.
-
-## Validation and reproduction
-
-The final GPU suite contains 59 tests. It covers direct Triton correctness,
-causal/padding/tile boundaries, all-masked behavior, TF32-disabled IEEE math,
-end-to-end strict state-dict compatibility, low-precision routing, dispatch
-positive/negative paths, fail-closed matrix states, compiled CUDA-graph output
-ownership, and result-fingerprint checks.
-
-Run the final checks with:
-
-   ```powershell
-   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 -m pytest tests -q
-   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 -m compileall -q torch_transformer_benchmark.py transformer_opt benchmarks tools sweep.py
-   python -m json.tool benchmarks/official_shapes.json > $null
-   python -m json.tool benchmarks/reference/manifest.json > $null
-   python -m json.tool docs/workflows/transformer-gpu-kernel.json > $null
-   python -m json.tool notebooks/colab_benchmark.ipynb > $null
-   python C:\Users\jared\.codex\skills\agentic-workflow-orchestrator\scripts\validate_workflow.py docs/workflows/transformer-gpu-kernel.json
-   git diff --check
-   ```
-
-Verify the frozen reference without a PowerShell text pipeline:
-
-   ```powershell
-   python -c "import hashlib, subprocess, json; m=json.load(open('benchmarks/reference/manifest.json')); b=subprocess.check_output(['git','cat-file','blob',m['git_blob_oid']]); assert hashlib.sha256(b).hexdigest()==m['sha256']; print('reference checksum: PASS')"
-   ```
-
-The repo-memory graph lives at
-`C:\Users\jared\Documents\Codex-Graphs\repos\github-com--lukeai-tan--tiktok-techjam-2026`.
-
-One nonblocking upstream warning may appear from Triton on Python 3.14:
-`AnnAssign.__init__` deprecation that will become an error in Python 3.15.
-
-## Remaining external submission work
-
-- Reconcile any final organizer benchmark, shapes, dtypes, timing, backward, or
-  source-modification rules with `docs/REQUIREMENTS.md`, then rerun the matrix.
-- Record and upload the public video using `DEMO_RUNBOOK.md`.
-- Do not claim remote GitHub Actions execution until the pushed workflow has
-  actually completed on GitHub.
-
-## Important decisions and rejected work
-
-- Keep PyTorch SDPA as the safe fallback/comparator, but do not present it as
-  the repository-owned kernel.
-- Remove the inherited standalone Triton LayerNorm. Measurements:
-  - 1024x512: native 0.00832 ms vs custom 0.01629 ms (0.511x).
-  - 2048x512: native 0.01082 ms vs custom 0.01562 ms (0.693x).
-  - 256x1024: native 0.00758 ms vs custom 0.01664 ms (0.456x).
-- Do not implement residual+LayerNorm or custom FFN/GEMM work without a new
-  profile showing enough end-to-end ceiling. Native LayerNorm is a small share;
-  mature GEMMs dominate the wide model.
-- Do not relax the executable correctness rule. It is per-element:
-  `abs_error <= 0.001 OR abs_error <= 0.01 * abs(reference)`.
-- Do not call fallback a custom success. Backend counts and profiler names are
-  required evidence.
-- Keep `results/` ignored for scratch data and `docs/results/` tracked for
-  curated, provenance-rich evidence.
-
-## Main created/changed paths
-
-- Kernel/dispatch: `transformer_opt/kernels/attention.py`,
-  `transformer_opt/config.py`, `transformer_opt/dispatch.py`,
-  `transformer_opt/__init__.py`, `torch_transformer_benchmark.py`.
-- Benchmark/provenance: `benchmarks/run_matrix.py`,
-  `benchmarks/profile_cases.py`, `benchmarks/official_shapes.json`,
-  `benchmarks/reference/manifest.json`, `tools/capture_environment.py`,
-  `sweep.py`.
-- Runtime: `scripts/run-wsl.ps1`, `tools/triton-cc`, `requirements.txt`.
-- Tests: `tests/test_correctness.py`, `tests/test_dispatch.py`,
-  `tests/test_gpu_attention.py`, `tests/test_gpu_transformer.py`,
-  `tests/test_sweep_integrity.py`, `tests/test_result_artifacts.py`.
-- Docs/delivery: `README.md`, `docs/REQUIREMENTS.md`,
-  `docs/PROJECT_CONTEXT.md`, `docs/KERNEL_DESIGN.md`,
-  `docs/TECH_REPORT.md`, `docs/results/`, `docs/DEVPOST_DESCRIPTION.md`,
-  `DEMO_RUNBOOK.md`, `.github/workflows/test.yml`,
-  `notebooks/colab_benchmark.ipynb`.
-
-## Official references already consulted
-
-- PyTorch installation: `https://docs.pytorch.org/get-started/locally/`
-- PyTorch CUDA 13.0 wheels: `https://download.pytorch.org/whl/cu130/torch/`
-- Triton installation: `https://triton-lang.org/main/getting-started/installation.html`
-- Triton fused-attention tutorial:
-  `https://triton-lang.org/main/getting-started/tutorials/06-fused-attention.html`
-- Zig downloads/index: `https://ziglang.org/download/` and
-  `https://ziglang.org/download/index.json`
-
-No memory files were used for this repository task. No secrets were read or
-written.
+GPU tests skip on CPU and never count as target-GPU evidence. If an Ubuntu WSL
+distribution exists, `scripts/run-wsl.ps1` remains an optional equivalent
+runner; it is not the source of the current curated measurements.

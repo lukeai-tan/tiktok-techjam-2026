@@ -2,6 +2,9 @@
 
 Target length: three to five minutes. Record a terminal at readable scale; do
 not show credentials, browser sessions, or unrelated files.
+Use only repository content, your own narration, and challenge material you are
+authorized to show. Do not add third-party music, logos, footage, or other
+copyrighted/trademarked assets.
 
 ## Preflight
 
@@ -10,8 +13,8 @@ From Windows PowerShell at the repository root:
 ```powershell
 git status --short --branch
 nvidia-smi
-powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 `
-  -c "import torch,triton; print(torch.__version__, triton.__version__); print(torch.cuda.get_device_name(), torch.cuda.get_device_capability())"
+$python = ".venv\Scripts\python.exe"
+& $python -c "import torch,triton; print(torch.__version__, triton.__version__); print(torch.cuda.get_device_name(), torch.cuda.get_device_capability())"
 ```
 
 Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
@@ -26,15 +29,14 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
 3. Run the direct GPU and end-to-end tests:
 
    ```powershell
-   powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 -m pytest `
-     tests/test_gpu_attention.py tests/test_gpu_transformer.py tests/test_dispatch.py -q
+   & $python -m pytest tests/test_gpu_attention.py `
+     tests/test_gpu_transformer.py tests/test_dispatch.py -q
    ```
 
 4. Run one fast, visible benchmark case:
 
    ```powershell
-   powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 `
-     benchmarks/run_matrix.py --device cuda --case long-causal-padding `
+   & $python benchmarks/run_matrix.py --device cuda --case long-causal-padding `
      --dtype float32 --attention-backend auto --quick --accuracy-trials 3 `
      --out results/demo.json
    ```
@@ -45,8 +47,7 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
 5. Prove the GPU kernel actually ran:
 
    ```powershell
-   powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 `
-     benchmarks/profile_cases.py --case long-causal-padding --dtype float32 `
+   & $python benchmarks/profile_cases.py --case long-causal-padding --dtype float32 `
      --attention-backend auto --steps 3 --out results/demo-profile.json
    ```
 

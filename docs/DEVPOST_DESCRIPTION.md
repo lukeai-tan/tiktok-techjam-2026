@@ -26,24 +26,42 @@ envelope and exposes actual backend counts. Unsupported cases have explicit
 SDPA/reference fallbacks, and forced custom mode fails clearly rather than
 silently pretending the custom kernel ran.
 
+Performance routing is measurement-driven: SDPA handles the two short,
+unmasked float32 cases where it was 12%-13% faster in controlled alternating
+tests; Triton handles all measured masked, causal, long, and wider-head cases.
+
+For eager CUDA float32 shapes through d_model=512, FlashTile also caches a
+derived packed QKV weight and replaces three projection GEMMs with one. Cache
+signatures invalidate on weight, device, or dtype changes, while the original
+parameter names and strict state dict remain unchanged.
+
 ## Measured outcome
 
-On an NVIDIA GeForce RTX 5070 Ti under WSL2:
+On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
 
 - 7/7 provisional matrix cases passed;
 - 0 failed elements across 35 trials and 13,117,440 checked elements;
-- maximum absolute error was 0.000997663 under the stricter executable rule;
-- end-to-end speedup ranged from 1.138x to 1.566x;
-- geometric-mean speedup was 1.360x; and
+- maximum absolute error was 0.000992358 under the stricter executable rule;
+- end-to-end speedup ranged from 1.236x to 1.741x;
+- geometric-mean speedup was 1.498x; and
 - the long-attention incremental peak allocation fell from 78 MiB to 22 MiB.
 
 The result artifacts contain raw CUDA-event samples, environment/revision
 metadata, implementation SHA-256, memory measurements, and profiler proof that
 the `_attention_fwd` kernel executed.
 
+## Impact and relevance
+
+Attention's quadratic intermediates create latency and memory pressure in
+real Transformer inference. On the longest measured case, FlashTile reduced
+incremental allocation by 71.8%; across the full matrix it improved median
+end-to-end latency for every shape. The same design can increase serving
+capacity, leave memory headroom for longer contexts or larger batches, and
+reduce per-request compute time without changing model weights.
+
 ## Development tools
 
-- Windows PowerShell and Ubuntu on WSL2
+- Windows PowerShell; native Windows CUDA/Triton and an earlier WSL test path
 - Git and GitHub
 - Python, pytest, and Jupyter/Google Colab
 - PyTorch profiler and CUDA events
@@ -71,8 +89,10 @@ requirements and supplied benchmark assets are retained in the repository.
 
 - Vendor GEMMs remain in PyTorch/cuBLAS; custom code targets the attention
   bottleneck instead of replacing mature matrix multiplication kernels.
-- Float32 is the primary end-to-end custom path because it is the checked-in
-  benchmark default and satisfies its strict tolerance across deep stacks.
+- Float32 is the primary optimized path because it is the checked-in benchmark
+  default and satisfies its strict tolerance across deep stacks.
+- Packed QKV is enabled only through d_model=512, where target-device
+  measurements justified its bounded derived-weight memory cost.
 - Direct fp16 attention is tested, while automatic fp16/bf16 deep-stack runs
   prioritize exact reference-style correctness.
 - A standalone Triton LayerNorm was removed after measuring only 0.46x-0.69x
@@ -92,8 +112,12 @@ only when a new profile demonstrates enough end-to-end ceiling.
 
 - Code: https://github.com/lukeai-tan/tiktok-techjam-2026
 - Technical evidence: `docs/TECH_REPORT.md` and `docs/results/`
+- Requirement audit: `docs/TRACK3_COMPLIANCE.md`
 - Demo: follow `DEMO_RUNBOOK.md`; add the final public YouTube URL to Devpost
   after the human recording/upload step.
+
+Before submission, make the repository public and verify the code link in a
+signed-out browser.
 
 Repository evidence does not establish additional human team-member
 attribution. The submitter should add participant names and contributions on

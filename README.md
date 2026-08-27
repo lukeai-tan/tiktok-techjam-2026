@@ -7,24 +7,26 @@ auditable fallbacks.
 
 ## Verified result
 
-On an NVIDIA GeForce RTX 5070 Ti under WSL2, the current provisional float32
+On an NVIDIA GeForce RTX 5070 Ti under native Windows 11, the current
+provisional float32
 matrix completed **7/7 PASS**, with **0 failed elements across 35 accuracy
-trials / 13,117,440 output elements**. Every optimized timing call used the
-custom Triton kernel.
+trials / 13,117,440 output elements**. Measured auto-routing used SDPA for two
+short unmasked cases and the custom Triton kernel for all five masked, causal,
+long, or wide regimes.
 
 | case | baseline median | optimized median | speedup |
 | --- | ---: | ---: | ---: |
-| tiny overhead | 0.325 ms | 0.262 ms | 1.242x |
-| medium throughput | 0.319 ms | 0.238 ms | 1.336x |
-| medium + padding | 0.652 ms | 0.498 ms | 1.309x |
-| long causal | 0.679 ms | 0.474 ms | 1.432x |
-| long causal + padding | 0.830 ms | 0.530 ms | 1.566x |
-| long attention | 0.814 ms | 0.525 ms | 1.550x |
-| wide model | 0.236 ms | 0.208 ms | 1.138x |
+| tiny overhead | 0.478 ms | 0.312 ms | 1.532x |
+| medium throughput | 0.502 ms | 0.311 ms | 1.612x |
+| medium + padding | 0.654 ms | 0.488 ms | 1.340x |
+| long causal | 0.694 ms | 0.462 ms | 1.500x |
+| long causal + padding | 0.925 ms | 0.531 ms | 1.741x |
+| long attention | 0.823 ms | 0.520 ms | 1.583x |
+| wide model | 0.267 ms | 0.216 ms | 1.236x |
 
-Geometric-mean end-to-end speedup: **1.360x**. The long-attention incremental
+Geometric-mean end-to-end speedup: **1.498x**. The long-attention incremental
 peak allocation fell from 78 MiB to 22 MiB (71.8%). The largest observed absolute
-error was **0.000997663**, within the executable atol=0.001 OR rtol=0.01
+error was **0.000992358**, within the executable atol=0.001 OR rtol=0.01
 contract.
 
 Raw samples, environment metadata, implementation fingerprint, and dispatch
@@ -54,10 +56,14 @@ weight copy while replacing explicit attention with:
 - fp32 online-softmax state and accumulator;
 - causal and prefix-padding bounds inside the kernel;
 - no [B,H,S,S] score, probability, or dense combined-mask allocation;
+- one cached QKV projection for measured eager-fp32 shapes up to d_model=512,
+  with automatic invalidation and no state-dict changes;
 - a measured fixed launch policy for head dimensions 16/32/64/128;
-- observable auto, triton, sdpa, and reference routing.
+- measured auto-routing (short unmasked fp32 heads <=32 use SDPA; the other
+  validated fp32 regimes use Triton); and
+- observable forced triton, sdpa, and reference routing.
 
-The primary end-to-end custom path uses the benchmark-default float32 and
+The primary optimized end-to-end path uses the benchmark-default float32 and
 follows its TF32 toggle. Direct fp16 kernel tests pass, but the model's auto
 mode keeps fp16/bf16 on exact reference-style math because fused
 low-precision differences compound beyond this unusually strict deep-stack
@@ -70,16 +76,33 @@ optimizations are documented in [the kernel design](docs/KERNEL_DESIGN.md).
 
 | component | version |
 | --- | --- |
+| CPU | AMD Ryzen 9 9950X, 16 cores / 32 logical processors |
 | GPU | NVIDIA GeForce RTX 5070 Ti, compute capability 12.0, 16,303 MiB |
-| OS | WSL2 Ubuntu |
-| Python | 3.14.4 |
+| NVIDIA driver | 610.88 |
+| OS | Windows 11, build 26200 |
+| Python | 3.12.10 |
 | PyTorch | 2.13.0+cu130 |
 | CUDA runtime | 13.0 |
 | Triton | 3.7.1 |
 
-PyTorch publishes separate CPU/CUDA wheels, so choose the matching index.
+PyTorch publishes separate CPU/CUDA wheels, so choose the matching index. On
+Windows, the supported Triton package is `triton-windows`.
 
-### WSL CUDA setup
+### Native Windows CUDA setup
+
+~~~powershell
+py -3.12 -m venv .venv
+$python = ".venv\Scripts\python.exe"
+& $python -m pip install --upgrade pip
+& $python -m pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cu130
+& $python -m pip install triton-windows==3.7.1.post27 numpy==2.5.2 pytest==9.1.1
+~~~
+
+A normal CPython installation supplies the headers and import library used by
+Triton's first-use driver shim. The measured artifact used the same official
+Python 3.12.10 runtime and package versions.
+
+### Optional WSL CUDA setup
 
 ~~~bash
 # Inside Ubuntu. A compiler and matching Python headers are needed for Triton's
@@ -89,14 +112,14 @@ sudo apt install -y build-essential python3-dev python3-venv
 
 python3 -m venv ~/.venvs/tiktok-techjam-2026
 ~/.venvs/tiktok-techjam-2026/bin/python -m pip install --upgrade pip
-~/.venvs/tiktok-techjam-2026/bin/python -m pip install +  torch==2.13.0 --index-url https://download.pytorch.org/whl/cu130
-~/.venvs/tiktok-techjam-2026/bin/python -m pip install +  numpy==2.5.2 pytest==9.1.1
+~/.venvs/tiktok-techjam-2026/bin/python -m pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cu130
+~/.venvs/tiktok-techjam-2026/bin/python -m pip install numpy==2.5.2 pytest==9.1.1
 ~~~
 
-The verified minimal WSL image had no sudo-capable compiler. It uses a
-user-scoped Zig 0.16.0 fallback plus extracted libpython3.14-dev headers.
-tools/triton-cc prefers gcc/clang and otherwise uses that fallback. Set
-TRITON_PYTHON_DEV_ROOT if the extracted headers live elsewhere.
+`tools/triton-cc` prefers gcc/clang and otherwise supports a user-scoped Zig
+fallback. Set `TRITON_PYTHON_DEV_ROOT` if extracted Python headers live outside
+the system include path. The current curated artifact is native Windows, not
+WSL.
 
 From Windows, scripts/run-wsl.ps1 finds the Ubuntu user and uses
 ~/.venvs/tiktok-techjam-2026. Override it when needed:
@@ -122,17 +145,19 @@ GPU tests skip on CPU; they do not become GPU evidence.
 From Windows PowerShell:
 
 ~~~powershell
-# Entire CPU + GPU suite on the verified WSL environment
-powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 -m pytest tests -q
+$python = ".venv\Scripts\python.exe"
+
+# Entire CPU + GPU suite
+& $python -m pytest tests -q
 
 # One direct benchmark using the competition integration point
-powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 torch_transformer_benchmark.py --device cuda --dtype float32 --attention-backend auto --accuracy-trials 5
+& $python torch_transformer_benchmark.py --device cuda --dtype float32 --attention-backend auto --accuracy-trials 5
 
 # Full manifest: raw samples and explicit PASS/FAIL/OOM/ERROR accounting
-powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 benchmarks/run_matrix.py --device cuda --attention-backend auto --accuracy-trials 5 --out results/matrix.json
+& $python benchmarks/run_matrix.py --device cuda --attention-backend auto --accuracy-trials 5 --out results/matrix.json
 
 # Profiler proof
-powershell -ExecutionPolicy Bypass -File scripts/run-wsl.ps1 benchmarks/profile_cases.py --case long-causal-padding --dtype float32 --attention-backend auto --steps 5 --out results/profile.json --trace results/profile-trace.json
+& $python benchmarks/profile_cases.py --case long-causal-padding --dtype float32 --attention-backend auto --steps 5 --out results/profile.json --trace results/profile-trace.json
 ~~~
 
 The matrix runner fails closed:
@@ -163,6 +188,7 @@ docs/
   REQUIREMENTS.md                     source-of-truth and acceptance criteria
   KERNEL_DESIGN.md                    kernel algorithm and trade-offs
   TECH_REPORT.md                      measured technical report
+  TRACK3_COMPLIANCE.md                brief-to-evidence audit and external holds
   results/                            curated raw evidence
 DEMO_RUNBOOK.md                       public walkthrough sequence
 ~~~
@@ -175,6 +201,20 @@ DEMO_RUNBOOK.md                       public walkthrough sequence
 - Tuning evidence is specific to the RTX 5070 Ti.
 - Float16/bfloat16 deep-stack auto runs prioritize exact benchmark correctness
   over fused speed.
+- Packed QKV duplicates up to 6 MiB of derived float32 weights for a two-layer
+  d_model=512 model; it is disabled where measurement did not justify the cost.
 - There is no production deployment because Track 3 explicitly excludes it.
 
-For a short public demo, follow [the demo runbook](DEMO_RUNBOOK.md).
+## Team contributions
+
+Repository evidence does not establish additional human team members. If this
+is a solo submission, the submitter owns the human contribution and the AI-tool
+roles are documented in the technical report. If a team applies, add only
+verified names and responsibilities here and on Devpost before submission.
+
+## Submission status
+
+The implementation is ready for the checked-in contract, but public-repository,
+final-organizer-matrix, and YouTube/Devpost steps remain external holds. See the
+[Track 3 compliance matrix](docs/TRACK3_COMPLIANCE.md) and follow the
+[demo runbook](DEMO_RUNBOOK.md).

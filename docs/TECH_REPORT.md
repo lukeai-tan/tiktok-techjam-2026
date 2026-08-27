@@ -9,8 +9,8 @@ quadratic attention matrix.
 
 On the NVIDIA GeForce RTX 5070 Ti, all seven provisional float32 cases passed
 the checked-in executable tolerance across five seeds each. The run covered
-13,117,440 output elements with zero failures and measured a **1.360x
-geometric-mean end-to-end speedup**, ranging from 1.138x to 1.566x.
+13,117,440 output elements with zero failures and measured a **1.498x
+geometric-mean end-to-end speedup**, ranging from 1.236x to 1.741x.
 
 The organizer's final shape list is not available in this repository. Results
 are therefore evidence for the checked-in contract and provisional matrix, not
@@ -40,27 +40,30 @@ docs/REQUIREMENTS.md and benchmarks/reference/manifest.json.
 
 | component | measured target |
 | --- | --- |
-| CPU | AMD Ryzen 7 9850X3D, 8 cores / 16 WSL logical CPUs |
+| CPU | AMD Ryzen 9 9950X, 16 cores / 32 logical processors |
 | GPU | NVIDIA GeForce RTX 5070 Ti |
 | compute capability | 12.0 |
 | GPU memory | 16,303 MiB |
-| NVIDIA driver | 610.47 |
-| OS/kernel | Ubuntu on WSL2, 6.6.114.1-microsoft-standard-WSL2 |
-| Python | 3.14.4 |
+| NVIDIA driver | 610.88 |
+| OS | Windows 11, build 26200, AMD64 |
+| Python | 3.12.10 |
 | PyTorch | 2.13.0+cu130 |
 | CUDA runtime | 13.0 |
 | Triton | 3.7.1 |
-| disk during run | C: 931 GiB total, 419 GiB free |
+| Triton distribution | triton-windows 3.7.1.post27 |
+| disk during run | C: 931 GiB total, 443 GiB free |
 | float32 policy | high matmul precision, TF32 enabled |
 
-The minimal WSL image lacked gcc and Python headers. The verified target used
-official Zig 0.16.0 as a user-scoped C frontend and extracted Ubuntu
-libpython3.14-dev headers for Triton's small first-use driver module. No system
-package or sudo change was required.
+The native environment used the official CPython 3.12.10 runtime, PyTorch CUDA
+13.0 wheel, and the Triton Windows package. The temporary portable interpreter
+was supplemented with the matching official Python development headers for
+Triton's first-use driver module; a normal CPython installation already
+contains those files.
 
-The curated result JSON also stores the Python executable, OS, CUDA capability,
-disk bytes, Git state, command, raw samples, and an implementation-content
-SHA-256 so an uncommitted benchmark cannot be mistaken for the base commit.
+The curated result JSON also stores CPU model/count, Python, OS, CUDA
+capability, driver, disk bytes, Git state, command, raw samples, fingerprint
+schema, and an implementation-content SHA-256 so an uncommitted benchmark
+cannot be mistaken for the base commit.
 
 ## 4. Baseline and bottleneck analysis
 
@@ -73,15 +76,17 @@ The captured causal-padding profile for five two-layer forwards recorded:
 
 | event | count | self device time |
 | --- | ---: | ---: |
-| addmm | 60 | 1,589.7 us |
-| custom _attention_fwd | 10 | 347.2 us |
-| native LayerNorm | 25 | 116.4 us |
-| GELU | 10 | 60.8 us |
-| residual add | 20 | 48.2 us |
+| optimized Transformer range | 5 | 2,842.9 us |
+| addmm | 40 | 1,599.0 us |
+| custom _attention_fwd | 10 | 351.6 us |
+| native LayerNorm | 25 | 123.0 us |
+| GELU | 10 | 62.8 us |
+| residual add | 20 | 50.5 us |
 
 The ten custom events exactly match five forwards times two layers. This proves
 the repository-owned kernel ran; dispatch counters alone were not used as
-proof.
+proof. Packed QKV lowers the expected projection/linear `addmm` count from 60
+to 40 across those five forwards.
 
 ## 5. Kernel implementation
 
@@ -91,21 +96,36 @@ Q/K/V stay in projection-friendly BSHD layout. The baseline creates three BHSD
 contiguous copies; the custom kernel consumes strides directly and returns BSHD
 for a direct reshape into the output projection.
 
-### 5.2 Online softmax
+### 5.2 Packed QKV projection
+
+For the measured eager CUDA float32 path through `d_model=512`, the model
+caches concatenated views of the existing Q/K/V weights and biases and uses one
+vendor `F.linear` call instead of three. The resulting `[B,S,3,H,D]` tensor is
+unbound into strided Q/K/V views consumed by the selected backend. Cache
+signatures detect parameter mutation, loading, and device/dtype changes;
+derived tensors are non-persistent, so the baseline state dict remains
+unchanged.
+
+Target-device microbenchmarks found the combined projection bit-identical for
+the tested float32 shapes and beneficial through width 512, but neutral at
+width 1024. The dispatcher therefore leaves the wide model, training,
+low-precision, CPU, and compiled paths on separate projections.
+
+### 5.3 Online softmax
 
 Each program owns a query tile and one batch/head pair. It streams K/V tiles
 while maintaining fp32 running maximum, normalization sum, and weighted-value
 accumulator. The rescaling formula makes each tile numerically compatible with
 the prior tiles, so no score or probability matrix is stored.
 
-### 5.3 Masks
+### 5.4 Masks
 
 Sequence bounds, valid-key prefixes, and causal key <= query bounds are combined
 inside the score tile. The all-masked case is explicitly finite and returns
 zero. The causal-padding custom path never builds the dense combined mask used
 by the prior SDPA integration.
 
-### 5.4 Numerical matching
+### 5.5 Numerical matching
 
 The kernel deliberately reproduces the reference's low-precision score tensor
 and scaling roundings before converting to fp32 softmax state. Float32 dot
@@ -113,12 +133,16 @@ products follow the benchmark's TF32 toggle. This was necessary for deep-stack
 agreement; mathematically reasonable fused implementations can still fail an
 elementwise benchmark when their rounding points differ.
 
-### 5.5 Dispatch
+### 5.6 Dispatch
 
 The custom envelope requires CUDA compute capability 8.0+, inference, sequence
 length at most 8192, final stride 1, float32/fp16, and head dimensions
 16/32/64/128. Forced Triton rejects unsupported inputs. Auto uses guarded
-fallbacks and exposes actual backend counts.
+fallbacks and exposes actual backend counts. Controlled alternating target-GPU
+measurements showed SDPA was 12%-13% faster for the launch-bound, unmasked,
+non-causal float32 corner with sequence <=128 and head dimension <=32. Auto
+routes those two provisional cases to SDPA and selects Triton for the other five
+masked, causal, long, or wider-head cases.
 
 The primary end-to-end route is float32. Direct fp16 attention passes, but fp16
 and bf16 fused differences compound in deep stacks under the strict executable
@@ -148,27 +172,31 @@ are excluded from steady-state forward latency for both sides.
 
 | case | B | S | d / heads | layers | mask | baseline ms | optimized ms | speedup |
 | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: |
-| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.325 | 0.262 | 1.242x |
-| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.319 | 0.238 | 1.336x |
-| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.652 | 0.498 | 1.309x |
-| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.679 | 0.474 | 1.432x |
-| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.830 | 0.530 | 1.566x |
-| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.814 | 0.525 | 1.550x |
-| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.236 | 0.208 | 1.138x |
+| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.478 | 0.312 | 1.532x |
+| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.502 | 0.311 | 1.612x |
+| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.654 | 0.488 | 1.340x |
+| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.694 | 0.462 | 1.500x |
+| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.925 | 0.531 | 1.741x |
+| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.823 | 0.520 | 1.583x |
+| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.267 | 0.216 | 1.236x |
 
 Summary:
 
 - 7 requested, 7 completed, 7 PASS, 0 FAIL, 0 OOM, 0 ERROR.
 - 35 accuracy trials and 13,117,440 checked elements.
 - 0 failed elements.
-- Maximum absolute error: 0.000997663.
-- Geometric-mean speedup: 1.360x.
-- Every timing backend count was Triton; no SDPA/reference timing fallback.
+- Maximum absolute error: 0.000992358.
+- Geometric-mean speedup: 1.498x.
+- Timing dispatch: SDPA for tiny/medium unmasked cases; Triton for all five
+  masked, causal, long, or wider-head cases; no reference timing fallback.
 
 Incremental peak CUDA allocation fell from 78 MiB to 22 MiB (71.8%) in the
-long-attention case. Causal and padding cases reduced the measured incremental
-peak by 52.4% and 54.4%, respectively. Tiny/wide cases are dominated by model
-outputs and GEMM work, so their measured peak did not change.
+long-attention case. Long-causal, causal-padding, and medium-padding cases
+reduced the measured incremental peak by 50.3%, 54.4%, and 31.3%, respectively.
+Tiny/wide cases are dominated by model outputs and GEMM work, so their measured
+incremental peak did not change. Packed QKV storage is prepared before this
+incremental measurement and adds about 6 MiB for two float32 d_model=512
+layers.
 
 The largest gains occur when attention or mask materialization is a larger share
 of the block. Wide-model performance is dominated by projection/FFN GEMMs, so
@@ -189,9 +217,11 @@ neighboring launch, so it was retired. A residual-add + LayerNorm fusion was
 not implemented: native LayerNorm was a small profiler share, while the added
 support and numerical risk was not justified by the available ceiling.
 
-QKV/output/FFN GEMMs were also retained as vendor operations. Replacing mature
-GEMM kernels merely to increase custom-code volume would not be a defensible
-optimization.
+QKV/output/FFN math remains in vendor GEMMs. QKV packing reduces three launches
+to one without replacing cuBLAS; custom output/FFN GEMMs were rejected because
+the profile did not justify competing with mature matrix-multiplication code.
+A causal loop-frontier prune and alternate tile/stage policies were also tested
+and rejected after they failed to improve the full end-to-end matrix.
 
 ## 9. AI-assisted development
 
@@ -202,10 +232,11 @@ OpenAI Codex, which was used to:
 - trace the checked-in challenge and benchmark contract;
 - identify the false-green sweep and unverified-kernel gaps;
 - design and implement the Triton online-softmax kernel and dispatcher;
-- bootstrap and diagnose the WSL CUDA/Triton toolchain;
+- bootstrap and diagnose both WSL and native Windows CUDA/Triton toolchains;
 - generate correctness, negative-path, matrix, and profiler checks;
 - iterate from measured numerical/performance failures;
-- reject a slower LayerNorm path; and
+- add and invalidate the measured packed-QKV inference cache;
+- reject slower LayerNorm, causal-pruning, and launch-retuning paths; and
 - produce provenance-linked documentation and demo instructions.
 
 AI output was not accepted as evidence by itself. Claims in this report come
@@ -221,6 +252,8 @@ applicable.
 - Reconcile the final organizer benchmark and shape matrix when published.
 - Retest and retune on any evaluation GPU; launch policy is measured only on the
   RTX 5070 Ti.
+- Packed QKV consumes bounded derived-weight memory and is deliberately limited
+  to the measured eager CUDA float32 envelope through d_model=512.
 - Add backward kernels only if training becomes part of the official contract.
 - Explore residual/normalization fusion only after a new profile shows a larger
   end-to-end ceiling.
@@ -233,4 +266,5 @@ applicable.
 - Profiler: docs/results/rtx-5070-ti-2026-08-27-profile.json
 - Requirements: docs/REQUIREMENTS.md
 - Kernel design: docs/KERNEL_DESIGN.md
+- Track 3 compliance: docs/TRACK3_COMPLIANCE.md
 - Demo procedure: DEMO_RUNBOOK.md

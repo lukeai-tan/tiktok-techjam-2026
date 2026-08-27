@@ -56,8 +56,8 @@ fail.
 Correctness validation must cover:
 
 - CPU float32 semantic regressions;
-- CUDA float32 for the primary end-to-end custom path, float16 for direct-kernel
-  validation, and bfloat16 for the exact fallback;
+- CUDA float32 for end-to-end auto routing and forced-custom coverage, float16
+  for direct-kernel validation, and bfloat16 for the exact fallback;
 - causal and non-causal attention;
 - no mask, all-valid mask, partial prefix padding, and minimum one-token prefix;
 - multiple seeds and input scales;
@@ -102,11 +102,11 @@ Correctness validation must cover:
 Primary tuning target:
 
 - NVIDIA GeForce RTX 5070 Ti, compute capability 12.0, 16,303 MiB VRAM;
-- WSL2 Linux;
-- Python 3.14.4;
+- native Windows 11, build 26200, NVIDIA driver 610.88;
+- Python 3.12.10;
 - PyTorch 2.13.0+cu130;
 - CUDA runtime 13.0;
-- Triton 3.7.1.
+- Triton 3.7.1 from `triton-windows==3.7.1.post27`.
 
 Portable CPU tests remain required. Other CUDA devices use the same guarded
 dispatcher and may fall back to SDPA until measured.
@@ -134,6 +134,7 @@ dispatcher and may fall back to SDPA until measured.
 - Correctness/performance results from the target machine.
 - Technical report including environment, optimization rationale, AI tooling,
   measurements, and limitations.
+- Track 3 requirement-to-evidence compliance matrix.
 - Demo-video runbook for an end-to-end public walkthrough.
 
 ## Open organizer questions
