@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-08-27T16:48:19.509879+00:00",
+  "created_at_utc": "2026-08-27T17:08:39.732768+00:00",
   "framework": "pytorch",
   "organizer_script": {
     "path": "benchmarks/torch_transformer_benchmark.py",
@@ -28,20 +28,20 @@
       "total_elements": 2621440
     },
     "baseline": {
-      "median_ms": 2.3021,
-      "mean_ms": 2.6158,
-      "p90_ms": 3.8913,
-      "min_ms": 1.854,
-      "tokens_per_second": 444812.03
+      "median_ms": 2.3168,
+      "mean_ms": 2.8219,
+      "p90_ms": 5.1496,
+      "min_ms": 1.6799,
+      "tokens_per_second": 441985.88
     },
     "optimized": {
-      "median_ms": 1.5335,
-      "mean_ms": 1.778,
-      "p90_ms": 2.7956,
-      "min_ms": 1.4953,
-      "tokens_per_second": 667765.72
+      "median_ms": 1.353,
+      "mean_ms": 1.7479,
+      "p90_ms": 3.6186,
+      "min_ms": 1.3211,
+      "tokens_per_second": 756823.23
     },
-    "speedup_median": 1.501
+    "speedup_median": 1.712
   },
   "attention_backend_counts": {
     "triton": 1950,
@@ -49,7 +49,7 @@
     "reference": 0
   },
   "environment": {
-    "captured_at_utc": "2026-08-27T16:48:19.557879+00:00",
+    "captured_at_utc": "2026-08-27T17:08:39.784897+00:00",
     "command": [
       "python",
       "benchmarks/run_organizer_torch.py",
@@ -59,11 +59,11 @@
       "docs\\results\\rtx-5070-ti-2026-08-27-organizer-default.json"
     ],
     "git": {
-      "commit": "134828aac303dba31c7a6a376b914b7386faee69",
+      "commit": "be8a0a326a2f4657340530a92befd8283b7f3b01",
       "dirty": false,
       "changed_path_count": 0,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "112124f9ca9811f5ed697339726b3c90c23b3847f5e3659ca7c8dfdd296e65d9",
+      "implementation_sha256": "6aad87cf141fcd47a2a95e2d5b9d014755b71966e3eec976ca3c0efafdea6525",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -99,7 +99,7 @@
     "disk": {
       "path": ".",
       "total_bytes": 999125151744,
-      "free_bytes": 434482630656
+      "free_bytes": 438908264448
     },
     "framework": {
       "torch": "2.13.0+cu130",
@@ -140,8 +140,8 @@
     "=== Performance benchmark ===",
     "timing excludes random-data generation and uses a fixed input",
     "CUDA latency is measured with torch.cuda.Event on the current stream",
-    "baseline : median=2.3021 ms | mean=2.6158 ms | p90=3.8913 ms | min=1.8540 ms | throughput=444812.03 token/s",
-    "optimized: median=1.5335 ms | mean=1.7780 ms | p90=2.7956 ms | min=1.4953 ms | throughput=667765.72 token/s",
-    "speedup  : 1.501x based on median latency"
+    "baseline : median=2.3168 ms | mean=2.8219 ms | p90=5.1496 ms | min=1.6799 ms | throughput=441985.88 token/s",
+    "optimized: median=1.3530 ms | mean=1.7479 ms | p90=3.6186 ms | min=1.3211 ms | throughput=756823.23 token/s",
+    "speedup  : 1.712x based on median latency"
   ]
 }
