@@ -19,6 +19,7 @@ from benchmarks.run_organizer_validation import (
     load_and_expand_matrix,
     organizer_arguments,
     result_exit_code,
+    summarize_results,
 )
 from torch_transformer_benchmark import UserOptimizedTransformer
 
@@ -311,3 +312,44 @@ def test_validation_exit_accounting_is_fail_closed():
         [{"status": "SKIPPED_RESOURCE", "skip_authorized": False}, passed]
     ) == 1
     assert result_exit_code([passed, {"status": "UNKNOWN"}]) == 1
+
+
+def test_validation_summary_includes_failed_accuracy_and_dispatch():
+    passed = {
+        "status": "PASS",
+        "parsed": {
+            "accuracy": {
+                "total_elements": 100,
+                "failed_elements": 0,
+                "max_abs_error": 0.0005,
+                "max_relative_error": 0.2,
+            },
+            "speedup_median": 1.25,
+        },
+        "attention_backend_counts": {"triton": 4, "sdpa": 0, "reference": 0},
+    }
+    failed = {
+        "status": "FAIL",
+        "parsed": {
+            "accuracy": {
+                "total_elements": 200,
+                "failed_elements": 7,
+                "max_abs_error": 0.002,
+                "max_relative_error": 3.0,
+            }
+        },
+        "attention_backend_counts": {"triton": 4, "sdpa": 0, "reference": 0},
+    }
+    skipped = {"status": "SKIPPED_RESOURCE", "skip_authorized": True}
+
+    summary = summarize_results([passed, failed, skipped])
+
+    assert summary["total_compared_elements"] == 300
+    assert summary["total_failed_elements"] == 7
+    assert summary["max_abs_error"] == 0.002
+    assert summary["geometric_mean_speedup"] == 1.25
+    assert summary["attention_backend_counts"] == {
+        "triton": 8,
+        "sdpa": 0,
+        "reference": 0,
+    }

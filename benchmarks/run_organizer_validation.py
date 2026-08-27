@@ -532,10 +532,18 @@ def summarize_results(results: Sequence[dict[str, Any]]) -> dict[str, Any]:
         result for result in results if result.get("status") != "SKIPPED_RESOURCE"
     ]
     passed = [result for result in executable if result.get("status") == "PASS"]
-    accuracy = [result["parsed"]["accuracy"] for result in passed]
-    speedups = [result["parsed"]["speedup_median"] for result in passed]
+    accuracy = [
+        result["parsed"]["accuracy"]
+        for result in executable
+        if isinstance((result.get("parsed") or {}).get("accuracy"), dict)
+    ]
+    speedups = [
+        result["parsed"]["speedup_median"]
+        for result in passed
+        if isinstance((result.get("parsed") or {}).get("speedup_median"), (int, float))
+    ]
     backend_totals = {"triton": 0, "sdpa": 0, "reference": 0}
-    for result in passed:
+    for result in executable:
         for backend, count in (result.get("attention_backend_counts") or {}).items():
             if backend in backend_totals:
                 backend_totals[backend] += int(count)
