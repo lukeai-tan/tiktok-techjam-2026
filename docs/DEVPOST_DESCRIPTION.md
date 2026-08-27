@@ -26,11 +26,12 @@ envelope and exposes actual backend counts. Unsupported cases have explicit
 SDPA/reference fallbacks, and forced custom mode fails clearly rather than
 silently pretending the custom kernel ran.
 
-Performance routing is measurement-driven: SDPA handles the two short,
-unmasked float32 cases where it was 12%-13% faster in controlled alternating
-tests. It also guards six-layer causal and batch-above-8 cases after rigorous
-testing found rare custom-kernel tolerance misses there. Triton remains active
-for the organizer default and validated smaller masked/long/wider-head cases.
+Performance routing is measurement-driven: SDPA handles a short unmasked
+float32 corner where it was 12%-13% faster in controlled alternating tests. It
+also guards six-layer causal and batch-above-8 cases after rigorous testing
+found rare custom-kernel tolerance misses there. Low precision, unsupported
+head widths, and very large causal batches use exact reference-style math.
+Triton remains active for the organizer default and validated custom regimes.
 
 For eager CUDA float32 shapes through d_model=512, FlashTile also caches a
 derived packed QKV weight and replaces three projection GEMMs with one. Cache
@@ -41,18 +42,23 @@ parameter names and strict state dict remain unchanged.
 
 On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
 
+- all 13 executable organizer-published final rows passed five trials each,
+  with zero failures across 938,885,120 comparisons;
+- the exact 100,000-token final resource row was recorded separately and was
+  not counted as a pass;
+- final-matrix geometric-mean speedup was 1.427x, with row 10 at 1.701x and
+  row 13 at 4.640x;
+- EXP-001 improved paired full-matrix geomean by 8.98% and 10.19%, while
+  reducing the targeted attention event by 89.43% across 40 Triton launches;
 - the untouched organizer PyTorch default six-layer harness passed 5/5 trials
-  with zero failed elements and measured 1.411x median speedup;
+  with zero failed elements and measured 1.408x median speedup;
 - all 1,950 optimized attention calls in that organizer run used Triton;
 - all 28 feasible source-derived exact-harness cases passed five trials each,
   with 0 failed elements across 459,776,000 comparisons;
 - the source-designated 100,000-token quadratic stress case was recorded as a
   resource skip and was not counted as a pass;
-- 7/7 provisional matrix cases passed;
-- 0 failed elements across 35 trials and 13,117,440 checked elements;
-- maximum absolute error was 0.000992358 under the stricter executable rule;
-- end-to-end speedup ranged from 1.230x to 1.752x;
-- provisional-matrix geometric-mean speedup was 1.501x; and
+- the seven-case project-held-out matrix passed with zero failed elements and
+  measured 1.221x geomean speedup; and
 - the long-attention incremental peak allocation fell from 78 MiB to 22 MiB.
 
 The result artifacts contain raw CUDA-event samples, environment/revision
@@ -62,9 +68,9 @@ the `_attention_fwd` kernel executed.
 ## Impact and relevance
 
 Attention's quadratic intermediates create latency and memory pressure in
-real Transformer inference. On the longest measured case, FlashTile reduced
-incremental allocation by 71.8%; across the full matrix it improved median
-end-to-end latency for every shape. The same design can increase serving
+real Transformer inference. On the longest held-out case, FlashTile reduced
+incremental allocation by 71.8%; on the published final dimensions it delivered
+a 1.427x geometric mean. The same design can increase serving
 capacity, leave memory headroom for longer contexts or larger batches, and
 reduce per-request compute time without changing model weights.
 
@@ -113,12 +119,11 @@ TensorFlow file is preserved as the allowed alternative and shape-scope audit.
 
 ## Limitations and future work
 
-The supplied PyTorch and TensorFlow scripts are reconciled, but the final
-PyTorch evaluator shape matrix was not included, so the broader project matrix
-is labelled provisional. The kernel is forward only and tuned on the RTX 5070
-Ti. Future work is to run the final evaluator unchanged, retune on its GPU, and
-consider adjacent fusion only when a new profile demonstrates enough
-end-to-end ceiling.
+The final dimensions are published, but dtype, padding, timing, tolerance, and
+backward policy are unstated; the evidence records the selected PyTorch
+assumptions. The kernel is forward only and tuned on the RTX 5070 Ti. Future
+work is to retest unchanged on the evaluator GPU and consider adjacent fusion
+only when a new profile demonstrates enough end-to-end ceiling.
 
 ## Links and submission notes
 

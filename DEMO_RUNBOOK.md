@@ -43,7 +43,19 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    Point out the exact six-layer default configuration, 5/5 `PASS`, zero failed
    elements, and the live baseline/optimized median speedup.
 
-5. Run the full source-derived organizer validation:
+5. Run the organizer-published final dimensions:
+
+   ```powershell
+   & $python benchmarks/run_organizer_validation.py `
+     --matrix benchmarks/final_evaluator_shapes.json `
+     --out results/demo-final-evaluator.json
+   ```
+
+   Point out 13/13 executable `PASS`, 0/938,885,120 failed elements, the
+   authorized row-14 resource skip, 1.427x geomean speedup, and row 10 at
+   1.701x.
+
+6. Run the full source-derived organizer validation:
 
    ```powershell
    & $python benchmarks/run_organizer_validation.py `
@@ -54,19 +66,23 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    one explicitly authorized 100,000-token resource skip that is not counted
    as a pass.
 
-6. Prove the GPU kernel actually ran:
+7. Prove the accepted row-10 kernel actually ran:
 
    ```powershell
-   & $python benchmarks/profile_cases.py --case long-causal-padding --dtype float32 `
-     --attention-backend auto --steps 3 --out results/demo-profile.json
+   & $python benchmarks/profile_cases.py `
+     --manifest benchmarks/final_profile_shapes.json `
+     --case final-10-b64-d128-h2-s128 --dtype float32 `
+     --attention-backend auto --steps 10 --out results/demo-profile.json
    ```
 
-   Show the `_attention_fwd` event count and matching model dispatch count.
+   Show 40 `_attention_fwd` events and 40 matching Triton dispatches. Compare
+   the result with the recorded 89.43% profiler-time reduction in
+   `docs/experiments/EXP-001-head64-short-tiles.md`.
 
-7. Finish on `docs/TECH_REPORT.md`: the untouched organizer default is 1.411x,
-   and the provisional seven-case matrix is 7/7 PASS with zero failed elements
-   and a 1.501x geometric-mean speedup. Show the rigorous matrix artifact as
-   the broader correctness proof.
+8. Finish on `docs/TECH_REPORT.md`: the untouched organizer default is 1.408x,
+   and the published final matrix is 13/13 executable PASS with zero failed
+   elements and a 1.427x geometric-mean speedup. Show the source-derived and
+   held-out artifacts as broader correctness and anti-overfitting evidence.
 
 ## Failure handling
 
@@ -76,6 +92,6 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
   previous green aggregate as the current run.
 - If the profiler has no `_attention_fwd` event while Triton dispatch is
   expected, treat the demo as failed rather than claiming custom execution.
-- If the organizer publishes a final evaluator matrix or revised script, update
-  the organizer checksum manifest and rerun all curated evidence before
+- If the organizer publishes revised dimensions, execution policy, or script,
+  update the organizer checksum manifest and rerun all curated evidence before
   recording.

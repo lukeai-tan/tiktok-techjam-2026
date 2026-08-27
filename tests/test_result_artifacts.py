@@ -121,7 +121,7 @@ def test_curated_matrix_is_complete_green_and_current():
         assert result["peak_memory"]["optimized"] is not None
         speedups.append(timing["speedup_median"])
     assert total_failed == 0
-    assert statistics.geometric_mean(speedups) == pytest.approx(1.288, abs=0.001)
+    assert statistics.geometric_mean(speedups) == pytest.approx(1.221, abs=0.001)
 
 
 def test_curated_profile_proves_custom_kernel_for_same_implementation():

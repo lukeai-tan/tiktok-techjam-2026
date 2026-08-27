@@ -146,7 +146,7 @@ Correctness validation must cover:
 Primary tuning target:
 
 - NVIDIA GeForce RTX 5070 Ti, compute capability 12.0, 16,303 MiB VRAM;
-- native Windows 11, build 26200, NVIDIA driver 610.88;
+- native Windows 11, build 26200, NVIDIA driver 616.56;
 - Python 3.12.10;
 - PyTorch 2.13.0+cu130;
 - CUDA runtime 13.0;

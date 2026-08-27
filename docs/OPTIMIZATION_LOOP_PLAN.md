@@ -1,6 +1,6 @@
 # Bounded Agentic GPU Optimization Loop
 
-Status: planning draft  
+Status: executed on 2026-08-28; EXP-001 accepted and rebaselined
 Applies to: the PyTorch/Triton Transformer implementation in this repository
 
 ## Objective
@@ -11,6 +11,29 @@ accounting, and reproducible evidence.
 
 The loop is a controlled experiment program, not an open-ended request for agents
 to keep changing code until a benchmark number looks better.
+
+## Campaign outcome
+
+- Phase 0 merged the current `origin/main`, repaired native-Windows evidence
+  portability, froze the organizer-published 14-row final matrix, and established
+  a clean green checkpoint.
+- Profiling identified final row 10 (`head_dim=64`, sequence 128) as the material
+  bottleneck: `_attention_fwd` consumed 30,324.486 us across 40 launches.
+- EXP-001 changed only the short-head-dimension-64 launch policy from
+  `BLOCK_M=64` / `BLOCK_N=128` to `BLOCK_M=32` / `BLOCK_N=64`. Two paired full
+  matrix trials improved geometric-mean speedup by 8.98% and 10.19%.
+- An independent reviewer approved the bounded implementation, including an
+  explicit noise waiver for unaffected `head_dim=32` timing variation.
+- The accepted candidate was merged and every curated artifact was regenerated
+  from implementation SHA-256
+  `83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f`.
+  The integrated final matrix is 13/13 executable PASS plus one authorized
+  resource skip, zero failed elements across 938,885,120 comparisons, and
+  1.427x geometric-mean speedup.
+
+The durable experiment record is
+`docs/experiments/EXP-001-head64-short-tiles.md`; rejected alternatives and
+pre-integration paired evidence remain versioned for auditability.
 
 ## Source of truth and scope
 
@@ -54,7 +77,7 @@ Current implementation context:
 - Record failures, OOMs, unsupported cases, skipped cases, and inconclusive runs;
   do not delete or weaken tests to obtain a green result.
 - Keep a held-out shape set so the implementation does not overfit the visible
-  seven-case provisional matrix.
+  final organizer matrix.
 - Do not read credentials or `.env` files, and do not place tokens in commands,
   URLs, logs, or evidence artifacts.
 

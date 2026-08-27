@@ -141,9 +141,17 @@ the target GPU.
 
 ## Measured design decisions
 
-- The seven-case RTX 5070 Ti matrix used SDPA for two short unmasked cases and
-  custom Triton for the five masked, causal, long, or wider-head cases. The
-  measured policy delivered a 1.501x geomean end-to-end speedup.
+- The organizer-published final matrix passed all 13 executable rows with zero
+  failed elements and one source-authorized resource skip. It delivered a
+  1.427x geomean end-to-end speedup; 1,008 attention calls used Triton and 448
+  unsupported or very-large-batch calls used explicit reference math.
+- EXP-001 targeted the final row-10 `head_dim=64`, sequence-128 spill bottleneck.
+  The former 64x128 tile reported 2,468 spills and 81,920 bytes of shared memory;
+  the accepted 32x64 tile reported two spills and 49,152 bytes. Across two paired
+  full-matrix trials, aggregate speedup improved by 8.98% and 10.19%.
+- After integration, row 10 measured 1.701x end-to-end. Its `_attention_fwd`
+  profiler time fell from 30,324.486 us to 3,205.548 us across 40 launches, an
+  89.43% reduction, with Triton handling all 40 calls.
 - Exact-harness stress testing found rare strict-tolerance misses when Triton
   differences accumulated through six causal layers or batches above eight.
   Auto routes those deep-stack regimes to SDPA; all 28 feasible source-derived
@@ -155,7 +163,7 @@ the target GPU.
 - The inherited standalone Triton LayerNorm was benchmarked at only 0.46x to
   0.69x the native CUDA LayerNorm across representative widths and was removed.
 - In the current causal-padding profile, native LayerNorm accounted for about
-  123 us across five forwards versus 2,843 us for the profiled model range. The small
+  135 us across five forwards versus 6,333 us for the profiled model range. The small
   share and slower standalone kernel did not justify residual/LayerNorm fusion
   risk for this iteration.
 - A causal loop-frontier prune and alternate tile/stage configurations were
@@ -167,7 +175,8 @@ the target GPU.
 ## Remaining limitations
 
 - There is no backward kernel.
-- The current shape matrix is provisional pending organizer publication.
+- The final table omits dtype, padding, timing, tolerance, and backward policy;
+  current validation records the selected PyTorch defaults as assumptions.
 - Support beyond sequence 8192 or the declared head dimensions is unvalidated.
 - Packed QKV trades bounded persistent memory for fewer launches/GEMMs (about
   6 MiB for two float32 d_model=512 layers) and is disabled outside its measured

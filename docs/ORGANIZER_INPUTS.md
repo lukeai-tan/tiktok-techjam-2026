@@ -113,6 +113,13 @@ Run the final rows independently from the broader source-derived validation:
   --out results/final-evaluator-validation.json
 ```
 
+The post-optimization integrated run passed all 13 executable rows across five
+accuracy trials each, with zero failures in 938,885,120 comparisons. It recorded
+a 1.427x geometric-mean speedup, 1,008 Triton attention calls, 448 explicit
+reference calls, zero SDPA calls, and the one authorized row-14 resource skip.
+The curated evidence is
+`docs/results/rtx-5070-ti-2026-08-28-final-evaluator-baseline.json`.
+
 ## Still needed from the organizer
 
 The published dimensions resolve the largest prior input gap, but the table
