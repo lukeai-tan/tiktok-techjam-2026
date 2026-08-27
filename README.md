@@ -16,15 +16,15 @@ long, or wide regimes.
 
 | case | baseline median | optimized median | speedup |
 | --- | ---: | ---: | ---: |
-| tiny overhead | 0.478 ms | 0.312 ms | 1.532x |
-| medium throughput | 0.502 ms | 0.311 ms | 1.612x |
-| medium + padding | 0.654 ms | 0.488 ms | 1.340x |
-| long causal | 0.694 ms | 0.462 ms | 1.500x |
-| long causal + padding | 0.925 ms | 0.531 ms | 1.741x |
-| long attention | 0.823 ms | 0.520 ms | 1.583x |
-| wide model | 0.267 ms | 0.216 ms | 1.236x |
+| tiny overhead | 0.484 ms | 0.312 ms | 1.552x |
+| medium throughput | 0.519 ms | 0.318 ms | 1.630x |
+| medium + padding | 0.653 ms | 0.490 ms | 1.332x |
+| long causal | 0.696 ms | 0.462 ms | 1.507x |
+| long causal + padding | 0.923 ms | 0.527 ms | 1.752x |
+| long attention | 0.813 ms | 0.518 ms | 1.570x |
+| wide model | 0.256 ms | 0.208 ms | 1.230x |
 
-Geometric-mean end-to-end speedup: **1.498x**. The long-attention incremental
+Geometric-mean end-to-end speedup: **1.501x**. The long-attention incremental
 peak allocation fell from 78 MiB to 22 MiB (71.8%). The largest observed absolute
 error was **0.000992358**, within the executable atol=0.001 OR rtol=0.01
 contract.
@@ -35,9 +35,28 @@ counts are in
 [Profiler evidence](docs/results/rtx-5070-ti-2026-08-27-profile.json)
 records _attention_fwd ten times for five two-layer forwards.
 
-The matrix is explicitly **provisional**: the final organizer shape list is not
-present in this repository. See [the requirements](docs/REQUIREMENTS.md) for
-the evidence boundary.
+The newly supplied organizer PyTorch file is also preserved untouched. Running
+that exact harness at its default six-layer configuration produced **5/5 PASS,
+0 failed elements out of 2,621,440, and 1.411x median speedup**. All 1,950
+optimized attention calls used Triton. See the
+[exact-harness artifact](docs/results/rtx-5070-ti-2026-08-27-organizer-default.json)
+and [organizer-input audit](docs/ORGANIZER_INPUTS.md).
+
+The rigorous source-derived validation then ran the untouched PyTorch
+parser/comparator/timer in a fresh process for every feasible dimension signal
+from both supplied files: **28/28 executable cases passed**, with **0 failed
+elements out of 459,776,000 across 140 accuracy trials**. The matrix covers
+float32, float16, bfloat16, causal attention, prefix padding, batch sizes through
+10,000, model widths through 1,024, head counts 1/2/4/16, and sequence length
+1,024. Overall geomean speedup was **1.262x**; the float32 subset was **1.492x**.
+The TensorFlow script's designated 100,000-token quadratic stress case is the
+single source-authorized resource skip and is not counted as a pass. See the
+[validation artifact](docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json).
+
+The project matrix remains explicitly **provisional**: both organizer benchmark
+files are now present, but the supplied PyTorch file exposes one configurable
+case rather than the promised final evaluator matrix. See
+[the requirements](docs/REQUIREMENTS.md) for the evidence boundary.
 
 ## What is implemented
 
@@ -59,8 +78,9 @@ weight copy while replacing explicit attention with:
 - one cached QKV projection for measured eager-fp32 shapes up to d_model=512,
   with automatic invalidation and no state-dict changes;
 - a measured fixed launch policy for head dimensions 16/32/64/128;
-- measured auto-routing (short unmasked fp32 heads <=32 use SDPA; the other
-  validated fp32 regimes use Triton); and
+- measured auto-routing (short unmasked fp32 heads <=32 use SDPA; deep six-layer
+  causal or batch-above-8 cases use accuracy-safe SDPA; validated default and
+  smaller masked fp32 regimes use Triton); and
 - observable forced triton, sdpa, and reference routing.
 
 The primary optimized end-to-end path uses the benchmark-default float32 and
@@ -153,6 +173,13 @@ $python = ".venv\Scripts\python.exe"
 # One direct benchmark using the competition integration point
 & $python torch_transformer_benchmark.py --device cuda --dtype float32 --attention-backend auto --accuracy-trials 5
 
+# Strongest contract proof: untouched organizer parser/comparator/timing harness
+& $python benchmarks/run_organizer_torch.py --device cuda
+
+# Rigorous supplied-contract matrix: 28 executable cases plus one declared skip
+& $python benchmarks/run_organizer_validation.py `
+  --out results/organizer-validation.json
+
 # Full manifest: raw samples and explicit PASS/FAIL/OOM/ERROR accounting
 & $python benchmarks/run_matrix.py --device cuda --attention-backend auto --accuracy-trials 5 --out results/matrix.json
 
@@ -179,12 +206,19 @@ transformer_opt/
   dispatch.py                         custom/SDPA/reference routing
   kernels/attention.py                Triton fused attention
 benchmarks/
+  torch_transformer_benchmark.py      untouched organizer PyTorch download
+  tensorflow_transformer_benchmark.py untouched organizer TensorFlow download
+  run_organizer_torch.py              inject submission into untouched harness
+  organizer_validation_matrix.json   source-derived validation policy
+  run_organizer_validation.py        isolated exact-harness matrix runner
   official_shapes.json                provisional machine-readable matrix
   run_matrix.py                       fail-closed correctness/performance runner
   profile_cases.py                    profiler proof
   reference/manifest.json             frozen benchmark fingerprint
+  reference/organizer_downloads.json  exact supplied-file checksums/contracts
 tests/                                CPU contract + direct/end-to-end GPU tests
 docs/
+  ORGANIZER_INPUTS.md                 received/missing organizer resource audit
   REQUIREMENTS.md                     source-of-truth and acceptance criteria
   KERNEL_DESIGN.md                    kernel algorithm and trade-offs
   TECH_REPORT.md                      measured technical report
@@ -195,8 +229,10 @@ DEMO_RUNBOOK.md                       public walkthrough sequence
 
 ## Limitations
 
-- The final organizer matrix and any post-workshop benchmark revision remain
-  external unknowns and must be reconciled before submission.
+- The two benchmark downloads are reconciled, but the final PyTorch evaluator
+  matrix and any post-workshop revision remain external unknowns.
+- The supplied TensorFlow benchmark's 100,000-token quadratic stress case is
+  preflight-skipped exactly as its own resource policy allows.
 - The kernel is forward/inference only.
 - Tuning evidence is specific to the RTX 5070 Ti.
 - Float16/bfloat16 deep-stack auto runs prioritize exact benchmark correctness
@@ -214,7 +250,8 @@ verified names and responsibilities here and on Devpost before submission.
 
 ## Submission status
 
-The implementation is ready for the checked-in contract, but public-repository,
-final-organizer-matrix, and YouTube/Devpost steps remain external holds. See the
+The implementation passes the project matrix, untouched organizer default, and
+all 28 feasible source-derived organizer validation cases. Public-repository,
+final-evaluator-matrix, and YouTube/Devpost steps remain external holds. See the
 [Track 3 compliance matrix](docs/TRACK3_COMPLIANCE.md) and follow the
 [demo runbook](DEMO_RUNBOOK.md).

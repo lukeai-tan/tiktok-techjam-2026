@@ -28,7 +28,9 @@ silently pretending the custom kernel ran.
 
 Performance routing is measurement-driven: SDPA handles the two short,
 unmasked float32 cases where it was 12%-13% faster in controlled alternating
-tests; Triton handles all measured masked, causal, long, and wider-head cases.
+tests. It also guards six-layer causal and batch-above-8 cases after rigorous
+testing found rare custom-kernel tolerance misses there. Triton remains active
+for the organizer default and validated smaller masked/long/wider-head cases.
 
 For eager CUDA float32 shapes through d_model=512, FlashTile also caches a
 derived packed QKV weight and replaces three projection GEMMs with one. Cache
@@ -39,11 +41,18 @@ parameter names and strict state dict remain unchanged.
 
 On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
 
+- the untouched organizer PyTorch default six-layer harness passed 5/5 trials
+  with zero failed elements and measured 1.411x median speedup;
+- all 1,950 optimized attention calls in that organizer run used Triton;
+- all 28 feasible source-derived exact-harness cases passed five trials each,
+  with 0 failed elements across 459,776,000 comparisons;
+- the source-designated 100,000-token quadratic stress case was recorded as a
+  resource skip and was not counted as a pass;
 - 7/7 provisional matrix cases passed;
 - 0 failed elements across 35 trials and 13,117,440 checked elements;
 - maximum absolute error was 0.000992358 under the stricter executable rule;
-- end-to-end speedup ranged from 1.236x to 1.741x;
-- geometric-mean speedup was 1.498x; and
+- end-to-end speedup ranged from 1.230x to 1.752x;
+- provisional-matrix geometric-mean speedup was 1.501x; and
 - the long-attention incremental peak allocation fell from 78 MiB to 22 MiB.
 
 The result artifacts contain raw CUDA-event samples, environment/revision
@@ -83,7 +92,9 @@ No external web API or hosted model API is required at runtime.
 
 The benchmark uses deterministic synthetic tensors generated from recorded
 seeds. No external dataset or third-party model weights are used. Challenge
-requirements and supplied benchmark assets are retained in the repository.
+requirements and both supplied benchmark scripts are retained byte-for-byte in
+the repository with SHA-256 checksums. PyTorch is the selected framework; the
+TensorFlow file is preserved as the allowed alternative and shape-scope audit.
 
 ## Engineering choices
 
@@ -102,11 +113,12 @@ requirements and supplied benchmark assets are retained in the repository.
 
 ## Limitations and future work
 
-The organizer's final shape matrix was not present when this evidence was
-captured, so the current matrix is labelled provisional. The kernel is forward
-only and tuned on the RTX 5070 Ti. Future work is to reconcile the final
-organizer harness, retune on the evaluation GPU, and consider adjacent fusion
-only when a new profile demonstrates enough end-to-end ceiling.
+The supplied PyTorch and TensorFlow scripts are reconciled, but the final
+PyTorch evaluator shape matrix was not included, so the broader project matrix
+is labelled provisional. The kernel is forward only and tuned on the RTX 5070
+Ti. Future work is to run the final evaluator unchanged, retune on its GPU, and
+consider adjacent fusion only when a new profile demonstrates enough
+end-to-end ceiling.
 
 ## Links and submission notes
 

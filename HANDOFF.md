@@ -11,7 +11,8 @@ submission**.
 
 The remaining holds are explicit in `docs/TRACK3_COMPLIANCE.md`:
 
-1. obtain and reconcile the final organizer benchmark/shape combinations;
+1. obtain the final PyTorch evaluator/shape combinations (the two benchmark
+   downloads themselves are now reconciled and checksum-frozen);
 2. make the GitHub repository public (the unauthenticated URL returned 404 on
    2026-08-27); and
 3. record/upload the public YouTube demo and publish the Devpost entry.
@@ -23,26 +24,30 @@ until those actions are independently verified.
 
 - Remote: `https://github.com/lukeai-tan/tiktok-techjam-2026`
 - Branch: `feat/transformer-gpu-kernel-implementation`
-- Change-set base commit: `d287d82e8796bc17ba08af63f3d6de44673e29c0`.
-- The completed work is segmented into target-GPU implementation/evidence,
-  secure Colab reproduction, and submission-audit documentation commits.
-- The worktree should be clean after those commits; verify it before making
-  further changes.
+- Organizer-reconciliation base commit:
+  `0712bebfec5630dcaa28841b4ca80dd374508a80`.
+- This increment is segmented into organizer inputs/runtime evidence and a
+  documentation/reproduction reconciliation commit.
+- The worktree should be clean after those commits; verify before further work.
 - The owner explicitly authorized committing and pushing this branch on
   2026-08-27. Publishing the Devpost/YouTube entries or changing repository
   visibility remains a separate external action.
 
 ## Read first
 
-1. `docs/REQUIREMENTS.md` - executable contract and acceptance criteria.
-2. `docs/TRACK3_COMPLIANCE.md` - every Track 3 clause, evidence, and external
+1. `docs/ORGANIZER_INPUTS.md` - received downloads, checksums, contract
+   differences, and the one remaining organizer file requirement.
+2. `docs/REQUIREMENTS.md` - executable contract and acceptance criteria.
+3. `docs/TRACK3_COMPLIANCE.md` - every Track 3 clause, evidence, and external
    hold.
-3. `docs/KERNEL_DESIGN.md` - algorithm, packed projection, support envelope,
+4. `docs/KERNEL_DESIGN.md` - algorithm, packed projection, support envelope,
    and rejected tuning.
-4. `docs/TECH_REPORT.md` - environment, methods, measurements, and AI use.
-5. `benchmarks/reference/manifest.json` - frozen checked-in benchmark provenance.
-6. `benchmarks/official_shapes.json` - seven-case provisional matrix.
-7. `docs/RELEASE_GATE.md` - current pass/hold decision.
+5. `docs/TECH_REPORT.md` - environment, methods, measurements, and AI use.
+6. `benchmarks/reference/organizer_downloads.json` - exact supplied-file
+   checksums and cross-framework contract audit.
+7. `benchmarks/reference/manifest.json` - older result-linked snapshot.
+8. `benchmarks/official_shapes.json` - seven-case provisional matrix.
+9. `docs/RELEASE_GATE.md` - current pass/hold decision.
 
 The obsolete temporary implementation plan was removed after its requirements
 and decisions were incorporated into permanent documentation.
@@ -86,6 +91,13 @@ and decisions were incorporated into permanent documentation.
 
 ### Benchmark and provenance
 
+- `benchmarks/torch_transformer_benchmark.py` and
+  `benchmarks/tensorflow_transformer_benchmark.py`: untouched organizer Lark
+  downloads preserved byte-for-byte.
+- `benchmarks/run_organizer_torch.py`: injects only the submitted class into the
+  untouched selected harness and can emit structured evidence.
+- `benchmarks/run_organizer_validation.py`: expands both source contracts into
+  isolated exact-harness cases with one narrowly authorized resource skip.
 - `benchmarks/run_matrix.py`: correctness before timing, alternating order, raw
   CUDA-event samples, peak allocation, backend counts, and explicit
   PASS/FAIL/OOM/ERROR accounting.
@@ -116,9 +128,23 @@ Curated matrix:
 - Timing selected SDPA for two short unmasked cases and Triton for the other
   five masked, causal, long, or wider-head cases.
 - 90 raw samples per model/case after 10 warmups.
-- Median speedup range: 1.236x to 1.741x.
-- Geometric-mean end-to-end speedup: 1.498x.
+- Median speedup range: 1.230x to 1.752x.
+- Geometric-mean end-to-end speedup: 1.501x.
 - Long-attention incremental allocation: 78 MiB to 22 MiB (71.8%).
+
+Untouched organizer PyTorch default:
+
+- B=8, S=128, d_model=512, heads=8, FFN=2048, six layers, float32.
+- 5/5 PASS; 0 failed out of 2,621,440 elements.
+- Baseline 1.9456 ms; optimized 1.3788 ms; median speedup 1.411x.
+- Triton 1,950 / SDPA 0 / reference 0 optimized attention calls.
+
+Rigorous supplied-contract validation:
+
+- 29 requested: 28 executable PASS and one source-authorized resource skip.
+- 140/140 accuracy trials; 0 failed out of 459,776,000 elements.
+- Overall geomean speedup 1.262x; float32 geomean 1.492x.
+- Triton 672 / SDPA 1,848 / reference 2,184 optimized attention calls.
 
 Profiler:
 
@@ -131,7 +157,9 @@ Artifacts and implementation fingerprint:
 
 - `docs/results/rtx-5070-ti-2026-08-27.json`
 - `docs/results/rtx-5070-ti-2026-08-27-profile.json`
-- `314dfa1615fe17b610d4851dd2a55377561f34b5a409762bf7fe43a4e5c196de`
+- `docs/results/rtx-5070-ti-2026-08-27-organizer-default.json`
+- `docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json`
+- `112124f9ca9811f5ed697339726b3c90c23b3847f5e3659ca7c8dfdd296e65d9`
 
 The prior WSL evidence was replaced because the implementation changed and the
 Ubuntu distribution is no longer installed on this host. The current artifacts
@@ -153,7 +181,7 @@ were freshly generated under native Windows; they were not manually migrated.
 
 ## Validation commands
 
-The current native target run passes 66/66 tests.
+The current native target run passes 79/79 tests.
 
 With the native environment from README:
 
@@ -163,6 +191,8 @@ $python = ".venv\Scripts\python.exe"
 & $python -m compileall -q torch_transformer_benchmark.py transformer_opt benchmarks tools sweep.py
 & $python -m json.tool benchmarks/official_shapes.json > $null
 & $python -m json.tool benchmarks/reference/manifest.json > $null
+& $python -m json.tool benchmarks/reference/organizer_downloads.json > $null
+& $python -m json.tool benchmarks/organizer_validation_matrix.json > $null
 & $python -m json.tool docs/workflows/transformer-gpu-kernel.json > $null
 & $python -m json.tool notebooks/colab_benchmark.ipynb > $null
 git diff --check
@@ -172,6 +202,13 @@ Verify the frozen reference from Git bytes, not a PowerShell text pipeline:
 
 ```powershell
 & $python -c "import hashlib,subprocess,json; m=json.load(open('benchmarks/reference/manifest.json')); b=subprocess.check_output(['git','cat-file','blob',m['git_blob_oid']]); assert hashlib.sha256(b).hexdigest()==m['sha256']; print('reference checksum: PASS')"
+```
+
+Run the untouched organizer harness directly:
+
+```powershell
+& $python benchmarks/run_organizer_torch.py --device cuda
+& $python benchmarks/run_organizer_validation.py --out results/organizer-validation.json
 ```
 
 GPU tests skip on CPU and never count as target-GPU evidence. If an Ubuntu WSL

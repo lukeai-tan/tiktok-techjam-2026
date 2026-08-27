@@ -135,7 +135,12 @@ and online-rescaling drift.
 
 - The seven-case RTX 5070 Ti matrix used SDPA for two short unmasked cases and
   custom Triton for the five masked, causal, long, or wider-head cases. The
-  measured policy delivered a 1.498x geomean end-to-end speedup.
+  measured policy delivered a 1.501x geomean end-to-end speedup.
+- Exact-harness stress testing found rare strict-tolerance misses when Triton
+  differences accumulated through six causal layers or batches above eight.
+  Auto routes those deep-stack regimes to SDPA; all 28 feasible source-derived
+  cases then passed across 459,776,000 compared elements, while the organizer
+  default remains on Triton.
 - Packed QKV reduced the two-layer profile from the architectural 60 `addmm`
   calls to 40 across five forwards. Isolated projection measurements were
   bit-identical and improved most in overhead-bound and medium shapes.

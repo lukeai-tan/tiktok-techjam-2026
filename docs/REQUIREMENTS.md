@@ -1,27 +1,51 @@
 # Transformer GPU Kernel Requirements
 
-Status: implementation contract based on the checked-in Track 3 brief and
-benchmark as of 2026-08-27. The organizer's final shape combinations have not
-yet been published in this repository; `benchmarks/official_shapes.json` is
-therefore explicitly provisional.
+Status: implementation contract reconciled with the two participant-supplied
+organizer downloads received on 2026-08-27. PyTorch is the selected framework.
+The final PyTorch evaluator shape combinations have not been supplied;
+`benchmarks/official_shapes.json` therefore remains explicitly provisional.
 
 ## Source-of-truth order
 
-1. A newly downloaded organizer benchmark and final shape list, once available.
-2. The checked-in benchmark snapshot identified by
+1. The untouched organizer PyTorch download identified by
+   `benchmarks/reference/organizer_downloads.json`.
+2. A final organizer evaluator/shape list, once available.
+3. The older result-linked snapshot identified by
    `benchmarks/reference/manifest.json`.
-3. Track 3 in `docs/hackathon-details.md`, lines 674-780.
-4. Reproduced behavior on the target GPU.
-5. Design and explanatory documentation in this repository.
+4. Track 3 in `docs/hackathon-details.md`, lines 674-780.
+5. Reproduced behavior on the target GPU.
+6. Design and explanatory documentation in this repository.
 
 If these sources conflict, update this file and the reference manifest before
 tuning kernels. Never relax a checked-in correctness rule to match a looser
 description.
 
+## Organizer download reconciliation
+
+- Untouched PyTorch SHA-256:
+  `1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`.
+- Untouched TensorFlow SHA-256:
+  `00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798`.
+- `benchmarks/run_organizer_torch.py` injects only the submitted class into the
+  untouched PyTorch harness; tests AST-compare protected baseline definitions.
+- The TensorFlow download is retained as an alternative-framework and shape
+  cross-check. It is not treated as a second implementation requirement.
+- `benchmarks/run_organizer_validation.py` translates every feasible published
+  dimension signal into the selected PyTorch harness. Its 28 executable cases
+  all pass; the TensorFlow source's designated 100000-token quadratic stress
+  case is the only authorized resource skip and is never counted as a pass.
+
+The files are not interchangeable evaluator specifications. PyTorch defaults
+to one configurable float32 case and the stricter 0.001/0.01 OR rule;
+TensorFlow defaults to a float16 compact dimension sweep and the prose-level
+0.002/0.02 OR rule. See `docs/ORGANIZER_INPUTS.md` for the exact differences and
+the remaining organizer input.
+
 ## Required behavior
 
-The selected PyTorch implementation is the pre-LayerNorm Transformer in
-`torch_transformer_benchmark.py`:
+The selected PyTorch implementation is the pre-LayerNorm Transformer in the
+untouched `benchmarks/torch_transformer_benchmark.py`; the optimized submission
+copy is `torch_transformer_benchmark.py`:
 
 ```text
 for each block:
@@ -125,6 +149,12 @@ dispatcher and may fall back to SDPA until measured.
   backend counts, and profiler evidence that the custom kernel ran.
 - **AC-6:** README, kernel design, technical report, and demo runbook contain no
   placeholders or unverified performance statements.
+- **AC-7:** The downloaded PyTorch/TensorFlow files match frozen hashes, and the
+  optimized class passes the untouched organizer PyTorch harness without
+  modifying its baseline, comparator, argument parsing, or timing code.
+- **AC-8:** Every feasible case derived from the two supplied contracts passes
+  in an isolated process, and skip accounting accepts only the exact
+  source-authorized 100000-token stress case.
 
 ## Deliverables
 
@@ -134,17 +164,19 @@ dispatcher and may fall back to SDPA until measured.
 - Correctness/performance results from the target machine.
 - Technical report including environment, optimization rationale, AI tooling,
   measurements, and limitations.
+- Byte-preserved organizer downloads, checksum manifest, and exact-harness
+  PyTorch default plus full source-derived validation evidence.
 - Track 3 requirement-to-evidence compliance matrix.
 - Demo-video runbook for an end-to-end public walkthrough.
 
 ## Open organizer questions
 
-- Final mandatory shape combinations and dtypes.
+- Final mandatory PyTorch shape combinations, dtypes, padding, and causal modes.
 - Whether timing includes model construction/compilation or steady-state forward
   only.
 - Whether gradients/backward are evaluated.
 - Exact dependency and source-file modification restrictions.
-- Whether a newer organizer benchmark supersedes the checked-in snapshot.
+- Whether a later workshop/evaluator revision supersedes either supplied file.
 
 These unknowns do not block implementing and validating the current contract,
 but they block claiming final organizer-matrix completeness.

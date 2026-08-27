@@ -9,12 +9,18 @@ quadratic attention matrix.
 
 On the NVIDIA GeForce RTX 5070 Ti, all seven provisional float32 cases passed
 the checked-in executable tolerance across five seeds each. The run covered
-13,117,440 output elements with zero failures and measured a **1.498x
-geometric-mean end-to-end speedup**, ranging from 1.236x to 1.741x.
+13,117,440 output elements with zero failures and measured a **1.501x
+geometric-mean end-to-end speedup**, ranging from 1.230x to 1.752x.
 
-The organizer's final shape list is not available in this repository. Results
-are therefore evidence for the checked-in contract and provisional matrix, not
-a claim about unpublished test cases.
+Both organizer benchmark downloads are now checksum-frozen. The untouched
+PyTorch default six-layer case also passed 5/5 trials with zero failed elements
+and measured 1.411x median speedup. A fail-closed matrix then translated every
+feasible shape signal from both downloads through that untouched PyTorch
+harness: 28/28 executable cases passed with zero failures across 459,776,000
+elements. The source-designated 100,000-token quadratic stress case was
+preflight-skipped and was not counted as a pass. The final PyTorch evaluator
+shape list is still unavailable, so these results remain evidence for all
+published inputs rather than a claim about unpublished test cases.
 
 ## 2. Executable contract
 
@@ -33,8 +39,11 @@ abs(optimized - reference) <= 0.01 * abs(reference)
 This is stricter than the Track 3 prose values of 0.002 absolute and 0.02
 relative. The executable rule governed all implementation and validation.
 
-Benchmark provenance and unresolved organizer questions are recorded in
-docs/REQUIREMENTS.md and benchmarks/reference/manifest.json.
+Organizer download provenance and unresolved evaluator questions are recorded
+in docs/ORGANIZER_INPUTS.md, docs/REQUIREMENTS.md, and
+benchmarks/reference/organizer_downloads.json. The older
+benchmarks/reference/manifest.json remains frozen because it is part of the
+existing result-artifact fingerprint.
 
 ## 3. Environment
 
@@ -76,12 +85,12 @@ The captured causal-padding profile for five two-layer forwards recorded:
 
 | event | count | self device time |
 | --- | ---: | ---: |
-| optimized Transformer range | 5 | 2,842.9 us |
-| addmm | 40 | 1,599.0 us |
-| custom _attention_fwd | 10 | 351.6 us |
-| native LayerNorm | 25 | 123.0 us |
-| GELU | 10 | 62.8 us |
-| residual add | 20 | 50.5 us |
+| optimized Transformer range | 5 | 2,521.7 us |
+| addmm | 40 | 1,596.0 us |
+| custom _attention_fwd | 10 | 352.0 us |
+| native LayerNorm | 25 | 120.7 us |
+| GELU | 10 | 62.2 us |
+| residual add | 20 | 50.1 us |
 
 The ten custom events exactly match five forwards times two layers. This proves
 the repository-owned kernel ran; dispatch counters alone were not used as
@@ -141,8 +150,12 @@ length at most 8192, final stride 1, float32/fp16, and head dimensions
 fallbacks and exposes actual backend counts. Controlled alternating target-GPU
 measurements showed SDPA was 12%-13% faster for the launch-bound, unmasked,
 non-causal float32 corner with sequence <=128 and head dimension <=32. Auto
-routes those two provisional cases to SDPA and selects Triton for the other five
-masked, causal, long, or wider-head cases.
+routes those two provisional cases to SDPA. The supplied five-trial harness
+also exposed rare custom-kernel tolerance misses after six layers for causal
+attention and batch sizes above eight; those deep-stack regimes now use SDPA,
+which passed the same comparator and remained faster than the baseline. The
+organizer-default non-causal B8 path stays on Triton, as do the validated
+smaller masked, long, and wider-head regimes.
 
 The primary end-to-end route is float32. Direct fp16 attention passes, but fp16
 and bf16 fused differences compound in deep stacks under the strict executable
@@ -154,6 +167,16 @@ Full algorithm and launch details are in docs/KERNEL_DESIGN.md.
 
 ## 6. Benchmark method
 
+- Organizer proof: untouched downloaded PyTorch parser, baseline, comparator,
+  and timer with only `UserOptimizedTransformer` injected.
+- Organizer default: B=8, S=128, d_model=512, heads=8, FFN=2048, six layers,
+  float32, five accuracy trials, 20 warmups, and 3 x 100 timing samples.
+- Rigorous organizer validation: six direct PyTorch variants plus all 11
+  feasible TensorFlow compact shapes translated to float32 and float16; five
+  accuracy trials and 2 x 10 timing samples per executable case, each isolated
+  in a fresh subprocess.
+- Resource accounting: the TensorFlow benchmark's designated B=32, S=100000,
+  d=1024, heads=16 stress case is recorded as `SKIPPED_RESOURCE`, never PASS.
 - Manifest: benchmarks/official_shapes.json, status provisional.
 - Dtype: float32.
 - Accuracy: five seeds per case, checked before timing.
@@ -170,15 +193,35 @@ are excluded from steady-state forward latency for both sides.
 
 ## 7. Results
 
+### Untouched organizer PyTorch default
+
+The downloaded script with SHA-256
+`1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`
+ran unchanged through `benchmarks/run_organizer_torch.py`:
+
+| metric | baseline | optimized |
+| --- | ---: | ---: |
+| median latency | 1.9456 ms | 1.3788 ms |
+| mean latency | 1.9843 ms | 1.4367 ms |
+| p90 latency | 2.1910 ms | 1.5705 ms |
+| throughput | 526,307 token/s | 742,649 token/s |
+
+- Median speedup: 1.411x.
+- Accuracy: 5/5 PASS, 0 failed out of 2,621,440 elements.
+- Maximum absolute error: 0.000990123.
+- Optimized attention dispatch: Triton 1,950; SDPA 0; reference 0.
+
+### Provisional cross-shape matrix
+
 | case | B | S | d / heads | layers | mask | baseline ms | optimized ms | speedup |
 | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: |
-| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.478 | 0.312 | 1.532x |
-| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.502 | 0.311 | 1.612x |
-| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.654 | 0.488 | 1.340x |
-| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.694 | 0.462 | 1.500x |
-| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.925 | 0.531 | 1.741x |
-| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.823 | 0.520 | 1.583x |
-| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.267 | 0.216 | 1.236x |
+| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.484 | 0.312 | 1.552x |
+| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.519 | 0.318 | 1.630x |
+| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.653 | 0.490 | 1.332x |
+| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.696 | 0.462 | 1.507x |
+| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.923 | 0.527 | 1.752x |
+| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.813 | 0.518 | 1.570x |
+| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.256 | 0.208 | 1.230x |
 
 Summary:
 
@@ -186,9 +229,28 @@ Summary:
 - 35 accuracy trials and 13,117,440 checked elements.
 - 0 failed elements.
 - Maximum absolute error: 0.000992358.
-- Geometric-mean speedup: 1.498x.
+- Geometric-mean speedup: 1.501x.
 - Timing dispatch: SDPA for tiny/medium unmasked cases; Triton for all five
   masked, causal, long, or wider-head cases; no reference timing fallback.
+
+### Supplied-contract shape validation
+
+The isolated exact-harness matrix produced:
+
+- 29 requested entries: 28 executable and one source-authorized resource skip;
+- 28/28 executable PASS and 0/459,776,000 failed elements across 140 trials;
+- batch sizes 1, 4, 8, 16, 128, and 10,000;
+- sequence lengths 32, 128, and 1,024;
+- widths 32, 128, 512, and 1,024; heads 1, 2, 4, 8, and 16;
+- float32, float16, bfloat16, causal, non-causal, and prefix-padding coverage;
+- overall geometric-mean speedup 1.262x and float32-only geomean 1.492x; and
+- aggregate dispatch counts Triton 672, SDPA 1,848, reference 2,184.
+
+The matrix uses the selected PyTorch executable tolerance of atol=0.001 OR
+rtol=0.01, which is stricter than the TensorFlow download's defaults. Its
+machine-readable policy and full stdout/evidence are stored with SHA-256
+fingerprints; a crash, OOM, numerical failure, unauthorized skip, or empty run
+returns nonzero.
 
 Incremental peak CUDA allocation fell from 78 MiB to 22 MiB (71.8%) in the
 long-attention case. Long-causal, causal-padding, and medium-padding cases
@@ -249,7 +311,8 @@ applicable.
 
 ## 10. Limitations and next work
 
-- Reconcile the final organizer benchmark and shape matrix when published.
+- Reconcile the final PyTorch evaluator matrix and any later benchmark revision
+  when published; both currently supplied scripts are already checksum-frozen.
 - Retest and retune on any evaluation GPU; launch policy is measured only on the
   RTX 5070 Ti.
 - Packed QKV consumes bounded derived-weight memory and is deliberately limited
@@ -264,6 +327,12 @@ applicable.
 
 - Matrix: docs/results/rtx-5070-ti-2026-08-27.json
 - Profiler: docs/results/rtx-5070-ti-2026-08-27-profile.json
+- Untouched organizer default:
+  docs/results/rtx-5070-ti-2026-08-27-organizer-default.json
+- Supplied-contract validation matrix:
+  docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json
+- Organizer inputs: docs/ORGANIZER_INPUTS.md
+- Organizer checksums: benchmarks/reference/organizer_downloads.json
 - Requirements: docs/REQUIREMENTS.md
 - Kernel design: docs/KERNEL_DESIGN.md
 - Track 3 compliance: docs/TRACK3_COMPLIANCE.md

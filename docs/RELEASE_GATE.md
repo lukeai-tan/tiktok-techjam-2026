@@ -8,11 +8,12 @@ Date: 2026-08-27
 tests, target-GPU matrix, profiler proof, and reproduction documentation are
 complete and mutually consistent.
 
-**HOLD for a final organizer-submission claim.** The organizer's final shape
-matrix and any superseding benchmark have not been published in this
-repository, the repository must be made public, and the public demo video still
-requires a human recording/upload. Those are external submission tasks, not
-missing kernel implementation work.
+**HOLD for a final organizer-submission claim.** Both supplied benchmark files
+are now checksum-frozen, the untouched PyTorch default passes, and every
+feasible published shape signal passes the selected harness, but the final
+PyTorch evaluator matrix has not been supplied. The repository must also be
+made public, and the public demo video still requires a human recording/upload.
+Those are external submission tasks, not missing kernel implementation work.
 
 ## Review record
 
@@ -30,14 +31,23 @@ independent human or multi-agent audit.
   the explicit reference path.
 - The eager CUDA float32 path packs Q/K/V into one measured vendor GEMM through
   d_model=512; mutation-aware cache tests protect state-dict and update safety.
-- The target-GPU suite passes 66 tests, including tile boundaries,
-  causal and padding masks, all-masked robustness, TF32-disabled math,
+- The target-GPU suite passes 79 tests, including organizer-download checksum
+  locks, protected-definition parity, untouched-harness integration, tile
+  boundaries, causal and padding masks, all-masked robustness, TF32-disabled math,
   unsupported-input fallback, state-dict compatibility, fail-closed result
   accounting, packed-cache invalidation, portable line endings/path redaction,
   and fingerprint-linked artifact checks.
 
-### Performance and evidence review: PASS for provisional matrix
+### Performance and evidence review: PASS for all published inputs
 
+- Untouched organizer PyTorch default: 5/5 accuracy PASS, zero failed out of
+  2,621,440 elements, 1.9456 ms baseline versus 1.3788 ms optimized median
+  latency (1.411x), and Triton for all 1,950 optimized attention calls.
+- Source-derived untouched-harness matrix: 28/28 executable PASS with zero
+  failed out of 459,776,000 elements over 140 trials; one explicitly authorized
+  100000-token resource skip is separate and not counted as a pass.
+- Rigorous-matrix geomean: 1.262x across all dtypes and 1.492x for float32;
+  aggregate dispatch counts were Triton 672, SDPA 1,848, reference 2,184.
 - Target: NVIDIA GeForce RTX 5070 Ti under native Windows 11, driver 610.88,
   PyTorch 2.13.0+cu130, Triton 3.7.1, CUDA runtime 13.0.
 - Matrix: 7 requested / 7 completed / 7 PASS; 0 FAIL, OOM, or ERROR.
@@ -45,14 +55,14 @@ independent human or multi-agent audit.
   absolute error 0.000992358 under the executable `atol=0.001 OR rtol=0.01`
   rule.
 - Timing: 90 raw CUDA-event samples per model/case after warm-up, alternating
-  baseline/optimized order; median end-to-end speedup 1.236x-1.741x and 1.498x
+  baseline/optimized order; median end-to-end speedup 1.230x-1.752x and 1.501x
   geometric mean.
 - Auto timing selected SDPA for two short unmasked cases and custom Triton for
   all five masked, causal, long, or wider-head cases.
 - Profiler: `_attention_fwd` appeared 10 times for five two-layer forwards;
   dispatch counts were Triton 10, SDPA 0, reference 0.
 - Matrix and profile share implementation fingerprint
-  `314dfa1615fe17b610d4851dd2a55377561f34b5a409762bf7fe43a4e5c196de`.
+  `112124f9ca9811f5ed697339726b3c90c23b3847f5e3659ca7c8dfdd296e65d9`.
 - The inherited standalone Triton LayerNorm was removed after target-device
   measurements showed it was slower than native PyTorch LayerNorm.
 
@@ -70,9 +80,9 @@ independent human or multi-agent audit.
 
 ## External actions before submission
 
-1. Reconcile any final organizer benchmark, shape list, dtype, timing, backward,
-   and source-modification rules with `docs/REQUIREMENTS.md` and the reference
-   manifest.
+1. Obtain the final PyTorch evaluator/shape list and reconcile its dtype,
+   padding, causal, timing, backward, and source-modification rules with
+   `docs/REQUIREMENTS.md` and `docs/ORGANIZER_INPUTS.md`.
 2. Rerun the complete matrix and profiler if any implementation-fingerprinted
    path changes.
 3. Make the submission repository public and verify the Devpost code link works

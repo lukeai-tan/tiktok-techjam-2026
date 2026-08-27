@@ -11,6 +11,16 @@ and exploratory runs stay under ignored `results/`.
 - `rtx-5070-ti-2026-08-27-profile.json`: profiler summary for the
   `long-causal-padding` case, including `_attention_fwd` event proof and the top
   device-time events.
+- `rtx-5070-ti-2026-08-27-organizer-default.json`: the untouched downloaded
+  PyTorch harness with only the submitted `UserOptimizedTransformer` injected.
+  The organizer-default six-layer case passed 5/5 trials with zero failed
+  elements and measured a 1.411x median speedup; all 1,950 optimized attention
+  calls used Triton.
+- `rtx-5070-ti-2026-08-27-organizer-validation.json`: 29 source-derived entries
+  executed through the untouched PyTorch harness in isolated processes. All 28
+  feasible cases passed with 0/459,776,000 failed elements; the supplied
+  TensorFlow benchmark's designated 100,000-token resource skip is recorded
+  separately and is not counted as a pass.
 
 The matrix is labelled provisional because the organizer's final shape list is
 not present in the repository. These files prove the checked-in contract on the
@@ -20,7 +30,7 @@ matrix or a different GPU.
 The current artifacts were generated directly with fingerprint schema 2, which
 canonicalizes checkout line endings and redacts host-specific paths. They share
 implementation SHA-256
-`314dfa1615fe17b610d4851dd2a55377561f34b5a409762bf7fe43a4e5c196de`.
+`112124f9ca9811f5ed697339726b3c90c23b3847f5e3659ca7c8dfdd296e65d9`.
 No measured field was hand-edited.
 
 Regenerate from Windows PowerShell:
@@ -35,6 +45,12 @@ $python = ".venv\Scripts\python.exe"
   --attention-backend auto --steps 5 `
   --out docs/results/rtx-5070-ti-2026-08-27-profile.json `
   --trace results/rtx-5070-ti-profile-trace.json
+
+& $python benchmarks/run_organizer_torch.py --device cuda `
+  --evidence-out docs/results/rtx-5070-ti-2026-08-27-organizer-default.json
+
+& $python benchmarks/run_organizer_validation.py `
+  --out docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json
 ```
 
 Do not hand-edit measured values. Rerun the command after implementation,
