@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-08-27T08:14:40.080451+00:00",
+  "created_at_utc": "2026-08-27T16:48:19.509879+00:00",
   "framework": "pytorch",
   "organizer_script": {
     "path": "benchmarks/torch_transformer_benchmark.py",
@@ -12,7 +12,7 @@
     "class": "torch_transformer_benchmark.UserOptimizedTransformer",
     "injection_point": "UserOptimizedTransformer",
     "runner_path": "benchmarks/run_organizer_torch.py",
-    "runner_sha256": "0fdd50a643123ce076582464442a954d9e8db961390484fcc23d48a9bfd96baf"
+    "runner_sha256": "7f8754734e1dd029f44cc60db8a6b4eda3f1e87cb55767d383e0adfbe6309499"
   },
   "organizer_arguments": [
     "--device",
@@ -28,20 +28,20 @@
       "total_elements": 2621440
     },
     "baseline": {
-      "median_ms": 1.9456,
-      "mean_ms": 1.9843,
-      "p90_ms": 2.191,
-      "min_ms": 1.6912,
-      "tokens_per_second": 526307.14
+      "median_ms": 2.3021,
+      "mean_ms": 2.6158,
+      "p90_ms": 3.8913,
+      "min_ms": 1.854,
+      "tokens_per_second": 444812.03
     },
     "optimized": {
-      "median_ms": 1.3788,
-      "mean_ms": 1.4367,
-      "p90_ms": 1.5705,
-      "min_ms": 1.3543,
-      "tokens_per_second": 742648.96
+      "median_ms": 1.5335,
+      "mean_ms": 1.778,
+      "p90_ms": 2.7956,
+      "min_ms": 1.4953,
+      "tokens_per_second": 667765.72
     },
-    "speedup_median": 1.411
+    "speedup_median": 1.501
   },
   "attention_backend_counts": {
     "triton": 1950,
@@ -49,7 +49,7 @@
     "reference": 0
   },
   "environment": {
-    "captured_at_utc": "2026-08-27T08:14:40.129307+00:00",
+    "captured_at_utc": "2026-08-27T16:48:19.557879+00:00",
     "command": [
       "python",
       "benchmarks/run_organizer_torch.py",
@@ -59,9 +59,9 @@
       "docs\\results\\rtx-5070-ti-2026-08-27-organizer-default.json"
     ],
     "git": {
-      "commit": "0712bebfec5630dcaa28841b4ca80dd374508a80",
-      "dirty": true,
-      "changed_path_count": 27,
+      "commit": "134828aac303dba31c7a6a376b914b7386faee69",
+      "dirty": false,
+      "changed_path_count": 0,
       "implementation_fingerprint_schema": 2,
       "implementation_sha256": "112124f9ca9811f5ed697339726b3c90c23b3847f5e3659ca7c8dfdd296e65d9",
       "implementation_paths": [
@@ -93,13 +93,13 @@
       "wsl_distribution": null
     },
     "cpu": {
-      "name": "AMD Ryzen 9 9950X 16-Core Processor",
-      "logical_count": 32
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
     },
     "disk": {
       "path": ".",
-      "total_bytes": 999089500160,
-      "free_bytes": 474007683072
+      "total_bytes": 999125151744,
+      "free_bytes": 434482630656
     },
     "framework": {
       "torch": "2.13.0+cu130",
@@ -117,9 +117,9 @@
         12,
         0
       ],
-      "total_memory_bytes": 17094475776,
+      "total_memory_bytes": 17066033152,
       "multiprocessor_count": 70,
-      "driver_version": "610.88"
+      "driver_version": "616.56"
     }
   },
   "stdout": [
@@ -140,8 +140,8 @@
     "=== Performance benchmark ===",
     "timing excludes random-data generation and uses a fixed input",
     "CUDA latency is measured with torch.cuda.Event on the current stream",
-    "baseline : median=1.9456 ms | mean=1.9843 ms | p90=2.1910 ms | min=1.6912 ms | throughput=526307.14 token/s",
-    "optimized: median=1.3788 ms | mean=1.4367 ms | p90=1.5705 ms | min=1.3543 ms | throughput=742648.96 token/s",
-    "speedup  : 1.411x based on median latency"
+    "baseline : median=2.3021 ms | mean=2.6158 ms | p90=3.8913 ms | min=1.8540 ms | throughput=444812.03 token/s",
+    "optimized: median=1.5335 ms | mean=1.7780 ms | p90=2.7956 ms | min=1.4953 ms | throughput=667765.72 token/s",
+    "speedup  : 1.501x based on median latency"
   ]
 }
