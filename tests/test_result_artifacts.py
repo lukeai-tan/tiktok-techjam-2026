@@ -192,6 +192,10 @@ def test_organizer_validation_artifact_is_complete_green_and_fail_closed():
     assert evidence["matrix"]["sha256"] == hashlib.sha256(
         ORGANIZER_VALIDATION_MATRIX_PATH.read_bytes()
     ).hexdigest()
+    manifest_path = ROOT / evidence["organizer_sources"]["manifest_path"]
+    assert evidence["organizer_sources"]["manifest_sha256"] == hashlib.sha256(
+        manifest_path.read_bytes()
+    ).hexdigest()
     for path_key, hash_key in (
         ("runner_path", "runner_sha256"),
         ("validation_runner_path", "validation_runner_sha256"),

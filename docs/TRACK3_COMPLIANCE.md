@@ -62,7 +62,7 @@ Three items cannot be completed truthfully from repository code alone:
   attention calls.
 - Source-derived exact-harness matrix: 28/28 executable PASS, 0/459,776,000
   failed elements over 140 trials, plus one authorized resource skip excluded
-  from the pass count; 1.262x overall and 1.492x float32 geomean speedup.
+  from the pass count; 1.258x overall and 1.509x float32 geomean speedup.
 - 7 requested / 7 completed / 7 PASS; 0 FAIL, OOM, or ERROR.
 - 35 accuracy trials; 13,117,440 checked output elements; zero failures.
 - Maximum absolute error: `0.0009923577308654785`.

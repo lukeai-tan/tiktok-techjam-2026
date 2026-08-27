@@ -26,7 +26,6 @@ ORGANIZER_TORCH = ROOT / "benchmarks" / "torch_transformer_benchmark.py"
 ORGANIZER_TENSORFLOW = ROOT / "benchmarks" / "tensorflow_transformer_benchmark.py"
 VALIDATION_MATRIX = ROOT / "benchmarks" / "organizer_validation_matrix.json"
 SUBMISSION_TORCH = ROOT / "torch_transformer_benchmark.py"
-ROOT_TENSORFLOW = ROOT / "tensorflow_transformer_benchmark.py"
 
 PROTECTED_TORCH_DEFINITIONS = (
     "TransformerConfig",
@@ -106,13 +105,18 @@ def test_submission_preserves_organizer_pytorch_baseline_contract():
         assert organizer[name] == submission[name], name
 
 
-def test_tensorflow_copy_matches_supplied_download_after_eol_normalization():
-    def normalize(value: bytes) -> bytes:
-        return value.replace(b"\r\n", b"\n")
-
-    assert normalize(ORGANIZER_TENSORFLOW.read_bytes()) == normalize(
-        ROOT_TENSORFLOW.read_bytes()
+def test_tensorflow_download_is_the_single_canonical_copy():
+    artifact = next(
+        artifact
+        for artifact in _manifest()["artifacts"]
+        if artifact["framework"] == "tensorflow"
     )
+
+    assert artifact["path"] == "benchmarks/tensorflow_transformer_benchmark.py"
+    assert _manifest()["reconciliation"][
+        "tensorflow_download_is_single_canonical_copy"
+    ] is True
+    assert not (ROOT / "tensorflow_transformer_benchmark.py").exists()
 
 
 def test_manifest_matches_tensorflow_default_shape_axes():

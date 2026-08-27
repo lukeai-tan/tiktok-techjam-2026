@@ -243,7 +243,7 @@ The isolated exact-harness matrix produced:
 - sequence lengths 32, 128, and 1,024;
 - widths 32, 128, 512, and 1,024; heads 1, 2, 4, 8, and 16;
 - float32, float16, bfloat16, causal, non-causal, and prefix-padding coverage;
-- overall geometric-mean speedup 1.262x and float32-only geomean 1.492x; and
+- overall geometric-mean speedup 1.258x and float32-only geomean 1.509x; and
 - aggregate dispatch counts Triton 672, SDPA 1,848, reference 2,184.
 
 The matrix uses the selected PyTorch executable tolerance of atol=0.001 OR

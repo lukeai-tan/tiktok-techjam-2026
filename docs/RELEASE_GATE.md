@@ -46,7 +46,7 @@ independent human or multi-agent audit.
 - Source-derived untouched-harness matrix: 28/28 executable PASS with zero
   failed out of 459,776,000 elements over 140 trials; one explicitly authorized
   100000-token resource skip is separate and not counted as a pass.
-- Rigorous-matrix geomean: 1.262x across all dtypes and 1.492x for float32;
+- Rigorous-matrix geomean: 1.258x across all dtypes and 1.509x for float32;
   aggregate dispatch counts were Triton 672, SDPA 1,848, reference 2,184.
 - Target: NVIDIA GeForce RTX 5070 Ti under native Windows 11, driver 610.88,
   PyTorch 2.13.0+cu130, Triton 3.7.1, CUDA runtime 13.0.

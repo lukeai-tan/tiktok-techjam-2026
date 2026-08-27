@@ -76,8 +76,8 @@ but are not silently treated as the PyTorch evaluator matrix.
   Triton.
 - The source-derived exact-harness matrix is 28/28 executable PASS with zero
   failures across 459,776,000 elements; its one source-authorized 100000-token
-  resource skip is not counted as a pass. Overall geomean is 1.262x and the
-  float32 subset geomean is 1.492x.
+  resource skip is not counted as a pass. Overall geomean is 1.258x and the
+  float32 subset geomean is 1.509x.
 - The seven-case provisional float32 matrix is 7/7 PASS across five seeds per
   case with zero failed output elements.
 - Median end-to-end speedup ranges from 1.230x to 1.752x; geomean is 1.501x.

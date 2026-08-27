@@ -26,8 +26,7 @@
       "size_bytes": 54531,
       "sha256": "00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798",
       "received_at_local": "2026-08-27T15:29:58.3318818+08:00",
-      "role": "untouched alternative-framework benchmark and shape-scope cross-check",
-      "normalized_copy": "tensorflow_transformer_benchmark.py"
+      "role": "untouched alternative-framework benchmark and shape-scope cross-check"
     }
   ],
   "pytorch_contract": {
@@ -82,7 +81,7 @@
   },
   "reconciliation": {
     "baseline_transformer_definitions_match_selected_submission_copy": true,
-    "tensorflow_normalized_content_matches_root_copy": true,
+    "tensorflow_download_is_single_canonical_copy": true,
     "framework_contracts_are_not_identical": true,
     "final_cross_framework_evaluator_matrix_available": false
   }

@@ -34,7 +34,9 @@ code:
 ```
 
 The TensorFlow file is not a second implementation requirement. It is retained
-untouched and used to audit the organizer's broader shape signals. Its default
+untouched as the single canonical copy under `benchmarks/` and used to audit
+the organizer's broader shape signals; no root TensorFlow submission copy is
+needed because PyTorch is the selected framework. Its default
 one-factor-at-a-time axes are:
 
 - batch sizes: 1, 4, 16, 128, 10000;

@@ -48,7 +48,7 @@ from both supplied files: **28/28 executable cases passed**, with **0 failed
 elements out of 459,776,000 across 140 accuracy trials**. The matrix covers
 float32, float16, bfloat16, causal attention, prefix padding, batch sizes through
 10,000, model widths through 1,024, head counts 1/2/4/16, and sequence length
-1,024. Overall geomean speedup was **1.262x**; the float32 subset was **1.492x**.
+1,024. Overall geomean speedup was **1.258x**; the float32 subset was **1.509x**.
 The TensorFlow script's designated 100,000-token quadratic stress case is the
 single source-authorized resource skip and is not counted as a pass. See the
 [validation artifact](docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json).
@@ -195,8 +195,6 @@ The matrix runner fails closed:
 - zero executed cases fail;
 - only a nonempty all-PASS result exits zero.
 
-sweep.py remains as a compatibility entry point for the same runner.
-
 ## Repository layout
 
 ~~~text
@@ -224,6 +222,7 @@ docs/
   TECH_REPORT.md                      measured technical report
   TRACK3_COMPLIANCE.md                brief-to-evidence audit and external holds
   results/                            curated raw evidence
+notebooks/colab_benchmark.ipynb       fail-closed Colab reproduction workflow
 DEMO_RUNBOOK.md                       public walkthrough sequence
 ~~~
 
