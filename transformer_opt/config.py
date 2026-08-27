@@ -18,6 +18,8 @@ SUPPORTED_HEAD_DIMS = frozenset({16, 32, 64, 128})
 SUPPORTED_DTYPES = frozenset({torch.float16, torch.float32})
 MIN_CUDA_CAPABILITY = (8, 0)
 MAX_SEQUENCE_LENGTH = 8192
+SDPA_SHORT_MAX_SEQUENCE_LENGTH = 128
+SDPA_SHORT_MAX_HEAD_DIM = 32
 
 
 @dataclass(frozen=True)
@@ -32,6 +34,28 @@ class AttentionLaunchConfig:
     block_n: int
     num_warps: int
     num_stages: int
+
+
+def prefer_triton_attention(
+    q: torch.Tensor,
+    valid_token_mask: Optional[torch.Tensor],
+    causal: bool,
+) -> bool:
+    """Return the measured RTX 5070 Ti auto-routing preference.
+
+    PyTorch SDPA wins the launch-bound, unmasked float32 corner. Triton wins the
+    measured masked, causal, longer-sequence, and wider-head regimes. Forced
+    backend selection remains available independently of this performance
+    policy.
+    """
+    short_unmasked_float32 = (
+        q.dtype is torch.float32
+        and q.shape[1] <= SDPA_SHORT_MAX_SEQUENCE_LENGTH
+        and q.shape[-1] <= SDPA_SHORT_MAX_HEAD_DIM
+        and valid_token_mask is None
+        and not causal
+    )
+    return not short_unmasked_float32
 
 
 def attention_launch_config(head_dim: int, seq_len: int) -> AttentionLaunchConfig:

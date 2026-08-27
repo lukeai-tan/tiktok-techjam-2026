@@ -19,7 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tools.capture_environment import capture_environment
+from tools.capture_environment import capture_environment, display_path
 from torch_transformer_benchmark import (
     BaselineTransformer,
     TransformerConfig,
@@ -418,7 +418,7 @@ def main() -> int:
         "schema_version": 1,
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "manifest": {
-            "path": str(args.manifest.resolve()),
+            "path": display_path(args.manifest),
             "status": manifest.get("status"),
             "organizer_matrix_available": manifest.get("organizer_matrix_available"),
         },

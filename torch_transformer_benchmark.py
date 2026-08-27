@@ -207,9 +207,90 @@ class UserOptimizedTransformer(BaselineTransformer):
             "sdpa": 0,
             "reference": 0,
         }
+        # Packed QKV tensors are derived, non-persistent inference data. Keeping
+        # them in a plain dictionary preserves the baseline's exact state_dict
+        # surface; the parameter signature below invalidates stale entries after
+        # a device/dtype move or any in-place parameter update.
+        self._packed_qkv_cache: Dict[
+            int,
+            Tuple[Tuple[Tuple[object, ...], ...], torch.Tensor, torch.Tensor],
+        ] = {}
 
     def reset_attention_backend_counts(self) -> None:
         self.attention_backend_counts = {"triton": 0, "sdpa": 0, "reference": 0}
+
+    @staticmethod
+    def _qkv_signature(
+        attn: "BaselineSelfAttention",
+    ) -> Tuple[Tuple[object, ...], ...]:
+        tensors = (
+            attn.q_proj.weight,
+            attn.k_proj.weight,
+            attn.v_proj.weight,
+            attn.q_proj.bias,
+            attn.k_proj.bias,
+            attn.v_proj.bias,
+        )
+        return tuple(
+            (
+                tensor.data_ptr(),
+                tensor._version,
+                tensor.device,
+                tensor.dtype,
+            )
+            for tensor in tensors
+            if tensor is not None
+        )
+
+    def _project_qkv(
+        self,
+        attn: "BaselineSelfAttention",
+        x: torch.Tensor,
+        *,
+        is_compiling: bool,
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        batch, seq_len, _ = x.shape
+        num_heads, head_dim = attn.num_heads, attn.head_dim
+
+        # Target-device measurements showed a cached combined projection wins
+        # through d_model=512 but is neutral at d_model=1024. Restrict the path
+        # to the validated eager-fp32 inference regime; training, CPU,
+        # low-precision, compilation, and wider models retain the exact three
+        # projection calls.
+        use_packed = (
+            x.is_cuda
+            and x.dtype == torch.float32
+            and not torch.is_grad_enabled()
+            and not is_compiling
+            and attn.d_model <= 512
+        )
+        if not use_packed:
+            split = lambda tensor: tensor.view(
+                batch, seq_len, num_heads, head_dim
+            )
+            return (
+                split(attn.q_proj(x)),
+                split(attn.k_proj(x)),
+                split(attn.v_proj(x)),
+            )
+
+        signature = self._qkv_signature(attn)
+        cached = self._packed_qkv_cache.get(id(attn))
+        if cached is None or cached[0] != signature:
+            packed_weight = torch.cat(
+                (attn.q_proj.weight, attn.k_proj.weight, attn.v_proj.weight),
+                dim=0,
+            ).detach()
+            packed_bias = torch.cat(
+                (attn.q_proj.bias, attn.k_proj.bias, attn.v_proj.bias),
+                dim=0,
+            ).detach()
+            cached = (signature, packed_weight, packed_bias)
+            self._packed_qkv_cache[id(attn)] = cached
+
+        projected = F.linear(x, cached[1], cached[2])
+        qkv = projected.view(batch, seq_len, 3, num_heads, head_dim)
+        return qkv.unbind(dim=2)
 
     def _attention(
         self,
@@ -221,14 +302,9 @@ class UserOptimizedTransformer(BaselineTransformer):
         from transformer_opt import attention_forward
 
         batch, seq_len, _ = x.shape
-        num_heads, head_dim = attn.num_heads, attn.head_dim
-
-        def split(t: torch.Tensor) -> torch.Tensor:
-            return t.view(batch, seq_len, num_heads, head_dim)
-
-        q = split(attn.q_proj(x))
-        k = split(attn.k_proj(x))
-        v = split(attn.v_proj(x))
+        compiler = getattr(torch, "compiler", None)
+        is_compiling = compiler is not None and compiler.is_compiling()
+        q, k, v = self._project_qkv(attn, x, is_compiling=is_compiling)
         selected_backend = self.attention_backend
         if selected_backend == "auto" and x.is_cuda and x.dtype != torch.float32:
             # The executable benchmark compares a deep stack against explicit
@@ -245,8 +321,6 @@ class UserOptimizedTransformer(BaselineTransformer):
             scale=attn.scale,
             backend=selected_backend,
         )
-        compiler = getattr(torch, "compiler", None)
-        is_compiling = compiler is not None and compiler.is_compiling()
         if not is_compiling:
             self.attention_backend_counts[dispatch.selected] += 1
         context = context.reshape(batch, seq_len, attn.d_model)

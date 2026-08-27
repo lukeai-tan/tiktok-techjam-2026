@@ -69,6 +69,41 @@ def test_explicit_all_valid_mask_matches_no_mask():
     assert result.passed
 
 
+def test_packed_qkv_cache_is_reused_and_invalidated():
+    config = TransformerConfig(1, 32, 64, 4, 256, 1, False)
+    baseline = BaselineTransformer(config).cuda().eval()
+    optimized = UserOptimizedTransformer(
+        config,
+        attention_backend="triton",
+    ).cuda().eval()
+    copy_model_weights(baseline, optimized, strict=True)
+    x = torch.randn(1, 32, 64, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        first = optimized(x)
+        cached = optimized._packed_qkv_cache[id(optimized.layers[0].attention)]
+        first_packed_weight = cached[1]
+        second = optimized(x)
+
+    assert optimized._packed_qkv_cache[id(optimized.layers[0].attention)][1] is (
+        first_packed_weight
+    )
+    assert torch.equal(first, second)
+    assert baseline.state_dict().keys() == optimized.state_dict().keys()
+
+    # Any in-place parameter update increments its version and must rebuild the
+    # derived packed tensors before the next inference.
+    with torch.no_grad():
+        baseline.layers[0].attention.q_proj.weight.add_(0.01)
+        optimized.layers[0].attention.q_proj.weight.add_(0.01)
+    with torch.inference_mode():
+        reference = baseline(x)
+        actual = optimized(x)
+    refreshed = optimized._packed_qkv_cache[id(optimized.layers[0].attention)][1]
+    assert refreshed is not first_packed_weight
+    assert compare_outputs(reference, actual, rtol=0.01, atol=0.001).passed
+
+
 @pytest.mark.parametrize("dtype", [torch.float16, torch.bfloat16])
 @pytest.mark.parametrize("causal,padding_ratio", [(False, 0.0), (True, 0.3)])
 def test_low_precision_auto_uses_correctness_first_reference(

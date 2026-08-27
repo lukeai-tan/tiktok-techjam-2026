@@ -1,5 +1,6 @@
-# Known-good target versions. Select the CUDA or CPU PyTorch index in the
-# install command; the CUDA wheel installs its compatible Triton dependency.
+# Known-good target versions. Install PyTorch from the CUDA or CPU index first;
+# native Windows needs the matching Triton fork listed below.
 torch==2.13.0
+triton-windows==3.7.1.post27; platform_system == "Windows"
 numpy==2.5.2
 pytest==9.1.1

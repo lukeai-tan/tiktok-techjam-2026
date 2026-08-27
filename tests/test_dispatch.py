@@ -56,10 +56,53 @@ def test_cuda_auto_selects_custom_kernel():
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
-def test_cuda_float32_auto_selects_custom_kernel():
+def test_cuda_short_unmasked_float32_auto_selects_measured_sdpa_path():
     q = torch.randn(1, 16, 2, 32, device="cuda", dtype=torch.float32)
     with torch.inference_mode():
         output, decision = attention_forward(q, q, q, backend="auto")
+    assert output.shape == q.shape
+    assert decision.selected == "sdpa"
+    assert "measured short unmasked" in decision.reason
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+def test_cuda_short_wide_head_float32_auto_selects_custom_kernel():
+    q = torch.randn(1, 16, 2, 64, device="cuda", dtype=torch.float32)
+    with torch.inference_mode():
+        output, decision = attention_forward(q, q, q, backend="auto")
+    assert output.shape == q.shape
+    assert decision.selected == "triton"
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+@pytest.mark.parametrize(
+    "seq_len,causal,with_mask",
+    [
+        (129, False, False),
+        (16, True, False),
+        (16, False, True),
+    ],
+)
+def test_float32_auto_keeps_triton_outside_short_unmasked_corner(
+    seq_len,
+    causal,
+    with_mask,
+):
+    q = torch.randn(1, seq_len, 2, 32, device="cuda", dtype=torch.float32)
+    valid_mask = (
+        torch.ones(1, seq_len, device="cuda", dtype=torch.bool)
+        if with_mask
+        else None
+    )
+    with torch.inference_mode():
+        output, decision = attention_forward(
+            q,
+            q,
+            q,
+            valid_mask,
+            causal=causal,
+            backend="auto",
+        )
     assert output.shape == q.shape
     assert decision.selected == "triton"
 

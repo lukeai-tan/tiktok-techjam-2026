@@ -8,16 +8,50 @@ from pathlib import Path
 
 import pytest
 
+import tools.capture_environment as capture_environment
 from tools.capture_environment import implementation_fingerprint
 
 
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX_PATH = ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-27.json"
 PROFILE_PATH = ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-27-profile.json"
+SDPA_CASES = {"tiny-overhead", "medium-throughput"}
 
 
 def _load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_implementation_fingerprint_ignores_checkout_line_endings(
+    tmp_path,
+    monkeypatch,
+):
+    source = tmp_path / "sample.py"
+    monkeypatch.setattr(capture_environment, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(capture_environment, "IMPLEMENTATION_PATHS", ("sample.py",))
+
+    source.write_bytes(b"first = 1\nsecond = 2\n")
+    lf_fingerprint, lf_paths = implementation_fingerprint()
+    source.write_bytes(b"first = 1\r\nsecond = 2\r\n")
+    crlf_fingerprint, crlf_paths = implementation_fingerprint()
+
+    assert lf_fingerprint == crlf_fingerprint
+    assert lf_paths == crlf_paths == ["sample.py"]
+
+
+def test_environment_paths_do_not_expose_host_home(monkeypatch):
+    monkeypatch.setattr(
+        capture_environment.sys,
+        "executable",
+        str(Path.home() / "venv" / "python"),
+    )
+    payload = capture_environment.capture_environment(["capture-environment"])
+
+    assert payload["python"]["executable"] == "python"
+    assert payload["disk"]["path"] == "."
+    assert payload["git"]["implementation_fingerprint_schema"] == 2
+    assert payload["cpu"]["name"]
+    assert payload["cpu"]["logical_count"]
 
 
 def test_curated_matrix_is_complete_green_and_current():
@@ -25,7 +59,12 @@ def test_curated_matrix_is_complete_green_and_current():
     current_fingerprint, current_paths = implementation_fingerprint()
     captured_git = matrix["environment"]["git"]
     assert captured_git["implementation_sha256"] == current_fingerprint
+    assert captured_git["implementation_fingerprint_schema"] == 2
+    assert "implementation_fingerprint_migrated_from_sha256" not in captured_git
     assert captured_git["implementation_paths"] == current_paths
+    assert matrix["manifest"]["path"] == "benchmarks/official_shapes.json"
+    assert Path(matrix["environment"]["python"]["executable"]).stem == "python"
+    assert matrix["environment"]["disk"]["path"] == "."
     assert matrix["manifest"]["status"] == "provisional"
     assert matrix["summary"] == {
         "requested": 7,
@@ -44,22 +83,27 @@ def test_curated_matrix_is_complete_green_and_current():
         timing = result["timing"]
         assert len(timing["baseline"]["raw_ms"]) == 90
         assert len(timing["optimized"]["raw_ms"]) == 90
-        assert timing["backend_counts"]["triton"] > 0
-        assert timing["backend_counts"]["sdpa"] == 0
+        selected = "sdpa" if result["case_id"] in SDPA_CASES else "triton"
+        other = "triton" if selected == "sdpa" else "sdpa"
+        assert timing["backend_counts"][selected] > 0
+        assert timing["backend_counts"][other] == 0
         assert timing["backend_counts"]["reference"] == 0
         assert result["peak_memory"]["baseline"] is not None
         assert result["peak_memory"]["optimized"] is not None
         speedups.append(timing["speedup_median"])
     assert total_failed == 0
-    assert statistics.geometric_mean(speedups) == pytest.approx(1.360, abs=0.001)
+    assert statistics.geometric_mean(speedups) == pytest.approx(1.498, abs=0.001)
 
 
 def test_curated_profile_proves_custom_kernel_for_same_implementation():
     matrix = _load(MATRIX_PATH)
     profile = _load(PROFILE_PATH)
+    assert Path(profile["environment"]["python"]["executable"]).stem == "python"
+    assert profile["environment"]["disk"]["path"] == "."
     assert profile["environment"]["git"]["implementation_sha256"] == (
         matrix["environment"]["git"]["implementation_sha256"]
     )
+    assert profile["environment"]["git"]["implementation_fingerprint_schema"] == 2
     assert profile["custom_kernel_expected"] is True
     assert profile["custom_kernel_profiler_proven"] is True
     assert profile["backend_counts"] == {"triton": 10, "sdpa": 0, "reference": 0}

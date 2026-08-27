@@ -30,6 +30,7 @@ IMPLEMENTATION_PATHS = (
     "tools/triton-cc",
     "scripts/run-wsl.ps1",
 )
+IMPLEMENTATION_FINGERPRINT_SCHEMA = 2
 
 
 def _run(command: list[str], cwd: Path = REPO_ROOT) -> Optional[str]:
@@ -49,8 +50,65 @@ def _run(command: list[str], cwd: Path = REPO_ROOT) -> Optional[str]:
     return completed.stdout.strip() or None
 
 
+def display_path(path: str | Path) -> str:
+    """Render repository paths portably and external paths without home details."""
+    candidate = Path(path).resolve()
+    try:
+        return candidate.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return candidate.name
+
+
+def cpu_name() -> Optional[str]:
+    """Return a useful CPU model without collecting user or host identity."""
+    if platform.system() == "Windows":
+        try:
+            import winreg
+
+            with winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
+                r"HARDWARE\DESCRIPTION\System\CentralProcessor\0",
+            ) as key:
+                value, _ = winreg.QueryValueEx(key, "ProcessorNameString")
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        except (OSError, ImportError):
+            pass
+    cpuinfo = Path("/proc/cpuinfo")
+    if cpuinfo.is_file():
+        try:
+            for line in cpuinfo.read_text(encoding="utf-8").splitlines():
+                if line.lower().startswith("model name"):
+                    return line.partition(":")[2].strip() or None
+        except OSError:
+            pass
+    return platform.processor() or None
+
+
+def nvidia_driver_version() -> Optional[str | int]:
+    """Prefer NVIDIA's reported display-driver version when available."""
+    reported = _run(
+        ["nvidia-smi", "--query-gpu=driver_version", "--format=csv,noheader"]
+    )
+    if reported:
+        return reported.splitlines()[0].strip()
+    driver_getter = getattr(torch.cuda, "driver_version", None)
+    if callable(driver_getter):
+        try:
+            return driver_getter()
+        except RuntimeError:
+            pass
+    return None
+
+
 def implementation_fingerprint() -> tuple[str, list[str]]:
-    """Hash implementation bytes even when the Git worktree is uncommitted."""
+    """Hash implementation content independent of checkout line endings.
+
+    Every fingerprinted path is text. Git stores these files with LF line
+    endings, but a Windows checkout may materialize CRLF bytes. Canonicalizing
+    CRLF here keeps the same implementation fingerprint across Windows, WSL,
+    and Linux while still detecting content changes in an uncommitted worktree.
+    """
     files: list[Path] = []
     for relative in IMPLEMENTATION_PATHS:
         candidate = REPO_ROOT / relative
@@ -65,7 +123,7 @@ def implementation_fingerprint() -> tuple[str, list[str]]:
         relative_paths.append(relative)
         digest.update(relative.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(path.read_bytes())
+        digest.update(path.read_bytes().replace(b"\r\n", b"\n"))
         digest.update(b"\0")
     return digest.hexdigest(), relative_paths
 
@@ -90,12 +148,13 @@ def capture_environment(command: Optional[list[str]] = None) -> dict[str, Any]:
             "commit": commit,
             "dirty": bool(git_status),
             "changed_path_count": len(git_status.splitlines()) if git_status else 0,
+            "implementation_fingerprint_schema": IMPLEMENTATION_FINGERPRINT_SCHEMA,
             "implementation_sha256": implementation_sha256,
             "implementation_paths": implementation_paths,
         },
         "python": {
             "version": platform.python_version(),
-            "executable": sys.executable,
+            "executable": display_path(sys.executable),
             "implementation": platform.python_implementation(),
         },
         "os": {
@@ -105,8 +164,12 @@ def capture_environment(command: Optional[list[str]] = None) -> dict[str, Any]:
             "processor": platform.processor() or None,
             "wsl_distribution": os.environ.get("WSL_DISTRO_NAME"),
         },
+        "cpu": {
+            "name": cpu_name(),
+            "logical_count": os.cpu_count(),
+        },
         "disk": {
-            "path": str(REPO_ROOT),
+            "path": display_path(REPO_ROOT),
             "total_bytes": disk.total,
             "free_bytes": disk.free,
         },
@@ -124,20 +187,13 @@ def capture_environment(command: Optional[list[str]] = None) -> dict[str, Any]:
     if torch.cuda.is_available():
         device = torch.cuda.current_device()
         properties = torch.cuda.get_device_properties(device)
-        driver_version = None
-        driver_getter = getattr(torch.cuda, "driver_version", None)
-        if callable(driver_getter):
-            try:
-                driver_version = driver_getter()
-            except RuntimeError:
-                driver_version = None
         result["gpu"] = {
             "index": device,
             "name": properties.name,
             "compute_capability": list(torch.cuda.get_device_capability(device)),
             "total_memory_bytes": properties.total_memory,
             "multiprocessor_count": properties.multi_processor_count,
-            "driver_version": driver_version,
+            "driver_version": nvidia_driver_version(),
         }
     return result
 

@@ -8,7 +8,11 @@ from typing import Optional, Tuple
 import torch
 import torch.nn.functional as F
 
-from transformer_opt.config import ATTENTION_BACKENDS, triton_attention_support
+from transformer_opt.config import (
+    ATTENTION_BACKENDS,
+    prefer_triton_attention,
+    triton_attention_support,
+)
 from transformer_opt.kernels.attention import triton_attention, triton_available
 
 
@@ -106,6 +110,11 @@ def attention_forward(
     _validate_backend(backend)
     support = triton_attention_support(q, k, v, valid_token_mask)
     triton_ready = triton_available()
+    triton_preferred = support.supported and prefer_triton_attention(
+        q,
+        valid_token_mask,
+        causal,
+    )
 
     if backend == "triton":
         if not triton_ready:
@@ -122,7 +131,7 @@ def attention_forward(
         )
         return output, AttentionDispatch("triton", "triton", support.reason)
 
-    if backend == "auto" and triton_ready and support.supported:
+    if backend == "auto" and triton_ready and triton_preferred:
         output = triton_attention(
             q,
             k,
@@ -144,6 +153,9 @@ def attention_forward(
 
     reason = "explicit SDPA backend"
     if backend == "auto":
-        reason = support.reason if triton_ready else "Triton/CUDA is unavailable"
+        if triton_ready and support.supported:
+            reason = "measured short unmasked float32 regime prefers PyTorch SDPA"
+        else:
+            reason = support.reason if triton_ready else "Triton/CUDA is unavailable"
     output = _sdpa_attention(q, k, v, valid_token_mask, causal, scale)
     return output, AttentionDispatch(backend, "sdpa", reason)
