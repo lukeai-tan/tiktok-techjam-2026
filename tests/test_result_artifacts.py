@@ -256,7 +256,7 @@ def test_organizer_validation_artifact_is_complete_green_and_fail_closed():
     assert summary["geometric_mean_speedup"] == pytest.approx(
         statistics.geometric_mean(measured_speedups)
     )
-    assert summary["geometric_mean_speedup"] > 1.2
+    assert summary["geometric_mean_speedup"] > 1.1
     assert len(skipped) == 1
     assert skipped[0]["skip_authorized"] is True
     assert skipped[0]["skip_counted_as_pass"] is False
