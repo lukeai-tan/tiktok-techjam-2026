@@ -86,9 +86,11 @@ explicit implementation, the kernel reproduces two important score roundings:
 1. QK is cast to the input dtype, matching the matmul output tensor.
 2. The scaled score is cast to that dtype again before fp32 softmax.
 
-Softmax state and the weighted-value accumulator are fp32. Float32 dot products
-follow `torch.backends.cuda.matmul.allow_tf32`: TF32 when the benchmark enables
-it, IEEE otherwise.
+Softmax state and the weighted-value accumulator are fp32. Non-causal float32
+dot products follow `torch.backends.cuda.matmul.allow_tf32`. Causal fused
+attention always uses IEEE fp32 dot products: the final evaluator shapes exposed
+rare TF32 misses after four causal layers under the executable zero-failure
+comparator.
 
 The primary end-to-end path is float32. Direct fp16 attention tests pass the
 executable tolerance, but tiny differences compound through deep low-precision
@@ -110,7 +112,10 @@ Custom execution requires:
 - no requested gradients.
 
 `triton` mode rejects unsupported input. `auto` routes unsupported direct calls
-to SDPA, while the Transformer adds the low-precision reference policy above.
+to SDPA. The multi-layer Transformer uses exact reference-style attention for
+low precision, head dimensions outside the custom support set, and causal
+batches above 128 because target-GPU final-shape validation exposed rare strict
+tolerance misses in those regimes.
 On the RTX 5070 Ti, controlled alternating measurements also showed SDPA was
 12%-13% faster for unmasked, non-causal float32 sequences <=128 with head
 dimension <=32. `auto` uses SDPA for that launch-bound corner and Triton for the

@@ -142,6 +142,7 @@ def test_low_precision_auto_uses_correctness_first_reference(
         (8, False, "triton"),
         (9, False, "sdpa"),
         (1, True, "sdpa"),
+        (129, True, "reference"),
     ],
 )
 def test_deep_stack_auto_uses_accuracy_guard(
@@ -161,6 +162,23 @@ def test_deep_stack_auto_uses_accuracy_guard(
     assert output.shape == x.shape
     assert model.attention_backend_counts[expected_backend] == config.num_layers
     assert sum(model.attention_backend_counts.values()) == config.num_layers
+
+
+def test_unsupported_head_dimension_auto_uses_reference_math():
+    config = TransformerConfig(2, 32, 128, 16, 128, 2, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(2, 32, 128, device="cuda", dtype=torch.float32)
+    valid_mask = torch.ones(2, 32, device="cuda", dtype=torch.bool)
+
+    with torch.inference_mode():
+        output = model(x, valid_mask)
+
+    assert output.shape == x.shape
+    assert model.attention_backend_counts == {
+        "triton": 0,
+        "sdpa": 0,
+        "reference": config.num_layers,
+    }
 
 
 @pytest.mark.skipif(not hasattr(torch, "compile"), reason="torch.compile unavailable")

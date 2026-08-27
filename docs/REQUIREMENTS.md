@@ -112,17 +112,20 @@ Correctness validation must cover:
   in Triton with online softmax and fp32 softmax accumulation.
 - The custom path must not materialize a `[B,H,S,S]` score tensor or dense
   causal mask.
-- PyTorch SDPA is the safe fallback and comparison backend.
+- PyTorch SDPA and explicit reference-style attention are the safe fallback and
+  comparison backends.
 - `auto` dispatch may select custom Triton only inside its tested support
   envelope; forced `triton` mode must fail clearly when unsupported.
 - Backend choice must be inspectable in tests/results. Import or compilation
   errors may not be swallowed as successful custom execution.
-- The benchmark-default float32 custom path follows the benchmark's TF32 toggle
-  (TF32 when enabled, IEEE otherwise). Automatic end-to-end low-precision runs
-  use the explicit reference-style path because fused FP16/BF16 differences
-  compounded beyond the checked-in benchmark's stricter tolerance in
-  target-GPU deep-stack tests. CPU, unsupported layouts/head widths, and training with
-  gradients fall back unless explicitly added and tested.
+- The benchmark-default non-causal float32 custom path follows the benchmark's
+  TF32 toggle. Causal custom attention uses IEEE fp32 dot products because final
+  evaluator testing found rare TF32 misses under the zero-failure comparator.
+  Automatic end-to-end low-precision runs, unsupported custom head widths, and
+  causal batches above 128 use the explicit reference-style path after the same
+  testing exposed rare SDPA or fused-attention misses. CPU, other unsupported
+  layouts, and training with gradients fall back unless explicitly added and
+  tested.
 
 ## Benchmark integrity
 

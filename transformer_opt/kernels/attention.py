@@ -235,7 +235,11 @@ def triton_attention(
         BLOCK_N=launch.block_n,
         HAS_MASK=valid_token_mask is not None,
         CAUSAL=causal,
-        ALLOW_TF32=torch.backends.cuda.matmul.allow_tf32,
+        # The strict end-to-end comparator exposed rare causal-stack misses
+        # when TF32 dot products were used inside the fused kernel. Preserve
+        # TF32 on the measured non-causal path, but use IEEE fp32 for causal
+        # attention so masked rows stay within the executable tolerance.
+        ALLOW_TF32=torch.backends.cuda.matmul.allow_tf32 and not causal,
         num_warps=launch.num_warps,
         num_stages=launch.num_stages,
     )
