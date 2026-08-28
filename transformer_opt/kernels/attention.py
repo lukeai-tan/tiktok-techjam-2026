@@ -60,6 +60,7 @@ if triton is not None:
         softmax_scale,
         N_CTX: tl.constexpr,
         HEAD_DIM: tl.constexpr,
+        DOT_HEAD_DIM: tl.constexpr,
         BLOCK_M: tl.constexpr,
         BLOCK_N: tl.constexpr,
         HAS_MASK: tl.constexpr,
@@ -72,18 +73,22 @@ if triton is not None:
         head = batch_head - batch * num_heads
 
         offs_m = query_block * BLOCK_M + tl.arange(0, BLOCK_M)
-        offs_d = tl.arange(0, HEAD_DIM)
+        offs_d = tl.arange(0, DOT_HEAD_DIM)
         q_offsets = (
             batch * stride_qb
             + offs_m[:, None] * stride_qs
             + head * stride_qh
             + offs_d[None, :] * stride_qd
         )
-        q = tl.load(q_ptr + q_offsets, mask=offs_m[:, None] < N_CTX, other=0.0)
+        q = tl.load(
+            q_ptr + q_offsets,
+            mask=(offs_m[:, None] < N_CTX) & (offs_d[None, :] < HEAD_DIM),
+            other=0.0,
+        )
 
         running_max = tl.full((BLOCK_M,), -float("inf"), tl.float32)
         running_sum = tl.zeros((BLOCK_M,), tl.float32)
-        accumulator = tl.zeros((BLOCK_M, HEAD_DIM), tl.float32)
+        accumulator = tl.zeros((BLOCK_M, DOT_HEAD_DIM), tl.float32)
 
         for start_n in range(0, N_CTX, BLOCK_N):
             offs_n = start_n + tl.arange(0, BLOCK_N)
@@ -100,8 +105,17 @@ if triton is not None:
                 + offs_d[None, :] * stride_vd
             )
             key_in_bounds = offs_n < N_CTX
-            k = tl.load(k_ptr + k_offsets, mask=key_in_bounds[:, None], other=0.0)
-            v = tl.load(v_ptr + v_offsets, mask=key_in_bounds[:, None], other=0.0)
+            head_in_bounds = offs_d < HEAD_DIM
+            k = tl.load(
+                k_ptr + k_offsets,
+                mask=key_in_bounds[:, None] & head_in_bounds[None, :],
+                other=0.0,
+            )
+            v = tl.load(
+                v_ptr + v_offsets,
+                mask=key_in_bounds[:, None] & head_in_bounds[None, :],
+                other=0.0,
+            )
 
             key_valid = key_in_bounds
             if HAS_MASK:
@@ -168,7 +182,11 @@ if triton is not None:
             + head * stride_oh
             + offs_d[None, :] * stride_od
         )
-        tl.store(out_ptr + out_offsets, normalized, mask=offs_m[:, None] < N_CTX)
+        tl.store(
+            out_ptr + out_offsets,
+            normalized,
+            mask=(offs_m[:, None] < N_CTX) & (offs_d[None, :] < HEAD_DIM),
+        )
 
 
 def triton_attention(
@@ -201,6 +219,7 @@ def triton_attention(
     mask_stride_b = valid_token_mask.stride(0) if valid_token_mask is not None else 0
     mask_stride_s = valid_token_mask.stride(1) if valid_token_mask is not None else 0
     softmax_scale = head_dim**-0.5 if scale is None else float(scale)
+    dot_head_dim = max(16, head_dim)
     grid = (triton.cdiv(seq_len, launch.block_m), batch * num_heads)
 
     _attention_fwd[grid](
@@ -231,6 +250,7 @@ def triton_attention(
         softmax_scale,
         N_CTX=seq_len,
         HEAD_DIM=head_dim,
+        DOT_HEAD_DIM=dot_head_dim,
         BLOCK_M=launch.block_m,
         BLOCK_N=launch.block_n,
         HAS_MASK=valid_token_mask is not None,

@@ -9,7 +9,7 @@ import torch
 
 
 ATTENTION_BACKENDS = ("auto", "triton", "sdpa", "reference")
-SUPPORTED_HEAD_DIMS = frozenset({16, 32, 64, 128})
+SUPPORTED_HEAD_DIMS = frozenset({8, 16, 32, 64, 128})
 # Float32 is the checked-in benchmark default and follows PyTorch's TF32 toggle
 # in the kernel. Float16 is retained for direct-kernel evaluation, while
 # deep-stack model policy can select reference math when the strict tolerance is
@@ -60,6 +60,13 @@ def prefer_triton_attention(
 
 def attention_launch_config(head_dim: int, seq_len: int) -> AttentionLaunchConfig:
     """Return a conservative launch configuration for the target GPU family."""
+    if head_dim == 8 and seq_len <= 128:
+        return AttentionLaunchConfig(
+            block_m=64,
+            block_n=64,
+            num_warps=4,
+            num_stages=2,
+        )
     if head_dim == 64 and seq_len <= 128:
         # The larger short-sequence tile spills heavily for IEEE fp32 dot
         # products on the RTX 5070 Ti. Halving both tile axes removes those

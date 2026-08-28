@@ -181,6 +181,84 @@ def test_unsupported_head_dimension_auto_uses_reference_math():
     }
 
 
+def test_final_row11_head_dim_8_auto_uses_padded_triton_route():
+    config = TransformerConfig(64, 128, 128, 16, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(64, 128, 128, device="cuda", dtype=torch.float32)
+    valid_mask = torch.ones(64, 128, device="cuda", dtype=torch.bool)
+
+    with torch.inference_mode():
+        output = model(x, valid_mask)
+
+    assert output.shape == x.shape
+    assert model.attention_backend_counts == {
+        "triton": config.num_layers,
+        "sdpa": 0,
+        "reference": 0,
+    }
+
+
+def test_final_row7_head_dim_8_keeps_correctness_first_reference_route():
+    config = TransformerConfig(64, 128, 32, 4, 32, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(64, 128, 32, device="cuda", dtype=torch.float32)
+    valid_mask = torch.ones(64, 128, device="cuda", dtype=torch.bool)
+
+    with torch.inference_mode():
+        output = model(x, valid_mask)
+
+    assert output.shape == x.shape
+    assert model.attention_backend_counts == {
+        "triton": 0,
+        "sdpa": 0,
+        "reference": config.num_layers,
+    }
+
+
+def test_final_row11_padded_triton_route_passes_seed_scale_and_padding_stress():
+    torch.manual_seed(8080)
+    config = TransformerConfig(64, 128, 128, 16, 128, 4, True)
+    baseline = BaselineTransformer(config)
+    optimized = UserOptimizedTransformer(config, attention_backend="auto")
+    copy_model_weights(baseline, optimized, strict=True)
+    baseline = baseline.cuda().eval()
+    optimized = optimized.cuda().eval()
+
+    with torch.inference_mode():
+        for seed in (1234, 2026, 4096):
+            for input_scale in (0.25, 1.0, 4.0):
+                for padding_ratio in (0.0, 0.25):
+                    x, valid_mask = generate_random_case(
+                        config,
+                        torch.device("cuda"),
+                        torch.float32,
+                        seed=seed,
+                        padding_ratio=padding_ratio,
+                        input_scale=input_scale,
+                    )
+                    if valid_mask is None:
+                        valid_mask = torch.ones(
+                            config.batch_size,
+                            config.seq_len,
+                            device="cuda",
+                            dtype=torch.bool,
+                        )
+                    reference = baseline(x, valid_mask)
+                    actual = optimized(x, valid_mask)
+                    result = compare_outputs(reference, actual, rtol=0.01, atol=0.001)
+                    assert result.passed, (
+                        f"seed={seed} scale={input_scale} padding={padding_ratio} "
+                        f"failed={result.failed_elements}/{result.total_elements} "
+                        f"max_abs={result.max_abs_error:.6g}"
+                    )
+
+    assert optimized.attention_backend_counts == {
+        "triton": 3 * 3 * 2 * config.num_layers,
+        "sdpa": 0,
+        "reference": 0,
+    }
+
+
 @pytest.mark.skipif(not hasattr(torch, "compile"), reason="torch.compile unavailable")
 def test_reduce_overhead_accuracy_preserves_cudagraph_outputs():
     """Regression: a second compiled call must not invalidate the reference."""

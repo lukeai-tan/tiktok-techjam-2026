@@ -17,6 +17,8 @@ pytestmark = pytest.mark.skipif(
 
 CASES = [
     # (B, S, H, D, dtype, causal, mask mode, input scale)
+    (2, 31, 4, 8, torch.float16, True, "all", 1.0),
+    (1, 65, 16, 8, torch.float32, True, "prefix", 1.0),
     (1, 1, 1, 16, torch.float16, False, "none", 1.0),
     (2, 31, 4, 32, torch.float16, True, "all", 1.0),
     (1, 63, 4, 64, torch.float16, False, "prefix", 0.25),

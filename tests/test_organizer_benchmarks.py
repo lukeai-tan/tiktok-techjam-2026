@@ -31,6 +31,7 @@ ORGANIZER_TENSORFLOW = ROOT / "benchmarks" / "tensorflow_transformer_benchmark.p
 VALIDATION_MATRIX = ROOT / "benchmarks" / "organizer_validation_matrix.json"
 FINAL_EVALUATOR_MATRIX = ROOT / "benchmarks" / "final_evaluator_shapes.json"
 FINAL_PROFILE_MATRIX = ROOT / "benchmarks" / "final_profile_shapes.json"
+CAMPAIGN4_PROFILE_MATRIX = ROOT / "benchmarks" / "campaign4_profile_shapes.json"
 SUBMISSION_TORCH = ROOT / "torch_transformer_benchmark.py"
 
 PROTECTED_TORCH_DEFINITIONS = (
@@ -320,6 +321,30 @@ def test_final_profile_subset_matches_final_evaluator_rows():
                 "causal",
             )
         } == final_case["config"]
+
+
+def test_campaign4_profile_target_matches_final_evaluator_row11():
+    _, final_cases = load_and_expand_matrix(FINAL_EVALUATOR_MATRIX)
+    final_by_row = {case["source_row"]: case for case in final_cases}
+    profile = json.loads(CAMPAIGN4_PROFILE_MATRIX.read_text(encoding="utf-8"))
+
+    assert [case["source_row"] for case in profile["cases"]] == [11]
+    profile_case = profile["cases"][0]
+    final_case = final_by_row[11]
+    assert profile_case["id"] == final_case["id"]
+    assert profile_case["padding_ratio"] == final_case["padding_ratio"]
+    assert {
+        key: profile_case[key]
+        for key in (
+            "batch_size",
+            "seq_len",
+            "d_model",
+            "num_heads",
+            "ffn_dim",
+            "num_layers",
+            "causal",
+        )
+    } == final_case["config"]
 
 
 def test_validation_exit_accounting_is_fail_closed():

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "status": "campaign4-profile-target",
+  "source": "Exact executable row 11 from benchmarks/final_evaluator_shapes.json",
+  "defaults": {
+    "dtypes": ["float32"],
+    "seeds": [1234],
+    "input_scale": 1.0,
+    "accuracy_rtol": 0.01,
+    "accuracy_atol": 0.001,
+    "warmup": 3,
+    "repeats": 10,
+    "rounds": 2
+  },
+  "cases": [
+    {
+      "id": "final-11-b64-d128-h16-s128",
+      "source_row": 11,
+      "batch_size": 64,
+      "seq_len": 128,
+      "d_model": 128,
+      "num_heads": 16,
+      "ffn_dim": 128,
+      "num_layers": 4,
+      "causal": true,
+      "padding_ratio": 0.0
+    }
+  ]
+}
