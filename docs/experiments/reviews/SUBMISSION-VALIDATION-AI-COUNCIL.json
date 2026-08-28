@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "task": "track3-submission-validation-20260828",
+  "review_stage": "post_measurement_pre_closure",
+  "reviewed_parent_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+  "reviewed_implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+  "objective": "Select the requested implementation at the actual repo submission entry and issue an evidence-backed local readiness recommendation after the full test and benchmark suite.",
+  "facts": [
+    "The actual organizer-loaded entry is torch_transformer_benchmark.py::UserOptimizedTransformer and independently recomputes to the requested schema-2 fingerprint across 13 implementation paths.",
+    "Protected organizer hashes and definitions are unchanged; five focused integration tests pass.",
+    "The measured suite has zero numerical failures across both final matrices, both held-out matrices, the organizer default, and the source-derived matrix.",
+    "The two final geomeans are 1.775778x and 1.770185x with identical Triton 1120, SDPA 0, and reference 336 backend counts.",
+    "The non-padded long-causal held-out case reproduces below baseline at 0.793x and 0.800x, despite remaining correct and reducing incremental memory.",
+    "The worktree is dirty on base commit b41fdaf and no Git or public action was authorized."
+  ],
+  "assumptions_and_missing_information": [
+    "Final-table dtype, padding, timing, tolerance, backward policy, evaluator GPU, and any post-workshop revision remain organizer-controlled unknowns.",
+    "The recorded native Windows RTX 5070 Ti environment is the only performance scope approved by this evidence."
+  ],
+  "perspectives": [
+    {
+      "role": "requirements",
+      "decision": "APPROVE_WITH_EXTERNAL_HOLDS",
+      "finding": "The repo-local request is satisfied at the real entry and every declared executable contract gate is green; organizer policy and public submission actions remain outside local authority."
+    },
+    {
+      "role": "architecture",
+      "decision": "APPROVE",
+      "finding": "No selector abstraction or candidate registry was invented. Preserving the already-matching root entry is the smallest integration-compatible action."
+    },
+    {
+      "role": "implementation",
+      "decision": "APPROVE",
+      "finding": "No submission implementation bytes changed during selection, avoiding fingerprint drift. Fresh evidence and tests were added under distinct names."
+    },
+    {
+      "role": "security and privacy",
+      "decision": "APPROVE",
+      "finding": "No credentials, network mutations, releases, public actions, or new runtime attack surfaces were introduced; persisted paths remain portable."
+    },
+    {
+      "role": "testing and QA",
+      "decision": "APPROVE_WITH_RESIDUAL",
+      "finding": "Correctness, provenance, backend, profiler, memory, source-derived, final, and full-suite evidence is strong. The repeated long-causal held-out slowdown must remain visible and prevents claiming universal per-shape speedup."
+    },
+    {
+      "role": "user and documentation",
+      "decision": "APPROVE_PENDING_CLOSURE",
+      "finding": "Submission-facing docs now identify the exact entry and fingerprint, link fresh artifacts, distinguish historical campaign evidence, and disclose the slowdown. Link, workflow, and graph checks remain required."
+    },
+    {
+      "role": "devil advocate",
+      "decision": "APPROVE_WITH_RESIDUAL",
+      "finding": "A dirty uncommitted fingerprint is content-addressable but not a public release revision; timing is hardware-specific, and the held-out slowdown shows that aggregate improvement is not universal. None invalidates the requested local selection or published final-matrix result."
+    }
+  ],
+  "decision": "APPROVE_FOR_CLOSURE_WITH_RESIDUALS",
+  "blocking_findings": [],
+  "required_controls": [
+    "Keep the selected fingerprint exact; rerun evidence after any fingerprinted implementation change.",
+    "Retain both held-out runs and disclose the approximately 0.80x non-padded long-causal result.",
+    "Do not claim a clean commit, public repository, evaluator-hardware result, backward support, or completed Devpost submission.",
+    "Complete provenance tests, full-suite rerun, workflow validation, documentation/link review, and repo-graph closure before the local readiness recommendation."
+  ]
+}

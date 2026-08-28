@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-08-28T11:42:32.182136+00:00",
+  "framework": "pytorch",
+  "organizer_script": {
+    "path": "benchmarks/torch_transformer_benchmark.py",
+    "sha256": "1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22",
+    "manifest": "benchmarks/reference/organizer_downloads.json",
+    "modified": false
+  },
+  "submission": {
+    "class": "torch_transformer_benchmark.UserOptimizedTransformer",
+    "injection_point": "UserOptimizedTransformer",
+    "runner_path": "benchmarks/run_organizer_torch.py",
+    "runner_sha256": "7f8754734e1dd029f44cc60db8a6b4eda3f1e87cb55767d383e0adfbe6309499"
+  },
+  "organizer_arguments": [
+    "--device",
+    "cuda"
+  ],
+  "exit_code": 0,
+  "parsed": {
+    "accuracy": {
+      "status": "PASS",
+      "max_abs_error": 0.000710778,
+      "max_relative_error": 19462.0,
+      "failed_elements": 0,
+      "total_elements": 2621440
+    },
+    "baseline": {
+      "median_ms": 1.9724,
+      "mean_ms": 2.0212,
+      "p90_ms": 2.3812,
+      "min_ms": 1.714,
+      "tokens_per_second": 519151.84
+    },
+    "optimized": {
+      "median_ms": 1.567,
+      "mean_ms": 1.6797,
+      "p90_ms": 1.9869,
+      "min_ms": 1.4787,
+      "tokens_per_second": 653494.67
+    },
+    "speedup_median": 1.259
+  },
+  "attention_backend_counts": null,
+  "environment": {
+    "captured_at_utc": "2026-08-28T11:42:32.266824+00:00",
+    "command": [
+      "python",
+      "benchmarks/run_organizer_torch.py",
+      "--device",
+      "cuda",
+      "--evidence-out",
+      "docs\\results\\rtx-5070-ti-2026-08-28-branchfix-candidate-organizer-default.json"
+    ],
+    "git": {
+      "commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+      "dirty": true,
+      "changed_path_count": 3,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "20c3c74144c0b1b6b095e82f2af51f53b51f232ffd6fc891abf2442bcd689354",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/triton_impl.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438499860480
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "high",
+      "allow_tf32_matmul": true,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "stdout": [
+    "=== Configuration ===",
+    "TransformerConfig(batch_size=8, seq_len=128, d_model=512, num_heads=8, ffn_dim=2048, num_layers=6, causal=False)",
+    "device=cuda, dtype=torch.float32, torch=2.13.0+cu130",
+    "gpu=NVIDIA GeForce RTX 5070 Ti",
+    "",
+    "=== Accuracy check ===",
+    "criterion: abs_error <= 0.001 OR relative_error <= 1.00%",
+    "trial 01/5: PASS | max_abs=0.000710778 | max_rel=68.6163 | failed=0/524288",
+    "trial 02/5: PASS | max_abs=0.000689268 | max_rel=92.8642 | failed=0/524288",
+    "trial 03/5: PASS | max_abs=0.000629097 | max_rel=19462 | failed=0/524288",
+    "trial 04/5: PASS | max_abs=0.000672221 | max_rel=69.9386 | failed=0/524288",
+    "trial 05/5: PASS | max_abs=0.000690341 | max_rel=10.7005 | failed=0/524288",
+    "summary: PASS | max_abs=0.000710778 | max_rel=19462 | failed=0/2621440",
+    "",
+    "=== Performance benchmark ===",
+    "timing excludes random-data generation and uses a fixed input",
+    "CUDA latency is measured with torch.cuda.Event on the current stream",
+    "baseline : median=1.9724 ms | mean=2.0212 ms | p90=2.3812 ms | min=1.7140 ms | throughput=519151.84 token/s",
+    "optimized: median=1.5670 ms | mean=1.6797 ms | p90=1.9869 ms | min=1.4787 ms | throughput=653494.67 token/s",
+    "speedup  : 1.259x based on median latency"
+  ]
+}

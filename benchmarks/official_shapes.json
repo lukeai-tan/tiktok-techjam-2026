@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "status": "provisional",
+  "source": "checked-in benchmark defaults plus repository contract coverage",
+  "organizer_matrix_available": false,
+  "defaults": {
+    "dtypes": ["float32"],
+    "seeds": [1234],
+    "input_scale": 1.0,
+    "accuracy_rtol": 0.01,
+    "accuracy_atol": 0.001,
+    "warmup": 10,
+    "repeats": 30,
+    "rounds": 3
+  },
+  "cases": [
+    {
+      "id": "tiny-overhead",
+      "batch_size": 1,
+      "seq_len": 32,
+      "d_model": 64,
+      "num_heads": 4,
+      "ffn_dim": 256,
+      "num_layers": 2,
+      "causal": false,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "medium-throughput",
+      "batch_size": 8,
+      "seq_len": 128,
+      "d_model": 256,
+      "num_heads": 8,
+      "ffn_dim": 1024,
+      "num_layers": 2,
+      "causal": false,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "medium-padding",
+      "batch_size": 4,
+      "seq_len": 256,
+      "d_model": 512,
+      "num_heads": 8,
+      "ffn_dim": 2048,
+      "num_layers": 2,
+      "causal": false,
+      "padding_ratio": 0.3
+    },
+    {
+      "id": "long-causal",
+      "batch_size": 2,
+      "seq_len": 512,
+      "d_model": 512,
+      "num_heads": 8,
+      "ffn_dim": 2048,
+      "num_layers": 2,
+      "causal": true,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "long-causal-padding",
+      "batch_size": 2,
+      "seq_len": 512,
+      "d_model": 512,
+      "num_heads": 8,
+      "ffn_dim": 2048,
+      "num_layers": 2,
+      "causal": true,
+      "padding_ratio": 0.3
+    },
+    {
+      "id": "long-attention",
+      "batch_size": 1,
+      "seq_len": 1024,
+      "d_model": 512,
+      "num_heads": 8,
+      "ffn_dim": 2048,
+      "num_layers": 2,
+      "causal": false,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "wide-model",
+      "batch_size": 2,
+      "seq_len": 128,
+      "d_model": 1024,
+      "num_heads": 16,
+      "ffn_dim": 4096,
+      "num_layers": 1,
+      "causal": false,
+      "padding_ratio": 0.0
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "task_id": "track3-campaign-002",
+  "title": "Logged post-EXP-001 GPU optimization campaign",
+  "status": "in_progress",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": null,
+    "project_context_reviewed": false,
+    "prd_update_task_id": "task-sot-close",
+    "contradictions": []
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "roles": [
+    {
+      "role": "Backend Performance Engineer",
+      "file": "06_Backend_API_and_Integration_Engineering/Backend_Performance_Engineer.md",
+      "why": "Profiles latency, allocation, launch behavior, and ranks hypotheses"
+    },
+    {
+      "role": "Machine Learning Engineer",
+      "file": "11_Data_Analytics_and_AI/Machine_Learning_Engineer.md",
+      "why": "Implements bounded kernel or dispatch candidates"
+    },
+    {
+      "role": "Performance Test Engineer",
+      "file": "09_Quality_Assurance_and_Testing/Performance_Test_Engineer.md",
+      "why": "Validates paired performance and environment-specific statistics"
+    },
+    {
+      "role": "Independent Reviewer and Critic",
+      "file": "00_Core_Orchestration/Independent_Reviewer_and_Critic.md",
+      "why": "Challenges correctness, provenance, overfitting, and maintainability"
+    },
+    {
+      "role": "Release Gatekeeper",
+      "file": "00_Core_Orchestration/Release_Gatekeeper.md",
+      "why": "Issues the final keep, reject, rework, or hold decision"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-attempt-logging",
+      "title": "Implement immutable optimization attempt logging",
+      "role": "Machine Learning Engineer",
+      "write_scope": [
+        "benchmarks/run_optimization_attempt.py",
+        "tests/test_optimization_attempt.py",
+        "docs/experiments"
+      ],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-LOG-1", "AC-LOG-2"],
+      "validation": ["pytest tests/test_optimization_attempt.py -q", "failed-command fixture"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification"]
+    },
+    {
+      "id": "task-profile-rank",
+      "title": "Profile accepted baseline and rank bounded hypotheses",
+      "role": "Backend Performance Engineer",
+      "write_scope": ["docs/experiments/attempts", "docs/experiments/CAMPAIGN-002.md"],
+      "depends_on": ["task-attempt-logging"],
+      "acceptance_criteria": ["AC-PROFILE-1"],
+      "validation": ["profiler event/backend count agreement", "clean baseline fingerprint"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision"]
+    },
+    {
+      "id": "task-candidates",
+      "title": "Run at most three isolated optimization candidates",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["isolated candidate worktrees"],
+      "depends_on": ["task-profile-rank"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-EVIDENCE-1"],
+      "validation": ["fast rejection gate", "paired final matrix", "held-out matrix", "profile"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-independent-review",
+      "title": "Review candidate evidence independently",
+      "role": "Independent Reviewer and Critic",
+      "write_scope": [],
+      "depends_on": ["task-candidates"],
+      "acceptance_criteria": ["AC-REVIEW-1"],
+      "validation": ["provenance recomputation", "regression and noise review"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["finding", "handoff"]
+    },
+    {
+      "id": "task-sot-close",
+      "title": "Integrate winner, rebaseline, update source of truth, and perform graph closure",
+      "role": "Release Gatekeeper",
+      "write_scope": ["integration branch", "authoritative docs", "curated results"],
+      "depends_on": ["task-independent-review"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["full pytest", "all curated fingerprints", "graph validation"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "verification", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-candidate-review",
+      "sequence": [
+        "Machine Learning Engineer",
+        "Performance Test Engineer",
+        "Independent Reviewer and Critic",
+        "Machine Learning Engineer"
+      ],
+      "max_iterations": 3,
+      "finding_condition": "A reproducible correctness, provenance, performance, or maintainability gate fails",
+      "acceptance_condition": "Candidate meets all correctness and evidence gates and the measured acceptance threshold",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "finalization": {
+    "prd_update_task_id": "task-sot-close",
+    "project_context_update_task_id": null,
+    "graph_closure_task_id": "task-sot-close",
+    "release_gatekeeper_task_id": "task-sot-close",
+    "final_report_sections": [
+      "What changed in code",
+      "Every attempt and its metrics",
+      "What changed in PRD/docs",
+      "What was tested",
+      "Unresolved clarification or inconsistency"
+    ]
+  }
+}

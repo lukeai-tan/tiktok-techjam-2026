@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Triton compiles a tiny Python/CUDA driver shim on first use. Prefer a normal
+# system toolchain; minimal WSL images can use the documented user-scoped Zig
+# fallback without sudo.
+if command -v gcc >/dev/null 2>&1; then
+    exec gcc "$@"
+fi
+if command -v clang >/dev/null 2>&1; then
+    exec clang "$@"
+fi
+triton_zig_bin="$(command -v zig 2>/dev/null || true)"
+if [ -z "$triton_zig_bin" ]; then
+    echo "zig was not found on PATH; install the documented user-scoped toolchain" >&2
+    exit 127
+fi
+python_dev_root="${TRITON_PYTHON_DEV_ROOT:-$HOME/.local/opt/python3.14-dev}"
+triton_cc_args=()
+for triton_cc_arg in "$@"; do
+    case "$triton_cc_arg" in
+        -l:libcuda.so.1)
+            # Zig/LLD does not implement GNU ld's exact-name `-l:` syntax.
+            triton_cc_args+=(/usr/lib/wsl/lib/libcuda.so.1)
+            ;;
+        *)
+            triton_cc_args+=("$triton_cc_arg")
+            ;;
+    esac
+done
+exec "$triton_zig_bin" cc \
+    -L/usr/lib/wsl/lib \
+    "-I$python_dev_root/usr/include" \
+    "-I$python_dev_root/usr/include/python3.14" \
+    "-I$python_dev_root/usr/include/x86_64-linux-gnu/python3.14" \
+    "${triton_cc_args[@]}"

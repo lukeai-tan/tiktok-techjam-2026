@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C2-EXP-003-POSTMERGE-TESTS",
+    "hypothesis": "The reviewed short head_dim=32 K/V-tile policy preserves the full repository test contract after integration",
+    "scope": "Complete repository pytest suite at integrated commit",
+    "parent_commit": "51196ad",
+    "candidate_commit": "085d6bc61ff534634e5f8d29592706e108d912ae",
+    "branch": "feat/transformer-gpu-kernel-implementation",
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "tests/test_dispatch.py"
+    ],
+    "rollback": "Revert integrated candidate commit 085d6bc",
+    "decision": "rework",
+    "decision_rationale": "The suite recorded 97 passed and 4 expected fail-closed artifact-fingerprint failures after the implementation changed from 83d952ab to 8eb7d215; regenerate curated evidence and rerun.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T00:59:25.442328+00:00",
+    "ended_at_utc": "2026-08-28T00:59:36.885486+00:00",
+    "wall_time_seconds": 11.442678000079468,
+    "timeout_seconds": 600.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "........................................................................ [ 71%]\n........................F.FFF                                            [100%]\n================================== FAILURES ===================================\n______________ test_curated_matrix_is_complete_green_and_current ______________\n\n    def test_curated_matrix_is_complete_green_and_current():\n        matrix = _load(MATRIX_PATH)\n        current_fingerprint, current_paths = implementation_fingerprint()\n        captured_git = matrix[\"environment\"][\"git\"]\n>       assert captured_git[\"implementation_sha256\"] == current_fingerprint\nE       AssertionError: assert '83d952ab3268...e04c7ff5a6e4f' == '8eb7d21551ab...5753ad2c93a8a'\nE         \nE         - 8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a\nE         + 83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f\n\ntests\\test_result_artifacts.py:90: AssertionError\n_ test_organizer_default_artifact_uses_untouched_harness_and_current_submission _\n\n    def test_organizer_default_artifact_uses_untouched_harness_and_current_submission():\n        evidence = _load(ORGANIZER_DEFAULT_PATH)\n        manifest = _load(ORGANIZER_MANIFEST_PATH)\n        current_fingerprint, _ = implementation_fingerprint()\n        pytorch_download = next(\n            artifact\n            for artifact in manifest[\"artifacts\"]\n            if artifact[\"framework\"] == \"pytorch\"\n        )\n    \n        assert evidence[\"exit_code\"] == 0\n        assert evidence[\"framework\"] == \"pytorch\"\n        assert evidence[\"organizer_script\"] == {\n            \"path\": \"benchmarks/torch_transformer_benchmark.py\",\n            \"sha256\": pytorch_download[\"sha256\"],\n            \"manifest\": \"benchmarks/reference/organizer_downloads.json\",\n            \"modified\": False,\n        }\n        assert evidence[\"organizer_arguments\"] == [\"--device\", \"cuda\"]\n        runner_path = ROOT / evidence[\"submission\"][\"runner_path\"]\n        assert evidence[\"submission\"][\"runner_sha256\"] == _text_sha256(runner_path)\n        assert evidence[\"parsed\"][\"accuracy\"][\"status\"] == \"PASS\"\n        assert evidence[\"parsed\"][\"accuracy\"][\"failed_elements\"] == 0\n        assert evidence[\"parsed\"][\"accuracy\"][\"total_elements\"] == 2_621_440\n        assert evidence[\"parsed\"][\"speedup_median\"] > 1.0\n        assert evidence[\"attention_backend_counts\"] == {\n            \"triton\": 1950,\n            \"sdpa\": 0,\n            \"reference\": 0,\n        }\n>       assert evidence[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert '83d952ab3268...e04c7ff5a6e4f' == '8eb7d21551ab...5753ad2c93a8a'\nE         \nE         - 8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a\nE         + 83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f\n\ntests\\test_result_artifacts.py:178: AssertionError\n____ test_organizer_validation_artifact_is_complete_green_and_fail_closed _____\n\n    def test_organizer_validation_artifact_is_complete_green_and_fail_closed():\n        evidence = _load(ORGANIZER_VALIDATION_PATH)\n        current_fingerprint, _ = implementation_fingerprint()\n    \n        def strings(value):\n            if isinstance(value, str):\n                yield value\n            elif isinstance(value, dict):\n                for nested in value.values():\n                    yield from strings(nested)\n            elif isinstance(value, list):\n                for nested in value:\n                    yield from strings(nested)\n    \n        host_home = str(Path.home()).lower()\n        assert all(host_home not in value.lower() for value in strings(evidence))\n        assert evidence[\"status\"] == \"PASS\"\n        assert evidence[\"matrix\"][\"path\"] == (\n            \"benchmarks/organizer_validation_matrix.json\"\n        )\n        assert evidence[\"matrix\"][\"sha256\"] == _text_sha256(\n            ORGANIZER_VALIDATION_MATRIX_PATH\n        )\n        manifest_path = ROOT / evidence[\"organizer_sources\"][\"manifest_path\"]\n        assert evidence[\"organizer_sources\"][\"manifest_sha256\"] == _text_sha256(\n            manifest_path\n        )\n        for path_key, hash_key in (\n            (\"runner_path\", \"runner_sha256\"),\n            (\"validation_runner_path\", \"validation_runner_sha256\"),\n        ):\n            path = ROOT / evidence[\"organizer_sources\"][path_key]\n            assert evidence[\"organizer_sources\"][hash_key] == _text_sha256(path)\n>       assert evidence[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert '83d952ab3268...e04c7ff5a6e4f' == '8eb7d21551ab...5753ad2c93a8a'\nE         \nE         - 8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a\nE         + 83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f\n\ntests\\test_result_artifacts.py:216: AssertionError\n_________ test_final_evaluator_artifact_is_complete_green_and_current _________\n\n    def test_final_evaluator_artifact_is_complete_green_and_current():\n        evidence = _load(FINAL_EVALUATOR_PATH)\n        current_fingerprint, _ = implementation_fingerprint()\n    \n        assert evidence[\"status\"] == \"PASS\"\n        assert evidence[\"matrix\"] == {\n            \"path\": \"benchmarks/final_evaluator_shapes.json\",\n            \"sha256\": _text_sha256(FINAL_EVALUATOR_MATRIX_PATH),\n            \"status\": \"organizer-published-final-shapes\",\n        }\n        assert evidence[\"environment\"][\"git\"][\"dirty\"] is False\n>       assert evidence[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert '83d952ab3268...e04c7ff5a6e4f' == '8eb7d21551ab...5753ad2c93a8a'\nE         \nE         - 8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a\nE         + 83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f\n\ntests\\test_result_artifacts.py:277: AssertionError\n============================== warnings summary ===============================\ntests/test_gpu_transformer.py: 14 warnings\n  <home>\\AppData\\Local\\Codex\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\torch\\jit\\_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests/test_result_artifacts.py::test_curated_matrix_is_complete_green_and_current\nFAILED tests/test_result_artifacts.py::test_organizer_default_artifact_uses_untouched_harness_and_current_submission\nFAILED tests/test_result_artifacts.py::test_organizer_validation_artifact_is_complete_green_and_fail_closed\nFAILED tests/test_result_artifacts.py::test_final_evaluator_artifact_is_complete_green_and_current\n4 failed, 97 passed, 14 warnings in 10.77s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T00:59:25.357126+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "git": {
+      "commit": "085d6bc61ff534634e5f8d29592706e108d912ae",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445402443776
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T00:59:36.924510+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "git": {
+      "commit": "085d6bc61ff534634e5f8d29592706e108d912ae",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445397962752
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "dfe2c3db28f1cdaed5bf4af094fafa13d1bcee3e3ab2ba5dcabeee61f5f79712"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

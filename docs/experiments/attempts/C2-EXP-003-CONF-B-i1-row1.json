@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C2-EXP-003-CONF-B-I1",
+    "hypothesis": "Alternating confirmation distinguishes combined 32x64 tiles from run-order noise",
+    "scope": "Round B EXP-003 I1 row-1 confirmation",
+    "parent_commit": "b90069a",
+    "candidate_commit": "9664609af8225fc40da6747ca8c19678f22f7507",
+    "branch": "exp/c2-short-h32-bm32bn64",
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "tests/test_dispatch.py"
+    ],
+    "rollback": "Drop candidate commit 2c5fd34 and restore the parent 64x128 tile",
+    "decision": "observation",
+    "decision_rationale": "Round B candidate observation for aggregate leader selection",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "benchmarks/run_organizer_validation.py",
+      "--matrix",
+      "benchmarks/final_evaluator_shapes.json",
+      "--case",
+      "final-01-b64-d128-h4-s128",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c2-exp003-conf-b-i1-row1.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T00:49:34.415324+00:00",
+    "ended_at_utc": "2026-08-28T00:49:37.428745+00:00",
+    "wall_time_seconds": 3.013666900107637,
+    "timeout_seconds": 180.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "[01/01] final-01-b64-d128-h4-s128: running\n[01/01] final-01-b64-d128-h4-s128: PASS max_abs=0.00114846\n\n| case | dtype | status | max abs | speedup | backends |\n| --- | --- | --- | ---: | ---: | --- |\n| final-01-b64-d128-h4-s128 | float32 | PASS | 0.00114846 | 1.559x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\naggregate: 1/1 executable PASS, 0 resource skip, 0/5242880 failed elements\ngeomean speedup=1.559x\nsaved docs\\results\\rtx-5070-ti-2026-08-28-c2-exp003-conf-b-i1-row1.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T00:49:34.330299+00:00",
+    "command": [
+      "python.exe",
+      "benchmarks/run_organizer_validation.py",
+      "--matrix",
+      "benchmarks/final_evaluator_shapes.json",
+      "--case",
+      "final-01-b64-d128-h4-s128",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c2-exp003-conf-b-i1-row1.json"
+    ],
+    "git": {
+      "commit": "9664609af8225fc40da6747ca8c19678f22f7507",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "58a5832b86aa6b9f8e5472ee043f412351f6ea5586aacc8789d00201848eadfe",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445396414464
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T00:49:37.470749+00:00",
+    "command": [
+      "python.exe",
+      "benchmarks/run_organizer_validation.py",
+      "--matrix",
+      "benchmarks/final_evaluator_shapes.json",
+      "--case",
+      "final-01-b64-d128-h4-s128",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c2-exp003-conf-b-i1-row1.json"
+    ],
+    "git": {
+      "commit": "9664609af8225fc40da6747ca8c19678f22f7507",
+      "dirty": true,
+      "changed_path_count": 1,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "58a5832b86aa6b9f8e5472ee043f412351f6ea5586aacc8789d00201848eadfe",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445396406272
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "fd4c7d9e20e5abc35a0d62f49be298af695ee943f42ed0a48ad62079eb7a8284"
+  },
+  "result_artifact": {
+    "path": "docs/results/rtx-5070-ti-2026-08-28-c2-exp003-conf-b-i1-row1.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 7907,
+    "sha256": "22d990ad80675e5328e623a01afe1313b0001274d06340956e288fd5e16631c4",
+    "schema_version": 1,
+    "created_at_utc": "2026-08-28T00:49:37.288613+00:00"
+  },
+  "metrics": {
+    "kind": "organizer_validation",
+    "status": "PASS",
+    "correctness": {
+      "requested": 1,
+      "executable": 1,
+      "passed": 1,
+      "skipped_resource": 0,
+      "skipped_counted_as_pass": false,
+      "all_executable_passed": true,
+      "counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "OOM": 0,
+        "PASS": 1,
+        "SKIPPED_RESOURCE": 0
+      },
+      "total_compared_elements": 5242880,
+      "total_failed_elements": 0,
+      "max_abs_error": 0.00114846,
+      "max_relative_error": 1053.44,
+      "accuracy_trials": 5,
+      "accuracy_trials_per_case": 5
+    },
+    "performance": {
+      "geometric_mean_speedup": 1.559,
+      "total_case_duration_seconds": 1.8371761001180857,
+      "per_case": [
+        {
+          "case_id": "final-01-b64-d128-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 1.8371761001180857,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00114846,
+            "max_relative_error": 1053.44,
+            "failed_elements": 0,
+            "total_elements": 5242880
+          },
+          "baseline": {
+            "median_ms": 1.3351,
+            "mean_ms": 1.3395,
+            "p90_ms": 1.3934,
+            "min_ms": 1.3055,
+            "tokens_per_second": 6135998.47
+          },
+          "optimized": {
+            "median_ms": 0.8565,
+            "mean_ms": 0.8625,
+            "p90_ms": 0.8715,
+            "min_ms": 0.8525,
+            "tokens_per_second": 9564730.03
+          },
+          "speedup_median": 1.559,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        }
+      ]
+    },
+    "attention_backend_counts": {
+      "triton": 112,
+      "sdpa": 0,
+      "reference": 0
+    },
+    "memory": null,
+    "profiler": null
+  }
+}

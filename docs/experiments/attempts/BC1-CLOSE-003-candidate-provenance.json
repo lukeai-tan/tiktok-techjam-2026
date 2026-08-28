@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "BC1-CLOSE-003-CANDIDATE-PROVENANCE",
+    "hypothesis": "The synthetic comparison worktree contains the exact three implementation files from the alternate branch and the unchanged flagship harness",
+    "scope": "Content-addressed provenance check for every overlaid candidate path",
+    "parent_commit": "651fe8ee9a19a36d8d36c4135c525161114f7cae",
+    "candidate_commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+    "branch": null,
+    "changed_paths": [
+      "torch_transformer_benchmark.py",
+      "transformer_opt/__init__.py",
+      "transformer_opt/triton_impl.py"
+    ],
+    "rollback": "Delete the isolated worktree; no candidate file is integrated",
+    "decision": "reject",
+    "decision_rationale": "Validate the measured candidate bytes while retaining the accuracy-based rejection",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-c",
+      "import subprocess; paths=('torch_transformer_benchmark.py','transformer_opt/__init__.py','transformer_opt/triton_impl.py'); commit='651fe8ee9a19a36d8d36c4135c525161114f7cae'; actual={p:subprocess.check_output(['git','hash-object',p],text=True).strip() for p in paths}; expected={p:subprocess.check_output(['git','rev-parse',commit+':'+p],text=True).strip() for p in paths}; assert actual==expected,(actual,expected); print('candidate_paths=3 blob_match=PASS')"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T12:03:57.077462+00:00",
+    "ended_at_utc": "2026-08-28T12:03:57.214594+00:00",
+    "wall_time_seconds": 0.13764520012773573,
+    "timeout_seconds": 60.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "candidate_paths=3 blob_match=PASS\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T12:03:56.983866+00:00",
+    "command": [
+      "python.exe",
+      "-c",
+      "import subprocess; paths=('torch_transformer_benchmark.py','transformer_opt/__init__.py','transformer_opt/triton_impl.py'); commit='651fe8ee9a19a36d8d36c4135c525161114f7cae'; actual={p:subprocess.check_output(['git','hash-object',p],text=True).strip() for p in paths}; expected={p:subprocess.check_output(['git','rev-parse',commit+':'+p],text=True).strip() for p in paths}; assert actual==expected,(actual,expected); print('candidate_paths=3 blob_match=PASS')"
+    ],
+    "git": {
+      "commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+      "dirty": true,
+      "changed_path_count": 13,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "20c3c74144c0b1b6b095e82f2af51f53b51f232ffd6fc891abf2442bcd689354",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/triton_impl.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438487453696
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T12:03:57.252901+00:00",
+    "command": [
+      "python.exe",
+      "-c",
+      "import subprocess; paths=('torch_transformer_benchmark.py','transformer_opt/__init__.py','transformer_opt/triton_impl.py'); commit='651fe8ee9a19a36d8d36c4135c525161114f7cae'; actual={p:subprocess.check_output(['git','hash-object',p],text=True).strip() for p in paths}; expected={p:subprocess.check_output(['git','rev-parse',commit+':'+p],text=True).strip() for p in paths}; assert actual==expected,(actual,expected); print('candidate_paths=3 blob_match=PASS')"
+    ],
+    "git": {
+      "commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+      "dirty": true,
+      "changed_path_count": 13,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "20c3c74144c0b1b6b095e82f2af51f53b51f232ffd6fc891abf2442bcd689354",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/triton_impl.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438487453696
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "b5de3aefb1e6a1fc048671564e265e0cdac8dfbc984949d1ef78790b2c4dbfbf"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

@@ -1,0 +1,148 @@
+{
+  "task_id": "track3-optimization-history-consolidation",
+  "title": "Consolidate the complete Track 3 optimization history",
+  "status": "complete",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": null,
+    "project_context_reviewed": false,
+    "prd_update_task_id": "task-sot-navigation",
+    "contradictions": []
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "acceptance_criteria": {
+    "AC-INVENTORY-1": "All Campaign 2 through 4 attempt records and all curated result artifacts are inventoried without deletion, renaming, or rewritten measurements.",
+    "AC-HISTORY-1": "One canonical history distinguishes foundational pre-ledger work, accepted candidates, rejected candidates, failed gates, campaign aggregates, and the current best implementation.",
+    "AC-METRICS-1": "Attempt counts, execution outcomes, wall times, correctness totals, performance values, backend counts, fingerprints, and review decisions reconcile with machine-readable evidence.",
+    "AC-NAV-1": "README, optimization plan, technical report, requirements, campaign records, experiment records, and result index point to the canonical history and label current versus historical evidence consistently.",
+    "AC-RELEASE-1": "All changed documentation links and JSON parse correctly, scoped diffs are clean, the repository tests relevant to curated artifacts pass, the graph validates, and review finds no unsupported claim."
+  },
+  "roles": [
+    {
+      "role": "Task Intake Analyst",
+      "file": "00_Core_Orchestration/Task_Intake_Analyst.md",
+      "why": "Normalizes cleanup scope and prevents evidence deletion or a synthetic new campaign"
+    },
+    {
+      "role": "Agentic Workflow Orchestrator",
+      "file": "00_Core_Orchestration/Agentic_Workflow_Orchestrator.md",
+      "why": "Owns evidence reconciliation, sequencing, source-of-truth closure, and final handoff"
+    },
+    {
+      "role": "Planning and Decomposition Agent",
+      "file": "00_Core_Orchestration/Planning_and_Decomposition_Agent.md",
+      "why": "Defines the bounded audit, authoring, navigation, and verification packages"
+    },
+    {
+      "role": "Technical Writer",
+      "file": "10_Technical_Writing_and_Documentation/Technical_Writer.md",
+      "why": "Builds a precise cross-campaign narrative without weakening raw evidence"
+    },
+    {
+      "role": "Independent Reviewer and Critic",
+      "file": "00_Core_Orchestration/Independent_Reviewer_and_Critic.md",
+      "why": "Challenges aggregate arithmetic, provenance, current-versus-historical labels, and unsupported causality"
+    },
+    {
+      "role": "Release Gatekeeper",
+      "file": "00_Core_Orchestration/Release_Gatekeeper.md",
+      "why": "Issues the final local documentation acceptance or hold decision"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-inventory",
+      "title": "Reconcile all optimization evidence",
+      "role": "Task Intake Analyst",
+      "write_scope": [],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-INVENTORY-1", "AC-METRICS-1"],
+      "validation": ["attempt JSON inventory", "campaign-ledger reconciliation", "result-artifact and Git-history inspection"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "finding"]
+    },
+    {
+      "id": "task-history",
+      "title": "Author the canonical optimization history",
+      "role": "Technical Writer",
+      "write_scope": ["docs/experiments/OPTIMIZATION_HISTORY.md"],
+      "depends_on": ["task-inventory"],
+      "acceptance_criteria": ["AC-HISTORY-1", "AC-METRICS-1"],
+      "validation": ["claim-to-artifact trace", "candidate decision matrix", "current best route and result review"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["implementation", "decision"]
+    },
+    {
+      "id": "task-sot-navigation",
+      "title": "Clean up source-of-truth navigation",
+      "role": "Agentic Workflow Orchestrator",
+      "write_scope": ["README.md", "docs/REQUIREMENTS.md", "docs/OPTIMIZATION_LOOP_PLAN.md", "docs/TECH_REPORT.md", "docs/results/README.md", "docs/experiments"],
+      "depends_on": ["task-history"],
+      "acceptance_criteria": ["AC-NAV-1"],
+      "validation": ["link target existence", "current-versus-historical wording review", "no raw evidence deletion or rename"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "handoff"]
+    },
+    {
+      "id": "task-review",
+      "title": "Review the consolidated claims and cleanup",
+      "role": "Independent Reviewer and Critic",
+      "write_scope": [],
+      "depends_on": ["task-sot-navigation"],
+      "acceptance_criteria": ["AC-INVENTORY-1", "AC-HISTORY-1", "AC-METRICS-1", "AC-NAV-1"],
+      "validation": ["independent arithmetic recomputation", "evidence provenance review", "devil's-advocate scope and causality challenge"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["finding", "handoff"]
+    },
+    {
+      "id": "task-release-closure",
+      "title": "Validate documentation and graph closure",
+      "role": "Release Gatekeeper",
+      "write_scope": ["docs/experiments/OPTIMIZATION-HISTORY-WORKFLOW.json", "repo memory graph"],
+      "depends_on": ["task-review"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["JSON parsing", "Markdown link audit", "curated artifact tests", "git diff --check", "workflow validation", "graph rebuild and validation"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["verification", "decision", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-history-review",
+      "sequence": ["Technical Writer", "Independent Reviewer and Critic", "Technical Writer"],
+      "max_iterations": 2,
+      "finding_condition": "A metric, disposition, link, provenance statement, or current-versus-historical label does not reconcile with its authoritative evidence",
+      "acceptance_condition": "Every consolidated claim is supported and navigation has one unambiguous current-best entry point",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "finalization": {
+    "prd_update_task_id": "task-sot-navigation",
+    "project_context_update_task_id": null,
+    "graph_closure_task_id": "task-release-closure",
+    "release_gatekeeper_task_id": "task-release-closure",
+    "final_report_sections": [
+      "What changed in code",
+      "Every attempt and its metrics",
+      "What changed in PRD/docs",
+      "What was tested",
+      "Unresolved clarification or inconsistency",
+      "Residual risks and holds"
+    ]
+  }
+}

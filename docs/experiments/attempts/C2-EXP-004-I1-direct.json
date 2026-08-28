@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C2-EXP-004-I1-DIRECT",
+    "hypothesis": "The existing fused attention kernel compiles and meets the strict direct-kernel contract at head_dim=8 without arithmetic changes",
+    "scope": "Direct GPU attention numerical and boundary suite including causal float32 head_dim=8",
+    "parent_commit": "3028abe",
+    "candidate_commit": "44b70eb4d6efb05df4af061609151ef42ea1af98",
+    "branch": "exp/c2-head8-direct",
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py"
+    ],
+    "rollback": "Drop candidate commit 44b70eb and retain exact-reference head_dim=8 fallback",
+    "decision": "reject",
+    "decision_rationale": "The existing kernel is not structurally safe at head_dim=8: Triton compilation requires dot-product K >= 16. The direct suite recorded 11 passed and the new head_dim=8 case failed before execution; padding or alternate arithmetic is outside this guarded hypothesis.",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_gpu_attention.py",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T01:55:27.462255+00:00",
+    "ended_at_utc": "2026-08-28T01:55:29.541174+00:00",
+    "wall_time_seconds": 2.0795062999241054,
+    "timeout_seconds": 300.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "F...........                                                             [100%]\n================================== FAILURES ===================================\n_ test_triton_attention_matches_explicit_reference[1-128-4-8-dtype0-True-none-1.0] _\n\nargs = (<triton.language.core.tensor object at 0x000001C98706F320>, <triton.language.core.tensor object at 0x000001C98706FFB0>)\nkwargs = {'_semantic': <triton.language.semantic.TritonSemantic object at 0x000001C98705E930>, 'input_precision': constexpr[ieee]}\n\n    @wraps(fn)\n    def wrapper(*args, **kwargs):\n        if \"_semantic\" not in kwargs or kwargs[\"_semantic\"] is None:\n            raise ValueError(\"Did you forget to add @triton.jit ? \"\n                             \"(`_semantic` argument must be provided outside of JIT functions.)\")\n>       return fn(*args, **kwargs)\n               ^^^^^^^^^^^^^^^^^^^\n\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\language\\core.py:43: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\language\\core.py:2090: in dot\n    res = _semantic.dot(input, other, acc, input_precision, max_num_imprecise_acc, out_dtype)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <triton.language.semantic.TritonSemantic object at 0x000001C98705E930>\nlhs = <triton.language.core.tensor object at 0x000001C98706F320>\nrhs = <triton.language.core.tensor object at 0x000001C98706FFB0>, acc = None\ninput_precision = <INPUT_PRECISION.IEEE: 2>, max_num_imprecise_acc = None\nout_dtype = triton.language.float32\n\n    def dot(self, lhs: TensorTy, rhs: TensorTy, acc: TensorTy, input_precision: Optional[str],\n            max_num_imprecise_acc: int, out_dtype: tl.dtype) -> TensorTy:\n        assert lhs.type.is_block() and rhs.type.is_block()\n    \n        if lhs.dtype.is_fp8() and rhs.dtype.is_fp8():\n            # All combinations of supported fp8 x fp8 are permitted\n            pass\n        else:\n            assert lhs.dtype in (tl.int8, tl.uint8, tl.float16, tl.bfloat16, tl.float32,\n                                 tl.float64), f\"Unsupported lhs dtype {lhs.dtype}\"\n            assert rhs.dtype in (tl.int8, tl.uint8, tl.float16, tl.bfloat16, tl.float32,\n                                 tl.float64), f\"Unsupported rhs dtype {rhs.dtype}\"\n            assert lhs.dtype == rhs.dtype, f\"Both operands must be same dtype. Got {lhs.dtype} and {rhs.dtype}\"\n    \n        if lhs.dtype.is_fp8e4b15() or rhs.dtype.is_fp8e4b15():\n            if \"fp8e4b15\" in self.builder.options.deprecated_fp8_dot_operand_dtypes:\n                warnings.warn(\n                    \"the use of fp8e4b15 is deprecated on Hopper and later architectures and can cause significant slow down. It will be removed in a future triton release\"\n                )\n            # We upcast because there's no fp8e4b15 type in MLIR\n            lhs = self.cast(lhs, tl.float16)\n            rhs = self.cast(rhs, tl.float16)\n    \n        uses_fp8e4b8 = lhs.dtype.is_fp8e4b8() or rhs.dtype.is_fp8e4b8()\n        uses_fp8e5b16 = lhs.dtype.is_fp8e5b16() or rhs.dtype.is_fp8e5b16()\n        if uses_fp8e4b8 or uses_fp8e5b16:\n            type_name = \"fp8e4b8\" if uses_fp8e4b8 else \"fp8e5b16\"\n            if type_name in self.builder.options.deprecated_fp8_dot_operand_dtypes:\n                arch = self.builder.options.arch\n                warnings.warn(\n                    f\"{type_name} is AMD gfx942 specific and not supported on {arch} so it's upcasted to fp16 and can cause significant slow down. \"\n                    f\"Please use OCP fp8 variants on {arch} for performance\")\n                lhs = self.cast(lhs, tl.float16)\n                rhs = self.cast(rhs, tl.float16)\n    \n        if input_precision is None:\n            input_precision = self.builder.options.default_dot_input_precision\n    \n        input_precision = self._str_to_dot_input_precision(input_precision)\n    \n        lhs_rank = len(lhs.shape)\n        rhs_rank = len(rhs.shape)\n        assert lhs_rank == rhs_rank == 2 or lhs_rank == rhs_rank == 3, f\"Both inputs must be either 2D or 3D; (lhs: {lhs.shape} vs rhs: {rhs.shape})\"\n        assert lhs.shape[-1].value == rhs.shape[\n            -2].value, f\"First input shape ({lhs.shape}) and second input shape {rhs.shape} are not compatible for matmul (second index of first shape ({lhs.shape[-1].value}) must be equal to first index of second shape ({rhs.shape[-2].value})\"\n        assert self.builder.codegen_fns.get(\n            \"min_dot_size\") is not None, \"target doesn't provide lower shape bounds for dot.\"\n        min_dot_size = self.builder.codegen_fns[\"min_dot_size\"](lhs.type, rhs.type)\n>       assert lhs.shape[-2].value >= min_dot_size[0] and lhs.shape[-1].value >= min_dot_size[2] \\\n            and rhs.shape[-1].value >= min_dot_size[1], \\\n                f\"Input shapes should have M >= {min_dot_size[0]}, N >= {min_dot_size[1]} and K >= {min_dot_size[2]}\"\nE       AssertionError: Input shapes should have M >= 1, N >= 1 and K >= 16\n\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\language\\semantic.py:1538: AssertionError\n\nThe above exception was the direct cause of the following exception:\n\nbatch = 1, seq_len = 128, heads = 4, head_dim = 8, dtype = torch.float32\ncausal = True, mask_mode = 'none', input_scale = 1.0\n\n    @pytest.mark.parametrize(\n        \"batch,seq_len,heads,head_dim,dtype,causal,mask_mode,input_scale\",\n        CASES,\n    )\n    def test_triton_attention_matches_explicit_reference(\n        batch,\n        seq_len,\n        heads,\n        head_dim,\n        dtype,\n        causal,\n        mask_mode,\n        input_scale,\n    ):\n        for seed in (7, 19):\n            torch.manual_seed(seed)\n            q = torch.randn(\n                batch,\n                seq_len,\n                heads,\n                head_dim,\n                device=\"cuda\",\n                dtype=dtype,\n            ) * input_scale\n            k = torch.randn_like(q) * input_scale\n            v = torch.randn_like(q)\n            valid_mask = _mask(mask_mode, batch, seq_len)\n            with torch.inference_mode():\n>               actual, custom = attention_forward(\n                    q,\n                    k,\n                    v,\n                    valid_mask,\n                    causal=causal,\n                    backend=\"triton\",\n                )\n\ntests\\test_gpu_attention.py:92: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\ntransformer_opt\\dispatch.py:124: in attention_forward\n    output = triton_attention(\ntransformer_opt\\kernels\\attention.py:206: in triton_attention\n    _attention_fwd[grid](\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\runtime\\jit.py:370: in <lambda>\n    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\runtime\\jit.py:739: in run\n    kernel = self._do_compile(key, signature, device, constexprs, options, attrs, warmup)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\runtime\\jit.py:884: in _do_compile\n    kernel = self.compile(src, target=target, options=options.__dict__)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\compiler\\compiler.py:307: in compile\n    module = src.make_ir(target, options, codegen_fns, module_map, context)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <triton.compiler.compiler.ASTSource object at 0x000001C98705D550>\ntarget = GPUTarget(backend='cuda', arch=120, warp_size=32)\noptions = CUDAOptions(num_warps=4, num_ctas=1, num_stages=2, warp_size=32, maxnreg=None, ptx_version=None, ptx_options=None, ir_...\\\\libdevice.10.bc'),), debug=False, backend_name='cuda', sanitize_overflow=True, arch='sm120', instrumentation_mode='')\ncodegen_fns = {'convert_custom_types': <function convert_custom_float8_sm80 at 0x000001C9F6262980>, 'min_dot_size': <function min_dot_size.<locals>.check_dot_compatibility at 0x000001C98707AF20>}\nmodule_map = {'triton.language.extra.libdevice': <module 'triton.language.extra.cuda.libdevice' from 'C:\\\\Users\\\\jared\\\\AppData\\\\Local\\\\Codex\\\\venvs\\\\tiktok-techjam-2026\\\\Lib\\\\site-packages\\\\triton\\\\language\\\\extra\\\\cuda\\\\libdevice.py'>}\ncontext = <triton._C.libtriton.ir.context object at 0x000001C9F60958F0>\n\n    def make_ir(self, target: GPUTarget, options, codegen_fns, module_map, context):\n        from .code_generator import ast_to_ttir\n>       return ast_to_ttir(self.fn, self, context=context, options=options, codegen_fns=codegen_fns,\n                           module_map=module_map)\nE       triton.compiler.errors.CompilationError: at 86:21:\nE                   key_valid = key_valid & tl.load(\nE                       mask_ptr + mask_offsets, mask=key_in_bounds, other=0\nE                   )\nE       \nE               allowed = key_valid[None, :]\nE               if CAUSAL:\nE                   allowed = allowed & (offs_n[None, :] <= offs_m[:, None])\nE       \nE               if ALLOW_TF32:\nE                   scores = tl.dot(q, tl.trans(k), input_precision=\"tf32\")\nE               else:\nE                   scores = tl.dot(q, tl.trans(k), input_precision=\"ieee\")\nE                            ^\nE       Input shapes should have M >= 1, N >= 1 and K >= 16\n\n..\\..\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\triton\\compiler\\compiler.py:80: CompilationError\n=========================== short test summary info ===========================\nFAILED tests/test_gpu_attention.py::test_triton_attention_matches_explicit_reference[1-128-4-8-dtype0-True-none-1.0]\n1 failed, 11 passed in 1.65s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T01:55:27.366049+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_gpu_attention.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "44b70eb4d6efb05df4af061609151ef42ea1af98",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "2711c6b397dc3d2892a3b6e24e12ccbdcc95fd2192ceea0c170a28f271ccd1f8",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445370265600
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T01:55:29.584686+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_gpu_attention.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "44b70eb4d6efb05df4af061609151ef42ea1af98",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "2711c6b397dc3d2892a3b6e24e12ccbdcc95fd2192ceea0c170a28f271ccd1f8",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445369970688
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "1938abe61909b3fa3b6fd03e100604a5d74e901658d3adb6aa68a13c63f6daaa"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

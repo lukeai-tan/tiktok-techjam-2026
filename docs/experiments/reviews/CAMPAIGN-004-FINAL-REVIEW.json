@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-004",
+  "review_stage": "final_local_acceptance",
+  "reviewer_role": "independent final release gatekeeper",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE",
+  "decision_scope": "Exact current dirty and uncommitted Campaign 4 checkpoint only",
+  "base_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+  "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+  "verified": [
+    "Production, infrastructure, test, evidence, and documentation changes are scoped to Campaign 4; no unrelated surface was found.",
+    "DOT_HEAD_DIM pads real width eight to 16; padded Q/K/V lanes are zero-masked, padded stores are excluded, scaling uses real HEAD_DIM, and existing widths keep equal real/dot dimensions.",
+    "Automatic width-eight Triton routing is restricted to exact final row 11; row 7 and every other width-eight multi-layer envelope remain reference.",
+    "All 44 immutable attempt-result links and protected runner, manifest, validation-runner, and matrix hashes match.",
+    "Attempt execution totals are 39 PASS and five retained FAIL across 315.261251 seconds; both pre-logger incidents are separately documented.",
+    "Primary and confirmation final matrices pass all 13 executable rows plus the exact authorized non-pass row-14 skip with zero failed elements and 1.7800748506x/1.7849198559x geomeans.",
+    "Default, held-out, source-derived, affected-row, profiler, curated-artifact, workflow, graph, and 112-test gates are green.",
+    "Current documentation truthfully records dirty, uncommitted provenance and makes no clean-commit, tag, push, or release claim."
+  ],
+  "blocking_findings": [],
+  "nonblocking_findings": [
+    "Immutable attempt JSON retains execution-time pending decisions and review statuses for many runs; final dispositions are owned by this review, the candidate/council sidecars, and the Campaign 4 ledger."
+  ],
+  "residual_risks": [
+    "Performance evidence is specific to the RTX 5070 Ti environment.",
+    "Row 11 passes the comparator with nonzero maximum absolute error 0.00106898.",
+    "The exact row-11 route is intentionally shape-specific and broader direct width-eight performance is not approved.",
+    "Backward execution is unsupported.",
+    "Organizer dtype, padding, timing, tolerance, and backward policy remain partially unstated; the exact row-14 resource skip remains source-authorized and excluded from pass."
+  ],
+  "git_actions_authorized": [],
+  "required_future_controls": [
+    "Do not create a commit, tag, push, or public release without separate user authorization.",
+    "If Git provenance changes later, regenerate evidence or explicitly retain the dirty-candidate provenance; never relabel these artifacts as clean.",
+    "Preserve all five failed attempts and both pre-logger startup incidents.",
+    "Reprofile and revalidate before broadening automatic width-eight routing or moving to a different evaluator GPU."
+  ]
+}

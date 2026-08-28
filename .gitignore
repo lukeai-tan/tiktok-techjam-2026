@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.egg-info/
-results/*.json
+/results/
 .DS_Store
 *:Zone.Identifier
 colab_bundle.zip

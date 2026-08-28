@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-004",
+  "review_stage": "candidate_integration",
+  "reviewer_role": "independent reviewer and critic",
+  "decision": "APPROVE_FOR_INTEGRATION_REBASELINE",
+  "decision_scope": "EXP-009-I2 padded head-dimension-8 Triton kernel, exact final-row-11 automatic dispatch policy, and direct/model/dispatch tests",
+  "excluded_scope": [
+    "campaign infrastructure",
+    "attempt logger portability change",
+    "workflow and result documentation",
+    "final release acceptance"
+  ],
+  "reviewed_parent_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+  "reviewed_implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+  "verified_findings": [
+    "Padded Q, K, and V lanes are zero-masked and padded output lanes are not stored.",
+    "Attention scaling continues to use the real head dimension.",
+    "Head dimensions 16, 32, 64, and 128 retain their original dot widths.",
+    "Automatic head-dimension-8 Triton dispatch is restricted to exact final row 11; historical-risk row 7 stays on reference.",
+    "Three exact row-11 confirmations passed with zero failed elements and 112 Triton calls each.",
+    "The selected optimized latency median is 1.0624 ms with a 0.0033 ms range, 81.08% below fresh reference and 43.06% below the SDPA candidate.",
+    "The explicit affected-row gate passed rows 7 and 11 with the intended reference/Triton split.",
+    "The profile recorded 40 Triton calls and 4993.999 us in _attention_fwd.",
+    "Candidate fingerprint, protected-source hashes, attempt/result hashes, and attempt-to-result links matched.",
+    "The initial I2 fast-test failure was retained; its corrected rework gate passed 15 of 15 tests."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C4-EXP-009-I2-fast.json",
+    "docs/experiments/attempts/C4-EXP-009-I2-fast-rework.json",
+    "docs/experiments/attempts/C4-EXP-009-I2-row11.json",
+    "docs/experiments/attempts/C4-EXP-009-I2-conf-a.json",
+    "docs/experiments/attempts/C4-EXP-009-I2-conf-b.json",
+    "docs/experiments/attempts/C4-EXP-009-I2-affected.json",
+    "docs/experiments/attempts/C4-EXP-009-I2-profile.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c4-exp009-i2-row11.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c4-exp009-i2-conf-a-row11.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c4-exp009-i2-conf-b-row11.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c4-exp009-i2-affected.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c4-exp009-i2-row11-profile.json"
+  ],
+  "required_post_integration_gates": [
+    "full pytest suite",
+    "exact final evaluator matrix",
+    "organizer default matrix",
+    "held-out matrix",
+    "source-derived matrix",
+    "explicit affected rows 7 and 11",
+    "exact row-11 profile",
+    "per-case regression review",
+    "authoritative documentation refresh",
+    "independent final release review"
+  ],
+  "residual_risks": [
+    "Performance evidence is specific to the measured RTX 5070 Ti environment.",
+    "Strict comparison passes but the exact row-11 maximum absolute difference is nonzero.",
+    "Broader direct forced head-dimension-8 correctness does not imply broader automatic-dispatch performance acceptance."
+  ],
+  "blocking_findings": []
+}

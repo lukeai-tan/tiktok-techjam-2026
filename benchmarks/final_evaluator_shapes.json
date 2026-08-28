@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "status": "organizer-published-final-shapes",
+  "description": "Exact Track 3 test-shape rows published in the organizer information document, executed through the selected untouched PyTorch harness.",
+  "source_manifest": "benchmarks/reference/organizer_downloads.json",
+  "source": {
+    "document_title": "TikTok TechJam 2026 Information Document",
+    "url": "https://bytedance.larkoffice.com/wiki/GdYFwzWNLiREsSkuIjZcDznInWc",
+    "section": "3.7 Appendix - Test shapes",
+    "document_last_updated": "2026-08-27",
+    "observed_on": "2026-08-28",
+    "table_columns": [
+      "Batch Size",
+      "QKV Dim",
+      "Heads",
+      "Seq Len",
+      "Layers",
+      "Causal",
+      "FFN Dim"
+    ]
+  },
+  "source_omissions": [
+    "framework",
+    "dtype",
+    "padding ratio",
+    "correctness tolerance",
+    "timing protocol",
+    "backward or gradient requirement"
+  ],
+  "execution_assumptions": [
+    "PyTorch is the selected framework, so the untouched PyTorch harness remains authoritative.",
+    "The table omits dtype and padding; validation uses the selected PyTorch harness defaults of float32 and no padding.",
+    "The stricter supplied PyTorch comparator remains authoritative: atol 0.001 OR rtol 0.01, with zero failed elements.",
+    "Row 14's batch, QKV-dimension, head-count, and 100000-token sequence axes match the supplied TensorFlow stress case; that source's explicit resource-preflight authorization is retained and the skip is not counted as a pass.",
+    "The table omits timing policy; warmup 3, repeats 10, and benchmark rounds 2 are repository validation settings, not organizer-specified values."
+  ],
+  "defaults": {
+    "device": "cuda",
+    "attention_backend": "auto",
+    "accuracy_trials": 5,
+    "rtol": 0.01,
+    "atol": 0.001,
+    "warmup": 3,
+    "repeats": 10,
+    "benchmark_rounds": 2,
+    "seed": 1234,
+    "input_scale": 1.0
+  },
+  "explicit_cases": [
+    {
+      "id": "final-01-b64-d128-h4-s128",
+      "source_row": 1,
+      "description": "Organizer final shape row 1.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 128, 4, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-02-b1-d128-h4-s128",
+      "source_row": 2,
+      "description": "Organizer final shape row 2.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [1, 128, 4, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 1,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-03-b4-d128-h4-s128",
+      "source_row": 3,
+      "description": "Organizer final shape row 3.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [4, 128, 4, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 4,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-04-b16-d128-h4-s128",
+      "source_row": 4,
+      "description": "Organizer final shape row 4.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [16, 128, 4, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 16,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-05-b128-d128-h4-s128",
+      "source_row": 5,
+      "description": "Organizer final shape row 5.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [128, 128, 4, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 128,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-06-b10000-d128-h4-s128",
+      "source_row": 6,
+      "description": "Organizer final shape row 6.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [10000, 128, 4, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 10000,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-07-b64-d32-h4-s128",
+      "source_row": 7,
+      "description": "Organizer final shape row 7.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 32, 4, 128, 4, true, 32],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 32,
+        "num_heads": 4,
+        "ffn_dim": 32,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-08-b64-d1024-h4-s128",
+      "source_row": 8,
+      "description": "Organizer final shape row 8.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 1024, 4, 128, 4, true, 1024],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 1024,
+        "num_heads": 4,
+        "ffn_dim": 1024,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-09-b64-d128-h1-s128",
+      "source_row": 9,
+      "description": "Organizer final shape row 9.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 128, 1, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 1,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-10-b64-d128-h2-s128",
+      "source_row": 10,
+      "description": "Organizer final shape row 10.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 128, 2, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 2,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-11-b64-d128-h16-s128",
+      "source_row": 11,
+      "description": "Organizer final shape row 11.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 128, 16, 128, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 16,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-12-b64-d128-h4-s32",
+      "source_row": 12,
+      "description": "Organizer final shape row 12.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 128, 4, 32, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 32,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-13-b64-d128-h4-s1024",
+      "source_row": 13,
+      "description": "Organizer final shape row 13.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [64, 128, 4, 1024, 4, true, 128],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 64,
+        "seq_len": 1024,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "execution": "run"
+    },
+    {
+      "id": "final-14-b32-d1024-h16-s100000-resource-skip",
+      "source_row": 14,
+      "description": "This final row's batch, QKV-dimension, head-count, and 100000-token sequence axes match the supplied TensorFlow stress case that explicitly permits resource preflight when its quadratic baseline exceeds the configured memory budget. The final row's layer, causal, and FFN values remain those published in the final table; this skip is not counted as a pass.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [32, 1024, 16, 100000, 2, true, 1024],
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "config": {
+        "batch_size": 32,
+        "seq_len": 100000,
+        "d_model": 1024,
+        "num_heads": 16,
+        "ffn_dim": 1024,
+        "num_layers": 2,
+        "causal": true
+      },
+      "execution": "skip_resource",
+      "skip_authorized": true
+    }
+  ]
+}

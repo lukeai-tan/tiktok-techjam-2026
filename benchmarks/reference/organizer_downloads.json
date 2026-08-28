@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "status": "participant-supplied-organizer-downloads",
+  "selected_framework": "pytorch",
+  "observed_at": "2026-08-27T15:35:14+08:00",
+  "source": {
+    "challenge_brief_path": "docs/hackathon-details.md",
+    "referrer_origin": "https://bytedance.larkoffice.com/",
+    "download_transport_host": "internal-api-drive-stream.larkoffice.com",
+    "windows_zone_identifier_observed": true,
+    "signed_download_urls_persisted": false
+  },
+  "artifacts": [
+    {
+      "framework": "pytorch",
+      "path": "benchmarks/torch_transformer_benchmark.py",
+      "size_bytes": 25017,
+      "sha256": "1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22",
+      "received_at_local": "2026-08-27T15:29:53.0430291+08:00",
+      "role": "untouched organizer benchmark and selected executable contract",
+      "submission_copy": "torch_transformer_benchmark.py"
+    },
+    {
+      "framework": "tensorflow",
+      "path": "benchmarks/tensorflow_transformer_benchmark.py",
+      "size_bytes": 54531,
+      "sha256": "00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798",
+      "received_at_local": "2026-08-27T15:29:58.3318818+08:00",
+      "role": "untouched alternative-framework benchmark and shape-scope cross-check"
+    }
+  ],
+  "pytorch_contract": {
+    "default_case": {
+      "batch_size": 8,
+      "seq_len": 128,
+      "d_model": 512,
+      "num_heads": 8,
+      "ffn_dim": 2048,
+      "num_layers": 6,
+      "causal": false,
+      "dtype": "float32",
+      "padding_ratio": 0.0
+    },
+    "accuracy_trials": 5,
+    "absolute_rule": "abs_error <= 0.001",
+    "relative_rule": "abs_error <= 0.01 * abs(reference)",
+    "timing": {
+      "warmup": 20,
+      "repeats": 100,
+      "rounds": 3
+    }
+  },
+  "tensorflow_contract": {
+    "default_axes": {
+      "batch_sizes": [1, 4, 16, 128, 10000],
+      "qkv_dims": [32, 128, 1024],
+      "heads": [1, 2, 4, 16],
+      "seq_lens": [32, 1024, 100000]
+    },
+    "default_dtype": "float16",
+    "num_layers": 6,
+    "ffn_multiplier": 4,
+    "absolute_rule": "abs_error < 0.002",
+    "relative_rule": "abs_error <= 0.02 * abs(reference)",
+    "compact_cases": [
+      [1, 128, 4, 32],
+      [4, 128, 4, 32],
+      [16, 128, 4, 32],
+      [128, 128, 4, 32],
+      [10000, 128, 4, 32],
+      [16, 32, 4, 32],
+      [16, 1024, 4, 32],
+      [16, 128, 1, 32],
+      [16, 128, 2, 32],
+      [16, 128, 16, 32],
+      [16, 128, 4, 1024],
+      [32, 1024, 16, 100000]
+    ],
+    "compact_case_order": ["batch_size", "qkv_dim", "heads", "seq_len"],
+    "stress_case_may_be_preflight_skipped": true
+  },
+  "reconciliation": {
+    "baseline_transformer_definitions_match_selected_submission_copy": true,
+    "tensorflow_download_is_single_canonical_copy": true,
+    "framework_contracts_are_not_identical": true,
+    "final_cross_framework_evaluator_matrix_available": false
+  }
+}

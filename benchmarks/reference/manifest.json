@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "checked-in-snapshot",
+  "framework": "pytorch",
+  "reference_path": "torch_transformer_benchmark.py",
+  "snapshot_commit": "3c7a05205f1090f7f074312ed82e3e6753d16b92",
+  "git_blob_oid": "5083fb4ebf6f83acd2b89a0cf62ae067f927dbb4",
+  "sha256": "4875cb8bee39b1a96154aa6ea383a0acf975390d9b2ae3240214a0c8eebf420c",
+  "challenge_brief_path": "docs/hackathon-details.md",
+  "challenge_brief_sha256": "798171bf818b76f98ebf606a8a54c3c7d8c5e302b28961516e6a0190ac8b3acb",
+  "recorded_at": "2026-08-27T00:00:00+08:00",
+  "upstream_url": null,
+  "upstream_byte_identity_verified": false,
+  "notes": [
+    "The exact base Git blob is recoverable with: git show 5083fb4ebf6f83acd2b89a0cf62ae067f927dbb4",
+    "The repository history begins with an already customized benchmark, so organizer byte identity is unresolved.",
+    "Replace or supplement this manifest when the latest organizer download and final shapes are available."
+  ]
+}

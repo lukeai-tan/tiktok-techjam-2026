@@ -1,0 +1,132 @@
+{
+  "task_id": "track3-campaign-004",
+  "title": "Profile-led head-dimension-8 optimization round",
+  "status": "in_progress",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": null,
+    "project_context_reviewed": false,
+    "prd_update_task_id": "task-sot-graph-closure",
+    "contradictions": []
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "acceptance_criteria": {
+    "AC-WF-1": "The workflow validates with zero errors and every executed test, profile, and benchmark has an immutable attempt record.",
+    "AC-BASE-1": "The accepted Campaign 3 checkpoint is clean, fingerprinted, source-hash current, and freshly measured before candidate changes.",
+    "AC-CORRECT-1": "Every accepted candidate has zero failed elements and no unauthorized fallback, error, OOM, or skip in its required gates.",
+    "AC-PERF-1": "An accepted candidate improves paired final-matrix geomean by approximately 5 percent or supplies a clear profiler-backed kernel, memory, or launch benefit, with no affected required case regressing more than 2 percent absent independent waiver.",
+    "AC-EVIDENCE-1": "Raw timings, error counts, backend counts, profiler events, environment, hashes, and wall time are linked to the exact implementation.",
+    "AC-REVIEW-1": "An independent reviewer recomputes provenance and challenges the candidate decision before integration.",
+    "AC-RELEASE-1": "Only an approved winner is retained and all curated matrices, profiles, tests, docs, and graph validation are current."
+  },
+  "roles": [
+    {"role": "Task Intake Analyst", "file": "00_Core_Orchestration/Task_Intake_Analyst.md", "why": "Normalizes scope and measurable evidence gates"},
+    {"role": "Agentic Workflow Orchestrator", "file": "00_Core_Orchestration/Agentic_Workflow_Orchestrator.md", "why": "Owns sequencing, rollback, evidence integration, and source-of-truth closure"},
+    {"role": "Planning and Decomposition Agent", "file": "00_Core_Orchestration/Planning_and_Decomposition_Agent.md", "why": "Defines bounded packages, dependencies, loop limits, and stop conditions"},
+    {"role": "Backend Performance Engineer", "file": "06_Backend_API_and_Integration_Engineering/Backend_Performance_Engineer.md", "why": "Profiles row 11 and ranks reference, SDPA, and padded-kernel hypotheses"},
+    {"role": "Machine Learning Engineer", "file": "11_Data_Analytics_and_AI/Machine_Learning_Engineer.md", "why": "Implements one bounded kernel or routing candidate at a time"},
+    {"role": "Performance Test Engineer", "file": "09_Quality_Assurance_and_Testing/Performance_Test_Engineer.md", "why": "Validates correctness, latency distributions, memory, and actual backend execution"},
+    {"role": "Independent Reviewer and Critic", "file": "00_Core_Orchestration/Independent_Reviewer_and_Critic.md", "why": "Challenges provenance, overfitting, correctness, and maintainability"},
+    {"role": "Release Gatekeeper", "file": "00_Core_Orchestration/Release_Gatekeeper.md", "why": "Issues the final accept, reject, rework, plateau, or hold decision"}
+  ],
+  "tasks": [
+    {
+      "id": "task-intake-workflow",
+      "title": "Freeze and validate Campaign 4 scope",
+      "role": "Planning and Decomposition Agent",
+      "write_scope": ["docs/experiments/CAMPAIGN-004-WORKFLOW.json", "docs/experiments/CAMPAIGN-004.md"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-WF-1", "AC-BASE-1"],
+      "validation": ["validate_workflow.py", "clean accepted Campaign 3 checkpoint"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision", "verification"]
+    },
+    {
+      "id": "task-profile-rank",
+      "title": "Profile final row 11 and screen exact backends",
+      "role": "Backend Performance Engineer",
+      "write_scope": ["docs/experiments/attempts", "docs/results", "docs/experiments/CAMPAIGN-004.md"],
+      "depends_on": ["task-intake-workflow"],
+      "acceptance_criteria": ["AC-BASE-1", "AC-EVIDENCE-1"],
+      "validation": ["fresh exact row-11 result", "profile and backend-count agreement", "auto, SDPA, and reference comparison"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision"]
+    },
+    {
+      "id": "task-candidates",
+      "title": "Run at most three head-dimension-8 candidates",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["transformer_opt", "torch_transformer_benchmark.py", "tests", "docs/experiments/attempts", "docs/results"],
+      "depends_on": ["task-profile-rank"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-EVIDENCE-1"],
+      "validation": ["focused dispatch and direct-kernel tests", "exact row 11 and affected row 7", "paired confirmation", "backend and profiler proof"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-independent-review",
+      "title": "Independently review the best candidate",
+      "role": "Independent Reviewer and Critic",
+      "write_scope": [],
+      "depends_on": ["task-candidates"],
+      "acceptance_criteria": ["AC-REVIEW-1"],
+      "validation": ["provenance recomputation", "correctness and timing review", "boundary and maintainability review"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["finding", "handoff"]
+    },
+    {
+      "id": "task-integrate-rebaseline",
+      "title": "Retain an approved winner and regenerate all evidence",
+      "role": "Agentic Workflow Orchestrator",
+      "write_scope": ["transformer_opt", "torch_transformer_benchmark.py", "tests", "docs/results", "docs/experiments"],
+      "depends_on": ["task-independent-review"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["final matrix", "organizer default", "held-out matrix", "source-derived validation", "profile", "full pytest"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "decision"]
+    },
+    {
+      "id": "task-sot-graph-closure",
+      "title": "Update source of truth and perform graph closure",
+      "role": "Release Gatekeeper",
+      "write_scope": ["authoritative docs", "campaign ledger", "repo memory graph"],
+      "depends_on": ["task-integrate-rebaseline"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["independent release review", "AI Council review", "graph rebuild and validation", "clean scoped diff"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "verification", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-head8-candidate-review",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 3,
+      "finding_condition": "A reproducible correctness, provenance, performance, or maintainability gate fails",
+      "acceptance_condition": "One candidate meets all correctness and evidence gates plus the measured acceptance threshold, or the subsystem is truthfully declared plateaued",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "finalization": {
+    "prd_update_task_id": "task-sot-graph-closure",
+    "project_context_update_task_id": null,
+    "graph_closure_task_id": "task-sot-graph-closure",
+    "release_gatekeeper_task_id": "task-sot-graph-closure",
+    "final_report_sections": ["What changed in code", "Every attempt and its metrics", "What changed in PRD/docs", "What was tested", "Unresolved clarification or inconsistency", "Residual risks and holds"]
+  }
+}

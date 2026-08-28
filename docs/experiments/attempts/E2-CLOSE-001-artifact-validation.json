@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "E2-CLOSE-001-ARTIFACT-VALIDATION",
+    "hypothesis": "All E2 attempt records, result artifacts, and the comparison summary are complete, parseable, passing, and tied to the selected implementation fingerprint",
+    "scope": "Closure integrity validation for fresh current-versus-original evaluation",
+    "parent_commit": "b833f7292bf15680d0add6007a53f9f7bf747690",
+    "candidate_commit": "b833f7292bf15680d0add6007a53f9f7bf747690",
+    "branch": "feat/transformer-gpu-kernel-implementation",
+    "changed_paths": [],
+    "rollback": "No code change; retain a failing closure record and report the evidence gap",
+    "decision": "observation",
+    "decision_rationale": "Close only after every fresh benchmark artifact and attempt record passes provenance checks.",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      ".venv\\Scripts\\python.exe",
+      "-c",
+      "import json; from pathlib import Path; expected='de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611'; attempts=sorted(Path('docs/experiments/attempts').glob('E2-*.json')); results=sorted(Path('docs/results').glob('*current-vs-original*.json')); aj=[json.loads(p.read_text(encoding='utf-8')) for p in attempts]; rj=[json.loads(p.read_text(encoding='utf-8')) for p in results]; assert len(attempts)==5, len(attempts); assert len(results)==4, len(results); assert all(x['record_status']=='RECORDED' and x['execution']['status']=='PASS' and x['environment_before']['git']['implementation_sha256']==expected for x in aj); assert all(x['environment']['git']['implementation_sha256']==expected for x in rj); assert Path('docs/experiments/CURRENT_VS_ORIGINAL_EVALUATION.md').is_file(); print(f'attempts={len(attempts)} results={len(results)} fingerprint={expected} statuses=PASS')"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T10:13:33.481276+00:00",
+    "ended_at_utc": "2026-08-28T10:13:33.524317+00:00",
+    "wall_time_seconds": 0.04338429984636605,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "attempts=5 results=4 fingerprint=de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611 statuses=PASS\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T10:13:33.388055+00:00",
+    "command": [
+      ".venv\\Scripts\\python.exe",
+      "-c",
+      "import json; from pathlib import Path; expected='de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611'; attempts=sorted(Path('docs/experiments/attempts').glob('E2-*.json')); results=sorted(Path('docs/results').glob('*current-vs-original*.json')); aj=[json.loads(p.read_text(encoding='utf-8')) for p in attempts]; rj=[json.loads(p.read_text(encoding='utf-8')) for p in results]; assert len(attempts)==5, len(attempts); assert len(results)==4, len(results); assert all(x['record_status']=='RECORDED' and x['execution']['status']=='PASS' and x['environment_before']['git']['implementation_sha256']==expected for x in aj); assert all(x['environment']['git']['implementation_sha256']==expected for x in rj); assert Path('docs/experiments/CURRENT_VS_ORIGINAL_EVALUATION.md').is_file(); print(f'attempts={len(attempts)} results={len(results)} fingerprint={expected} statuses=PASS')"
+    ],
+    "git": {
+      "commit": "b833f7292bf15680d0add6007a53f9f7bf747690",
+      "dirty": true,
+      "changed_path_count": 10,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440003125248
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T10:13:33.560387+00:00",
+    "command": [
+      ".venv\\Scripts\\python.exe",
+      "-c",
+      "import json; from pathlib import Path; expected='de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611'; attempts=sorted(Path('docs/experiments/attempts').glob('E2-*.json')); results=sorted(Path('docs/results').glob('*current-vs-original*.json')); aj=[json.loads(p.read_text(encoding='utf-8')) for p in attempts]; rj=[json.loads(p.read_text(encoding='utf-8')) for p in results]; assert len(attempts)==5, len(attempts); assert len(results)==4, len(results); assert all(x['record_status']=='RECORDED' and x['execution']['status']=='PASS' and x['environment_before']['git']['implementation_sha256']==expected for x in aj); assert all(x['environment']['git']['implementation_sha256']==expected for x in rj); assert Path('docs/experiments/CURRENT_VS_ORIGINAL_EVALUATION.md').is_file(); print(f'attempts={len(attempts)} results={len(results)} fingerprint={expected} statuses=PASS')"
+    ],
+    "git": {
+      "commit": "b833f7292bf15680d0add6007a53f9f7bf747690",
+      "dirty": true,
+      "changed_path_count": 10,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440003125248
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}
