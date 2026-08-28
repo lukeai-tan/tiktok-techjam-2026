@@ -49,9 +49,21 @@ def _sha256(path: Path) -> str:
 def portable_command(command: list[str]) -> list[str]:
     """Remove machine-specific absolute path prefixes from persisted argv."""
     rendered: list[str] = []
-    for argument in command:
+    active_python = Path(sys.executable).resolve()
+    for index, argument in enumerate(command):
         candidate = Path(argument)
-        rendered.append(display_path(candidate) if candidate.is_absolute() else argument)
+        if (
+            index == 0
+            and candidate.is_absolute()
+            and candidate.resolve() == active_python
+        ):
+            # A repository-local virtual environment is still machine-specific
+            # command plumbing. Persist the interpreter token, not `.venv`.
+            rendered.append(candidate.name)
+        else:
+            rendered.append(
+                display_path(candidate) if candidate.is_absolute() else argument
+            )
     return rendered
 
 
