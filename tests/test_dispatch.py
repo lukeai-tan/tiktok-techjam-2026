@@ -168,6 +168,14 @@ def test_short_head_dim_32_reduces_kv_tile_only_through_sequence_128():
     assert (smaller_head.block_m, smaller_head.block_n) == (64, 128)
 
 
+def test_exp005_i2_short_head_dim_128_reduces_kv_tile_only():
+    candidate = attention_launch_config(head_dim=128, seq_len=128)
+    longer = attention_launch_config(head_dim=128, seq_len=129)
+
+    assert (candidate.block_m, candidate.block_n, candidate.num_warps) == (32, 32, 4)
+    assert (longer.block_m, longer.block_n) == (32, 64)
+
+
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
 def test_forced_triton_rejects_bfloat16():
     q = torch.randn(1, 16, 2, 32, device="cuda", dtype=torch.bfloat16)

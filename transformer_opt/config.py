@@ -79,6 +79,15 @@ def attention_launch_config(head_dim: int, seq_len: int) -> AttentionLaunchConfi
             num_warps=4,
             num_stages=2,
         )
+    if head_dim == 128 and seq_len <= 128:
+        # Candidate EXP-005-I2: reduce only the K/V tile to test shared-memory
+        # pressure without changing the established Q tile or arithmetic.
+        return AttentionLaunchConfig(
+            block_m=32,
+            block_n=32,
+            num_warps=4,
+            num_stages=2,
+        )
     if head_dim <= 64:
         return AttentionLaunchConfig(
             block_m=64,
