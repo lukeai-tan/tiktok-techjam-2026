@@ -112,6 +112,27 @@ def attention_launch_config(head_dim: int, seq_len: int) -> AttentionLaunchConfi
     )
 
 
+def attention_autotune_configs() -> tuple[tuple[int, int], ...]:
+    """Return the (num_warps, num_stages) scheduling search space for autotuning.
+
+    Only the two scheduling knobs are tuned. Tile sizes stay fixed by
+    ``attention_launch_config`` because ``BLOCK_M``/``BLOCK_N`` change the
+    online-softmax accumulation order and therefore the numerical drift against
+    the strict executable comparator; warp count and pipeline depth do not.
+
+    The list always contains the historical launch policy (``num_warps=4`` with
+    ``num_stages`` two and three), so the worst autotune outcome is the current
+    hand-tuned behavior. The extra ``num_warps=8`` entries let the kernel adapt
+    to GPUs where the fixed four-warp policy under-occupies, which the fixed
+    table could not do outside the tuned RTX 5070 Ti.
+    """
+    return tuple(
+        (num_warps, num_stages)
+        for num_warps in (4, 8)
+        for num_stages in (2, 3, 4)
+    )
+
+
 def _validate_qkv_contract(
     q: torch.Tensor,
     k: torch.Tensor,

@@ -12,7 +12,11 @@ from typing import Optional
 
 import torch
 
-from transformer_opt.config import attention_launch_config, triton_attention_support
+from transformer_opt.config import (
+    attention_autotune_configs,
+    attention_launch_config,
+    triton_attention_support,
+)
 
 try:
     import triton
@@ -31,6 +35,21 @@ def triton_available() -> bool:
 
 if triton is not None:
 
+    # Autotune only the scheduling knobs (num_warps, num_stages). BLOCK_M and
+    # BLOCK_N stay pinned by attention_launch_config so the online-softmax
+    # accumulation order, and therefore the numerical drift against the strict
+    # comparator, is identical to the hand-tuned policy. The historical
+    # num_warps=4 configs are always in the space, so autotune can never do
+    # worse than the previous fixed launch. The key re-tunes per compiled shape.
+    _ATTENTION_AUTOTUNE_CONFIGS = [
+        triton.Config({}, num_warps=num_warps, num_stages=num_stages)
+        for (num_warps, num_stages) in attention_autotune_configs()
+    ]
+
+    @triton.autotune(
+        configs=_ATTENTION_AUTOTUNE_CONFIGS,
+        key=["N_CTX", "HEAD_DIM", "DOT_HEAD_DIM", "BLOCK_M", "BLOCK_N", "HAS_MASK", "CAUSAL"],
+    )
     @triton.jit
     def _attention_fwd(
         q_ptr,
@@ -260,7 +279,8 @@ def triton_attention(
         # TF32 on the measured non-causal path, but use IEEE fp32 for causal
         # attention so masked rows stay within the executable tolerance.
         ALLOW_TF32=torch.backends.cuda.matmul.allow_tf32 and not causal,
-        num_warps=launch.num_warps,
-        num_stages=launch.num_stages,
+        # num_warps and num_stages are supplied by @triton.autotune. BLOCK_M and
+        # BLOCK_N remain pinned by attention_launch_config above so the tiling,
+        # and thus the numerical result, is unchanged.
     )
     return output
