@@ -1,0 +1,293 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-08-28T04:58:37.689129+00:00",
+  "manifest": {
+    "path": "benchmarks/final_profile_shapes.json",
+    "status": "organizer-final-profile-subset",
+    "organizer_matrix_available": null
+  },
+  "environment": {
+    "captured_at_utc": "2026-08-28T04:58:37.731688+00:00",
+    "command": [
+      "benchmarks/run_matrix.py",
+      "--manifest",
+      "benchmarks/final_profile_shapes.json",
+      "--case",
+      "final-09-b64-d128-h1-s128",
+      "--dtype",
+      "float32",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c3-row09-backend-auto.json"
+    ],
+    "git": {
+      "commit": "6426e0cab48a842697441eca966a520a7fd6409f",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445469720576
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "high",
+      "allow_tf32_matmul": true,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "parameters": {
+    "device": "cuda",
+    "backend": "auto",
+    "warmup": 3,
+    "repeats": 10,
+    "rounds": 2,
+    "accuracy_trials": 5
+  },
+  "summary": {
+    "requested": 1,
+    "completed": 1,
+    "counts": {
+      "ERROR": 0,
+      "FAIL": 0,
+      "OOM": 0,
+      "PASS": 1
+    }
+  },
+  "results": [
+    {
+      "case_id": "final-09-b64-d128-h1-s128",
+      "dtype": "float32",
+      "backend_requested": "auto",
+      "config": {
+        "id": "final-09-b64-d128-h1-s128",
+        "source_row": 9,
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 1,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true,
+        "padding_ratio": 0.0,
+        "input_scale": 1.0
+      },
+      "status": "PASS",
+      "accuracy": {
+        "rtol": 0.01,
+        "atol": 0.001,
+        "trials": [
+          {
+            "seed": 1234,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 1048576,
+            "max_abs_error": 0.0009851828217506409,
+            "max_relative_error": 58.61948776245117,
+            "mean_abs_error": 9.287845023209229e-05,
+            "worst_index": [
+              7,
+              1,
+              111
+            ]
+          },
+          {
+            "seed": 1235,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 1048576,
+            "max_abs_error": 0.0010235309600830078,
+            "max_relative_error": 128.55859375,
+            "mean_abs_error": 9.311127359978855e-05,
+            "worst_index": [
+              35,
+              1,
+              38
+            ]
+          },
+          {
+            "seed": 1236,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 1048576,
+            "max_abs_error": 0.0010627508163452148,
+            "max_relative_error": 190.44338989257812,
+            "mean_abs_error": 9.269703878089786e-05,
+            "worst_index": [
+              30,
+              1,
+              88
+            ]
+          },
+          {
+            "seed": 1237,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 1048576,
+            "max_abs_error": 0.0009167641401290894,
+            "max_relative_error": 727.0723876953125,
+            "mean_abs_error": 9.33473274926655e-05,
+            "worst_index": [
+              21,
+              3,
+              90
+            ]
+          },
+          {
+            "seed": 1238,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 1048576,
+            "max_abs_error": 0.0009889602661132812,
+            "max_relative_error": 60.60137176513672,
+            "mean_abs_error": 9.27673390833661e-05,
+            "worst_index": [
+              29,
+              1,
+              21
+            ]
+          }
+        ],
+        "backend_counts": {
+          "triton": 20,
+          "sdpa": 0,
+          "reference": 0
+        }
+      },
+      "timing": {
+        "warmup": 3,
+        "repeats": 10,
+        "rounds": 2,
+        "baseline": {
+          "raw_ms": [
+            0.9826880097389221,
+            0.827072024345398,
+            0.8535680174827576,
+            0.7947520017623901,
+            0.825760006904602,
+            0.8242239952087402,
+            0.7854080200195312,
+            0.7704319953918457,
+            0.8124160170555115,
+            0.8115839958190918,
+            0.8447679877281189,
+            0.8111039996147156,
+            0.8674560189247131,
+            0.8425279855728149,
+            0.8324480056762695,
+            0.950111985206604,
+            1.0183680057525635,
+            0.7565439939498901,
+            1.0257920026779175,
+            0.753279983997345
+          ],
+          "median_ms": 0.826416015625,
+          "mean_ms": 0.8495152026414872,
+          "p90_ms": 0.9862560093402863,
+          "min_ms": 0.753279983997345
+        },
+        "optimized": {
+          "raw_ms": [
+            1.2806400060653687,
+            1.151039958000183,
+            1.1476479768753052,
+            1.1511039733886719,
+            1.143712043762207,
+            1.1656639575958252,
+            1.1505919694900513,
+            1.1480319499969482,
+            1.1524159908294678,
+            1.1494719982147217,
+            1.2894400358200073,
+            1.1446399688720703,
+            1.14518404006958,
+            1.1468160152435303,
+            1.1474560499191284,
+            1.3976320028305054,
+            1.4234880208969116,
+            1.147007942199707,
+            1.2890559434890747,
+            1.4253120422363281
+          ],
+          "median_ms": 1.1508159637451172,
+          "mean_ms": 1.2098175942897798,
+          "p90_ms": 1.4002176046371462,
+          "min_ms": 1.143712043762207
+        },
+        "speedup_median": 0.7181130968461563,
+        "baseline_tokens_per_second": 9912683.013293944,
+        "optimized_tokens_per_second": 7118427.496730802,
+        "backend_counts": {
+          "triton": 92,
+          "sdpa": 0,
+          "reference": 0
+        }
+      },
+      "peak_memory": {
+        "baseline": {
+          "allocated_before_bytes": 41730048,
+          "peak_allocated_bytes": 79495168,
+          "incremental_peak_bytes": 37765120
+        },
+        "optimized": {
+          "allocated_before_bytes": 41730048,
+          "peak_allocated_bytes": 71090176,
+          "incremental_peak_bytes": 29360128
+        }
+      }
+    }
+  ]
+}

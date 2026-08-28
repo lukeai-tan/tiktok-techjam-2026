@@ -99,9 +99,12 @@ missing or invalid artifacts remain in the ledger.
 | C3-PREFLIGHT-003-PROFILE-MANIFEST | Row 9 is an exact versioned profile case | focused manifest test | 1.381 s | 1/1 passed; dimensions match final row 9 | keep |
 | C3-BASE-001-FINAL-ROW9 | Fresh row-9 baseline reproduces the regression | final row 9 | 3.486 s | PASS; 0/5,242,880 failed; Triton 112/112; 1.1745/1.2341 ms; 0.952x | observation |
 | C3-OBS-001-FINAL-ROW9-PROFILE | Row-9 attention is a material bottleneck | final row 9 profile | 2.880 s | Triton 40/40; `_attention_fwd` 6,775.468 us / 40, 55.23% of optimized range | observation |
+| C3-OBS-002-BACKEND-AUTO | Same-runner auto/Triton control | final row 9 | 1.982 s | PASS; 0/5,242,880 failed; Triton 92/92; 1.15082 ms | observation |
+| C3-OBS-003-BACKEND-SDPA | SDPA may win short causal `head_dim=128` | final row 9 | 1.765 s | PASS; 0/5,242,880 failed; SDPA 92/92; 0.69224 ms, -39.85% vs auto | observation |
+| C3-OBS-004-BACKEND-REFERENCE | Exact attention bounds fallback cost | final row 9 | 1.732 s | PASS; 0/5,242,880 failed; reference 92/92; 1.00851 ms | observation |
 
-Campaign 3 currently contains five passing attempt records and zero failed
-commands. Recorded child-command wall time totals 11.184 seconds; orchestration,
+Campaign 3 currently contains eight passing attempt records and zero failed
+commands. Recorded child-command wall time totals 16.663 seconds; orchestration,
 documentation, commits, and review time are excluded.
 
 ## Baseline observation
@@ -113,6 +116,14 @@ baseline (0.952x). The matching ten-step profile recorded 40 Triton launches and
 6,775.468 us of `_attention_fwd` self device time inside a 12,266.268 us model
 range. Attention therefore accounts for 55.23% of the optimized range and
 authorizes bounded EXP-005 launch testing.
+
+The controlled backend screen used the same project matrix runner for auto,
+forced SDPA, and forced reference. All three passed zero-failure correctness.
+Optimized medians were 1.15082 ms for auto/Triton, 0.69224 ms for SDPA, and
+1.00851 ms for exact reference. SDPA was 39.85% faster than auto and 31.36%
+faster than exact reference. Separate-run baseline medians varied from 0.82642
+to 0.93888 ms, so these screens authorize EXP-006 but do not accept it; the
+routing candidate requires alternating confirmation and final-matrix evidence.
 
 ## Source-of-truth impact
 
