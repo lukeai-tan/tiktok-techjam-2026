@@ -1,0 +1,110 @@
+{
+  "task_id": "track3-submission-validation-20260828",
+  "title": "Promote and fully validate the requested Track 3 submission fingerprint",
+  "status": "complete",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": null,
+    "project_context_reviewed": false,
+    "prd_update_task_id": "task-submission-close",
+    "contradictions": []
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "acceptance_criteria": {
+    "AC-ENTRY-1": "The organizer-loaded root UserOptimizedTransformer recomputes to implementation fingerprint de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611 without modifying protected organizer sources.",
+    "AC-TEST-1": "The complete CPU and GPU pytest suite passes without removing, weakening, or skipping required coverage.",
+    "AC-CORRECT-1": "The organizer default, all 13 executable final rows, all 28 feasible source-derived cases, and all seven held-out cases pass with zero failed elements; the exact authorized 100000-token resource case remains a non-pass skip.",
+    "AC-PERF-1": "Two complete final-matrix runs record reproducible timing, raw samples, backend counts, wall time, and geometric-mean speedup for the requested fingerprint.",
+    "AC-PROFILE-1": "An integrated profile records repository-owned Triton execution for final row 11 and exposes kernel timing and call counts.",
+    "AC-EVIDENCE-1": "Every executed test, benchmark, and profile command has an immutable attempt record tied to environment, implementation fingerprint, output artifact, wall time, and available accuracy, performance, backend, memory, or profiler metrics.",
+    "AC-REVIEW-1": "Independent provenance, result-consistency, workflow, documentation, and graph checks pass before a local submission-ready recommendation is issued."
+  },
+  "roles": [
+    {"role": "Task Intake Analyst", "file": "00_Core_Orchestration/Task_Intake_Analyst.md", "why": "Resolves the requested fingerprint to the real organizer-loaded submission entry and measurable gates"},
+    {"role": "Agentic Workflow Orchestrator", "file": "00_Core_Orchestration/Agentic_Workflow_Orchestrator.md", "why": "Sequences immutable evidence generation, review, source-of-truth closure, and rollback"},
+    {"role": "Planning and Decomposition Agent", "file": "00_Core_Orchestration/Planning_and_Decomposition_Agent.md", "why": "Defines the bounded serial GPU suite and explicit loop limit"},
+    {"role": "Machine Learning Engineer", "file": "11_Data_Analytics_and_AI/Machine_Learning_Engineer.md", "why": "Verifies the requested implementation identity and preserves its numerical contract"},
+    {"role": "Backend Performance Engineer", "file": "06_Backend_API_and_Integration_Engineering/Backend_Performance_Engineer.md", "why": "Interprets end-to-end, backend, memory, and profiler evidence"},
+    {"role": "Performance Test Engineer", "file": "09_Quality_Assurance_and_Testing/Performance_Test_Engineer.md", "why": "Executes correctness, timing, held-out, and profiler gates on the target GPU"},
+    {"role": "Independent Reviewer and Critic", "file": "00_Core_Orchestration/Independent_Reviewer_and_Critic.md", "why": "Challenges provenance, suite completeness, result consistency, and unsupported claims"},
+    {"role": "Release Gatekeeper", "file": "00_Core_Orchestration/Release_Gatekeeper.md", "why": "Issues the bounded local submission-ready, rework, or hold recommendation"}
+  ],
+  "tasks": [
+    {
+      "id": "task-submission-preflight",
+      "title": "Resolve and freeze the selected submission identity",
+      "role": "Planning and Decomposition Agent",
+      "write_scope": ["docs/experiments/SUBMISSION-VALIDATION-WORKFLOW.json", "docs/experiments/SUBMISSION_VALIDATION.md", "docs/experiments/attempts"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-ENTRY-1", "AC-EVIDENCE-1"],
+      "validation": ["implementation fingerprint recomputation", "protected organizer hash and extension-point tests", "workflow validation"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision", "verification"]
+    },
+    {
+      "id": "task-submission-suite",
+      "title": "Run the complete logged correctness and performance suite",
+      "role": "Performance Test Engineer",
+      "write_scope": ["docs/experiments/attempts", "docs/results", "results"],
+      "depends_on": ["task-submission-preflight"],
+      "acceptance_criteria": ["AC-TEST-1", "AC-CORRECT-1", "AC-PERF-1", "AC-PROFILE-1", "AC-EVIDENCE-1"],
+      "validation": ["full pytest", "organizer default", "primary and confirmation final matrices", "held-out matrix", "source-derived matrix", "integrated row-11 profile"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["verification", "finding"]
+    },
+    {
+      "id": "task-submission-review",
+      "title": "Independently reconcile every validation artifact",
+      "role": "Independent Reviewer and Critic",
+      "write_scope": ["docs/experiments/reviews", "docs/experiments/attempts"],
+      "depends_on": ["task-submission-suite"],
+      "acceptance_criteria": ["AC-ENTRY-1", "AC-CORRECT-1", "AC-PERF-1", "AC-PROFILE-1", "AC-REVIEW-1"],
+      "validation": ["fingerprint agreement", "source hash agreement", "zero-failure accounting", "paired final-run consistency", "backend and profiler proof"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["finding", "handoff"]
+    },
+    {
+      "id": "task-submission-close",
+      "title": "Publish local submission evidence, perform graph closure, and close all gates",
+      "role": "Release Gatekeeper",
+      "write_scope": ["README.md", "docs/REQUIREMENTS.md", "docs/TECH_REPORT.md", "docs/TRACK3_COMPLIANCE.md", "docs/results/README.md", "docs/experiments/SUBMISSION_VALIDATION.md", "docs/experiments/SUBMISSION-VALIDATION-WORKFLOW.json", "repo memory graph"],
+      "depends_on": ["task-submission-review"],
+      "acceptance_criteria": ["AC-REVIEW-1"],
+      "validation": ["curated artifact tests", "workflow validation", "AI Council review", "graph rebuild and validation", "scoped diff review"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "verification", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-submission-rework",
+      "sequence": ["Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer", "Performance Test Engineer"],
+      "max_iterations": 2,
+      "finding_condition": "A reproducible identity, correctness, benchmark, backend, profiler, or evidence gate fails",
+      "acceptance_condition": "Every required gate passes on the requested fingerprint with immutable evidence, or the release gate truthfully records a hold",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "finalization": {
+    "prd_update_task_id": "task-submission-close",
+    "project_context_update_task_id": null,
+    "graph_closure_task_id": "task-submission-close",
+    "release_gatekeeper_task_id": "task-submission-close",
+    "final_report_sections": ["What changed in code", "Every attempt and its metrics", "What changed in PRD/docs", "What was tested", "Unresolved clarification or inconsistency", "Selected submission", "Full benchmark results", "Profiler proof", "Residual risks and external holds"]
+  }
+}

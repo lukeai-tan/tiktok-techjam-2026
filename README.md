@@ -14,69 +14,40 @@ count. Under the recorded PyTorch assumptions (float32, no padding, and the
 stricter executable comparator), all 65 accuracy trials passed with **0 failed
 elements across 938,885,120 comparisons**.
 
-Final-matrix geometric-mean end-to-end speedup is **1.556x**. Per-row speedups
-range from 0.978x to 4.800x; the Campaign 3 target (row 9,
-`head_dim=128`, sequence 128) measures **1.281x**. Backend accounting records
-1,008 Triton calls, 448 explicit reference calls for unsupported or very-large
+The selected local submission is
+`torch_transformer_benchmark.py::UserOptimizedTransformer`, with schema-2
+implementation SHA-256
+`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`.
+Fresh final-matrix geometric-mean end-to-end speedup is **1.776x**. Per-row
+speedups range from 1.013x to 5.456x; the Campaign 4 target (row 11,
+`head_dim=8`, sequence 128) measures **5.456x**. Backend accounting records
+1,120 Triton calls, 336 explicit reference calls for unsupported or very-large
 batch regimes, and zero SDPA calls. The complete table, stdout, environment,
 source hashes, and implementation fingerprint are in
-[the final evaluator artifact](docs/results/rtx-5070-ti-2026-08-28-c3-final.json).
+[the selected-submission artifact](docs/results/rtx-5070-ti-2026-08-28-submission-final.json).
 
-EXP-001 replaced only the short `head_dim=64` attention tile. Two paired full
-matrix trials improved aggregate speedup by **8.98%** and **10.19%**. After
-integration, the current `_attention_fwd` profile for 40 row-10 launches is
-2,694.679 us, 91.11% below the frozen 30,324.486 us pre-candidate profile,
-while all 40 calls remain Triton. See the
-[experiment decision](docs/experiments/EXP-001-head64-short-tiles.md) and
-[integrated profiler artifact](docs/results/rtx-5070-ti-2026-08-28-final-10-profile.json).
+A second complete run of the same implementation reproduced the contract and
+backend counts at **1.770x**. Two project-owned held-out runs are **7/7 PASS at
+1.210x and 1.266x**, the untouched organizer default is **5/5 PASS at 1.352x**,
+and the source-derived matrix is **28/28 executable PASS at 1.203x** plus the
+same authorized non-pass skip. The held-out non-padded long-causal case is a
+reproduced local slowdown at about 0.80x; the published final-matrix claim does
+not hide or average away that limitation. These are separate evidence gates,
+not substitutes for the final matrix.
 
-EXP-003 then changed only short `head_dim=32` K/V tiles from 128 to 64. Three
-alternating row-1 measurements reduced optimized median latency from a
-1.2402 ms baseline mean to 0.8201 ms, and the integrated final-matrix geomean
-rose 6.95% from 1.426692x to 1.525823x. The row-1 `_attention_fwd` profile fell
-69.98%, from 7,008.677 us to 2,103.978 us across 40 launches. Every attempt,
-including rejected and failed gates, is recorded under
-[`docs/experiments/attempts`](docs/experiments/attempts) and summarized in the
-[Campaign 2 record](docs/experiments/CAMPAIGN-002.md).
-
-Campaign 3 then tested three bounded short-`head_dim=128` launch geometries and
-one shape-aware SDPA alternative. Counterbalanced confirmation selected 32x32
-tiles with optimized medians of 0.9042/0.9049/0.9034 ms, 6.16% faster than the
-SDPA alternative's three-run median. After integration, row-9 optimized latency
-fell from 1.2055 ms to 0.9071 ms, final-matrix geomean rose 1.96% from
-1.525823x to 1.555780x, and `_attention_fwd` profiler time fell 55.45% from
-6,775.468 us to 3,018.182 us across 40 Triton calls. See the
-[Campaign 3 record](docs/experiments/CAMPAIGN-003.md) and
-[integrated row-9 profile](docs/results/rtx-5070-ti-2026-08-28-c3-final-09-profile.json).
-
-The project-owned seven-case held-out matrix also completed **7/7 PASS**, with
-zero failures across 13,117,440 comparisons and a **1.220x** geomean. It retains
-raw alternating-order CUDA-event samples and memory measurements; the
-long-attention incremental peak allocation fell from 78 MiB to 22 MiB (71.8%).
-See [the held-out artifact](docs/results/rtx-5070-ti-2026-08-28-c3-heldout.json)
-and the profiler evidence linked above.
-
-The newly supplied organizer PyTorch file is also preserved untouched. Running
-that exact harness at its default six-layer configuration produced **5/5 PASS,
-0 failed elements out of 2,621,440, and 1.367x median speedup**. All 1,950
-optimized attention calls used Triton. See the
-[exact-harness artifact](docs/results/rtx-5070-ti-2026-08-28-c3-organizer-default.json)
-and [organizer-input audit](docs/ORGANIZER_INPUTS.md).
-
-The rigorous source-derived validation then ran the untouched PyTorch
-parser/comparator/timer in a fresh process for every feasible dimension signal
-from both supplied files: **28/28 executable cases passed**, with **0 failed
-elements out of 459,776,000 across 140 accuracy trials**. The matrix covers
-float32, float16, bfloat16, causal attention, prefix padding, batch sizes through
-10,000, model widths through 1,024, head counts 1/2/4/16, and sequence length
-1,024. Overall geomean speedup was **1.201x**; the float32 subset was **1.385x**.
-The TensorFlow script's designated 100,000-token quadratic stress case is the
-single source-authorized resource skip and is not counted as a pass. See the
-[validation artifact](docs/results/rtx-5070-ti-2026-08-28-c3-source-derived.json).
+The complete optimization history now has one canonical entry point:
+[what was tried, every campaign aggregate, rejected and failed work, score
+evolution, and why Campaign 4 is best](docs/experiments/OPTIMIZATION_HISTORY.md).
+Campaigns 2-4 retain all **114** immutable attempt records: 105 passing child
+commands, 9 failed child commands, and 788.748 seconds of measured child wall
+time. Submission selection adds **25** `S1-*` records: 24 passing commands, one
+retained workflow-schema failure, and 223.238 seconds of child wall time. No
+rejected or failed evidence was deleted during consolidation or selection.
 
 The final dimensions are published, but dtype, padding, timing, tolerance, and
 backward policy remain unstated. See [the requirements](docs/REQUIREMENTS.md)
-for the exact assumptions and evidence boundary.
+for the exact assumptions and [the result index](docs/results/README.md) for all
+current reproducibility commands.
 
 ## What is implemented
 
@@ -97,7 +68,8 @@ weight copy while replacing explicit attention with:
 - no [B,H,S,S] score, probability, or dense combined-mask allocation;
 - one cached QKV projection for measured eager-fp32 shapes up to d_model=512,
   with automatic invalidation and no state-dict changes;
-- a measured fixed launch policy for head dimensions 16/32/64/128;
+- a measured fixed launch policy for head dimensions 8/16/32/64/128, with
+  zero-masked 16-lane dot padding for width eight;
 - measured auto-routing (short unmasked fp32 heads <=32 use SDPA; deep six-layer
   causal or batch-above-8 cases use accuracy-safe SDPA; low precision,
   unsupported head widths, and causal batches above 128 use exact reference
@@ -278,9 +250,13 @@ verified names and responsibilities here and on Devpost before submission.
 
 ## Submission status
 
-The implementation passes all 13 executable final rows, the project-held-out
-matrix, the untouched organizer default, and all 28 feasible source-derived
-organizer validation cases. Organizer policy clarification, public-repository,
-and YouTube/Devpost steps remain external holds. See the
+The repo-local submission entry is selected at the fingerprint above. It passes
+all 13 executable final rows, both project-held-out confirmations, the untouched
+organizer default, all 28 feasible source-derived organizer validation cases,
+and the complete 115-test CPU/GPU suite. The immutable validation artifacts were
+captured before Git packaging and therefore record a dirty local candidate;
+committing or pushing this checkpoint does not relabel those measurements as a
+clean run. Organizer policy clarification and YouTube/Devpost steps remain
+external holds. See the
 [Track 3 compliance matrix](docs/TRACK3_COMPLIANCE.md) and follow the
 [demo runbook](DEMO_RUNBOOK.md).

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "task": "track3-submission-validation-20260828",
+  "review_stage": "final_local_selection",
+  "reviewer_role": "independent reviewer and release gatekeeper",
+  "decision": "APPROVE_LOCAL_SUBMISSION_SELECTION_WITH_RESIDUALS",
+  "decision_scope": "Exact current dirty and uncommitted root submission at the requested implementation fingerprint on the recorded RTX 5070 Ti environment",
+  "base_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+  "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+  "verified": [
+    "The actual submission entry is torch_transformer_benchmark.py::UserOptimizedTransformer; independent schema-2 recomputation equals the requested fingerprint across all 13 implementation paths.",
+    "The organizer PyTorch and TensorFlow downloads retain their frozen byte hashes, protected PyTorch definitions match, and the untouched harness accepts the root submission.",
+    "Both full final matrices pass 13/13 executable rows plus the exact authorized non-pass resource skip with zero failures across 938885120 comparisons and 1.7757783185x/1.7701848424x geomeans.",
+    "The untouched organizer default passes 5/5 trials with 0/2621440 failures, 1.352x speedup, and 1950 Triton attention calls.",
+    "The source-derived gate passes 28/28 executable cases plus the exact skip with 0/459776000 failed elements and 1.2034657626x geomean.",
+    "Two complete held-out runs pass 7/7 cases with 0/13117440 failures each at 1.2100085323x and 1.2660101850x geomean.",
+    "The row-11 profile proves 40 Triton calls and 40 _attention_fwd events totaling 4763.665 us.",
+    "Every selected-submission measured artifact is bound to a passing immutable attempt record, result SHA-256, and the same before/after implementation fingerprint.",
+    "The final complete pytest run passes 115/115 tests with 14 upstream PyTorch deprecation warnings; no required coverage was removed.",
+    "Submission-facing docs identify the actual entry and fingerprint, link the fresh artifacts, preserve historical Campaign 2-4 evidence, and disclose the held-out slowdown.",
+    "The AI Council found no local blocker and required explicit residual controls. The repo graph rebuilt to 55 events and validates with zero errors and warnings."
+  ],
+  "blocking_findings": [],
+  "nonblocking_findings": [
+    "The first workflow-schema attempt failed because canonical closure-section names and graph-title wording were missing; the corrected workflow then validated with zero errors and warnings, and the failed attempt remains immutable.",
+    "The non-padded long-causal held-out case reproducibly measures 0.793x and 0.800x. The aggregate remains above baseline, correctness remains green, and memory falls, but universal per-shape speedup must not be claimed.",
+    "Direct and organizer-default speedups are lower than the earlier Campaign 4 snapshot; fresh selected-submission values are reported instead of relabeling historical results."
+  ],
+  "residual_risks": [
+    "All timing evidence is hardware, driver, framework, and thermal-state specific to the recorded RTX 5070 Ti environment.",
+    "The exact row-11 route is deliberately shape-specific and must not be generalized without new correctness and profiler evidence.",
+    "Backward execution is unsupported.",
+    "Organizer dtype, padding, timing, tolerance, backward, evaluator-GPU, and post-workshop policy remain partially unstated.",
+    "The selected content is dirty and uncommitted on b41fdaf; the fingerprint is the local content identity, not a clean public revision."
+  ],
+  "git_actions_authorized": [],
+  "external_holds": [
+    "Organizer policy clarification or later benchmark revision",
+    "Public GitHub visibility",
+    "Human YouTube recording and upload",
+    "Human Devpost publication"
+  ],
+  "required_future_controls": [
+    "Regenerate the complete evidence set after any fingerprinted implementation change.",
+    "Retest on an evaluator GPU that differs from the recorded target.",
+    "Retain and disclose both held-out runs and the long-causal slowdown.",
+    "Do not commit, tag, push, rewrite history, publish, or relabel provenance without separate authorization."
+  ]
+}

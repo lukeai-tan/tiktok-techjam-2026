@@ -21,28 +21,43 @@ def _text_sha256(path: Path) -> str:
 
 
 MATRIX_PATH = (
-    ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-28-c3-heldout.json"
+    ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-28-submission-heldout.json"
+)
+MATRIX_CONFIRMATION_PATH = (
+    ROOT
+    / "docs"
+    / "results"
+    / "rtx-5070-ti-2026-08-28-submission-heldout-confirmation.json"
 )
 PROFILE_PATH = (
-    ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-28-c3-final-09-profile.json"
+    ROOT
+    / "docs"
+    / "results"
+    / "rtx-5070-ti-2026-08-28-submission-final-11-profile.json"
 )
 ORGANIZER_DEFAULT_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-c3-organizer-default.json"
+    / "rtx-5070-ti-2026-08-28-submission-organizer-default.json"
 )
 ORGANIZER_VALIDATION_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-c3-source-derived.json"
+    / "rtx-5070-ti-2026-08-28-submission-source-derived.json"
 )
 FINAL_EVALUATOR_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-c3-final.json"
+    / "rtx-5070-ti-2026-08-28-submission-final.json"
+)
+FINAL_CONFIRMATION_PATH = (
+    ROOT
+    / "docs"
+    / "results"
+    / "rtx-5070-ti-2026-08-28-submission-final-confirmation.json"
 )
 FINAL_EVALUATOR_MATRIX_PATH = ROOT / "benchmarks" / "final_evaluator_shapes.json"
 ORGANIZER_VALIDATION_MATRIX_PATH = (
@@ -52,10 +67,23 @@ ORGANIZER_MANIFEST_PATH = (
     ROOT / "benchmarks" / "reference" / "organizer_downloads.json"
 )
 SDPA_CASES = {"tiny-overhead", "medium-throughput"}
+SUBMISSION_ATTEMPT_RESULT_MAP = {
+    "S1-SUITE-003-organizer-default.json": ORGANIZER_DEFAULT_PATH,
+    "S1-SUITE-004-final-primary.json": FINAL_EVALUATOR_PATH,
+    "S1-SUITE-005-final-confirmation.json": FINAL_CONFIRMATION_PATH,
+    "S1-SUITE-006-heldout.json": MATRIX_PATH,
+    "S1-SUITE-007-source-derived.json": ORGANIZER_VALIDATION_PATH,
+    "S1-SUITE-008-profile-row11.json": PROFILE_PATH,
+    "S1-SUITE-009-heldout-confirmation.json": MATRIX_CONFIRMATION_PATH,
+}
 
 
 def _load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def test_implementation_fingerprint_ignores_checkout_line_endings(
@@ -88,6 +116,59 @@ def test_environment_paths_do_not_expose_host_home(monkeypatch):
     assert payload["git"]["implementation_fingerprint_schema"] == 2
     assert payload["cpu"]["name"]
     assert payload["cpu"]["logical_count"]
+
+
+def test_selected_submission_attempts_bind_results_to_current_fingerprint():
+    current_fingerprint, _ = implementation_fingerprint()
+    attempt_root = ROOT / "docs" / "experiments" / "attempts"
+
+    for attempt_name, result_path in SUBMISSION_ATTEMPT_RESULT_MAP.items():
+        attempt = _load(attempt_root / attempt_name)
+        assert attempt["record_status"] == "RECORDED"
+        assert attempt["execution"]["status"] == "PASS"
+        assert attempt["execution"]["return_code"] == 0
+        assert attempt["environment_before"]["git"]["implementation_sha256"] == (
+            current_fingerprint
+        )
+        assert attempt["environment_after"]["git"]["implementation_sha256"] == (
+            current_fingerprint
+        )
+        assert attempt["result_artifact"]["path"] == result_path.relative_to(
+            ROOT
+        ).as_posix()
+        assert attempt["result_artifact"]["sha256"] == _sha256(result_path)
+        assert attempt["metrics"]["status"] == "PASS"
+
+
+def test_submission_docs_select_fresh_evidence_and_disclose_heldout_slowdown():
+    fingerprint = (
+        "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611"
+    )
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    requirements = (ROOT / "docs" / "REQUIREMENTS.md").read_text(encoding="utf-8")
+    result_index = (ROOT / "docs" / "results" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    technical_report = (ROOT / "docs" / "TECH_REPORT.md").read_text(
+        encoding="utf-8"
+    )
+    compliance = (ROOT / "docs" / "TRACK3_COMPLIANCE.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert all(
+        fingerprint in text for text in (readme, requirements, result_index)
+    )
+    for artifact in SUBMISSION_ATTEMPT_RESULT_MAP.values():
+        assert artifact.name in result_index
+    assert FINAL_EVALUATOR_PATH.name in readme
+    assert FINAL_EVALUATOR_PATH.name in technical_report
+    assert ORGANIZER_DEFAULT_PATH.name in technical_report
+    assert ORGANIZER_VALIDATION_PATH.name in technical_report
+    assert "long-causal" in result_index
+    assert "0.793x" in result_index
+    assert "0.800x" in result_index
+    assert "0.80x" in compliance
 
 
 def test_curated_matrix_is_complete_green_and_current():
@@ -128,7 +209,42 @@ def test_curated_matrix_is_complete_green_and_current():
         assert result["peak_memory"]["optimized"] is not None
         speedups.append(timing["speedup_median"])
     assert total_failed == 0
-    assert statistics.geometric_mean(speedups) == pytest.approx(1.220, abs=0.001)
+    assert statistics.geometric_mean(speedups) == pytest.approx(1.210, abs=0.001)
+
+
+def test_curated_matrix_confirmation_preserves_correctness_and_bounds_variance():
+    primary = _load(MATRIX_PATH)
+    confirmation = _load(MATRIX_CONFIRMATION_PATH)
+
+    assert confirmation["environment"]["git"]["implementation_sha256"] == (
+        primary["environment"]["git"]["implementation_sha256"]
+    )
+    assert confirmation["summary"] == primary["summary"]
+    assert all(result["status"] == "PASS" for result in confirmation["results"])
+    assert all(
+        sum(
+            trial["failed_elements"]
+            for trial in result["accuracy"]["trials"]
+        )
+        == 0
+        for result in confirmation["results"]
+    )
+
+    primary_by_case = {result["case_id"]: result for result in primary["results"]}
+    confirmation_by_case = {
+        result["case_id"]: result for result in confirmation["results"]
+    }
+    assert primary_by_case["long-causal"]["timing"]["speedup_median"] < 1.0
+    assert confirmation_by_case["long-causal"]["timing"]["speedup_median"] < 1.0
+
+    confirmation_speedups = [
+        result["timing"]["speedup_median"]
+        for result in confirmation["results"]
+    ]
+    assert statistics.geometric_mean(confirmation_speedups) == pytest.approx(
+        1.266,
+        abs=0.001,
+    )
 
 
 def test_curated_profile_proves_custom_kernel_for_same_implementation():
@@ -280,7 +396,9 @@ def test_final_evaluator_artifact_is_complete_green_and_current():
         "sha256": _text_sha256(FINAL_EVALUATOR_MATRIX_PATH),
         "status": "organizer-published-final-shapes",
     }
-    assert evidence["environment"]["git"]["dirty"] is False
+    # Campaign 4 was intentionally measured as a reviewable local candidate;
+    # no commit or history mutation was authorized for this optimization round.
+    assert evidence["environment"]["git"]["dirty"] is True
     assert evidence["environment"]["git"]["implementation_sha256"] == (
         current_fingerprint
     )
@@ -305,7 +423,7 @@ def test_final_evaluator_artifact_is_complete_green_and_current():
     assert summary["total_compared_elements"] == 938_885_120
     assert summary["total_failed_elements"] == 0
     assert summary["skipped_counted_as_pass"] is False
-    assert summary["geometric_mean_speedup"] > 1.0
+    assert summary["geometric_mean_speedup"] > 1.7
 
     executable = [
         result for result in evidence["results"] if result["status"] == "PASS"
@@ -324,6 +442,20 @@ def test_final_evaluator_artifact_is_complete_green_and_current():
         and sum(result["attention_backend_counts"].values()) == 112
         for result in executable
     )
+    by_case = {result["case_id"]: result for result in executable}
+    row_7 = by_case["final-07-b64-d32-h4-s128"]
+    row_11 = by_case["final-11-b64-d128-h16-s128"]
+    assert row_7["attention_backend_counts"] == {
+        "triton": 0,
+        "sdpa": 0,
+        "reference": 112,
+    }
+    assert row_11["attention_backend_counts"] == {
+        "triton": 112,
+        "sdpa": 0,
+        "reference": 0,
+    }
+    assert row_11["parsed"]["speedup_median"] > 5.0
     assert len(skipped) == 1
     assert skipped[0]["source_dimensions"] == [
         32,
@@ -336,3 +468,23 @@ def test_final_evaluator_artifact_is_complete_green_and_current():
     ]
     assert skipped[0]["skip_authorized"] is True
     assert skipped[0]["skip_counted_as_pass"] is False
+
+
+def test_final_evaluator_confirmation_reproduces_primary_result():
+    primary = _load(FINAL_EVALUATOR_PATH)
+    confirmation = _load(FINAL_CONFIRMATION_PATH)
+
+    assert confirmation["status"] == "PASS"
+    assert confirmation["matrix"] == primary["matrix"]
+    assert confirmation["environment"]["git"]["implementation_sha256"] == (
+        primary["environment"]["git"]["implementation_sha256"]
+    )
+    assert confirmation["summary"]["counts"] == primary["summary"]["counts"]
+    assert confirmation["summary"]["total_failed_elements"] == 0
+    assert confirmation["summary"]["attention_backend_counts"] == (
+        primary["summary"]["attention_backend_counts"]
+    )
+    assert confirmation["summary"]["geometric_mean_speedup"] == pytest.approx(
+        primary["summary"]["geometric_mean_speedup"],
+        rel=0.01,
+    )

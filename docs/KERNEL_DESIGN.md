@@ -64,6 +64,12 @@ The final output is `acc / l_i`. Triton `exp2` is used after folding
 `log2(e)` into scores. This is FlashAttention-style online softmax: the kernel
 never stores a `[B,H,S,S]` score or probability tensor.
 
+For real `head_dim=8`, the wrapper supplies a compile-time dot width of 16 to
+meet Triton's minimum reduction width. Lanes 8-15 are zero-masked for Q/K/V,
+the accumulator retains 16 lanes, and the store mask writes only lanes 0-7.
+Softmax scaling still uses `8**-0.5`; padding therefore changes neither the
+mathematical head width nor the public tensor shape.
+
 ## Masks and boundary safety
 
 - Sequence-tail masks guard every Q/K/V load and output store.
@@ -105,7 +111,7 @@ Custom execution requires:
 - CUDA inference tensors on compute capability 8.0 or newer;
 - identical Q/K/V shapes, dtype, and device;
 - float32 or float16;
-- `head_dim` in `{16, 32, 64, 128}`;
+- `head_dim` in `{8, 16, 32, 64, 128}`;
 - `1 <= sequence <= 8192`;
 - last-dimension stride 1;
 - optional boolean mask of shape `[B,S]` on the same device;
@@ -128,6 +134,7 @@ The measured fixed policy avoids per-process autotuning overhead:
 
 | head dimension | sequence | BLOCK_M | BLOCK_N | warps | stages |
 | ---: | ---: | ---: | ---: | ---: | ---: |
+| 8 | <= 128 | 64 | 64 | 4 | 2 |
 | 16 | <= 128 | 64 | 128 | 4 | 2 |
 | 32 | <= 128 | 64 | 64 | 4 | 2 |
 | 64 | <= 128 | 32 | 64 | 4 | 2 |
@@ -144,12 +151,15 @@ the register spilling measured with IEEE fp32 dots on the target GPU. Short
 head-dimension-128 sequences use a 32-wide K/V tile after three reproducible
 row-9 measurements showed a 26.73% latency reduction versus the fresh baseline;
 sequence 129 and above retains the prior 64-wide K/V tile.
+Head-dimension-8 direct execution uses the same 64x64 geometry at the target
+boundary; only exact final row 11 is automatically routed to it in the
+multi-layer model.
 
 ## Measured design decisions
 
 - The organizer-published final matrix passed all 13 executable rows with zero
   failed elements and one source-authorized resource skip. It delivered a
-  1.556x geomean end-to-end speedup; 1,008 attention calls used Triton and 448
+  fresh 1.775778x geomean end-to-end speedup; 1,120 attention calls used Triton and 336
   unsupported or very-large-batch calls used explicit reference math.
 - EXP-001 targeted the final row-10 `head_dim=64`, sequence-128 spill bottleneck.
   The former 64x128 tile reported 2,468 spills and 81,920 bytes of shared memory;
@@ -169,6 +179,12 @@ sequence 129 and above retains the prior 64-wide K/V tile.
   three-run median, 6.16% faster than SDPA. The integrated row-9 profile kept
   40/40 calls on Triton while `_attention_fwd` time fell from 6,775.468 us to
   3,018.182 us (-55.45%) and the ten-step model range fell 26.96%.
+- Campaign 4 tested exact SDPA and three padded-width Triton geometries for
+  final row 11. The selected 64x64 configuration reproduced 1.0595/1.0628/
+  1.0624 ms optimized medians, 43.06% below the correct SDPA alternative and
+  81.08% below the fresh exact-reference median. The integrated profile proved
+  40/40 Triton calls; its ten-step model range fell from 41,658.659 us to
+  10,592.605 us (-74.57%).
 - Exact-harness stress testing found rare strict-tolerance misses when Triton
   differences accumulated through six causal layers or batches above eight.
   Auto routes those deep-stack regimes to SDPA; all 28 feasible source-derived

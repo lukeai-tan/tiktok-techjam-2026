@@ -9,6 +9,14 @@ the table omits framework, dtype, padding, tolerance, timing, and backward
 requirements. `benchmarks/official_shapes.json` remains a project-owned
 held-out matrix rather than the final organizer matrix.
 
+Selected local submission entry:
+`torch_transformer_benchmark.py::UserOptimizedTransformer`. Its schema-2
+implementation fingerprint is
+`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`.
+The 2026-08-28 submission-validation suite recomputed that identity before
+execution and ties all fresh tests, benchmarks, profiles, and source hashes to
+it. Selecting it did not modify the protected organizer downloads.
+
 ## Source-of-truth order
 
 1. The untouched organizer PyTorch download identified by
@@ -24,6 +32,11 @@ held-out matrix rather than the final organizer matrix.
 If these sources conflict, update this file and the reference manifest before
 tuning kernels. Never relax a checked-in correctness rule to match a looser
 description.
+
+This file owns the implementation contract. The canonical chronology and
+current-versus-historical evidence map is
+[`experiments/OPTIMIZATION_HISTORY.md`](experiments/OPTIMIZATION_HISTORY.md);
+campaign ledgers and raw JSON remain the authority for individual executions.
 
 ## Organizer download reconciliation
 
@@ -122,6 +135,12 @@ Correctness validation must cover:
   through sequence 128 and returns to 32x64 at sequence 129 and above. Boundary
   tests must preserve that exact guard; it changes launch geometry, not the
   support envelope, arithmetic, public API, or persisted state.
+- Direct Triton attention supports `head_dim == 8` by zero-padding the compile-
+  time dot width to 16 lanes, masking padded Q/K/V loads, storing only the real
+  eight output lanes, and scaling by the real head dimension. The measured
+  64x64 launch is selected for the final row-11 target. Multi-layer `auto`
+  dispatch enables this path only for exact final row 11; other width-eight
+  shapes remain on explicit reference math until separately measured.
 - The benchmark-default non-causal float32 custom path follows the benchmark's
   TF32 toggle. Causal custom attention uses IEEE fp32 dot products because final
   evaluator testing found rare TF32 misses under the zero-failure comparator.
@@ -143,7 +162,8 @@ Correctness validation must cover:
 - Result artifacts include the code revision, dirty state, command, raw timing
   samples, framework/runtime versions, GPU name/capability, driver, and case
   definition.
-- Performance claims are tied to committed curated JSON, not console excerpts.
+- Performance claims are tied to curated JSON, its implementation fingerprint,
+  and its recorded Git dirty state, not console excerpts or an assumed commit.
 
 ## Target and dependencies
 

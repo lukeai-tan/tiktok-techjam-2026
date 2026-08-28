@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "S1-CLOSE-003-PROVENANCE",
+    "hypothesis": "Every selected-submission result artifact is cryptographically bound by its immutable attempt record to the requested fingerprint before and after execution",
+    "scope": "Attempt-to-result hash, status, and fingerprint reconciliation",
+    "parent_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+    "candidate_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+    "branch": "feat/transformer-gpu-kernel-implementation",
+    "changed_paths": [
+      "tests/test_result_artifacts.py",
+      "docs/experiments/attempts",
+      "docs/results"
+    ],
+    "rollback": "Hold the evidence promotion if any attempt/result/fingerprint link fails",
+    "decision": "pending",
+    "decision_rationale": "Approve provenance only if all curated artifact and attempt-link tests pass.",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_result_artifacts.py"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T09:35:42.593276+00:00",
+    "ended_at_utc": "2026-08-28T09:35:44.209716+00:00",
+    "wall_time_seconds": 1.6165774001274258,
+    "timeout_seconds": 600.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "..........                                                               [100%]\n10 passed in 1.25s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T09:35:42.510728+00:00",
+    "command": [
+      ".venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_result_artifacts.py"
+    ],
+    "git": {
+      "commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+      "dirty": true,
+      "changed_path_count": 120,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439877304320
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T09:35:44.246753+00:00",
+    "command": [
+      ".venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_result_artifacts.py"
+    ],
+    "git": {
+      "commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+      "dirty": true,
+      "changed_path_count": 120,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439877328896
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}
