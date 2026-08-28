@@ -13,9 +13,9 @@
       "tests/test_dispatch.py"
     ],
     "rollback": "Drop candidate commit 196a940 and restore the parent launch policy",
-    "decision": "pending",
-    "decision_rationale": "Fast structural gate before any performance measurement",
-    "review_status": "pending"
+    "decision": "reject",
+    "decision_rationale": "Structural gate passed, but the paired row-13 screen regressed optimized median latency from 17.6598 ms to 41.3406 ms, so this launch policy is rejected.",
+    "review_status": "not_required"
   },
   "execution": {
     "command": [
