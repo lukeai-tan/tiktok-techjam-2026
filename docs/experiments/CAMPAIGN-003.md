@@ -124,11 +124,12 @@ missing or invalid artifacts remain in the ledger.
 | C3-INTEGRATE-006-PROFILE-ROW9 | Intended Triton kernel caused the gain | row-9 ten-step profile | 3.353 s | Triton 40/40; `_attention_fwd` 3,018.182 us, -55.454% | keep |
 | C3-INTEGRATE-007-CURATED-TESTS | Promoted evidence is current and fail-closed | curated artifact tests | 1.616 s | 7/7 passed; shared fingerprint and source hashes | keep |
 | C3-CLOSURE-001-FULL-TESTS | Complete repository contract remains green | full pytest suite | 7.344 s | 104/104 passed; 14 upstream warnings | keep |
+| C3-CLOSURE-002-FINAL-TESTS | Final docs and ledger remain green | final full pytest suite | 7.233 s | 104/104 passed; 14 upstream warnings | keep |
 
-Campaign 3 contains 30 immutable attempt records. All 30 child commands passed
+Campaign 3 contains 31 immutable attempt records. All 31 child commands passed
 and none failed; this does not hide optimization outcomes: eight candidate
 records are rejected and two are marked rework. Recorded child-command wall
-time totals 210.981 seconds; orchestration, documentation, commits, and review
+time totals 218.214 seconds; orchestration, documentation, commits, and review
 time are excluded.
 
 ## Baseline observation
