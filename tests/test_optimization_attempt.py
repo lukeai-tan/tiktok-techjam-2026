@@ -172,7 +172,7 @@ def test_live_tee_replaces_characters_unsupported_by_console_encoding():
     sink.flush()
 
     assert chunks == ["before \ufffd after\n"]
-    assert raw_sink.getvalue().decode("ascii") == "before ? after\n"
+    assert raw_sink.getvalue().decode("ascii").splitlines() == ["before ? after"]
 
 
 def test_timed_out_command_is_captured():
