@@ -89,6 +89,8 @@ times out, or does not produce a metrics artifact.
 | C2-LOG-HARDENING-005-FOCUSED | Portable logger hardening | focused logger/result tests | 3.153 s | 17/17 passed | Unicode and CRLF covered | keep |
 | C2-EXP-003-FINAL-TESTS | Integrated, rebaselined state is green | complete pytest | 7.571 s | 102 passed, 14 upstream warnings | final automated gate | keep |
 | C2-EXP-004-I1-DIRECT | Existing kernel safely supports `head_dim=8` | direct GPU attention suite | 2.080 s | 11 passed; `head_dim=8` compile failed because dot K must be >=16 | no performance run authorized | reject |
+| C2-LOG-HARDENING-006-FOCUSED | Persisted output is machine-portable | focused logger/result tests | 3.110 s | 18/18 passed | repo/home prefixes removed from durable output | keep |
+| C2-CLOSURE-001-FULL-TESTS | Reviewer closure preserves the repository | complete pytest | 7.528 s | 103 passed, 14 upstream warnings | final closure gate | keep |
 
 Rows are added only from committed attempt JSON and experiment decisions; no
 metric is copied from an unrecorded console run.
@@ -145,9 +147,9 @@ alternate arithmetic would be a different, wider kernel-design hypothesis, so
 no model-level or performance run was authorized and production keeps exact
 reference fallback for final rows 7 and 11.
 
-Campaign 2 contains 37 attempt records: 33 child commands passed and four
+Campaign 2 contains 39 attempt records: 35 child commands passed and four
 failed gates were retained as rework or rejection evidence. Recorded
-child-command wall time totals 244.635 seconds; orchestration, review, commits,
+child-command wall time totals 255.273 seconds; orchestration, review, commits,
 and documentation time are intentionally excluded from that machine-measured
 sum.
 
@@ -183,6 +185,13 @@ sum.
   failed under Windows CRLF translation (16 pass, 1 fail). The portable
   assertion passed with the complete focused gate at 17/17, followed by the
   complete repository gate at 102 passed.
+- `LOG-HARDENING-006`: final review found that two older pytest records retained
+  the absolute virtual-environment prefix in warning output even though argv
+  was already portable. Persisted stdout, stderr, launch errors, and artifact
+  parse errors now replace repository/home prefixes while live tee output and
+  executed argv remain unchanged. The focused gate passed 18/18, the two older
+  records were normalized without dropping their output, and the complete
+  closure suite passed 103 tests.
 
 ## Source-of-truth impact
 
