@@ -52,9 +52,31 @@ times out, or does not produce a metrics artifact.
 
 | ID | Hypothesis | Scope | Wall time | Correctness | Performance | Decision |
 | --- | --- | --- | ---: | --- | --- | --- |
+| C2-OBS-001 | Row-1 short `head_dim=32` attention remains material | final row 1 profile | 2.666 s | profile-only; Triton 40/40 | `_attention_fwd` 6,150.907 us / 40; 33.55% of optimized range | observation |
+| C2-OBS-002 | Accepted short `head_dim=64` still has residual ceiling | final row 10 profile | 2.541 s | profile-only; Triton 40/40 | `_attention_fwd` 2,690.243 us / 40; 28.44% of optimized range | observation |
+| C2-OBS-003 | Long `head_dim=32` attention dominates row 13 | final row 13 profile | 2.824 s | profile-only; Triton 40/40 | `_attention_fwd` 192,575.551 us / 40; 82.00% of optimized range | observation |
+| C2-OBS-004 | Sequence-512 `head_dim=64` attention explains held-out pressure | held-out causal-padding profile | 2.754 s | profile-only; Triton 20/20 | `_attention_fwd` 4,926.368 us / 20; 53.49% of optimized range | observation |
 
 Rows are added only from committed attempt JSON and experiment decisions; no
 metric is copied from an unrecorded console run.
+
+## Ranked candidate hypotheses
+
+1. **EXP-002 — long `head_dim=32` launch geometry.** Row 13 is the largest
+   measured remaining bottleneck at 82.00% of the optimized range. Test bounded
+   `BLOCK_M`, `BLOCK_N`, warp, and stage variants without changing arithmetic,
+   dispatch, or the organizer policy.
+2. **EXP-003 — short `head_dim=32` launch geometry.** Row 1 still spends 33.55%
+   of its range in attention, and the same policy covers final rows 1-5 and 12.
+   Only proceed after EXP-002 is decided so launch-policy branches do not overlap.
+3. **EXP-004 — guarded `head_dim=8` custom support.** Final rows 7 and 11 use
+   exact reference fallback today. Attempt only if direct correctness and compile
+   evidence show the existing kernel is structurally safe at this width; preserve
+   immediate rollback to reference.
+
+The held-out sequence-512 `head_dim=64` path remains a regression signal and a
+required anti-overfitting check, but it is not promoted ahead of hypotheses that
+affect published final rows.
 
 ## Logging implementation findings
 
