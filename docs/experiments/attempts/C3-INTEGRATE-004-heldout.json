@@ -15,7 +15,7 @@
     "rollback": "Revert integration commits 6898e80 and 2b82bb5 to restore the Campaign 3 baseline implementation",
     "decision": "keep",
     "decision_rationale": "All seven held-out cases and 35 accuracy trials passed with 0/13117440 failed elements, expected 900 Triton and 400 SDPA calls, and 1.220024x geomean; no held-out case enters the changed head128 short-sequence envelope",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

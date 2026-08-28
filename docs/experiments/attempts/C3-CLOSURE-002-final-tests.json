@@ -22,7 +22,7 @@
     "rollback": "Revert Campaign 3 integration and evidence-promotion commits to the baseline tag",
     "decision": "keep",
     "decision_rationale": "The final review candidate passed all 104 tests after every Campaign 3 ledger and user-facing documentation commit; the 14 warnings remain upstream PyTorch JIT deprecations",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

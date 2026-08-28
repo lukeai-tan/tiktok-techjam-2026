@@ -15,7 +15,7 @@
     "rollback": "Revert integration commits 6898e80 and 2b82bb5 to restore the Campaign 3 baseline implementation",
     "decision": "keep",
     "decision_rationale": "All 13 executable rows passed with 0/938885120 failed elements and only the authorized row-14 resource skip; geomean rose from 1.525823x to 1.555780x, while the only directly affected row 9 improved from 1.2055 ms to 0.9071 ms and retained 112 Triton calls",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

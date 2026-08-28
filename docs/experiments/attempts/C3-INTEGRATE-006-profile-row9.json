@@ -15,7 +15,7 @@
     "rollback": "Revert integration commits 6898e80 and 2b82bb5 to restore the Campaign 3 baseline implementation",
     "decision": "keep",
     "decision_rationale": "The profile proved 40/40 Triton _attention_fwd calls; attention self-device time fell from 6775.468 us to 3018.182 us (-55.454%) and the ten-step optimized range fell from 12266.268 us to 8959.045 us (-26.962%)",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

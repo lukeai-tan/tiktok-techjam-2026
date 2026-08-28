@@ -1,6 +1,6 @@
 # CAMPAIGN-003: Logged post-Campaign-2 optimization round
 
-Status: integrated and rebaselined; final release review pending
+Status: complete; independent release review approved
 Parent checkpoint: `b884cdd3805d51c1cd7cbd34ba19c37474135237`
 Baseline tag: `track3-optimization-campaign3-baseline-20260828`
 Target: NVIDIA GeForce RTX 5070 Ti, driver 616.56, PyTorch 2.13.0+cu130,
@@ -200,6 +200,17 @@ index, README, Devpost copy, compliance matrix, demo runbook, organizer-input
 audit, and optimization-plan summary were refreshed to the current fingerprint
 `9071e3c049a7a3bc2311fc9d33997202ce4bead93d9daced375340fe6308eb9e`.
 
-Final release review, repo-graph closure, and the accepted local checkpoint tag
-remain pending; no push, public submission, or external release action is part
-of this campaign.
+The AI Council cross-check approved the local checkpoint on architecture,
+correctness, evidence, privacy, and documentation grounds: the change is one
+exact launch-policy branch with no API or persisted-state change, protected
+organizer inputs are unchanged, and all measured claims are fingerprinted.
+Its devil's-advocate review retains the hardware-specific timing, omitted final
+table policy, row-14 authorized non-pass skip, and sub-5% aggregate gain as
+explicit residual limitations rather than waiving them.
+
+Independent release review approved the implementation, all current artifacts,
+and the two 104-test closure gates after one result-index wording correction and
+the nine mechanical review-status updates above. The repository graph was
+rebuilt and validated with zero errors or warnings. This commit is ready for the
+accepted local checkpoint tag; no push, public submission, or external release
+action is part of this campaign.

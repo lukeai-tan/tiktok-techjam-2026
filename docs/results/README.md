@@ -49,8 +49,9 @@ not substitutes for the curated artifacts listed above.
 
 `rtx-5070-ti-2026-08-28-c3-*.json` files and their Campaign 3 attempt records
 retain the fresh baseline, profiles, rejected launch/SDPA alternatives,
-counterbalanced confirmations, and integrated rebaseline. The four artifacts
-listed first are the current curated evidence; the others remain audit history.
+counterbalanced confirmations, and integrated rebaseline. The five Campaign 3
+artifacts identified above are current curated evidence; the others remain
+audit history.
 
 These files prove the checked-in contract on the recorded RTX 5070 Ti
 environment. The final table itself omits dtype, padding, timing, tolerance,

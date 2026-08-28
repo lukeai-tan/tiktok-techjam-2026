@@ -21,7 +21,7 @@
     "rollback": "Revert Campaign 3 integration and evidence-promotion commits to the baseline tag",
     "decision": "keep",
     "decision_rationale": "The complete post-documentation suite passed 104 tests with zero failures; the 14 warnings are the already tracked upstream PyTorch JIT deprecations",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

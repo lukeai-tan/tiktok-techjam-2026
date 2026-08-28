@@ -15,7 +15,7 @@
     "rollback": "Revert integration commits 6898e80 and 2b82bb5 to restore the Campaign 3 baseline implementation",
     "decision": "keep",
     "decision_rationale": "All 42 focused dispatch, direct-kernel, and end-to-end Transformer tests passed after integration; proceed to matrix and profiler rebaseline",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

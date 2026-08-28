@@ -14,7 +14,7 @@
     "rollback": "Revert commit 0adee90 to restore Campaign 2 curated evidence pointers",
     "decision": "keep",
     "decision_rationale": "All seven curated artifact tests passed, proving the Campaign 3 final, held-out, organizer-default, source-derived, and profile evidence share the current implementation fingerprint and protected-source hashes",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [
