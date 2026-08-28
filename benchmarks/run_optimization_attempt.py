@@ -46,6 +46,15 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def portable_command(command: list[str]) -> list[str]:
+    """Remove machine-specific absolute path prefixes from persisted argv."""
+    rendered: list[str] = []
+    for argument in command:
+        candidate = Path(argument)
+        rendered.append(display_path(candidate) if candidate.is_absolute() else argument)
+    return rendered
+
+
 def _git_value(*args: str) -> Optional[str]:
     try:
         completed = subprocess.run(
@@ -470,7 +479,8 @@ def main() -> int:
         print(f"attempt record already exists: {display_path(out_path)}", file=sys.stderr)
         return 2
 
-    environment_before = capture_environment(args.command)
+    recorded_command = portable_command(args.command)
+    environment_before = capture_environment(recorded_command)
     branch = _git_value("branch", "--show-current")
     execution = run_logged_command(
         args.command,
@@ -478,7 +488,7 @@ def main() -> int:
         tee=True,
     )
     result_artifact, result_payload = load_result_artifact(args.result_artifact)
-    environment_after = capture_environment(args.command)
+    environment_after = capture_environment(recorded_command)
     logger_path = Path(__file__).resolve()
     metrics = summarize_result_artifact(result_payload) if result_payload is not None else None
 
@@ -506,7 +516,7 @@ def main() -> int:
             "decision_rationale": args.decision_rationale,
             "review_status": args.review_status,
         },
-        "execution": {"command": args.command, "cwd": ".", **execution},
+        "execution": {"command": recorded_command, "cwd": ".", **execution},
         "environment_before": environment_before,
         "environment_after": environment_after,
         "logger": {

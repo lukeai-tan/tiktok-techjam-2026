@@ -11,6 +11,7 @@ import pytest
 
 from benchmarks.run_optimization_attempt import (
     load_result_artifact,
+    portable_command,
     run_logged_command,
     summarize_result_artifact,
     write_json_exclusive,
@@ -18,6 +19,13 @@ from benchmarks.run_optimization_attempt import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_persisted_command_removes_machine_specific_absolute_prefixes():
+    command = portable_command([sys.executable, "benchmarks/profile_cases.py"])
+    assert command[0] == Path(sys.executable).name
+    assert str(Path.home()).lower() not in " ".join(command).lower()
+    assert command[1] == "benchmarks/profile_cases.py"
 
 
 def test_validation_summary_preserves_correctness_performance_and_duration():

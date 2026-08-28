@@ -69,11 +69,16 @@ metric is copied from an unrecorded console run.
   dictionary-union expression had incorrect comprehension precedence. The
   extractor now unions two explicit dictionaries and the regression remains
   covered by `tests/test_optimization_attempt.py`.
-- Final logging gate: 8/8 focused logger tests passed, including direct-file
+- Final logging gate: 9/9 focused logger tests passed, including direct-file
   invocation, nonzero exit persistence, timeout persistence, invalid/missing
   artifact handling, metric extraction, and exclusive writes. The complete
-  repository suite passed 99 tests with 14 upstream PyTorch deprecation
+  repository suite passed 100 tests with 14 upstream PyTorch deprecation
   warnings.
+- `LOG-HARDENING-003`: pre-measurement review found that exact raw argv would
+  persist the external virtual-environment path. Execution still uses the real
+  argv, but the durable record now renders absolute paths as repo-relative paths
+  or basenames and captures the exact Python/runtime identity separately. A
+  regression test verifies that the user's home path is absent.
 
 ## Source-of-truth impact
 
