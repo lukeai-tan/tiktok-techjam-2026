@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C2-EXP-003-I2-FAST",
+    "hypothesis": "Short head_dim=32 attention improves from BLOCK_M=32 while retaining the single BLOCK_N=128 K/V tile",
+    "scope": "Focused dispatch and launch-policy regression tests",
+    "parent_commit": "0254660",
+    "candidate_commit": "b9a28982e696e8a9cf3c08185db965756081a403",
+    "branch": "exp/c2-short-h32-bm32bn128",
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "tests/test_dispatch.py"
+    ],
+    "rollback": "Drop candidate commit b9a2898 and restore the parent 64x128 short-head tile",
+    "decision": "pending",
+    "decision_rationale": "Fast structural gate before row-1 performance measurement",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T00:39:13.991009+00:00",
+    "ended_at_utc": "2026-08-28T00:39:17.267211+00:00",
+    "wall_time_seconds": 3.2762119001708925,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "................                                                         [100%]\n16 passed in 2.89s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T00:39:13.897296+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "b9a28982e696e8a9cf3c08185db965756081a403",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "47c42d096d167d5eb9bcb0a8de8602c90707c6d2c424e1a37de9d3e157eca203",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445364707328
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T00:39:17.306261+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "b9a28982e696e8a9cf3c08185db965756081a403",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "47c42d096d167d5eb9bcb0a8de8602c90707c6d2c424e1a37de9d3e157eca203",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445358870528
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "fd4c7d9e20e5abc35a0d62f49be298af695ee943f42ed0a48ad62079eb7a8284"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}
