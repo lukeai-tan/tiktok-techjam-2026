@@ -20,22 +20,29 @@ def _text_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
-MATRIX_PATH = ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-27.json"
-PROFILE_PATH = ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-27-profile.json"
+MATRIX_PATH = (
+    ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-28-c3-heldout.json"
+)
+PROFILE_PATH = (
+    ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-28-c3-final-09-profile.json"
+)
 ORGANIZER_DEFAULT_PATH = (
-    ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-27-organizer-default.json"
+    ROOT
+    / "docs"
+    / "results"
+    / "rtx-5070-ti-2026-08-28-c3-organizer-default.json"
 )
 ORGANIZER_VALIDATION_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-27-organizer-validation.json"
+    / "rtx-5070-ti-2026-08-28-c3-source-derived.json"
 )
 FINAL_EVALUATOR_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-final-evaluator-baseline.json"
+    / "rtx-5070-ti-2026-08-28-c3-final.json"
 )
 FINAL_EVALUATOR_MATRIX_PATH = ROOT / "benchmarks" / "final_evaluator_shapes.json"
 ORGANIZER_VALIDATION_MATRIX_PATH = (
@@ -121,7 +128,7 @@ def test_curated_matrix_is_complete_green_and_current():
         assert result["peak_memory"]["optimized"] is not None
         speedups.append(timing["speedup_median"])
     assert total_failed == 0
-    assert statistics.geometric_mean(speedups) == pytest.approx(1.228, abs=0.001)
+    assert statistics.geometric_mean(speedups) == pytest.approx(1.220, abs=0.001)
 
 
 def test_curated_profile_proves_custom_kernel_for_same_implementation():
@@ -135,14 +142,14 @@ def test_curated_profile_proves_custom_kernel_for_same_implementation():
     assert profile["environment"]["git"]["implementation_fingerprint_schema"] == 2
     assert profile["custom_kernel_expected"] is True
     assert profile["custom_kernel_profiler_proven"] is True
-    assert profile["backend_counts"] == {"triton": 10, "sdpa": 0, "reference": 0}
+    assert profile["backend_counts"] == {"triton": 40, "sdpa": 0, "reference": 0}
     matching = [
         event
         for event in profile["custom_kernel_events"]
         if event["name"] == "_attention_fwd"
     ]
     assert len(matching) == 1
-    assert matching[0]["count"] == 10
+    assert matching[0]["count"] == 40
 
 
 def test_organizer_default_artifact_uses_untouched_harness_and_current_submission():
