@@ -18,11 +18,11 @@ and exploratory runs stay under ignored `results/`.
 - `rtx-5070-ti-2026-08-28-c3-final-09-profile.json`: integrated Campaign 3
   profiler proof. `_attention_fwd` used 3,018.182 us across 40 Triton calls,
   down 55.45% from the fresh pre-candidate row-9 profile.
-- `rtx-5070-ti-2026-08-28-final-10-profile.json`: integrated profiler proof for
-  the EXP-001 target. `_attention_fwd` used 2,694.679 us across 40 Triton calls,
-  down 91.11% from the frozen pre-candidate profile.
-- `rtx-5070-ti-2026-08-28-final-01-profile.json`: representative neighboring
-  final-shape profile for the EXP-003 target. `_attention_fwd` used 2,103.978 us
+- `rtx-5070-ti-2026-08-28-final-10-profile.json`: historical Campaign 2
+  profiler proof for the EXP-001 target. `_attention_fwd` used 2,694.679 us
+  across 40 Triton calls, down 91.11% from the frozen pre-candidate profile.
+- `rtx-5070-ti-2026-08-28-final-01-profile.json`: historical Campaign 2
+  profiler proof for the EXP-003 target. `_attention_fwd` used 2,103.978 us
   across 40 Triton calls, down 69.98% from the pre-EXP-003 curated profile.
 - `rtx-5070-ti-2026-08-28-c3-organizer-default.json`: the untouched downloaded
   PyTorch harness with only the submitted `UserOptimizedTransformer` injected.
@@ -87,20 +87,6 @@ $python = ".venv\Scripts\python.exe"
 
 & $python benchmarks/run_organizer_validation.py `
   --out docs/results/rtx-5070-ti-2026-08-28-c3-source-derived.json
-
-& $python benchmarks/profile_cases.py `
-  --manifest benchmarks/final_profile_shapes.json `
-  --case final-01-b64-d128-h4-s128 --dtype float32 `
-  --attention-backend auto --steps 10 `
-  --out docs/results/rtx-5070-ti-2026-08-28-final-01-profile.json `
-  --trace results/rtx-5070-ti-final-01-profile-trace.json
-
-& $python benchmarks/profile_cases.py `
-  --manifest benchmarks/final_profile_shapes.json `
-  --case final-10-b64-d128-h2-s128 --dtype float32 `
-  --attention-backend auto --steps 10 `
-  --out docs/results/rtx-5070-ti-2026-08-28-final-10-profile.json `
-  --trace results/rtx-5070-ti-final-10-profile-trace.json
 ```
 
 Do not hand-edit measured values. Rerun the command after implementation,

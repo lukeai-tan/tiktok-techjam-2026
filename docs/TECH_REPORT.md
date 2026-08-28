@@ -371,7 +371,7 @@ review approved only the exact `head_dim == 128 and seq_len <= 128` launch
 guard. The integrated final matrix remained 13/13 executable PASS with the one
 authorized skip, raised geomean to 1.555780x, and reduced the row-9 profiler's
 attention time 55.45%. Exact organizer-default, held-out, source-derived, and
-curated-artifact gates all remained green.
+curated-artifact gates all remained green, followed by 104/104 repository tests.
 
 The inherited standalone Triton LayerNorm was measured before removal:
 
