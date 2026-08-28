@@ -56,6 +56,12 @@ times out, or does not produce a metrics artifact.
 | C2-OBS-002 | Accepted short `head_dim=64` still has residual ceiling | final row 10 profile | 2.541 s | profile-only; Triton 40/40 | `_attention_fwd` 2,690.243 us / 40; 28.44% of optimized range | observation |
 | C2-OBS-003 | Long `head_dim=32` attention dominates row 13 | final row 13 profile | 2.824 s | profile-only; Triton 40/40 | `_attention_fwd` 192,575.551 us / 40; 82.00% of optimized range | observation |
 | C2-OBS-004 | Sequence-512 `head_dim=64` attention explains held-out pressure | held-out causal-padding profile | 2.754 s | profile-only; Triton 20/20 | `_attention_fwd` 4,926.368 us / 20; 53.49% of optimized range | observation |
+| C2-EXP-002-I1-FAST | Long `head_dim=32`: `BLOCK_N=128`, two stages | focused dispatch tests | 1.769 s | 16/16 tests passed | structural gate only | reject |
+| C2-EXP-002-I1-ROW13 | Long `head_dim=32`: `BLOCK_N=128`, two stages | final row 13 | 7.899 s | PASS; 0/41,943,040 failed; max abs 0.00114191; Triton 112/112 | 41.3406 ms, 2.047x vs 17.6598 ms, 4.790x baseline | reject |
+| C2-EXP-002-I2-FAST | Long `head_dim=32`: two stages only | focused dispatch tests | 1.744 s | 16/16 tests passed | structural gate only | reject |
+| C2-EXP-002-I2-ROW13 | Long `head_dim=32`: two stages only | final row 13 | 6.595 s | PASS; 0/41,943,040 failed; max abs 0.00114191; Triton 112/112 | 17.9966 ms, 4.701x vs 17.6598 ms, 4.790x baseline | reject |
+| C2-EXP-002-I3-FAST | Long `head_dim=32`: `BLOCK_M=32` | focused dispatch tests | 1.775 s | 16/16 tests passed | structural gate only | reject |
+| C2-EXP-002-I3-ROW13 | Long `head_dim=32`: `BLOCK_M=32` | final row 13 | 6.471 s | PASS; 0/41,943,040 failed; max abs 0.00114191; Triton 112/112 | 21.5897 ms, 3.918x vs 17.6598 ms, 4.790x baseline | reject |
 
 Rows are added only from committed attempt JSON and experiment decisions; no
 metric is copied from an unrecorded console run.
@@ -77,6 +83,14 @@ metric is copied from an unrecorded console run.
 The held-out sequence-512 `head_dim=64` path remains a regression signal and a
 required anti-overfitting check, but it is not promoted ahead of hypotheses that
 affect published final rows.
+
+### EXP-002 decision
+
+Closed as **rejected** after all three allowed producer cycles. Every candidate
+preserved the organizer accuracy contract and executed Triton, but none improved
+the fresh baseline. The least harmful change, reducing pipeline depth only,
+still regressed optimized median latency by 1.91%. No EXP-002 implementation
+commit is integrated; only the immutable attempt and result evidence is retained.
 
 ## Logging implementation findings
 
