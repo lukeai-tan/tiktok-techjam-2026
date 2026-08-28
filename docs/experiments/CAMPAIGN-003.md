@@ -1,5 +1,8 @@
 # CAMPAIGN-003: Logged post-Campaign-2 optimization round
 
+Canonical overview: [Complete Track 3 Optimization History](OPTIMIZATION_HISTORY.md).
+This file remains the detailed Campaign 3 attempt and decision ledger.
+
 Status: complete; independent release review approved
 Parent checkpoint: `b884cdd3805d51c1cd7cbd34ba19c37474135237`
 Baseline tag: `track3-optimization-campaign3-baseline-20260828`

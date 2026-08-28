@@ -1,6 +1,6 @@
 # Bounded Agentic GPU Optimization Loop
 
-Status: executed on 2026-08-28; EXP-001, EXP-003, and EXP-005-I2 accepted and rebaselined
+Status: executed on 2026-08-28; EXP-001, EXP-003, EXP-005-I2, and EXP-009-I2 accepted and rebaselined
 Applies to: the PyTorch/Triton Transformer implementation in this repository
 
 ## Objective
@@ -14,50 +14,24 @@ to keep changing code until a benchmark number looks better.
 
 ## Campaign outcome
 
-- Phase 0 merged the current `origin/main`, repaired native-Windows evidence
-  portability, froze the organizer-published 14-row final matrix, and established
-  a clean green checkpoint.
-- Profiling identified final row 10 (`head_dim=64`, sequence 128) as the material
-  bottleneck: `_attention_fwd` consumed 30,324.486 us across 40 launches.
-- EXP-001 changed only the short-head-dimension-64 launch policy from
-  `BLOCK_M=64` / `BLOCK_N=128` to `BLOCK_M=32` / `BLOCK_N=64`. Two paired full
-  matrix trials improved geometric-mean speedup by 8.98% and 10.19%.
-- An independent reviewer approved the bounded implementation, including an
-  explicit noise waiver for unaffected `head_dim=32` timing variation.
-- Campaign 2 retained all 39 executed attempts: 35 child commands passed and
-  four failed gates remain as evidence. Their measured child wall time totals
-  255.273 seconds, with stdout/stderr, correctness, latency distributions,
-  memory/backend/profiler data, artifact hashes, environment, and decisions.
-  EXP-002 rejected all three long-`head_dim=32` variants; each was slower.
-- EXP-004 stopped at its first direct compile gate because Triton dot requires
-  `K >= 16`; the production `head_dim=8` exact-reference fallback remains.
-- EXP-003 tested three short-`head_dim=32` tile policies. Alternating row-1
-  confirmation selected the 64x64 tile at a 0.8201 ms mean versus the 1.2402 ms
-  unchanged mean. Independent review approved the exact guarded branch.
-- The accepted candidates were merged and every curated artifact was regenerated
-  from implementation SHA-256
-  `8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a`.
-  The integrated final matrix is 13/13 executable PASS plus one authorized
-  resource skip, zero failed elements across 938,885,120 comparisons, and
-  1.526x geometric-mean speedup, 6.95% above the post-EXP-001 matrix.
-- Campaign 3 profiled final row 9, screened three bounded short-`head_dim=128`
-  launch geometries, and counterbalanced the best Triton result against a
-  shape-aware SDPA alternative. Independent review approved only the 32x32
-  Triton tile through sequence 128.
-- The accepted Campaign 3 candidate reproduced 0.9042/0.9049/0.9034 ms optimized
-  medians, 26.73% below the fresh 1.2341 ms baseline and 6.16% faster than the
-  SDPA alternative's three-run median. Integrated `_attention_fwd` time fell
-  55.45%, and final geomean rose from 1.525823x to 1.555780x while all required
-  correctness gates remained green.
-- Campaign 3 curated artifacts share implementation SHA-256
-  `9071e3c049a7a3bc2311fc9d33997202ce4bead93d9daced375340fe6308eb9e`.
+The loop is complete through Campaign 4. The current implementation passed all
+13 executable final rows with zero failed elements across 938,885,120
+comparisons; the exact 100,000-token resource row remains an authorized non-pass
+skip. The primary and confirmation geomeans are 1.780075x and 1.784920x.
 
-The durable experiment records are
-`docs/experiments/EXP-001-head64-short-tiles.md`,
-`docs/experiments/EXP-003-short-head32-kv-tiles.md`, and
-`docs/experiments/CAMPAIGN-002.md`, with Campaign 3 recorded in
-`docs/experiments/CAMPAIGN-003.md`; rejected alternatives, failed gates, and
-pre-integration paired evidence remain versioned for auditability.
+| Stage | Accepted change | Final geomean after integration |
+| --- | --- | ---: |
+| EXP-001 | short `head_dim=64`: 32x64 tiles | 1.426692x |
+| Campaign 2 / EXP-003 | short `head_dim=32`: 64x64 tiles | 1.525823x |
+| Campaign 3 / EXP-005-I2 | short `head_dim=128`: 32x32 tiles | 1.555780x |
+| Campaign 4 / EXP-009-I2 | exact row-11 `head_dim=8`: padded-width 64x64 Triton | 1.780075x; 1.784920x confirmation |
+
+Campaigns 2-4 retain 114 immutable attempt records: 105 passing child commands,
+9 failed child commands, and 788.748209 seconds of measured child wall time.
+The canonical [complete optimization history](experiments/OPTIMIZATION_HISTORY.md)
+contains the chronological run-through, every meaningful candidate and
+disposition, campaign metrics, failed gates, current route table, and audit
+links. The individual campaign records remain immutable-detail appendices.
 
 ## Source of truth and scope
 

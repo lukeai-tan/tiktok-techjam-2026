@@ -1,5 +1,8 @@
 # EXP-003: Short head-dimension-32 K/V tiles
 
+Canonical overview: [Complete Track 3 Optimization History](OPTIMIZATION_HISTORY.md).
+This file remains the detailed EXP-003 evidence and decision record.
+
 ## Experiment identity
 
 - Status: keep - independently approved, integrated, and rebaselined

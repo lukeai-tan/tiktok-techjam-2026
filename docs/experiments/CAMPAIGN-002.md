@@ -1,5 +1,8 @@
 # CAMPAIGN-002: Logged post-EXP-001 optimization loops
 
+Canonical overview: [Complete Track 3 Optimization History](OPTIMIZATION_HISTORY.md).
+This file remains the detailed Campaign 2 attempt and decision ledger.
+
 Status: complete; independently reviewed and approved
 Parent checkpoint: `cdfada9df980dd471311bead2d378c3589e06320`  
 Target: NVIDIA GeForce RTX 5070 Ti, driver 616.56, PyTorch 2.13.0+cu130,

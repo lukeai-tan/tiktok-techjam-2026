@@ -1,5 +1,8 @@
 # EXP-001: Short head-dimension-64 tiles
 
+Canonical overview: [Complete Track 3 Optimization History](OPTIMIZATION_HISTORY.md).
+This file remains the detailed EXP-001 evidence and decision record.
+
 ## Experiment identity
 
 - Status: keep — independently approved for integration and mandatory rebaseline
