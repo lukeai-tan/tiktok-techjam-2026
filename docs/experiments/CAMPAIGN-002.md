@@ -1,6 +1,6 @@
 # CAMPAIGN-002: Logged post-EXP-001 optimization loops
 
-Status: in progress; EXP-003 accepted, EXP-004 gated next
+Status: complete; final release review pending
 Parent checkpoint: `cdfada9df980dd471311bead2d378c3589e06320`  
 Target: NVIDIA GeForce RTX 5070 Ti, driver 616.56, PyTorch 2.13.0+cu130,
 Triton 3.7.1.post27, Python 3.12.10
@@ -88,6 +88,7 @@ times out, or does not produce a metrics artifact.
 | C2-LOG-HARDENING-004-FOCUSED | Unicode-safe tee and metric assertion | focused logger/result tests | 3.148 s | 16 pass, 1 Windows-newline assertion fail | tee itself preserved output | rework |
 | C2-LOG-HARDENING-005-FOCUSED | Portable logger hardening | focused logger/result tests | 3.153 s | 17/17 passed | Unicode and CRLF covered | keep |
 | C2-EXP-003-FINAL-TESTS | Integrated, rebaselined state is green | complete pytest | 7.571 s | 102 passed, 14 upstream warnings | final automated gate | keep |
+| C2-EXP-004-I1-DIRECT | Existing kernel safely supports `head_dim=8` | direct GPU attention suite | 2.080 s | 11 passed; `head_dim=8` compile failed because dot K must be >=16 | no performance run authorized | reject |
 
 Rows are added only from committed attempt JSON and experiment decisions; no
 metric is copied from an unrecorded console run.
@@ -135,10 +136,20 @@ remained zero-failure, and the largest unaffected final optimized-latency
 regression was 1.59%, inside the 2% threshold. The current fingerprint is
 `8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a`.
 
-Through EXP-003, Campaign 2 contains 36 attempt records: 33 child commands passed and three
-failed gates were retained as rework evidence. Recorded child-command wall time
-totals 242.555 seconds; orchestration, review, commits, and documentation time
-are intentionally excluded from that machine-measured sum.
+### EXP-004 decision
+
+Closed as **rejected** at the mandatory first compile gate. Adding width 8 to
+the support set caused Triton's dot lowering to fail with `K >= 16`; the other
+11 direct-kernel cases passed. Padding the dot dimension or introducing
+alternate arithmetic would be a different, wider kernel-design hypothesis, so
+no model-level or performance run was authorized and production keeps exact
+reference fallback for final rows 7 and 11.
+
+Campaign 2 contains 37 attempt records: 33 child commands passed and four
+failed gates were retained as rework or rejection evidence. Recorded
+child-command wall time totals 244.635 seconds; orchestration, review, commits,
+and documentation time are intentionally excluded from that machine-measured
+sum.
 
 ## Logging implementation findings
 
@@ -153,7 +164,7 @@ are intentionally excluded from that machine-measured sum.
   dictionary-union expression had incorrect comprehension precedence. The
   extractor now unions two explicit dictionaries and the regression remains
   covered by `tests/test_optimization_attempt.py`.
-- Final logging gate: 9/9 focused logger tests passed, including direct-file
+- Initial logging gate: 9/9 focused logger tests passed, including direct-file
   invocation, nonzero exit persistence, timeout persistence, invalid/missing
   artifact handling, metric extraction, and exclusive writes. The complete
   repository suite passed 100 tests with 14 upstream PyTorch deprecation

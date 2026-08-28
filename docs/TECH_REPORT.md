@@ -348,8 +348,10 @@ Independent review approved the exact `head_dim == 32 and seq_len <= 128`
 guard. After integration, all affected executable final rows improved and
 final geomean rose from 1.426692x to 1.525823x (+6.95%). The rebaseline passed
 13/13 final rows, 7/7 held-out cases, 28/28 source-derived cases, the untouched
-organizer default, three profiler gates, and 102 repository tests. All 36
-Campaign 2 attempts—including three deliberately retained failed/rework
+organizer default, three profiler gates, and 102 repository tests. EXP-004 then
+probed direct `head_dim=8` support and stopped when Triton compilation proved
+its dot product requires `K >= 16`; exact reference fallback remains. All 37
+Campaign 2 attempts—including four deliberately retained failed/rework/reject
 gates—store timing, output, accuracy, latency, backend, environment, and
 artifact hashes in `docs/experiments/attempts/`.
 

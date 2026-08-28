@@ -24,10 +24,12 @@ to keep changing code until a benchmark number looks better.
   matrix trials improved geometric-mean speedup by 8.98% and 10.19%.
 - An independent reviewer approved the bounded implementation, including an
   explicit noise waiver for unaffected `head_dim=32` timing variation.
-- Campaign 2 retained all 36 executed attempts, including three failed gates,
+- Campaign 2 retained all 37 executed attempts, including four failed gates,
   with command wall time, stdout/stderr, correctness, latency distributions,
   memory/backend/profiler data, artifact hashes, environment, and decisions.
   EXP-002 rejected all three long-`head_dim=32` variants; each was slower.
+- EXP-004 stopped at its first direct compile gate because Triton dot requires
+  `K >= 16`; the production `head_dim=8` exact-reference fallback remains.
 - EXP-003 tested three short-`head_dim=32` tile policies. Alternating row-1
   confirmation selected the 64x64 tile at a 0.8201 ms mean versus the 1.2402 ms
   unchanged mean. Independent review approved the exact guarded branch.
