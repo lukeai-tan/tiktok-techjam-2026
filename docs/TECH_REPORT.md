@@ -10,13 +10,13 @@ quadratic attention matrix.
 On the NVIDIA GeForce RTX 5070 Ti, all 13 executable rows in the
 organizer-published final shape table passed the checked-in executable tolerance
 across five seeds each. The run covered 938,885,120 output comparisons with zero
-failures and measured a **1.427x geometric-mean end-to-end speedup**, ranging
-from 1.009x to 4.640x. The source-authorized 100,000-token resource row was
+failures and measured a **1.526x geometric-mean end-to-end speedup**, ranging
+from 0.945x to 4.766x. The source-authorized 100,000-token resource row was
 preflight-skipped and was not counted as a pass.
 
 Both organizer benchmark downloads are now checksum-frozen. The untouched
 PyTorch default six-layer case also passed 5/5 trials with zero failed elements
-and measured 1.408x median speedup. A fail-closed matrix then translated every
+and measured 1.314x median speedup. A fail-closed matrix then translated every
 feasible shape signal from both downloads through that untouched PyTorch
 harness: 28/28 executable cases passed with zero failures across 459,776,000
 elements. The source-designated 100,000-token quadratic stress case was
@@ -87,12 +87,12 @@ The captured causal-padding profile for five two-layer forwards recorded:
 
 | event | count | self device time |
 | --- | ---: | ---: |
-| optimized Transformer range | 5 | 6,333.0 us |
-| addmm | 40 | 2,048.6 us |
-| custom _attention_fwd | 10 | 3,663.9 us |
-| native LayerNorm | 25 | 134.9 us |
-| GELU | 10 | 64.6 us |
-| residual add | 20 | 55.0 us |
+| optimized Transformer range | 5 | 4,612.9 us |
+| addmm | 40 | 1,572.0 us |
+| custom _attention_fwd | 10 | 2,460.9 us |
+| native LayerNorm | 25 | 119.6 us |
+| GELU | 10 | 60.8 us |
+| residual add | 20 | 49.5 us |
 
 The ten custom events exactly match five forwards times two layers. This proves
 the repository-owned kernel ran; dispatch counters alone were not used as
@@ -102,8 +102,16 @@ to 40 across those five forwards.
 The final-shape profile then isolated row 10 (`B=64`, `S=128`, `d_model=128`,
 two heads, four layers). Before EXP-001, `_attention_fwd` consumed 30,324.486 us
 across 40 launches and dominated 79.6% of recorded GPU time. The accepted short
-`head_dim=64` tile reduced that event to 3,205.548 us, an 89.43% reduction; all
-40 launches remained Triton. The integrated end-to-end row improved to 1.701x.
+`head_dim=64` tile reduced that event; the current integrated profile is
+2,694.679 us, 91.11% below the frozen pre-EXP-001 value, and all 40 launches
+remain Triton. The current end-to-end row measures 1.547x.
+
+Campaign 2 then isolated final row 1 (`head_dim=32`, sequence 128). Three
+alternating measurements selected a 64x64 launch over the prior 64x128 policy:
+candidate optimized median averaged 0.8201 ms versus 1.2402 ms for the unchanged
+implementation. After integration, row-1 `_attention_fwd` fell from 7,008.677
+us to 2,103.978 us across 40 launches (69.98%), and final-matrix geomean rose
+6.95% from 1.426692x to 1.525823x.
 
 ## 5. Kernel implementation
 
@@ -214,12 +222,12 @@ ran unchanged through `benchmarks/run_organizer_torch.py`:
 
 | metric | baseline | optimized |
 | --- | ---: | ---: |
-| median latency | 1.9057 ms | 1.3533 ms |
-| mean latency | 2.4338 ms | 1.6646 ms |
-| p90 latency | 4.5151 ms | 2.2364 ms |
-| throughput | 537,327 token/s | 756,680 token/s |
+| median latency | 1.7579 ms | 1.3374 ms |
+| mean latency | 1.7713 ms | 1.3409 ms |
+| p90 latency | 1.8474 ms | 1.3517 ms |
+| throughput | 582,522 token/s | 765,678 token/s |
 
-- Median speedup: 1.408x.
+- Median speedup: 1.314x.
 - Accuracy: 5/5 PASS, 0 failed out of 2,621,440 elements.
 - Maximum absolute error: 0.00100136.
 - Optimized attention dispatch: Triton 1,950; SDPA 0; reference 0.
@@ -232,19 +240,19 @@ Section 6, not claims about omitted organizer policy.
 
 | row | B | S | d / heads | layers | baseline ms | optimized ms | speedup | backend |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | 64 | 128 | 128 / 4 | 4 | 1.4976 | 1.2421 | 1.206x | Triton |
-| 2 | 1 | 128 | 128 / 4 | 4 | 1.8304 | 1.1358 | 1.612x | Triton |
-| 3 | 4 | 128 | 128 / 4 | 4 | 1.7116 | 0.8853 | 1.933x | Triton |
-| 4 | 16 | 128 | 128 / 4 | 4 | 1.5104 | 0.9646 | 1.566x | Triton |
-| 5 | 128 | 128 | 128 / 4 | 4 | 2.9682 | 2.5948 | 1.144x | Triton |
-| 6 | 10,000 | 128 | 128 / 4 | 4 | 528.1644 | 494.1977 | 1.069x | reference |
-| 7 | 64 | 128 | 32 / 4 | 4 | 1.4314 | 1.3786 | 1.038x | reference |
-| 8 | 64 | 128 | 1,024 / 4 | 4 | 17.2808 | 17.1294 | 1.009x | reference |
-| 9 | 64 | 128 | 128 / 1 | 4 | 1.3112 | 1.1866 | 1.105x | Triton |
-| 10 | 64 | 128 | 128 / 2 | 4 | 1.5510 | 0.9120 | 1.701x | Triton |
-| 11 | 64 | 128 | 128 / 16 | 4 | 6.6684 | 6.4690 | 1.031x | reference |
-| 12 | 64 | 32 | 128 / 4 | 4 | 1.6213 | 1.0831 | 1.497x | Triton |
-| 13 | 64 | 1,024 | 128 / 4 | 4 | 102.4249 | 22.0748 | 4.640x | Triton |
+| 1 | 64 | 128 | 128 / 4 | 4 | 1.4232 | 0.8198 | 1.736x | Triton |
+| 2 | 1 | 128 | 128 / 4 | 4 | 1.4049 | 0.8105 | 1.733x | Triton |
+| 3 | 4 | 128 | 128 / 4 | 4 | 1.3458 | 0.7521 | 1.789x | Triton |
+| 4 | 16 | 128 | 128 / 4 | 4 | 1.2846 | 0.7295 | 1.761x | Triton |
+| 5 | 128 | 128 | 128 / 4 | 4 | 2.7052 | 1.4868 | 1.819x | Triton |
+| 6 | 10,000 | 128 | 128 / 4 | 4 | 362.0893 | 339.1602 | 1.068x | reference |
+| 7 | 64 | 128 | 32 / 4 | 4 | 1.2631 | 1.1956 | 1.056x | reference |
+| 8 | 64 | 128 | 1,024 / 4 | 4 | 13.8965 | 13.7089 | 1.014x | reference |
+| 9 | 64 | 128 | 128 / 1 | 4 | 1.1397 | 1.2055 | 0.945x | Triton |
+| 10 | 64 | 128 | 128 / 2 | 4 | 1.3349 | 0.8630 | 1.547x | Triton |
+| 11 | 64 | 128 | 128 / 16 | 4 | 5.6840 | 5.6116 | 1.013x | reference |
+| 12 | 64 | 32 | 128 / 4 | 4 | 1.3023 | 0.7460 | 1.746x | Triton |
+| 13 | 64 | 1,024 | 128 / 4 | 4 | 84.6284 | 17.7553 | 4.766x | Triton |
 | 14 | 32 | 100,000 | 1,024 / 16 | 2 | - | - | - | authorized resource skip |
 
 Summary:
@@ -252,20 +260,20 @@ Summary:
 - 13/13 executable PASS plus one authorized resource skip excluded from pass.
 - 65 accuracy trials and 938,885,120 checked elements; zero failures.
 - Maximum absolute error: 0.00114846.
-- Geometric-mean speedup: 1.427x.
+- Geometric-mean speedup: 1.526x.
 - Attention dispatch: Triton 1,008; SDPA 0; reference 448.
 
 ### Project-owned held-out matrix
 
 | case | B | S | d / heads | layers | mask | baseline ms | optimized ms | speedup |
 | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: |
-| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.533 | 0.326 | 1.633x |
-| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.543 | 0.362 | 1.498x |
-| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.676 | 0.514 | 1.315x |
-| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.707 | 0.896 | 0.789x |
-| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.845 | 0.991 | 0.852x |
-| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.827 | 0.537 | 1.541x |
-| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.313 | 0.259 | 1.211x |
+| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.460 | 0.292 | 1.578x |
+| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.400 | 0.248 | 1.610x |
+| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.639 | 0.479 | 1.333x |
+| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.679 | 0.855 | 0.795x |
+| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.822 | 0.939 | 0.875x |
+| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.806 | 0.513 | 1.571x |
+| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.234 | 0.206 | 1.140x |
 
 Summary:
 
@@ -273,7 +281,7 @@ Summary:
 - 35 accuracy trials and 13,117,440 checked elements.
 - 0 failed elements.
 - Maximum absolute error: 0.000595748.
-- Geometric-mean speedup: 1.221x.
+- Geometric-mean speedup: 1.228x.
 - Timing dispatch: SDPA for tiny/medium unmasked cases; Triton for all five
   masked, causal, long, or wider-head cases; no reference timing fallback.
 
@@ -287,7 +295,7 @@ The isolated exact-harness matrix produced:
 - sequence lengths 32, 128, and 1,024;
 - widths 32, 128, 512, and 1,024; heads 1, 2, 4, 8, and 16;
 - float32, float16, bfloat16, causal, non-causal, and prefix-padding coverage;
-- overall geometric-mean speedup 1.233x and float32-only geomean 1.443x; and
+- overall geometric-mean speedup 1.194x and float32-only geomean 1.373x; and
 - aggregate dispatch counts Triton 672, SDPA 1,344, reference 2,688.
 
 The matrix uses the selected PyTorch executable tolerance of atol=0.001 OR
@@ -295,6 +303,12 @@ rtol=0.01, which is stricter than the TensorFlow download's defaults. Its
 machine-readable policy and full stdout/evidence are stored with SHA-256
 fingerprints; a crash, OOM, numerical failure, unauthorized skip, or empty run
 returns nonzero.
+
+The source-derived speedup ratio is lower than the prior artifact because the
+fresh in-run baselines moved more than the optimized measurements. Every
+optimized median nevertheless improved versus the prior fingerprint by 8.98%
+to 36.97%; the campaign retains both artifacts and flags the ratio change as
+timing noise rather than hiding it.
 
 Incremental peak CUDA allocation fell from 78 MiB to 22 MiB (71.8%) in the
 long-attention case. Long-causal, causal-padding, and medium-padding cases
@@ -320,6 +334,24 @@ alternating clean-worktree final-matrix pairs improved aggregate geomean by
 recorded a timing-noise waiver for unaffected `head_dim=32` rows whose paired
 directions disagreed. The implementation was then merged and all release
 artifacts were regenerated from the integrated fingerprint.
+
+Campaign 2 first tested three long-`head_dim=32` policies on final row 13.
+`BLOCK_N=128`, a two-stage-only policy, and `BLOCK_M=32` measured 41.3406 ms,
+17.9966 ms, and 21.5897 ms respectively against the 17.6598 ms baseline, so
+all three were rejected despite exact correctness. It then tested the short
+`head_dim=32` policy on row 1. The 32x64, 32x128, and 64x64 tiles measured
+0.8579 ms, 0.8805 ms, and 0.8164 ms in screening. Two alternating confirmation
+rounds selected 64x64: its three-run mean was 0.8201 ms with a 0.0036 ms sample
+standard deviation, versus 1.2402 ms for the unchanged policy.
+
+Independent review approved the exact `head_dim == 32 and seq_len <= 128`
+guard. After integration, all affected executable final rows improved and
+final geomean rose from 1.426692x to 1.525823x (+6.95%). The rebaseline passed
+13/13 final rows, 7/7 held-out cases, 28/28 source-derived cases, the untouched
+organizer default, three profiler gates, and 102 repository tests. All 36
+Campaign 2 attempts—including three deliberately retained failed/rework
+gates—store timing, output, accuracy, latency, backend, environment, and
+artifact hashes in `docs/experiments/attempts/`.
 
 The inherited standalone Triton LayerNorm was measured before removal:
 

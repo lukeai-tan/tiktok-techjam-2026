@@ -1,6 +1,6 @@
 # Bounded Agentic GPU Optimization Loop
 
-Status: executed on 2026-08-28; EXP-001 accepted and rebaselined
+Status: executed on 2026-08-28; EXP-001 and EXP-003 accepted and rebaselined
 Applies to: the PyTorch/Triton Transformer implementation in this repository
 
 ## Objective
@@ -24,15 +24,24 @@ to keep changing code until a benchmark number looks better.
   matrix trials improved geometric-mean speedup by 8.98% and 10.19%.
 - An independent reviewer approved the bounded implementation, including an
   explicit noise waiver for unaffected `head_dim=32` timing variation.
-- The accepted candidate was merged and every curated artifact was regenerated
+- Campaign 2 retained all 36 executed attempts, including three failed gates,
+  with command wall time, stdout/stderr, correctness, latency distributions,
+  memory/backend/profiler data, artifact hashes, environment, and decisions.
+  EXP-002 rejected all three long-`head_dim=32` variants; each was slower.
+- EXP-003 tested three short-`head_dim=32` tile policies. Alternating row-1
+  confirmation selected the 64x64 tile at a 0.8201 ms mean versus the 1.2402 ms
+  unchanged mean. Independent review approved the exact guarded branch.
+- The accepted candidates were merged and every curated artifact was regenerated
   from implementation SHA-256
-  `83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f`.
+  `8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a`.
   The integrated final matrix is 13/13 executable PASS plus one authorized
   resource skip, zero failed elements across 938,885,120 comparisons, and
-  1.427x geometric-mean speedup.
+  1.526x geometric-mean speedup, 6.95% above the post-EXP-001 matrix.
 
-The durable experiment record is
-`docs/experiments/EXP-001-head64-short-tiles.md`; rejected alternatives and
+The durable experiment records are
+`docs/experiments/EXP-001-head64-short-tiles.md`,
+`docs/experiments/EXP-003-short-head32-kv-tiles.md`, and
+`docs/experiments/CAMPAIGN-002.md`; rejected alternatives, failed gates, and
 pre-integration paired evidence remain versioned for auditability.
 
 ## Source of truth and scope

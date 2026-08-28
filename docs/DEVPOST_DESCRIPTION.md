@@ -46,19 +46,21 @@ On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
   with zero failures across 938,885,120 comparisons;
 - the exact 100,000-token final resource row was recorded separately and was
   not counted as a pass;
-- final-matrix geometric-mean speedup was 1.427x, with row 10 at 1.701x and
-  row 13 at 4.640x;
+- final-matrix geometric-mean speedup was 1.526x, with row 1 at 1.736x and
+  row 13 at 4.766x;
 - EXP-001 improved paired full-matrix geomean by 8.98% and 10.19%, while
-  reducing the targeted attention event by 89.43% across 40 Triton launches;
+  the current target profile remains 91.11% below its frozen baseline;
+- EXP-003 improved the post-EXP-001 final-matrix geomean by 6.95% and reduced
+  row-1 attention time by 69.98% across 40 Triton launches;
 - the untouched organizer PyTorch default six-layer harness passed 5/5 trials
-  with zero failed elements and measured 1.408x median speedup;
+  with zero failed elements and measured 1.314x median speedup;
 - all 1,950 optimized attention calls in that organizer run used Triton;
 - all 28 feasible source-derived exact-harness cases passed five trials each,
   with 0 failed elements across 459,776,000 comparisons;
 - the source-designated 100,000-token quadratic stress case was recorded as a
   resource skip and was not counted as a pass;
 - the seven-case project-held-out matrix passed with zero failed elements and
-  measured 1.221x geomean speedup; and
+  measured 1.228x geomean speedup; and
 - the long-attention incremental peak allocation fell from 78 MiB to 22 MiB.
 
 The result artifacts contain raw CUDA-event samples, environment/revision
@@ -70,7 +72,7 @@ the `_attention_fwd` kernel executed.
 Attention's quadratic intermediates create latency and memory pressure in
 real Transformer inference. On the longest held-out case, FlashTile reduced
 incremental allocation by 71.8%; on the published final dimensions it delivered
-a 1.427x geometric mean. The same design can increase serving
+a 1.526x geometric mean. The same design can increase serving
 capacity, leave memory headroom for longer contexts or larger batches, and
 reduce per-request compute time without changing model weights.
 

@@ -14,9 +14,9 @@ count. Under the recorded PyTorch assumptions (float32, no padding, and the
 stricter executable comparator), all 65 accuracy trials passed with **0 failed
 elements across 938,885,120 comparisons**.
 
-Final-matrix geometric-mean end-to-end speedup is **1.427x**. Per-row speedups
-range from 1.009x to 4.640x; the optimized EXP-001 target (row 10,
-`head_dim=64`, sequence 128) measures **1.701x**. Backend accounting records
+Final-matrix geometric-mean end-to-end speedup is **1.526x**. Per-row speedups
+range from 0.945x to 4.766x; the EXP-003 target (row 1, `head_dim=32`,
+sequence 128) measures **1.736x**. Backend accounting records
 1,008 Triton calls, 448 explicit reference calls for unsupported or very-large
 batch regimes, and zero SDPA calls. The complete table, stdout, environment,
 source hashes, and implementation fingerprint are in
@@ -24,13 +24,23 @@ source hashes, and implementation fingerprint are in
 
 EXP-001 replaced only the short `head_dim=64` attention tile. Two paired full
 matrix trials improved aggregate speedup by **8.98%** and **10.19%**. After
-integration, `_attention_fwd` time for 40 row-10 launches fell from 30,324.486
-us to 3,205.548 us (89.43%) while all 40 calls remained Triton. See the
+integration, the current `_attention_fwd` profile for 40 row-10 launches is
+2,694.679 us, 91.11% below the frozen 30,324.486 us pre-candidate profile,
+while all 40 calls remain Triton. See the
 [experiment decision](docs/experiments/EXP-001-head64-short-tiles.md) and
 [integrated profiler artifact](docs/results/rtx-5070-ti-2026-08-28-final-10-profile.json).
 
+EXP-003 then changed only short `head_dim=32` K/V tiles from 128 to 64. Three
+alternating row-1 measurements reduced optimized median latency from a
+1.2402 ms baseline mean to 0.8201 ms, and the integrated final-matrix geomean
+rose 6.95% from 1.426692x to 1.525823x. The row-1 `_attention_fwd` profile fell
+69.98%, from 7,008.677 us to 2,103.978 us across 40 launches. Every attempt,
+including rejected and failed gates, is recorded under
+[`docs/experiments/attempts`](docs/experiments/attempts) and summarized in the
+[Campaign 2 record](docs/experiments/CAMPAIGN-002.md).
+
 The project-owned seven-case held-out matrix also completed **7/7 PASS**, with
-zero failures across 13,117,440 comparisons and a **1.221x** geomean. It retains
+zero failures across 13,117,440 comparisons and a **1.228x** geomean. It retains
 raw alternating-order CUDA-event samples and memory measurements; the
 long-attention incremental peak allocation fell from 78 MiB to 22 MiB (71.8%).
 See [the held-out artifact](docs/results/rtx-5070-ti-2026-08-27.json) and
@@ -38,7 +48,7 @@ See [the held-out artifact](docs/results/rtx-5070-ti-2026-08-27.json) and
 
 The newly supplied organizer PyTorch file is also preserved untouched. Running
 that exact harness at its default six-layer configuration produced **5/5 PASS,
-0 failed elements out of 2,621,440, and 1.408x median speedup**. All 1,950
+0 failed elements out of 2,621,440, and 1.314x median speedup**. All 1,950
 optimized attention calls used Triton. See the
 [exact-harness artifact](docs/results/rtx-5070-ti-2026-08-27-organizer-default.json)
 and [organizer-input audit](docs/ORGANIZER_INPUTS.md).
@@ -49,7 +59,7 @@ from both supplied files: **28/28 executable cases passed**, with **0 failed
 elements out of 459,776,000 across 140 accuracy trials**. The matrix covers
 float32, float16, bfloat16, causal attention, prefix padding, batch sizes through
 10,000, model widths through 1,024, head counts 1/2/4/16, and sequence length
-1,024. Overall geomean speedup was **1.233x**; the float32 subset was **1.443x**.
+1,024. Overall geomean speedup was **1.194x**; the float32 subset was **1.373x**.
 The TensorFlow script's designated 100,000-token quadratic stress case is the
 single source-authorized resource skip and is not counted as a pass. See the
 [validation artifact](docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json).

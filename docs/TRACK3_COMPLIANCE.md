@@ -33,7 +33,7 @@ Three external items cannot be completed truthfully from repository code alone:
 | Use AI-assisted development | PASS | `docs/TECH_REPORT.md` records OpenAI Codex and the inherited Claude Code prototype, the tasks performed, and the evidence policy. | Add any human/team details on Devpost. |
 | Optimize and test on the participant's own GPU | PASS | Curated CUDA-event and profiler artifacts were produced locally on an RTX 5070 Ti. | Retest on the evaluation GPU if it differs. |
 | Provide a clear technical report including AI skills/tools | PASS | `docs/TECH_REPORT.md` covers contract, environment, bottleneck analysis, kernel design, methods, results, AI use, rejected work, and limitations. | None. |
-| Download the benchmark, customize the implementation, run locally, and report CPU/GPU/disk/optimizations/results | PASS | Both local Lark downloads are byte-preserved in `benchmarks/` and frozen by `organizer_downloads.json`. The untouched PyTorch default passed 5/5 trials at 1.408x, the final dimensions passed 13/13 executable rows, and the source-derived matrix passed 28/28 executable cases on the recorded RTX 5070 Ti. | Recheck if the organizer publishes a later revision or confirms changed attachment bytes. |
+| Download the benchmark, customize the implementation, run locally, and report CPU/GPU/disk/optimizations/results | PASS | Both local Lark downloads are byte-preserved in `benchmarks/` and frozen by `organizer_downloads.json`. The untouched PyTorch default passed 5/5 trials at 1.314x, the final dimensions passed 13/13 executable rows, and the source-derived matrix passed 28/28 executable cases on the recorded RTX 5070 Ti. | Recheck if the organizer publishes a later revision or confirms changed attachment bytes. |
 | In scope: code generation, fusion, profiling; production deployment is not required | PASS | Custom Triton, packed-QKV inference, CUDA events, PyTorch profiler, tests, and fail-closed result tooling are included; no production deployment is claimed. | None. |
 
 ## Deliverables
@@ -50,9 +50,9 @@ Three external items cannot be completed truthfully from repository code alone:
 
 | Criterion | Weight | Evidence-backed position | Last-mile opportunity |
 | --- | ---: | --- | --- |
-| Technical execution | 35% | Custom online-softmax Triton kernel, measured dispatcher, strict correctness, packed-QKV optimization, 91-test CPU/GPU suite, 13-row final proof, 28-case isolated validation, raw evidence, and profiler proof. | Retest unchanged on the evaluator GPU if it differs. |
+| Technical execution | 35% | Custom online-softmax Triton kernel, measured dispatcher, strict correctness, packed-QKV optimization, 102-test CPU/GPU suite, 13-row final proof, 28-case isolated validation, raw evidence, and profiler proof. | Retest unchanged on the evaluator GPU if it differs. |
 | Innovation and problem insight | 20% | Eliminates quadratic score/mask intermediates, consumes projection-native BSHD strides, reproduces reference rounding boundaries, and uses measured shape-aware routing instead of forcing custom code everywhere. | Explain these three decisions visually in the demo. |
-| Impact and relevance | 20% | The final matrix measures 1.427x geomean speedup, EXP-001 removes 89.43% of the targeted attention-kernel time, and long-attention incremental allocation falls 71.8%. | Frame the result around lower latency, memory pressure, and serving capacity. |
+| Impact and relevance | 20% | The final matrix measures 1.526x geomean speedup, EXP-003 removes 69.98% of row-1 attention-kernel time, EXP-001's current profile remains 91.11% below its frozen baseline, and long-attention incremental allocation falls 71.8%. | Frame the result around lower latency, memory pressure, and serving capacity. |
 | Feasibility and practicality | 15% | Explicit support envelope, exact fallbacks, state-dict compatibility, bounded packed-weight cache, reproducible environment, and honest forward-only limitation. | Demonstrate fallback behavior once in Q&A if asked. |
 | Presentation and communication | 10% | README, technical report, kernel design, Devpost copy, compliance matrix, and demo runbook form one consistent story. | Record the public demo and rehearse the measured claims. |
 
@@ -60,21 +60,22 @@ Three external items cannot be completed truthfully from repository code alone:
 
 - Organizer-published final dimensions: 13/13 executable PASS, zero failures
   across 938,885,120 comparisons over 65 trials, plus one authorized resource
-  skip excluded from the pass count; 1.427x geomean speedup.
+  skip excluded from the pass count; 1.526x geomean speedup.
 - Final attention dispatch: Triton 1,008 / SDPA 0 / reference 448. The targeted
-  row 10 is 1.701x and its integrated `_attention_fwd` profile is 3,205.548 us
-  across 40 Triton launches, down 89.43% from the frozen pre-candidate profile.
+  EXP-003 row 1 is 1.736x and its integrated `_attention_fwd` profile is
+  2,103.978 us across 40 Triton launches, down 69.98% from the prior profile.
+  Row 10 is 1.547x and remains 91.11% below its frozen pre-EXP-001 profile.
 - Untouched organizer PyTorch default: 5/5 PASS, 0/2,621,440 failed elements,
-  1.408x median speedup, and Triton 1,950 / SDPA 0 / reference 0 optimized
+  1.314x median speedup, and Triton 1,950 / SDPA 0 / reference 0 optimized
   attention calls.
 - Source-derived exact-harness matrix: 28/28 executable PASS, 0/459,776,000
   failed elements over 140 trials, plus one authorized resource skip excluded
-  from the pass count; 1.233x overall and 1.443x float32 geomean speedup.
+  from the pass count; 1.194x overall and 1.373x float32 geomean speedup.
 - Project-held-out matrix: 7/7 PASS, zero failures across 13,117,440
-  comparisons, and 1.221x geomean speedup.
+  comparisons, and 1.228x geomean speedup.
 - Long-attention incremental peak allocation: 78 MiB to 22 MiB (71.8%).
 - Implementation fingerprint:
-  `83d952ab3268cffba2ac9b396c64f5733c6e46e58d37c03f92de04c7ff5a6e4f`.
+  `8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a`.
 
 These values apply only to the exact fingerprinted implementation, recorded
 RTX 5070 Ti environment, published dimensions, and explicit PyTorch assumptions.
