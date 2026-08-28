@@ -24,8 +24,9 @@ to keep changing code until a benchmark number looks better.
   matrix trials improved geometric-mean speedup by 8.98% and 10.19%.
 - An independent reviewer approved the bounded implementation, including an
   explicit noise waiver for unaffected `head_dim=32` timing variation.
-- Campaign 2 retained all 37 executed attempts, including four failed gates,
-  with command wall time, stdout/stderr, correctness, latency distributions,
+- Campaign 2 retained all 39 executed attempts: 35 child commands passed and
+  four failed gates remain as evidence. Their measured child wall time totals
+  255.273 seconds, with stdout/stderr, correctness, latency distributions,
   memory/backend/profiler data, artifact hashes, environment, and decisions.
   EXP-002 rejected all three long-`head_dim=32` variants; each was slower.
 - EXP-004 stopped at its first direct compile gate because Triton dot requires
