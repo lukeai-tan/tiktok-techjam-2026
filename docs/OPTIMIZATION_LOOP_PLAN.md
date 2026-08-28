@@ -259,6 +259,15 @@ regressions, OOMs, errors, and skips
 reviewer decision and reason
 ```
 
+All Campaign 2 and later commands must be executed through
+`benchmarks/run_optimization_attempt.py`. The versioned record additionally
+captures UTC start/end timestamps, command wall time, exit/timeout state,
+stdout/stderr, accuracy/error totals, latency distributions and sample counts,
+memory, backend/profiler counts, environment, artifact hash, Git state, and the
+logger hash. A nonzero command, timeout, missing artifact, or invalid artifact
+must still produce a record. A later review decision may be stored in a linked
+immutable sidecar, but measured fields are never hand-edited.
+
 Keep rejected and inconclusive records. They prevent the agents from repeating
 the same low-value idea and make the final technical report honest.
 
