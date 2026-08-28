@@ -15,7 +15,7 @@
     "rollback": "Drop candidate commit 2c5fd34 and restore the parent 64x128 tile",
     "decision": "observation",
     "decision_rationale": "Round A candidate observation for aggregate leader selection",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

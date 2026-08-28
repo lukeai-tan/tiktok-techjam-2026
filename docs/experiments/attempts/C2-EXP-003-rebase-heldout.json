@@ -15,7 +15,7 @@
     "rollback": "Revert integrated candidate commit 085d6bc and restore prior curated artifact",
     "decision": "keep",
     "decision_rationale": "All seven held-out cases passed with zero failed elements; geomean rose from 1.220518x to 1.228277x (+0.636%) and every optimized median improved by 4.45% to 31.43%.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

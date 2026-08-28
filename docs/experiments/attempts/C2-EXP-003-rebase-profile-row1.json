@@ -15,7 +15,7 @@
     "rollback": "Revert integrated candidate commit 085d6bc and restore prior curated artifact",
     "decision": "keep",
     "decision_rationale": "Profiler proved 40/40 Triton _attention_fwd launches; self device time fell from 7008.677 us to 2103.978 us across ten forwards, a 69.980% reduction.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

@@ -15,7 +15,7 @@
     "rollback": "Revert integrated candidate commit 085d6bc and curated rebaseline commits",
     "decision": "rework",
     "decision_rationale": "The rebaselined suite left one stale held-out geomean assertion (expected 1.221 vs measured 1.228) and exposed a Windows cp1252 UnicodeEncodeError in the logger tee thread; update the assertion, harden tee encoding, and rerun.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

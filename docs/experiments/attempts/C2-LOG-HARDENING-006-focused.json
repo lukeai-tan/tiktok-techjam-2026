@@ -2,55 +2,56 @@
   "schema_version": 1,
   "record_status": "RECORDED",
   "attempt": {
-    "id": "C2-EXP-003-FINAL-TESTS",
-    "hypothesis": "The integrated and rebaselined EXP-003 state passes the complete repository suite",
-    "scope": "Final complete repository pytest suite",
-    "parent_commit": "51196ad",
-    "candidate_commit": "7fa90e5536adf679daa93a48fd6bbaf56d8a1eeb",
+    "id": "C2-LOG-HARDENING-006-FOCUSED",
+    "hypothesis": "Persisted output removes repository and home-directory prefixes without changing executed commands or live tee output",
+    "scope": "Focused optimization logger and curated-result regression tests",
+    "parent_commit": "923521d",
+    "candidate_commit": "923521d17482be3229e86518ee2c4283f800485f",
     "branch": "feat/transformer-gpu-kernel-implementation",
     "changed_paths": [
-      "transformer_opt/config.py",
-      "tests/test_dispatch.py",
       "benchmarks/run_optimization_attempt.py",
-      "tests/test_optimization_attempt.py",
-      "tests/test_result_artifacts.py"
+      "tests/test_optimization_attempt.py"
     ],
-    "rollback": "Revert EXP-003 integration, curated rebaseline, and logger hardening commits",
+    "rollback": "Revert portable_output and its regression test",
     "decision": "keep",
-    "decision_rationale": "The complete suite passed 102 tests with zero failures in 6.92 seconds; 14 warnings are upstream PyTorch deprecations already tracked by the project.",
-    "review_status": "approved"
+    "decision_rationale": "All 18 focused logger and curated-result tests passed; persisted stdout, stderr, and exception text now remove repository and home-directory prefixes.",
+    "review_status": "pending"
   },
   "execution": {
     "command": [
       "python.exe",
       "-m",
       "pytest",
+      "tests/test_optimization_attempt.py",
+      "tests/test_result_artifacts.py",
       "-q"
     ],
     "cwd": ".",
-    "started_at_utc": "2026-08-28T01:25:20.600018+00:00",
-    "ended_at_utc": "2026-08-28T01:25:28.171107+00:00",
-    "wall_time_seconds": 7.571115399943665,
-    "timeout_seconds": 600.0,
+    "started_at_utc": "2026-08-28T02:14:19.661695+00:00",
+    "ended_at_utc": "2026-08-28T02:14:22.771639+00:00",
+    "wall_time_seconds": 3.1098569999448955,
+    "timeout_seconds": 180.0,
     "timed_out": false,
     "status": "PASS",
     "return_code": 0,
     "launch_error": null,
-    "stdout": "........................................................................ [ 70%]\n..............................                                           [100%]\n============================== warnings summary ===============================\ntests/test_gpu_transformer.py: 14 warnings\n  <home>\\AppData\\Local\\Codex\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\torch\\jit\\_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n102 passed, 14 warnings in 6.92s\n",
+    "stdout": "..................                                                       [100%]\n18 passed in 2.74s\n",
     "stderr": ""
   },
   "environment_before": {
-    "captured_at_utc": "2026-08-28T01:25:20.517538+00:00",
+    "captured_at_utc": "2026-08-28T02:14:19.573101+00:00",
     "command": [
       "python.exe",
       "-m",
       "pytest",
+      "tests/test_optimization_attempt.py",
+      "tests/test_result_artifacts.py",
       "-q"
     ],
     "git": {
-      "commit": "7fa90e5536adf679daa93a48fd6bbaf56d8a1eeb",
-      "dirty": false,
-      "changed_path_count": 0,
+      "commit": "923521d17482be3229e86518ee2c4283f800485f",
+      "dirty": true,
+      "changed_path_count": 20,
       "implementation_fingerprint_schema": 2,
       "implementation_sha256": "8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a",
       "implementation_paths": [
@@ -88,7 +89,7 @@
     "disk": {
       "path": ".",
       "total_bytes": 999125151744,
-      "free_bytes": 445389459456
+      "free_bytes": 445275906048
     },
     "framework": {
       "torch": "2.13.0+cu130",
@@ -112,17 +113,19 @@
     }
   },
   "environment_after": {
-    "captured_at_utc": "2026-08-28T01:25:28.215449+00:00",
+    "captured_at_utc": "2026-08-28T02:14:22.810363+00:00",
     "command": [
       "python.exe",
       "-m",
       "pytest",
+      "tests/test_optimization_attempt.py",
+      "tests/test_result_artifacts.py",
       "-q"
     ],
     "git": {
-      "commit": "7fa90e5536adf679daa93a48fd6bbaf56d8a1eeb",
-      "dirty": false,
-      "changed_path_count": 0,
+      "commit": "923521d17482be3229e86518ee2c4283f800485f",
+      "dirty": true,
+      "changed_path_count": 20,
       "implementation_fingerprint_schema": 2,
       "implementation_sha256": "8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a",
       "implementation_paths": [
@@ -160,7 +163,7 @@
     "disk": {
       "path": ".",
       "total_bytes": 999125151744,
-      "free_bytes": 445386919936
+      "free_bytes": 445274984448
     },
     "framework": {
       "torch": "2.13.0+cu130",
@@ -185,7 +188,7 @@
   },
   "logger": {
     "path": "benchmarks/run_optimization_attempt.py",
-    "sha256": "489668bc9c6755b128e150a79b63fa15bead6fe7e80d5a2dc9ae7ad7524fc016"
+    "sha256": "ee1b35a8c8f5ac1830d067bb9dc832358cf3a1f9d50d542ae4cf820e93f0ec40"
   },
   "result_artifact": {
     "path": null,

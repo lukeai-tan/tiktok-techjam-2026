@@ -15,7 +15,7 @@
     "rollback": "Revert integrated candidate commit 085d6bc and restore prior curated artifact",
     "decision": "keep",
     "decision_rationale": "All 13 executable rows passed with 0/938885120 failed elements; geomean rose from 1.426692x to 1.525823x (+6.948%), all directly affected executable rows improved, and the largest unaffected optimized-latency regression was 1.59%.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

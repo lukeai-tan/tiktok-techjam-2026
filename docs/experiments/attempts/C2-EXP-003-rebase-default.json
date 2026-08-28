@@ -15,7 +15,7 @@
     "rollback": "Revert integrated candidate commit 085d6bc and restore prior curated artifact",
     "decision": "keep",
     "decision_rationale": "The untouched organizer harness passed 5/5 trials with 0/2621440 failed elements and 1950/1950 Triton launches; optimized median improved from 1.3533 ms to 1.3374 ms (1.175% lower).",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

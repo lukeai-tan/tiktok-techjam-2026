@@ -15,7 +15,7 @@
     "rollback": "Revert integrated candidate commit 085d6bc and restore prior curated artifact",
     "decision": "keep",
     "decision_rationale": "The held-out path retained 10/10 Triton _attention_fwd launches and self device time improved from 3663.926 us to 2460.878 us; no neighboring-path regression observed.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

@@ -52,8 +52,8 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    ```
 
    Point out 13/13 executable `PASS`, 0/938,885,120 failed elements, the
-   authorized row-14 resource skip, 1.427x geomean speedup, and row 10 at
-   1.701x.
+   authorized row-14 resource skip, 1.525823x geomean speedup, row 1 at
+   1.736x, and row 10 at 1.547x.
 
 6. Run the full source-derived organizer validation:
 
@@ -79,9 +79,9 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    the result with the recorded 89.43% profiler-time reduction in
    `docs/experiments/EXP-001-head64-short-tiles.md`.
 
-8. Finish on `docs/TECH_REPORT.md`: the untouched organizer default is 1.408x,
+8. Finish on `docs/TECH_REPORT.md`: the untouched organizer default is 1.314x,
    and the published final matrix is 13/13 executable PASS with zero failed
-   elements and a 1.427x geometric-mean speedup. Show the source-derived and
+   elements and a 1.525823x geometric-mean speedup. Show the source-derived and
    held-out artifacts as broader correctness and anti-overfitting evidence.
 
 ## Failure handling

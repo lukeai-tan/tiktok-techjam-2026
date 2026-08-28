@@ -55,6 +55,17 @@ def portable_command(command: list[str]) -> list[str]:
     return rendered
 
 
+def portable_output(output: str) -> str:
+    """Remove repository and home-directory prefixes from persisted output."""
+    rendered = output
+    replacements = ((REPO_ROOT, "."), (Path.home(), "<home>"))
+    for prefix, replacement in replacements:
+        variants = {str(prefix), prefix.as_posix()}
+        for variant in variants:
+            rendered = re.sub(re.escape(variant), replacement, rendered, flags=re.IGNORECASE)
+    return rendered
+
+
 def _git_value(*args: str) -> Optional[str]:
     try:
         completed = subprocess.run(
@@ -410,9 +421,9 @@ def run_logged_command(
         "timed_out": timed_out,
         "status": status,
         "return_code": return_code,
-        "launch_error": launch_error,
-        "stdout": "".join(stdout_chunks),
-        "stderr": "".join(stderr_chunks),
+        "launch_error": portable_output(launch_error) if launch_error else None,
+        "stdout": portable_output("".join(stdout_chunks)),
+        "stderr": portable_output("".join(stderr_chunks)),
     }
 
 
@@ -432,7 +443,7 @@ def load_result_artifact(path: Optional[Path]) -> tuple[dict[str, Any], Optional
     try:
         payload = json.loads(resolved.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        metadata["parse_error"] = f"{type(exc).__name__}: {exc}"
+        metadata["parse_error"] = portable_output(f"{type(exc).__name__}: {exc}")
         return metadata, None
     if not isinstance(payload, dict):
         metadata["parse_error"] = "result artifact root must be a JSON object"

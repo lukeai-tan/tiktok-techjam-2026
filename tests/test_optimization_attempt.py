@@ -14,6 +14,7 @@ from benchmarks.run_optimization_attempt import (
     _pump_stream,
     load_result_artifact,
     portable_command,
+    portable_output,
     run_logged_command,
     summarize_result_artifact,
     write_json_exclusive,
@@ -28,6 +29,21 @@ def test_persisted_command_removes_machine_specific_absolute_prefixes():
     assert command[0] == Path(sys.executable).name
     assert str(Path.home()).lower() not in " ".join(command).lower()
     assert command[1] == "benchmarks/profile_cases.py"
+
+
+def test_persisted_output_removes_machine_specific_absolute_prefixes():
+    home = str(Path.home())
+    repo = str(ROOT)
+    output = portable_output(
+        f"repo={repo}\\artifact.json\nhome={home}\\runtime\\warning.py\n"
+        f"slash={Path.home().as_posix()}/runtime/warning.py\n"
+    )
+
+    assert repo.lower() not in output.lower()
+    assert home.lower() not in output.lower()
+    assert "repo=.\\artifact.json" in output
+    assert "home=<home>\\runtime\\warning.py" in output
+    assert "slash=<home>/runtime/warning.py" in output
 
 
 def test_validation_summary_preserves_correctness_performance_and_duration():

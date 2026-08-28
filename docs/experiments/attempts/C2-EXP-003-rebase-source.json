@@ -15,7 +15,7 @@
     "rollback": "Revert integrated candidate commit 085d6bc and restore prior curated artifact",
     "decision": "keep",
     "decision_rationale": "All 28 executable cases passed with 0/459776000 failed elements and one authorized skip. Reported geomean moved from 1.232813x to 1.193898x as baseline timings shifted, while every optimized median improved by 8.98% to 36.97%; retain with explicit timing-noise review.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [
