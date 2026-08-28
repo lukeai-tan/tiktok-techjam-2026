@@ -97,10 +97,22 @@ missing or invalid artifacts remain in the ledger.
 | C3-PREFLIGHT-001-WORKFLOW | Campaign workflow is mechanically complete | workflow validator | 0.049 s | 0 errors; 0 warnings | keep |
 | C3-PREFLIGHT-002-BASELINE | Accepted baseline remains source/evidence current | focused integrity tests | 3.388 s | 33/33 passed; fingerprint unchanged | keep |
 | C3-PREFLIGHT-003-PROFILE-MANIFEST | Row 9 is an exact versioned profile case | focused manifest test | 1.381 s | 1/1 passed; dimensions match final row 9 | keep |
+| C3-BASE-001-FINAL-ROW9 | Fresh row-9 baseline reproduces the regression | final row 9 | 3.486 s | PASS; 0/5,242,880 failed; Triton 112/112; 1.1745/1.2341 ms; 0.952x | observation |
+| C3-OBS-001-FINAL-ROW9-PROFILE | Row-9 attention is a material bottleneck | final row 9 profile | 2.880 s | Triton 40/40; `_attention_fwd` 6,775.468 us / 40, 55.23% of optimized range | observation |
 
-Campaign 3 currently contains three passing attempt records and zero failed
-commands. Recorded child-command wall time totals 4.818 seconds; orchestration,
+Campaign 3 currently contains five passing attempt records and zero failed
+commands. Recorded child-command wall time totals 11.184 seconds; orchestration,
 documentation, commits, and review time are excluded.
+
+## Baseline observation
+
+The fresh row-9 run confirms a real target rather than relying on Campaign 2's
+single curated value. It passed the strict comparator with maximum absolute
+error 0.00106275, but optimized median latency was 1.2341 ms against a 1.1745 ms
+baseline (0.952x). The matching ten-step profile recorded 40 Triton launches and
+6,775.468 us of `_attention_fwd` self device time inside a 12,266.268 us model
+range. Attention therefore accounts for 55.23% of the optimized range and
+authorizes bounded EXP-005 launch testing.
 
 ## Source-of-truth impact
 
