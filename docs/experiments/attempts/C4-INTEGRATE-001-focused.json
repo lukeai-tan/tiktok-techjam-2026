@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C4-INTEGRATE-001-FOCUSED",
+    "hypothesis": "The reviewed padded head-dimension-8 implementation preserves dispatch, direct kernel, transformer, and organizer-contract correctness",
+    "scope": "All focused Campaign 4 implementation and organizer-contract tests",
+    "parent_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+    "candidate_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+    "branch": "feat/transformer-gpu-kernel-implementation",
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "transformer_opt/kernels/attention.py",
+      "torch_transformer_benchmark.py",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py",
+      "tests/test_organizer_benchmarks.py",
+      "benchmarks/campaign4_profile_shapes.json"
+    ],
+    "rollback": "Revert the Campaign 4 padded head-dimension-8 implementation and its tests",
+    "decision": "pending",
+    "decision_rationale": "Advance to integration matrices only if every focused implementation and organizer-contract test passes.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py",
+      "tests/test_organizer_benchmarks.py",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T07:04:49.119196+00:00",
+    "ended_at_utc": "2026-08-28T07:05:01.520477+00:00",
+    "wall_time_seconds": 12.40148129989393,
+    "timeout_seconds": 600.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "................................................................         [100%]\n============================== warnings summary ===============================\ntests/test_gpu_transformer.py: 14 warnings\n  .\\.venv\\Lib\\site-packages\\torch\\jit\\_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n64 passed, 14 warnings in 11.65s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T07:04:49.010305+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py",
+      "tests/test_organizer_benchmarks.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+      "dirty": true,
+      "changed_path_count": 60,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 442092257280
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T07:05:01.563542+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py",
+      "tests/test_organizer_benchmarks.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+      "dirty": true,
+      "changed_path_count": 60,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 442080829440
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

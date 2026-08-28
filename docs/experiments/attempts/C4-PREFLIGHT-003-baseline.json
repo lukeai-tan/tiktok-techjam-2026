@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C4-PREFLIGHT-003-BASELINE",
+    "hypothesis": "The accepted Campaign 3 checkpoint remains source-integrity, curated-evidence, and immutable-attempt current before new measurements",
+    "scope": "Focused organizer, curated-result, and attempt-logger preflight tests",
+    "parent_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+    "candidate_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+    "branch": "feat/transformer-gpu-kernel-implementation",
+    "changed_paths": [],
+    "rollback": "Repair the baseline contract before running Campaign 4 benchmarks",
+    "decision": "keep",
+    "decision_rationale": "Candidate work is authorized only if the accepted baseline integrity tests pass unchanged.",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_organizer_benchmarks.py",
+      "tests/test_result_artifacts.py",
+      "tests/test_optimization_attempt.py",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T06:30:11.002235+00:00",
+    "ended_at_utc": "2026-08-28T06:30:14.313955+00:00",
+    "wall_time_seconds": 3.3118338000494987,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "......................F..........                                        [100%]\n================================== FAILURES ===================================\n______ test_persisted_command_removes_machine_specific_absolute_prefixes ______\n\n    def test_persisted_command_removes_machine_specific_absolute_prefixes():\n        command = portable_command([sys.executable, \"benchmarks/profile_cases.py\"])\n>       assert command[0] == Path(sys.executable).name\nE       AssertionError: assert '.venv/Scripts/python.exe' == 'python.exe'\nE         \nE         - python.exe\nE         + .venv/Scripts/python.exe\n\ntests\\test_optimization_attempt.py:29: AssertionError\n=========================== short test summary info ===========================\nFAILED tests/test_optimization_attempt.py::test_persisted_command_removes_machine_specific_absolute_prefixes\n1 failed, 32 passed in 2.92s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T06:30:10.912483+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_organizer_benchmarks.py",
+      "tests/test_result_artifacts.py",
+      "tests/test_optimization_attempt.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+      "dirty": true,
+      "changed_path_count": 6,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9071e3c049a7a3bc2311fc9d33997202ce4bead93d9daced375340fe6308eb9e",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 442105651200
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T06:30:14.352846+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests/test_organizer_benchmarks.py",
+      "tests/test_result_artifacts.py",
+      "tests/test_optimization_attempt.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+      "dirty": true,
+      "changed_path_count": 6,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9071e3c049a7a3bc2311fc9d33997202ce4bead93d9daced375340fe6308eb9e",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 442105610240
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "ee1b35a8c8f5ac1830d067bb9dc832358cf3a1f9d50d542ae4cf820e93f0ec40"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-004",
+  "review_stage": "post_integration_council",
+  "reviewed_parent_commit": "b41fdaf90f869a920346401b2b9fd93899fe805e",
+  "reviewed_implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+  "perspectives": [
+    {
+      "role": "requirements and contract",
+      "decision": "APPROVE",
+      "finding": "Organizer sources, final-row order, comparator, tolerances, timing policy, and exact resource-skip policy are unchanged; automatic width-eight routing is narrower than direct support and exactly documented."
+    },
+    {
+      "role": "architecture and maintainability",
+      "decision": "APPROVE_WITH_RESIDUAL",
+      "finding": "Separating real HEAD_DIM from DOT_HEAD_DIM is a local compile-time extension with no API, state-dict, dependency, or persistence change. The literal row-11 guard is intentionally narrow but must be revisited rather than generalized implicitly."
+    },
+    {
+      "role": "implementation and numerical safety",
+      "decision": "APPROVE",
+      "finding": "Padded Q/K/V loads are zero-masked, output stores exclude padded lanes, softmax uses the real width, and all previously supported widths retain equal real/dot dimensions."
+    },
+    {
+      "role": "security and operational risk",
+      "decision": "APPROVE",
+      "finding": "The change adds no network, file, credential, serialization, or external-state surface. Unsupported modes remain fail-closed through existing dispatch and validation."
+    },
+    {
+      "role": "testing and performance evidence",
+      "decision": "APPROVE",
+      "finding": "Direct GPU, 18-scenario model stress, affected rows, two full matrices, default, held-out, source-derived, profiler, curated-artifact, and 112-test gates are green with backend proof and zero failed measured elements."
+    },
+    {
+      "role": "documentation and evidence provenance",
+      "decision": "APPROVE",
+      "finding": "Claims point to immutable result/attempt JSON and the exact implementation hash; startup failures, failed/reworked attempts, dirty Git state, and absent commit/push authorization remain explicit."
+    },
+    {
+      "role": "devil advocate",
+      "decision": "APPROVE_WITH_RESIDUAL",
+      "finding": "The win is highly shape- and GPU-specific, automatic dispatch is deliberately overfit to one published row, forced width-eight correctness evidence is broader than performance evidence, and strict comparison passes with nonzero absolute error."
+    }
+  ],
+  "decision": "APPROVE_FOR_INDEPENDENT_FINAL_REVIEW",
+  "blocking_findings": [],
+  "required_controls": [
+    "Do not broaden automatic width-eight dispatch without new profiling and strict correctness evidence.",
+    "Keep row 7 and other unmeasured width-eight model shapes on reference.",
+    "Retest on any evaluator GPU that differs from the RTX 5070 Ti.",
+    "Do not claim backward support or clean-commit provenance.",
+    "Require independent final release review after closing docs, graph, and tests."
+  ]
+}
