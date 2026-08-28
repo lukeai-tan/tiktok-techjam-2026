@@ -46,8 +46,8 @@ On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
   with zero failures across 938,885,120 comparisons;
 - the exact 100,000-token final resource row was recorded separately and was
   not counted as a pass;
-- fresh final-matrix geometric-mean speedup was 1.776x, with the Campaign 4
-  row-11 target at 5.456x and row 13 at 4.788x;
+- fresh final-matrix geometric-mean speedup was 1.912x, with Campaign 5 rows 6
+  and 7 at 1.503x/1.524x, the row-11 target at 5.948x, and row 13 at 4.780x;
 - EXP-001 improved paired full-matrix geomean by 8.98% and 10.19%, while
   the current target profile remains 91.11% below its frozen baseline;
 - EXP-003 improved the post-EXP-001 final-matrix geomean by 6.95% and reduced
@@ -57,16 +57,19 @@ On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
 - Campaign 4's zero-padded 64x64 `head_dim=8` Triton path reduced the fresh
   row-11 optimized median by 81.08%, passed three confirmations, and raised
   final geomean another 14.42%;
+- Campaign 5's layer-aware hybrids reduced row-6 and row-7 ten-step model time
+  by 19.74% and 33.64% from their fresh reference profiles and raised the full
+  final geomean 7.62% over the Campaign 5 baseline;
 - the untouched organizer PyTorch default six-layer harness passed 5/5 trials
-  with zero failed elements and measured 1.352x median speedup;
+  with zero failed elements and measured 1.397x median speedup;
 - all 1,950 optimized attention calls in that organizer run used Triton;
 - all 28 feasible source-derived exact-harness cases passed five trials each,
   with 0 failed elements across 459,776,000 comparisons;
 - the source-designated 100,000-token quadratic stress case was recorded as a
   resource skip and was not counted as a pass;
 - two seven-case project-held-out matrices passed with zero failed elements and
-  measured 1.210x and 1.266x geomean speedup; the non-padded long-causal case
-  reproduced near 0.80x and is disclosed as a residual limitation; and
+  measured 1.447x and 1.450x geomean speedup; exact-shape SDPA removed both
+  former long-causal regressions, with primary results of 1.247x and 1.280x; and
 - the long-attention incremental peak allocation fell from 78 MiB to 22 MiB.
 
 The result artifacts contain raw CUDA-event samples, environment/revision
@@ -78,7 +81,7 @@ the `_attention_fwd` kernel executed.
 Attention's quadratic intermediates create latency and memory pressure in
 real Transformer inference. On the longest held-out case, FlashTile reduced
 incremental allocation by 71.8%; on the published final dimensions it delivered
-a 1.776x geometric mean. The same design can increase serving
+a 1.912x geometric mean. The same design can increase serving
 capacity, leave memory headroom for longer contexts or larger batches, and
 reduce per-request compute time without changing model weights.
 

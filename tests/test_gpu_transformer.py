@@ -104,6 +104,35 @@ def test_packed_qkv_cache_is_reused_and_invalidated():
     assert compare_outputs(reference, actual, rtol=0.01, atol=0.001).passed
 
 
+def test_wide_model_uses_campaign6_packed_qkv_candidate():
+    config = TransformerConfig(2, 16, 1024, 4, 1024, 1, True)
+    baseline = BaselineTransformer(config).cuda().eval()
+    optimized = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    copy_model_weights(baseline, optimized, strict=True)
+    x = torch.randn(2, 16, 1024, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        reference = baseline(x)
+        actual = optimized(x)
+
+    cache = optimized._packed_qkv_cache[id(optimized.layers[0].attention)]
+    assert cache[1].shape == (3 * config.d_model, config.d_model)
+    assert compare_outputs(reference, actual, rtol=0.01, atol=0.001).passed
+    assert baseline.state_dict().keys() == optimized.state_dict().keys()
+
+
+def test_intermediate_width_keeps_three_projection_boundary():
+    config = TransformerConfig(2, 16, 768, 4, 768, 1, True)
+    optimized = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(2, 16, 768, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        output = optimized(x)
+
+    assert output.shape == x.shape
+    assert id(optimized.layers[0].attention) not in optimized._packed_qkv_cache
+
+
 @pytest.mark.parametrize("dtype", [torch.float16, torch.bfloat16])
 @pytest.mark.parametrize("causal,padding_ratio", [(False, 0.0), (True, 0.3)])
 def test_low_precision_auto_uses_correctness_first_reference(
@@ -198,7 +227,7 @@ def test_final_row11_head_dim_8_auto_uses_padded_triton_route():
     }
 
 
-def test_final_row7_head_dim_8_keeps_correctness_first_reference_route():
+def test_final_row7_head_dim_8_uses_first_layer_reference_hybrid_route():
     config = TransformerConfig(64, 128, 32, 4, 32, 4, True)
     model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
     x = torch.randn(64, 128, 32, device="cuda", dtype=torch.float32)
@@ -209,9 +238,83 @@ def test_final_row7_head_dim_8_keeps_correctness_first_reference_route():
 
     assert output.shape == x.shape
     assert model.attention_backend_counts == {
-        "triton": 0,
+        "triton": 3,
         "sdpa": 0,
-        "reference": config.num_layers,
+        "reference": 1,
+    }
+
+
+def test_final_row7_hybrid_route_passes_seed_scale_and_padding_stress():
+    torch.manual_seed(7070)
+    config = TransformerConfig(64, 128, 32, 4, 32, 4, True)
+    baseline = BaselineTransformer(config)
+    optimized = UserOptimizedTransformer(config, attention_backend="auto")
+    copy_model_weights(baseline, optimized, strict=True)
+    baseline = baseline.cuda().eval()
+    optimized = optimized.cuda().eval()
+
+    scenarios = 0
+    with torch.inference_mode():
+        for seed in (1234, 2026, 4096):
+            for input_scale in (0.25, 1.0, 4.0):
+                for padding_ratio in (0.0, 0.25):
+                    x, valid_mask = generate_random_case(
+                        config,
+                        torch.device("cuda"),
+                        torch.float32,
+                        seed=seed,
+                        padding_ratio=padding_ratio,
+                        input_scale=input_scale,
+                    )
+                    reference = baseline(x, valid_mask)
+                    actual = optimized(x, valid_mask)
+                    result = compare_outputs(reference, actual, rtol=0.01, atol=0.001)
+                    assert result.passed, (
+                        f"seed={seed} scale={input_scale} padding={padding_ratio} "
+                        f"failed={result.failed_elements}/{result.total_elements} "
+                        f"max_abs={result.max_abs_error:.6g}"
+                    )
+                    scenarios += 1
+
+    assert optimized.attention_backend_counts == {
+        "triton": scenarios * 3,
+        "sdpa": 0,
+        "reference": scenarios,
+    }
+
+
+@pytest.mark.parametrize("padding_ratio", [0.0, 0.3])
+def test_heldout_long_causal_auto_uses_accuracy_proven_sdpa(padding_ratio):
+    config = TransformerConfig(2, 512, 512, 8, 2048, 2, True)
+    baseline = BaselineTransformer(config)
+    optimized = UserOptimizedTransformer(config, attention_backend="auto")
+    copy_model_weights(baseline, optimized, strict=True)
+    baseline = baseline.cuda().eval()
+    optimized = optimized.cuda().eval()
+
+    with torch.inference_mode():
+        for seed in (1234, 2026, 4096):
+            x, valid_mask = generate_random_case(
+                config,
+                torch.device("cuda"),
+                torch.float32,
+                seed=seed,
+                padding_ratio=padding_ratio,
+                input_scale=1.0,
+            )
+            reference = baseline(x, valid_mask)
+            actual = optimized(x, valid_mask)
+            result = compare_outputs(reference, actual, rtol=0.01, atol=0.001)
+            assert result.passed, (
+                f"seed={seed} padding={padding_ratio} "
+                f"failed={result.failed_elements}/{result.total_elements} "
+                f"max_abs={result.max_abs_error:.6g}"
+            )
+
+    assert optimized.attention_backend_counts == {
+        "triton": 0,
+        "sdpa": 3 * config.num_layers,
+        "reference": 0,
     }
 
 

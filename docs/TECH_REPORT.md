@@ -10,13 +10,14 @@ quadratic attention matrix.
 On the NVIDIA GeForce RTX 5070 Ti, all 13 executable rows in the
 organizer-published final shape table passed the checked-in executable tolerance
 across five seeds each. The run covered 938,885,120 output comparisons with zero
-failures and measured a **1.776x geometric-mean end-to-end speedup**, ranging
-from 1.013x to 5.456x. The source-authorized 100,000-token resource row was
+failures and measured a **1.912x geometric-mean end-to-end speedup**, ranging
+from 1.031x to 5.948x. A complete confirmation measured 1.995x with identical
+correctness and backend counts. The source-authorized 100,000-token resource row was
 preflight-skipped and was not counted as a pass.
 
 Both organizer benchmark downloads are now checksum-frozen. The untouched
 PyTorch default six-layer case also passed 5/5 trials with zero failed elements
-and measured 1.352x median speedup. A fail-closed matrix then translated every
+and measured 1.397x median speedup. A fail-closed matrix then translated every
 feasible shape signal from both downloads through that untouched PyTorch
 harness: 28/28 executable cases passed with zero failures across 459,776,000
 elements. The source-designated 100,000-token quadratic stress case was
@@ -131,6 +132,15 @@ geometries and exact SDPA were screened. The selected 64x64 launch reproduced
 43.06% below SDPA. The integrated ten-step model range fell from 41,658.659 us
 to 10,592.605 us (-74.57%) with 40/40 Triton calls.
 
+Campaign 5 revisited the remaining exact-reference routes and two held-out
+long-causal regressions. Strict backend screens rejected full Triton/SDPA for
+rows 6-8 after one or more elements failed. Layer-index isolation then found
+two accurate hybrids: row 6 keeps layers 0-1 exact and uses Triton for layers
+2-3; row 7 keeps layer 0 exact and uses Triton for layers 1-3. Exact-shape SDPA
+for the two `B=2,S=512,d_model=512,heads=8,layers=2,causal=true` held-out cases
+removed both latency regressions. Row 8 remained unchanged because its SDPA
+screen failed and `aten::addmm` consumed about 71% of its profile.
+
 ## 5. Kernel implementation
 
 ### 5.1 Layout
@@ -243,12 +253,12 @@ ran unchanged through `benchmarks/run_organizer_torch.py`:
 
 | metric | baseline | optimized |
 | --- | ---: | ---: |
-| median latency | 1.8205 ms | 1.3465 ms |
-| mean latency | 1.8564 ms | 1.3722 ms |
-| p90 latency | 2.0215 ms | 1.4848 ms |
-| throughput | 562,474 token/s | 760,501 token/s |
+| median latency | 1.8948 ms | 1.3565 ms |
+| mean latency | 2.0151 ms | 1.4872 ms |
+| p90 latency | 2.4126 ms | 1.7604 ms |
+| throughput | 540,426 token/s | 754,895 token/s |
 
-- Median speedup: 1.352x.
+- Median speedup: 1.397x.
 - Accuracy: 5/5 PASS, 0 failed out of 2,621,440 elements.
 - Maximum absolute error: 0.00100136.
 - Optimized attention dispatch: Triton 1,950; SDPA 0; reference 0.
@@ -261,19 +271,19 @@ Section 6, not claims about omitted organizer policy.
 
 | row | B | S | d / heads | layers | baseline ms | optimized ms | speedup | backend |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | 64 | 128 | 128 / 4 | 4 | 1.3735 | 0.8178 | 1.679x | Triton |
-| 2 | 1 | 128 | 128 / 4 | 4 | 1.4611 | 0.8524 | 1.714x | Triton |
-| 3 | 4 | 128 | 128 / 4 | 4 | 1.3807 | 0.7941 | 1.739x | Triton |
-| 4 | 16 | 128 | 128 / 4 | 4 | 1.3421 | 0.7711 | 1.741x | Triton |
-| 5 | 128 | 128 | 128 / 4 | 4 | 2.6963 | 1.4859 | 1.815x | Triton |
-| 6 | 10,000 | 128 | 128 / 4 | 4 | 398.6831 | 370.3962 | 1.076x | reference |
-| 7 | 64 | 128 | 32 / 4 | 4 | 1.3532 | 1.2558 | 1.078x | reference |
-| 8 | 64 | 128 | 1,024 / 4 | 4 | 14.0574 | 13.8829 | 1.013x | reference |
-| 9 | 64 | 128 | 128 / 1 | 4 | 1.2013 | 0.9030 | 1.330x | Triton |
-| 10 | 64 | 128 | 128 / 2 | 4 | 1.3356 | 0.8740 | 1.528x | Triton |
-| 11 | 64 | 128 | 128 / 16 | 4 | 5.7873 | 1.0608 | 5.456x | Triton |
-| 12 | 64 | 32 | 128 / 4 | 4 | 1.3404 | 0.7574 | 1.770x | Triton |
-| 13 | 64 | 1,024 | 128 / 4 | 4 | 87.3437 | 18.2404 | 4.788x | Triton |
+| 1 | 64 | 128 | 128 / 4 | 4 | 1.5312 | 0.8595 | 1.781x | Triton |
+| 2 | 1 | 128 | 128 / 4 | 4 | 1.5842 | 0.8898 | 1.780x | Triton |
+| 3 | 4 | 128 | 128 / 4 | 4 | 1.4291 | 0.8133 | 1.757x | Triton |
+| 4 | 16 | 128 | 128 / 4 | 4 | 1.3422 | 0.7950 | 1.688x | Triton |
+| 5 | 128 | 128 | 128 / 4 | 4 | 2.9995 | 1.6647 | 1.802x | Triton |
+| 6 | 10,000 | 128 | 128 / 4 | 4 | 449.1052 | 298.7559 | 1.503x | 2 reference + 2 Triton layers |
+| 7 | 64 | 128 | 32 / 4 | 4 | 1.3750 | 0.9024 | 1.524x | 1 reference + 3 Triton layers |
+| 8 | 64 | 128 | 1,024 / 4 | 4 | 15.7496 | 15.2777 | 1.031x | reference |
+| 9 | 64 | 128 | 128 / 1 | 4 | 1.2159 | 0.9240 | 1.316x | Triton |
+| 10 | 64 | 128 | 128 / 2 | 4 | 1.4777 | 0.8725 | 1.694x | Triton |
+| 11 | 64 | 128 | 128 / 16 | 4 | 6.4429 | 1.0832 | 5.948x | Triton |
+| 12 | 64 | 32 | 128 / 4 | 4 | 1.4170 | 0.7879 | 1.799x | Triton |
+| 13 | 64 | 1,024 | 128 / 4 | 4 | 95.9056 | 20.0648 | 4.780x | Triton |
 | 14 | 32 | 100,000 | 1,024 / 16 | 2 | - | - | - | authorized resource skip |
 
 Summary:
@@ -281,20 +291,20 @@ Summary:
 - 13/13 executable PASS plus one authorized resource skip excluded from pass.
 - 65 accuracy trials and 938,885,120 checked elements; zero failures.
 - Maximum absolute error: 0.00114846.
-- Geometric-mean speedup: 1.775778x; complete confirmation 1.770185x.
-- Attention dispatch: Triton 1,120; SDPA 0; reference 336.
+- Geometric-mean speedup: 1.911947x; complete confirmation 1.995117x.
+- Attention dispatch: Triton 1,260; SDPA 0; reference 196.
 
 ### Project-owned held-out matrix
 
 | case | B | S | d / heads | layers | mask | baseline ms | optimized ms | speedup |
 | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: |
-| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.4718 | 0.3048 | 1.548x |
-| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.4294 | 0.3068 | 1.400x |
-| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.6428 | 0.4883 | 1.316x |
-| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.6828 | 0.8613 | 0.793x |
-| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.8835 | 0.9388 | 0.941x |
-| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.8031 | 0.5129 | 1.566x |
-| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.2346 | 0.2057 | 1.140x |
+| tiny-overhead | 1 | 32 | 64 / 4 | 2 | none | 0.5204 | 0.3216 | 1.618x |
+| medium-throughput | 8 | 128 | 256 / 8 | 2 | none | 0.5264 | 0.2632 | 2.000x |
+| medium-padding | 4 | 256 | 512 / 8 | 2 | 30% padding | 0.6889 | 0.5042 | 1.366x |
+| long-causal | 2 | 512 | 512 / 8 | 2 | causal | 0.7217 | 0.5788 | 1.247x |
+| long-causal-padding | 2 | 512 | 512 / 8 | 2 | causal + 30% padding | 0.8954 | 0.6993 | 1.280x |
+| long-attention | 1 | 1024 | 512 / 8 | 2 | none | 0.8400 | 0.5191 | 1.618x |
+| wide-model | 2 | 128 | 1024 / 16 | 1 | none | 0.2445 | 0.2098 | 1.165x |
 
 Summary:
 
@@ -302,13 +312,13 @@ Summary:
 - 35 accuracy trials and 13,117,440 checked elements.
 - 0 failed elements.
 - Maximum absolute error: 0.000595748.
-- Geometric-mean speedup: 1.210008x; complete confirmation 1.266010x.
-- Timing dispatch: SDPA for tiny/medium unmasked cases; Triton for all five
-  masked, causal, long, or wider-head cases; no reference timing fallback.
-- The non-padded long-causal case reproduced below baseline at 0.793x and
-  0.800x. Causal-padding measured 0.941x then 0.992x. These held-out
-  limitations do not occur in the published final matrix and are retained as
-  residual risk rather than omitted from the aggregate.
+- Geometric-mean speedup: 1.447477x; complete confirmation 1.449715x.
+- Timing dispatch: SDPA for tiny/medium unmasked and the exact two long-causal
+  cases; Triton for padding-only, long-attention, and wide-model cases; no
+  reference timing fallback.
+- The exact long-causal routes now measure 1.247x/1.216x without padding and
+  1.280x/1.423x with padding. Both five-seed runs remove the former regressions;
+  the optimized medians stay near 0.58 ms and 0.70 ms.
 
 ### Supplied-contract shape validation
 
@@ -320,7 +330,7 @@ The isolated exact-harness matrix produced:
 - sequence lengths 32, 128, and 1,024;
 - widths 32, 128, 512, and 1,024; heads 1, 2, 4, 8, and 16;
 - float32, float16, bfloat16, causal, non-causal, and prefix-padding coverage;
-- overall geometric-mean speedup 1.203466x; and
+- overall geometric-mean speedup 1.204815x; and
 - aggregate dispatch counts Triton 672, SDPA 1,344, reference 2,688.
 
 The matrix uses the selected PyTorch executable tolerance of atol=0.001 OR
@@ -349,12 +359,12 @@ attention fusion has less leverage.
 ## 8. Optimization campaign and rejected alternatives
 
 This section is the submission-facing narrative. The canonical cross-campaign
-ledger, including the pre-ledger foundation, 114 logged attempt aggregates,
+ledger, including the pre-ledger foundation, 238 immutable attempt records,
 every meaningful candidate disposition, failed gates, and current route table,
 is [the complete optimization history](experiments/OPTIMIZATION_HISTORY.md).
-The subsequent selected-submission validation adds 25 immutable attempts
-(24 PASS, one retained workflow-schema FAIL) totaling 223.237808 seconds; its
-complete ledger is [submission validation](experiments/SUBMISSION_VALIDATION.md).
+The total includes optimization campaigns, selection/current comparisons, and
+the alternate-branch evaluation; the history separates each record set and its
+PASS/FAIL/time accounting.
 
 Profiling final row 10 showed that the prior 64x128 attention tile spilled
 2,468 registers and used 81,920 bytes of shared memory under causal IEEE-fp32
@@ -410,6 +420,18 @@ Row 7 remained reference within -0.19% of its Campaign 3 normalized speedup;
 row 11 switched to Triton and improved from 0.978x to 5.395x. The full suite
 passed 112/112 before documentation closure. All failed startup, manifest,
 test-wiring, and logger-portability gates remain in the Campaign 4 ledger.
+
+Campaign 5 ran three profile-authorized hypotheses. Full-backend row-7 Triton
+and SDPA each missed one of 1,310,720 compared elements; full-backend row 6
+missed 21 of 819,200,000; row-8 SDPA missed one of 41,943,040. These failures
+were retained and bounded the accepted routes. Row 7's first-two-layer Triton
+hybrid passed but was superseded by a faster first-layer-reference design;
+the latter passed 18 stress scenarios and cut the ten-step model range 33.64%.
+Row 6's one-reference-layer design still missed one element, while the
+two-reference/two-Triton design passed and cut the ten-step model range 19.74%.
+The exact long-causal SDPA route passed both padded and unpadded multi-seed
+stress gates. Integrated final geomean rose 7.62% over the fresh Campaign 5
+baseline, and all broader correctness gates remained green.
 
 The inherited standalone Triton LayerNorm was measured before removal:
 
@@ -477,15 +499,18 @@ applicable.
 - Canonical optimization history:
   docs/experiments/OPTIMIZATION_HISTORY.md
 - Final organizer-shape matrix:
-  docs/results/rtx-5070-ti-2026-08-28-submission-final.json
+  docs/results/rtx-5070-ti-2026-08-28-c5-integrated-final.json
 - EXP-001 decision: docs/experiments/EXP-001-head64-short-tiles.md
-- Integrated Campaign 4 target profiler:
-  docs/results/rtx-5070-ti-2026-08-28-submission-final-11-profile.json
-- Held-out matrix: docs/results/rtx-5070-ti-2026-08-28-submission-heldout.json
+- Integrated Campaign 5 profiles:
+  docs/results/rtx-5070-ti-2026-08-28-c5-integrated-row06-profile.json,
+  docs/results/rtx-5070-ti-2026-08-28-c5-integrated-row07-profile.json,
+  and docs/results/rtx-5070-ti-2026-08-28-c5-integrated-row11-profile.json
+- Held-out matrix:
+  docs/results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed.json
 - Untouched organizer default:
-  docs/results/rtx-5070-ti-2026-08-28-submission-organizer-default.json
+  docs/results/rtx-5070-ti-2026-08-28-c5-integrated-organizer-default.json
 - Supplied-contract validation matrix:
-  docs/results/rtx-5070-ti-2026-08-28-submission-source-derived.json
+  docs/results/rtx-5070-ti-2026-08-28-c5-integrated-source-derived.json
 - Organizer inputs: docs/ORGANIZER_INPUTS.md
 - Organizer checksums: benchmarks/reference/organizer_downloads.json
 - Requirements: docs/REQUIREMENTS.md

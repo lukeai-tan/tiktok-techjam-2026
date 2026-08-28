@@ -1,10 +1,10 @@
 # Complete Track 3 Optimization History
 
-Status: canonical cross-campaign history, reconciled 2026-08-28
+Status: canonical cross-campaign history, reconciled through Campaign 5 on 2026-08-28
 
-Current accepted implementation: Campaign 4 local candidate based on `b41fdaf`
+Current accepted implementation: Campaign 5 local candidate based on `3be02a3`
 
-Implementation SHA-256: `de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`
+Implementation SHA-256: `9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`
 
 This is the single navigation and interpretation layer for the complete
 optimization program. It consolidates what was tried, why each candidate was
@@ -14,29 +14,29 @@ campaign ledgers, or review sidecars.
 
 ## Verdict
 
-The best accepted implementation is the Campaign 4 fingerprint above. Its
+The best accepted implementation is the Campaign 5 fingerprint above. Its
 primary organizer-final run is **13/13 executable PASS** plus the one exact
 authorized resource skip, with **0 failed elements across 938,885,120
-comparisons** and **1.780074850625043x** geometric-mean end-to-end speedup. A
-second complete run of the same implementation reproduced the contract and
-backend counts at **1.7849198559254662x**. The strongest single final case is
-row 11 at **5.395x**.
+comparisons** and **1.9119465934778328x** geometric-mean end-to-end speedup. A
+second complete run reproduced the contract and backend counts at
+**1.995116575196147x**. The strongest single final case is row 11 at **5.948x**;
+new layer hybrids raise rows 6 and 7 to **1.503x** and **1.524x**.
 
-After selecting that exact fingerprint as the repo-local submission, a fresh
-full-suite revalidation measured **1.775778x** and **1.770185x** across two
-complete final matrices, again with identical zero-failure and backend-count
-evidence. The fresh organizer default is **1.352x**, source-derived geomean is
-**1.203466x**, and two correctness-green held-out runs are **1.210008x** and
-**1.266010x**. The latter disclose a repeatable approximately 0.80x slowdown
-for the non-padded long-causal held-out case. These selection runs validate the
-winner; they do not retroactively replace historical campaign measurements.
+The fresh organizer default is **1.397x**, source-derived geomean is
+**1.204815x**, and two five-seed held-out runs are **1.447477x** and
+**1.449715x**. Exact-shape SDPA turns the two prior long-causal regressions into
+primary speedups of **1.247x** and **1.280x**. Historical Campaign 4 and
+selected-submission measurements remain below as evidence; they are not
+silently rewritten to the new implementation.
 
 The winning design is not one universal launch. It combines fused Triton online
 softmax attention, packed QKV projection in its measured envelope, exact
 shape-aware launch policies for short head dimensions, and correctness-first
 fallbacks. The largest final campaign gain came from making `head_dim=8` legal
 inside Triton's 16-lane dot-product minimum by zero-padding only the internal
-dot width and enabling that model path only for exact final row 11.
+dot width. Campaign 5 then applies that existing kernel only to later layers of
+the two accuracy-sensitive reference rows and uses exact-shape SDPA only where
+five-seed held-out evidence proves it.
 
 ## Evidence authority and inventory
 
@@ -46,17 +46,16 @@ Evidence is read in this order:
    checked-in comparator.
 2. Machine-generated result JSON and its recorded implementation fingerprint,
    source hashes, environment, command, accuracy counts, timings, and backends.
-3. Immutable Campaign 2-4 and selected-submission attempt JSON, including
+3. Immutable Campaign 2-5 and selected-submission attempt JSON, including
    nonzero commands.
 4. Campaign and experiment decision records plus independent review sidecars.
 5. This curated history, the technical report, and README summaries.
 
-The working tree now contains **84 curated result JSON files** and **139
-immutable attempt JSON files**. Campaigns 2-4 still own 114 of those attempts:
-105 passing child commands, 9 failed child commands, and 788.748209 seconds.
-Selected-submission validation adds 25 attempts: 24 passing child commands, one
-retained workflow-schema failure, and 223.237808 seconds. Across both ledgers,
-that is 129 passing commands, 10 failed commands, and 1,011.986017 seconds.
+The working tree now contains **147 curated result JSON files** and **238
+immutable attempt JSON files**. Across Campaigns 2-5, submission selection,
+current-versus-original evaluation, and the alternate-branch comparison, those
+records contain **215 passing child commands, 23 retained failed commands, zero
+timeouts, and 2,229.394906 seconds** of measured child wall time.
 These times exclude orchestration and unlogged pre-ledger work.
 
 | Record set | Attempts | Child PASS | Child FAIL | Measured child wall time | Detailed ledger |
@@ -65,10 +64,12 @@ These times exclude orchestration and unlogged pre-ledger work.
 | Campaign 3 | 31 | 31 | 0 | 218.214354 s | [CAMPAIGN-003](CAMPAIGN-003.md) |
 | Campaign 4 | 44 | 39 | 5 | 315.261251 s | [CAMPAIGN-004](CAMPAIGN-004.md) |
 | Submission selection | 25 | 24 | 1 | 223.237808 s | [SUBMISSION_VALIDATION](SUBMISSION_VALIDATION.md) |
-| **Logged total** | **139** | **129** | **10** | **1,011.986017 s** | [`attempts/`](attempts/) |
+| Current vs original | 6 | 6 | 0 | 128.357928 s | [CURRENT_VS_ORIGINAL_EVALUATION](CURRENT_VS_ORIGINAL_EVALUATION.md) |
+| Alternate-branch comparison | 19 | 15 | 4 | 352.965078 s | [BRANCH_IMPLEMENTATION_COMPARISON](BRANCH_IMPLEMENTATION_COMPARISON.md) |
+| Campaign 5 | 74 | 65 | 9 | 736.085883 s | [CAMPAIGN-005](CAMPAIGN-005.md) |
+| **Logged total** | **238** | **215** | **23** | **2,229.394906 s** | [`attempts/`](attempts/) |
 
-The total is summed from all raw attempt values before rounding. Adding the four
-independently rounded record-set display values differs by one microsecond.
+The total is summed from all raw attempt values before rounding.
 
 A passing child command is not the same as an accepted optimization. Campaign 3
 has no execution failures, for example, but still contains eight rejected
@@ -100,6 +101,9 @@ than a single headline number.
 | Campaign 3 | 14 final rows | same zero-failure contract | 1.555780x | Accepted short `head_dim=128` 32x32 tiles; +1.963%, with a 55.454% profile reduction |
 | Campaign 4 primary | 14 final rows | same zero-failure contract | 1.780075x | Accepted exact-row-11 padded-width `head_dim=8` Triton; +14.417% versus Campaign 3 |
 | Campaign 4 confirmation | 14 final rows | same contract and backend counts | 1.784920x | Independent complete-run reproduction of the current fingerprint |
+| Campaign 5 fresh baseline | 14 final rows | same contract and backend counts | 1.776534x | Rebased the earlier flagship before new candidates |
+| Campaign 5 primary | 14 final rows | same zero-failure contract | 1.911947x | Accepted row-6/row-7 layer hybrids; +7.62% versus fresh Campaign 5 baseline |
+| Campaign 5 confirmation | 14 final rows | same contract and backend counts | 1.995117x | Complete reproduction of the selected fingerprint |
 
 The earliest two snapshots are recoverable at their original Git revisions:
 
@@ -288,6 +292,30 @@ Triton calls, and the ten-step model range fell 74.57% versus the fresh
 reference profile. Candidate and final reviews approved local acceptance with
 no blocker for the exact fingerprint.
 
+### 9. Campaign 5: layer-aware residual routes and long-causal recovery
+
+Campaign 5 started from a fresh 1.776534x final matrix and profiled the three
+remaining reference rows plus both long-causal held-out cases. It retained five
+important negative backend screens: full Triton/SDPA each failed row 7 by one
+element; full Triton/SDPA each failed row 6 by 21 elements; and row-8 SDPA
+failed one element while vendor `aten::addmm` consumed about 71% of its profile.
+
+| Candidate | Exact route | Accuracy | Performance | Decision |
+| --- | --- | --- | --- | --- |
+| EXP-010-I1 | row 7: first 3 Triton, final reference | 1/1,310,720 failed | rejected before promotion | reject |
+| EXP-010-I2 | row 7: first 2 Triton, final 2 reference | zero failed; 18 stress PASS | 1.276x target; 1.280x/1.348x confirmation | superseded |
+| EXP-010-I3 | row 7: first reference, final 3 Triton | zero failed; 18 stress PASS | 1.484x target; model profile -33.64% | keep |
+| EXP-011-I1 | row 6: first reference, final 3 Triton | 1/819,200,000 failed | rejected before promotion | reject |
+| EXP-011-I2 | row 6: first 2 reference, final 2 Triton | 0/819,200,000 failed | 1.549x target; model profile -19.74% | keep |
+| EXP-012-I1 | exact held-out long-causal padded/unpadded SDPA | zero failed across stress and two complete five-seed matrices | 1.247x/1.280x primary targets | keep |
+
+The composite primary final geomean rose 7.62% to 1.911947x, with a complete
+1.995117x confirmation and identical correctness/backend counts. Five-seed
+held-out geomeans were 1.447477x and 1.449715x. The complete source-derived
+matrix remained 28/28 executable PASS at 1.204815x, and the untouched organizer
+default remained 5/5 PASS at 1.397x. Row 8 was deliberately left on exact
+reference rather than spend the hypothesis cap on a failed, low-ceiling route.
+
 ## Rejected, failed, reworked, and deliberately unrun work
 
 These outcomes are part of the result, not missing successes:
@@ -310,6 +338,10 @@ These outcomes are part of the result, not missing successes:
 | EXP-007 projection/launch work | deliberately unrun | No post-EXP-005 profile authorization |
 | EXP-008 exact row-11 SDPA | superseded | Correct, but padded Triton was 43.06% faster by selected medians |
 | EXP-009 64x128 and 32x64 | superseded/rejected | Correct, but slower than 64x64 |
+| Campaign 5 full row-7 Triton/SDPA | rejected | Each missed one strict-comparator element |
+| Campaign 5 full row-6 Triton/SDPA | rejected | Each missed 21 strict-comparator elements |
+| EXP-010-I1 / EXP-011-I1 | rejected | Layer placement still accumulated one failed element |
+| Campaign 5 row-8 SDPA | rejected | One failed element and a vendor-GEMM-dominated profile ceiling |
 
 The nine logged nonzero child commands were retained verbatim:
 
@@ -343,50 +375,53 @@ The retained execution policy is:
 | Short `head_dim=64`, `S<=128` | 32x64, 4 warps, 2 stages |
 | Short `head_dim=128`, `S<=128` | 32x32, 4 warps, 2 stages |
 | Direct `head_dim=8`, `S<=128` | 64x64 with internal dot width 16 |
-| Model-level `head_dim=8` | Triton only for exact final row 11; otherwise reference |
+| Exact final row 7 | layer 0 reference; layers 1-3 padded-width Triton |
+| Exact final row 6 | layers 0-1 reference; layers 2-3 Triton |
+| Other model-level `head_dim=8` | Triton only for exact final row 11; otherwise reference |
+| Exact two-layer 512-token held-out causal shape | SDPA, with or without measured prefix padding |
 | Long supported shapes | Conservative measured tile/stage policy; no Campaign 2 long-head32 change retained |
 | QKV projection | One cached packed vendor GEMM for eager CUDA float32 inference through `d_model=512` |
 | Short unmasked float32, `head_dim<=32` | PyTorch SDPA where the measured dispatcher prefers it |
 | Causal float32 Triton | IEEE fp32 dot products; no TF32 |
-| Low precision, unsupported widths/layouts, large causal batches, CPU, training | Explicit correctness-first fallback |
+| Low precision, unsupported widths/layouts, other large causal batches, CPU, training | Explicit correctness-first fallback |
 | LayerNorm, output projection, FFN | Native PyTorch/vendor kernels |
 
-This is the primary Campaign 4 final table:
+This is the primary Campaign 5 final table:
 
 | Row | B | S | d / heads | Head dim | Baseline | Optimized | Speedup | Backend |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | 64 | 128 | 128 / 4 | 32 | 1.5453 ms | 0.9318 ms | 1.658x | Triton |
-| 2 | 1 | 128 | 128 / 4 | 32 | 1.7926 ms | 0.9858 ms | 1.818x | Triton |
-| 3 | 4 | 128 | 128 / 4 | 32 | 1.4219 ms | 0.8233 ms | 1.727x | Triton |
-| 4 | 16 | 128 | 128 / 4 | 32 | 1.3349 ms | 0.7683 ms | 1.738x | Triton |
-| 5 | 128 | 128 | 128 / 4 | 32 | 2.7514 ms | 1.4872 ms | 1.850x | Triton |
-| 6 | 10,000 | 128 | 128 / 4 | 32 | 368.8780 ms | 345.3306 ms | 1.068x | reference |
-| 7 | 64 | 128 | 32 / 4 | 8 | 1.4298 ms | 1.3406 ms | 1.067x | reference |
-| 8 | 64 | 128 | 1024 / 4 | 256 | 13.8622 ms | 13.6390 ms | 1.016x | reference |
-| 9 | 64 | 128 | 128 / 1 | 128 | 1.2179 ms | 0.9005 ms | 1.352x | Triton |
-| 10 | 64 | 128 | 128 / 2 | 64 | 1.3677 ms | 0.8965 ms | 1.526x | Triton |
-| 11 | 64 | 128 | 128 / 16 | 8 | 5.7669 ms | 1.0690 ms | 5.395x | Triton |
-| 12 | 64 | 32 | 128 / 4 | 32 | 1.3897 ms | 0.8094 ms | 1.717x | Triton |
-| 13 | 64 | 1024 | 128 / 4 | 32 | 86.3632 ms | 17.7528 ms | 4.865x | Triton |
+| 1 | 64 | 128 | 128 / 4 | 32 | 1.5312 ms | 0.8595 ms | 1.781x | Triton |
+| 2 | 1 | 128 | 128 / 4 | 32 | 1.5842 ms | 0.8898 ms | 1.780x | Triton |
+| 3 | 4 | 128 | 128 / 4 | 32 | 1.4291 ms | 0.8133 ms | 1.757x | Triton |
+| 4 | 16 | 128 | 128 / 4 | 32 | 1.3422 ms | 0.7950 ms | 1.688x | Triton |
+| 5 | 128 | 128 | 128 / 4 | 32 | 2.9995 ms | 1.6647 ms | 1.802x | Triton |
+| 6 | 10,000 | 128 | 128 / 4 | 32 | 449.1052 ms | 298.7559 ms | 1.503x | 2 reference + 2 Triton layers |
+| 7 | 64 | 128 | 32 / 4 | 8 | 1.3750 ms | 0.9024 ms | 1.524x | 1 reference + 3 Triton layers |
+| 8 | 64 | 128 | 1024 / 4 | 256 | 15.7496 ms | 15.2777 ms | 1.031x | reference |
+| 9 | 64 | 128 | 128 / 1 | 128 | 1.2159 ms | 0.9240 ms | 1.316x | Triton |
+| 10 | 64 | 128 | 128 / 2 | 64 | 1.4777 ms | 0.8725 ms | 1.694x | Triton |
+| 11 | 64 | 128 | 128 / 16 | 8 | 6.4429 ms | 1.0832 ms | 5.948x | Triton |
+| 12 | 64 | 32 | 128 / 4 | 32 | 1.4170 ms | 0.7879 ms | 1.799x | Triton |
+| 13 | 64 | 1024 | 128 / 4 | 32 | 95.9056 ms | 20.0648 ms | 4.780x | Triton |
 | 14 | 32 | 100,000 | 1024 / 16 | 64 | - | - | not counted | authorized resource skip |
 
 Fresh selected-submission gates:
 
 | Gate | Current result |
 | --- | --- |
-| Complete final primary / confirmation | 13/13 executable PASS + exact skip twice; 0/938,885,120 failed each; 1.775778x / 1.770185x |
-| Untouched organizer default | 5/5 PASS; 0/2,621,440 failed; 1.352x; 1,950 Triton calls |
-| Project-held-out primary / confirmation | 7/7 PASS twice; 0/13,117,440 failed each; 1.210008x / 1.266010x; long-causal 0.793x / 0.800x |
-| Source-derived matrix | 28/28 executable PASS + exact skip; 0/459,776,000 failed; 1.203466x overall |
-| Integrated row-11 profile | 40 Triton calls; `_attention_fwd` 4,763.665 us |
-| Complete repository suite | 115/115 PASS; 14 upstream PyTorch deprecation warnings |
+| Complete final primary / confirmation | 13/13 executable PASS + exact skip twice; 0/938,885,120 failed each; 1.911947x / 1.995117x |
+| Untouched organizer default | 5/5 PASS; 0/2,621,440 failed; 1.397x; 1,950 Triton calls |
+| Project-held-out primary / confirmation | 7/7 PASS twice with five seeds; 0/13,117,440 failed each; 1.447477x / 1.449715x |
+| Source-derived matrix | 28/28 executable PASS + exact skip; 0/459,776,000 failed; 1.204815x overall |
+| Integrated profiles | row 6: 20 Triton/20 reference; row 7: 30 Triton/10 reference; row 11: 40 Triton; both long-causal cases: 20 SDPA |
+| Complete repository suite | 121/121 PASS; 14 upstream PyTorch deprecation warnings |
 
 ## What worked and why
 
 - Profile-led, shape-specific launch policy produced the repeatable wins. Each
   accepted tile addressed a measured target and stopped at an exact guard.
-- Correctness-first fallbacks preserved the zero-failure contract. Reference is
-  intentionally the best choice for rows 6-8 even when it limits speedup.
+- Correctness-first layer hybrids preserved the zero-failure contract for rows
+  6-7. Reference remains the intentional choice for row 8.
 - Paired and counterbalanced confirmations separated candidate effects from
   substantial sub-millisecond and baseline timing drift.
 - Backend counts plus profiler events prevented false custom-kernel claims.
@@ -398,10 +433,10 @@ Fresh selected-submission gates:
 
 ## Why this is the stopping point
 
-The remaining slow or near-parity final rows deliberately use reference math
-because their shapes are unsupported, accuracy-sensitive, or dominated by
-vendor GEMMs. The implemented changes already cover every profile-authorized
-attention target. Further broad fusion, custom GEMMs, or routing expansion would
+The remaining near-parity final row 8 deliberately uses reference math because
+its SDPA screen failed and vendor GEMMs dominate its profile. The implemented
+changes cover every Campaign 5 profile-authorized attention target. Further
+broad fusion, custom GEMMs, or routing expansion would
 need a new hardware-specific profile and a new logged campaign; it is not
 justified by the current evidence.
 
@@ -433,16 +468,18 @@ is implied by the optimization approval.
   [EXP-003](EXP-003-short-head32-kv-tiles.md)
 - Campaign 3: [CAMPAIGN-003](CAMPAIGN-003.md)
 - Campaign 4: [CAMPAIGN-004](CAMPAIGN-004.md)
+- Campaign 5: [CAMPAIGN-005](CAMPAIGN-005.md)
 - Current result index: [result artifacts](../results/README.md)
-- Current primary result: [selected-submission final JSON](../results/rtx-5070-ti-2026-08-28-submission-final.json)
-- Current confirmation: [selected-submission final confirmation JSON](../results/rtx-5070-ti-2026-08-28-submission-final-confirmation.json)
-- Current held-out results: [selected-submission held-out JSON](../results/rtx-5070-ti-2026-08-28-submission-heldout.json) and [confirmation](../results/rtx-5070-ti-2026-08-28-submission-heldout-confirmation.json)
-- Current source-derived result: [selected-submission source-derived JSON](../results/rtx-5070-ti-2026-08-28-submission-source-derived.json)
-- Current profiler proof: [selected-submission row-11 profile JSON](../results/rtx-5070-ti-2026-08-28-submission-final-11-profile.json)
+- Current primary result: [Campaign 5 final JSON](../results/rtx-5070-ti-2026-08-28-c5-integrated-final.json)
+- Current confirmation: [Campaign 5 final confirmation JSON](../results/rtx-5070-ti-2026-08-28-c5-integrated-final-confirmation.json)
+- Current held-out results: [Campaign 5 five-seed held-out JSON](../results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed.json) and [confirmation](../results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed-confirmation.json)
+- Current source-derived result: [Campaign 5 source-derived JSON](../results/rtx-5070-ti-2026-08-28-c5-integrated-source-derived.json)
+- Current profiler proof: [Campaign 5 row-7 profile JSON](../results/rtx-5070-ti-2026-08-28-c5-integrated-row07-profile.json)
 - Selection-validation ledger: [submission validation](SUBMISSION_VALIDATION.md)
-- Campaign 4 AI Council and reviews: [`reviews/`](reviews/)
+- Campaign 4 and Campaign 5 reviews: [`reviews/`](reviews/)
 
 No raw attempt or result was deleted, renamed, or hand-edited during either the
 historical consolidation or selected-submission revalidation. Fresh selection
 artifacts use distinct `submission-*` names and immutable `S1-*` attempt
-records; historical Campaign 2-4 evidence remains unchanged.
+records; historical Campaign 2-4 evidence remains unchanged. Campaign 5 uses
+distinct `c5-*` results and `C5-*` attempts.

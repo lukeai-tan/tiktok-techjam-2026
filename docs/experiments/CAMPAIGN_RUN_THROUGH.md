@@ -6,10 +6,10 @@ Last reconciled: 2026-08-28 (Asia/Singapore)
 
 Evidence checkout before this document: `c4ff1f520901f268a6b76509b3a8c57dfdfea036`
 
-Benchmarked implementation commit: `b833f7292bf15680d0add6007a53f9f7bf747690`
+Campaign 5 base commit: `3be02a3ebe562a89ca360b196057a2762b425ec4`
 
 Selected implementation SHA-256:
-`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`
+`9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`
 
 ## Purpose and scope
 
@@ -20,8 +20,8 @@ changed, and what the final implementation can and cannot claim.
 
 The repository did not formally name the pre-logger work “Campaign 1.” This
 run-through calls it the **foundational phase / EXP-001** and then follows the
-formal Campaign 2, Campaign 3, and Campaign 4 ledgers. It also covers the two
-post-optimization rounds:
+formal Campaign 2, Campaign 3, Campaign 4, and Campaign 5 ledgers. It also
+covers the two post-Campaign-4 evaluation rounds:
 
 1. selected-submission validation (`S1-*`), which froze and revalidated the
    requested fingerprint without changing implementation bytes; and
@@ -40,9 +40,10 @@ complete published final matrix it achieved:
 
 - **13/13 executable rows PASS**, plus the one exact authorized resource skip;
 - **0 failed elements across 938,885,120 comparisons**;
-- **1.793579x geometric-mean end-to-end speedup** versus the original;
-- **5.482x** on the strongest row, final row 11; and
-- 1,120 Triton attention calls, 336 explicit-reference calls, and no SDPA calls.
+- **1.911947x geometric-mean end-to-end speedup** versus the original, with a
+  complete confirmation at **1.995117x**;
+- **5.948x** on the strongest row, final row 11; and
+- 1,260 Triton attention calls, 196 explicit-reference calls, and no final-matrix SDPA calls.
 
 Across the complete fresh `E2` comparison—organizer default, published final,
 held-out, and source-derived matrices—245 accuracy trials compared
@@ -51,10 +52,10 @@ overlap, so this total is an evidence-volume count, not a count of unique tensor
 elements or shapes.
 
 The result is materially faster on the published workload, but it is not
-universally faster. The fresh seven-case held-out aggregate was 1.190136x, while
-the non-padded long-causal case was 0.796x and the padded long-causal case was
-0.876x. Those regressions are real, correctness-green, and accompanied by
-50.27% and 54.41% lower incremental peak allocation respectively.
+universally faster. Two five-seed seven-case held-out aggregates are 1.447477x
+and 1.449715x. Campaign 5 removed the prior non-padded and padded long-causal
+regressions with exact-shape SDPA; primary target speedups are 1.247x and 1.280x.
+Row 8 remains near parity on exact reference attention.
 
 ## Campaign progression at a glance
 
@@ -74,6 +75,10 @@ single causal series.
 | Campaign 4 / EXP-009-I2 | Exact row-11 `head_dim=8` reference bottleneck | Real width 8 with zero-padded internal dot width 16 and 64x64 tiles | 1.780075x primary; 1.784920x confirmation | keep |
 | Submission selection | Freeze and validate the requested fingerprint | Existing root entry already matched; no implementation rewrite | 1.775778x / 1.770185x final reproductions | approve locally with residuals |
 | Fresh original comparison | Direct final-versus-original measurement | Same selected fingerprint, freshly benchmarked | 1.793579x final; 1.341x organizer default | validated |
+| Campaign 5 / EXP-010-I3 | Exact row-7 reference bottleneck | layer 0 reference, layers 1-3 padded-width Triton | row 7 1.524x; model profile -33.64% | keep |
+| Campaign 5 / EXP-011-I2 | Exact row-6 reference bottleneck | layers 0-1 reference, layers 2-3 Triton | row 6 1.503x; model profile -19.74% | keep |
+| Campaign 5 / EXP-012-I1 | Two held-out long-causal regressions | exact-shape SDPA for padded/unpadded cases | 1.447477x/1.449715x held-out geomeans | keep |
+| Campaign 5 composite | Full integration and rebaseline | all three exact routes | 1.911947x / 1.995117x final | current best |
 
 The small apparent drop from the green 1.439957x run to the post-EXP-001
 1.426692x integration run is why the program did not accept candidates from a
@@ -117,11 +122,13 @@ round used `benchmarks/run_optimization_attempt.py`.
 | Campaign 4 | 44 | 39 | 5 | 315.261251 s |
 | Submission selection | 25 | 24 | 1 | 223.237808 s |
 | Current-versus-original evaluation | 6 | 6 | 0 | 128.357928 s |
-| **Logged total** | **145** | **135** | **10** | **1,140.343945 s** |
+| Alternate-branch comparison | 19 | 15 | 4 | 352.965078 s |
+| Campaign 5 | 74 | 65 | 9 | 736.085883 s |
+| **Logged total** | **238** | **215** | **23** | **2,229.394906 s** |
 
-The logged total is 19 minutes and 0.344 seconds of child-command time. It
+The logged total is 37 minutes and 9.395 seconds of child-command time. It
 excludes orchestration, analysis, review, documentation, commits, and the
-pre-ledger foundation. The current tree contains 88 result JSON files and 145
+pre-ledger foundation. The current tree contains 147 result JSON files and 238
 attempt JSON files. A passing command is not automatically an accepted
 optimization: many correct timing screens were rejected because a different
 candidate was faster or because the gain did not reproduce.
@@ -466,6 +473,60 @@ The `E2` round retained six passing attempt records totaling 128.357928 seconds:
 a full 115-test preflight, four complete comparison artifacts, and an artifact
 closure check.
 
+## Campaign 5: layer-aware hybrids and long-causal recovery
+
+Campaign 5 deliberately reopened only three surfaces after a fresh baseline
+and profile pass. The starting final matrix was 13/13 executable PASS at
+1.776534x. Rows 6-8 were exact reference routes at 1.060x, 1.050x, and 1.007x;
+the two long-causal held-out cases were 0.798x and 0.878x.
+
+### Full-backend screens
+
+| Screen | Accuracy outcome | Profile/performance interpretation | Disposition |
+| --- | --- | --- | --- |
+| row 7 full Triton | 1/1,310,720 failed | Kernel executes but deep-stack drift crosses one boundary | reject |
+| row 7 full SDPA | 1/1,310,720 failed | Same strict-comparator limit | reject |
+| row 6 full Triton | 21/819,200,000 failed | Large causal batch accumulates drift | reject |
+| row 6 full SDPA | 21/819,200,000 failed | No accuracy advantage over full Triton | reject |
+| row 8 SDPA | 1/41,943,040 failed | `aten::addmm` is about 71% of model time | reject and stop |
+| long-causal SDPA | zero failed | 1.199x unpadded, 1.230x padded screen | continue |
+
+### Candidate loops
+
+Row 7 required three placements. First-three-layers Triton failed one element.
+First-two-layers Triton passed and reproduced at 1.280x/1.348x, but the selected
+first-layer-reference/final-three-Triton route was faster: 1.484x target,
+1.492x/1.596x confirmations, 18/18 stress scenarios PASS, and a 33.64% reduction
+in ten-forward model time. The profile proved 30 Triton and 10 reference calls.
+
+Row 6's one-reference/three-Triton route still failed one of 819,200,000
+elements. The selected two-reference/two-Triton route passed with max absolute
+error 0.000898957, measured 1.549x with 1.488x/1.495x confirmations, and reduced
+ten-forward model time 19.74%. The profile proved 20 Triton and 20 reference
+calls.
+
+The exact two-layer 512-token causal held-out shape moved to SDPA for both
+padding modes. Candidate stress and profile gates passed, then two complete
+five-seed matrices reproduced 7/7 PASS with zero failures at 1.447477x and
+1.449715x. Non-padded/padded primary speedups are 1.247x/1.280x; confirmation
+is 1.216x/1.423x.
+
+### Composite outcome
+
+| Gate | Result |
+| --- | --- |
+| Final primary / confirmation | 13/13 executable PASS + exact skip twice; zero failed; 1.911947x / 1.995117x |
+| Organizer default | 5/5 PASS; zero failed; 1.397x; 1,950 Triton calls |
+| Source-derived | 28/28 executable PASS + exact skip; zero failed; 1.204815x |
+| Held-out primary / confirmation | 7/7 PASS twice over five seeds; zero failed; 1.447477x / 1.449715x |
+| Profiles | exact row-6/row-7 hybrid counts, row-11 Triton, and long-causal SDPA all proven |
+| Full repository suite | 121/121 PASS; 14 upstream deprecation warnings |
+
+The composite primary is 7.62% above the fresh Campaign 5 baseline. All nine
+nonzero commands remain logged: five backend screens, two unsafe layer
+placements, one malformed pytest selector, and the expected stale-artifact
+pre-documentation suite. The corrected focused and full-suite gates passed.
+
 ## Complete candidate disposition summary
 
 | Candidate or direction | Final disposition | Reason |
@@ -494,10 +555,18 @@ closure check.
 | EXP-009 padded Triton 64x128 | superseded | Correct, but slower than 64x64 |
 | EXP-009 padded Triton 64x64 | keep | Best stable row-11 timing and largest campaign-wide gain |
 | EXP-009 padded Triton 32x64 | reject | 18.93% slower than selected I2 median |
+| Campaign 5 full row-7 Triton/SDPA | reject | Each failed one strict-comparator element |
+| EXP-010-I2 two-layer row-7 hybrid | superseded | Correct, but slower than the selected three-layer hybrid |
+| EXP-010-I3 three-layer row-7 hybrid | keep | Stress-green and reduced profiled model time 33.64% |
+| Campaign 5 full row-6 Triton/SDPA | reject | Each failed 21 strict-comparator elements |
+| EXP-011-I1 three-layer row-6 hybrid | reject | Still failed one of 819,200,000 elements |
+| EXP-011-I2 two-layer row-6 hybrid | keep | Zero failures and reduced profiled model time 19.74% |
+| Campaign 5 row-8 SDPA | reject | One failed element and low attention-only profile ceiling |
+| EXP-012-I1 exact long-causal SDPA | keep | Two five-seed matrices removed both prior regressions |
 
 ## Retained failed and rework gates
 
-Ten logged child commands exited nonzero. They are part of the evidence rather
+Nineteen logged child commands exited nonzero through Campaign 5. They are part of the evidence rather
 than omitted noise:
 
 | Round | Failed gate | Resolution or outcome |
@@ -512,6 +581,13 @@ than omitted noise:
 | Campaign 4 | first row-11 profile setup | Final manifest schema differed from profiler manifest; dedicated case added |
 | Campaign 4 | first I2 focused gate | One stale duplicate assertion after 13 passes; expectation corrected |
 | Submission selection | first workflow validation | Missing canonical closure fields; workflow corrected and revalidated |
+| Campaign 5 | row-7 Triton and SDPA screens | One failed element in each; full-backend routes rejected |
+| Campaign 5 | row-6 Triton and SDPA screens | 21 failed elements in each; full-backend routes rejected |
+| Campaign 5 | row-8 SDPA screen | One failed element and low profile ceiling; row 8 unchanged |
+| Campaign 5 | EXP-010-I1 | One failed element; different layer placement tested |
+| Campaign 5 | EXP-010-I3 focused selector | Invalid hyphenated pytest name; corrected selector passed |
+| Campaign 5 | EXP-011-I1 | One failed element; two-reference-layer route tested |
+| Campaign 5 | pre-doc full suite | Five stale artifact assertions; artifacts updated and 121-test suite passed |
 
 Campaign 2 also disclosed two logger self-test defects that happened before a
 durable attempt could be written: a direct-entrypoint import-path error and a
@@ -541,8 +617,9 @@ counted as immutable attempt JSON.
 
 - “Custom” was not automatically faster: standalone Triton LayerNorm lost to
   native CUDA, and long-head32 tile changes lost to the existing launch.
-- Broader routing was often worse than an exact shape guard. The successful
-  width-eight kernel is deliberately limited to final row 11 at model level.
+- Broader routing was often worse than an exact shape or layer guard. The
+  successful width-eight kernel is all-layer only on row 11 and layer-limited
+  on row 7.
 - A microbenchmark win was insufficient. Campaign 3's forced SDPA screen was
   faster, but the corrected production route lost to the selected Triton tile.
 - Numerical shortcuts were not accepted when they threatened the zero-failure
@@ -559,12 +636,15 @@ counted as immutable attempt JSON.
 | Short `head_dim=64, S<=128` | 32x64, four warps, two stages |
 | Short `head_dim=128, S<=128` | 32x32, four warps, two stages |
 | Direct `head_dim=8, S<=128` | 64x64 with internal dot width 16 |
-| Model-level `head_dim=8` | Triton only for exact final row 11; otherwise reference |
+| Exact final row 7 | layer 0 reference; layers 1-3 padded-width Triton |
+| Exact final row 6 | layers 0-1 reference; layers 2-3 Triton |
+| Other model-level `head_dim=8` | Triton only for exact final row 11; otherwise reference |
+| Exact held-out `B=2,S=512,d=512,h=8,layers=2,causal` | SDPA with or without measured prefix padding |
 | Long supported shapes | Conservative measured policy; no Campaign 2 long-head32 variant retained |
 | QKV projection | Cached packed vendor GEMM for eager CUDA float32 through `d_model=512` |
 | Narrow short unmasked float32 | SDPA only where the measured dispatcher prefers it |
 | Causal float32 Triton | IEEE-fp32 dot products; no TF32 |
-| Low precision, unsupported layouts/widths, large causal batches, CPU, training | Explicit correctness-first fallback |
+| Low precision, unsupported layouts/widths, other large causal batches, CPU, training | Explicit correctness-first fallback |
 | LayerNorm, output projection, FFN | Native PyTorch/vendor kernels |
 
 ## Final conclusion
@@ -577,19 +657,19 @@ claim is:
 
 > On the recorded RTX 5070 Ti environment, the selected implementation passed
 > every executable published final row under the stricter comparator with zero
-> observed failed elements and achieved a fresh 1.793579x geometric-mean
+> observed failed elements and achieved a fresh 1.911947x geometric-mean
 > end-to-end speedup versus the original.
 
-The best design is Campaign 4's selected fingerprint, not any one isolated
+The best design is Campaign 5's selected fingerprint, not any one isolated
 kernel candidate. Its performance comes from combining fused attention, packed
 QKV, profile-selected launch geometry for head dimensions 32/64/128, padded
-internal width for the exact head-dimension-8 target, and reference/SDPA
+internal width for head dimension 8, exact layer-aware hybrids, and SDPA/reference
 fallbacks where custom execution was unsupported or unjustified.
 
 The result does not prove backward/training support, universal other-GPU
 performance, or speedup on every Transformer shape. Row 14 remains an
-authorized non-pass resource skip, two long-causal held-out cases regress in
-latency, and organizer dtype, padding, timing, backward, and post-workshop
+authorized non-pass resource skip, row 8 remains near parity, and organizer
+dtype, padding, timing, backward, and post-workshop
 policy remain external unknowns. Any fingerprint or evaluator-environment
 change requires a fresh full validation.
 
@@ -602,11 +682,13 @@ change requires a fresh full validation.
 - Campaign 2 ledger: [CAMPAIGN-002](CAMPAIGN-002.md)
 - Campaign 3 ledger: [CAMPAIGN-003](CAMPAIGN-003.md)
 - Campaign 4 ledger: [CAMPAIGN-004](CAMPAIGN-004.md)
+- Campaign 5 ledger: [CAMPAIGN-005](CAMPAIGN-005.md)
 - Selection and full-suite validation: [submission validation](SUBMISSION_VALIDATION.md)
 - Fresh original comparison: [current versus original evaluation](CURRENT_VS_ORIGINAL_EVALUATION.md)
+- Current final result: [Campaign 5 final JSON](../results/rtx-5070-ti-2026-08-28-c5-integrated-final.json)
+- Current held-out result: [Campaign 5 five-seed held-out JSON](../results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed.json)
 - Immutable attempt records: [`attempts/`](attempts/)
 - Result index: [result artifacts](../results/README.md)
 - Fresh final result: [current-versus-original final JSON](../results/rtx-5070-ti-2026-08-28-current-vs-original-final.json)
 - Fresh held-out result: [current-versus-original held-out JSON](../results/rtx-5070-ti-2026-08-28-current-vs-original-heldout.json)
 - Fresh source-derived result: [current-versus-original source-derived JSON](../results/rtx-5070-ti-2026-08-28-current-vs-original-source-derived.json)
-

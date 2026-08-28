@@ -1,0 +1,191 @@
+{
+  "task_id": "track3-campaign-006",
+  "title": "Long-run exact-shape launch and projection optimization campaign",
+  "status": "active",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": null,
+    "project_context_reviewed": false,
+    "prd_update_task_id": "task-sot-graph-closure",
+    "contradictions": []
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "acceptance_criteria": {
+    "AC-WF-1": "The workflow validates with zero errors and every executed test, profile, benchmark, candidate, and closure gate has an immutable Campaign 6 attempt record.",
+    "AC-BASE-1": "The Campaign 5 fingerprint, protected organizer inputs, environment, complete final matrix, and target profiles are freshly verified before candidate changes.",
+    "AC-CORRECT-1": "Every retained candidate has zero failed elements and no unauthorized fallback, error, OOM, or skip in all affected correctness gates.",
+    "AC-PERF-1": "A retained candidate improves complete-matrix geomean by approximately five percent or provides a reproducible target-latency, kernel-time, memory, or launch benefit of about five percent, with no required case regressing more than two percent absent an explicit reviewed exception.",
+    "AC-EVIDENCE-1": "Raw samples, latency summaries, error counts, backend counts, profiler events, memory, environment, source hashes, implementation fingerprint, and command wall time are tied to the exact candidate.",
+    "AC-BOUNDARY-1": "Any launch or dispatch rule is exact-shape or demonstrably safe at adjacent affected shapes and leaves unmeasured shapes on the previously validated policy.",
+    "AC-REVIEW-1": "A surviving candidate receives an independent provenance, correctness, performance, boundary, and maintainability review before integration.",
+    "AC-RELEASE-1": "Only an approved winner is retained and final, organizer-default, held-out, source-derived, profile, test, documentation, workflow, graph, and working-tree gates are current."
+  },
+  "roles": [
+    {"role": "Task Intake Analyst", "file": "00_Core_Orchestration/Task_Intake_Analyst.md", "why": "Normalizes the requested long campaign into measurable bounded loops"},
+    {"role": "Agentic Workflow Orchestrator", "file": "00_Core_Orchestration/Agentic_Workflow_Orchestrator.md", "why": "Owns sequencing, isolation, evidence lineage, integration, and stop rules"},
+    {"role": "Planning and Decomposition Agent", "file": "00_Core_Orchestration/Planning_and_Decomposition_Agent.md", "why": "Separates exact-row launch and projection hypotheses into independently reversible work"},
+    {"role": "Backend Performance Engineer", "file": "06_Backend_API_and_Integration_Engineering/Backend_Performance_Engineer.md", "why": "Ranks fresh target profiles and calculates the end-to-end ceiling"},
+    {"role": "Machine Learning Engineer", "file": "11_Data_Analytics_and_AI/Machine_Learning_Engineer.md", "why": "Implements one narrow kernel launch or projection candidate at a time"},
+    {"role": "Performance Test Engineer", "file": "09_Quality_Assurance_and_Testing/Performance_Test_Engineer.md", "why": "Measures strict accuracy, target latency, distributions, memory, and actual backend execution"},
+    {"role": "Independent Reviewer and Critic", "file": "00_Core_Orchestration/Independent_Reviewer_and_Critic.md", "why": "Challenges overfitting, provenance, numerical safety, and timing credibility"},
+    {"role": "Release Gatekeeper", "file": "00_Core_Orchestration/Release_Gatekeeper.md", "why": "Issues the final retain, reject, plateau, or hold decision"}
+  ],
+  "tasks": [
+    {
+      "id": "task-intake-workflow",
+      "title": "Freeze and validate Campaign 6 scope and baseline identity",
+      "role": "Planning and Decomposition Agent",
+      "write_scope": ["docs/experiments/CAMPAIGN-006-WORKFLOW.json", "docs/experiments/CAMPAIGN-006.md", "benchmarks/campaign6_profile_shapes.json"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-WF-1", "AC-BASE-1"],
+      "validation": ["validate_workflow.py", "protected source hashes", "current implementation fingerprint", "environment capture"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision", "verification"]
+    },
+    {
+      "id": "task-profile-rank",
+      "title": "Run fresh final baseline and exact row 6, row 7, row 8, and row 11 profiles",
+      "role": "Backend Performance Engineer",
+      "write_scope": ["docs/experiments/attempts", "docs/results", "docs/experiments/CAMPAIGN-006.md"],
+      "depends_on": ["task-intake-workflow"],
+      "acceptance_criteria": ["AC-BASE-1", "AC-EVIDENCE-1"],
+      "validation": ["complete final matrix", "target profiles", "backend counts", "profile ceiling calculation"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision"]
+    },
+    {
+      "id": "task-exp013-row6-launch",
+      "title": "Tune exact row-6 huge-batch head-32 launch geometry",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["transformer_opt/config.py", "transformer_opt/kernels/attention.py", "tests", "docs/experiments/attempts", "docs/results"],
+      "depends_on": ["task-profile-rank"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-EVIDENCE-1", "AC-BOUNDARY-1"],
+      "validation": ["configuration tests", "direct Triton tests", "exact row 6", "counterbalanced confirmations", "row-6 profile", "affected head-32 neighbors"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-exp014-row7-launch",
+      "title": "Tune exact row-7 and preserve row-11 padded-width head-8 launch geometry",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["transformer_opt/config.py", "transformer_opt/kernels/attention.py", "tests", "docs/experiments/attempts", "docs/results"],
+      "depends_on": ["task-exp013-row6-launch"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-EVIDENCE-1", "AC-BOUNDARY-1"],
+      "validation": ["configuration tests", "direct padded-width tests", "exact rows 7 and 11", "stress seeds and scales", "counterbalanced confirmations", "profiles"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-exp015-row8-projection",
+      "title": "Recheck one profile-authorized wide-model projection candidate",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["torch_transformer_benchmark.py", "tests", "docs/experiments/attempts", "docs/results"],
+      "depends_on": ["task-exp016-row11-launch"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-EVIDENCE-1", "AC-BOUNDARY-1"],
+      "validation": ["strict state dict and cache tests", "exact row 8", "wide held-out neighbor", "counterbalanced confirmation", "row-8 profile"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-exp016-row11-launch",
+      "title": "Test untried exact row-11 padded-width query-tile and warp variants",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["transformer_opt/config.py", "transformer_opt/kernels/attention.py", "tests", "docs/experiments/attempts", "docs/results"],
+      "depends_on": ["task-exp014-row7-launch"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-EVIDENCE-1", "AC-BOUNDARY-1"],
+      "validation": ["configuration tests", "direct padded-width tests", "exact rows 7 and 11", "long-sample timing", "counterbalanced confirmation", "row-11 profile"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-independent-review",
+      "title": "Review every surviving candidate and the composite",
+      "role": "Independent Reviewer and Critic",
+      "write_scope": ["docs/experiments/reviews/CAMPAIGN-006-CANDIDATE-REVIEW.json"],
+      "depends_on": ["task-exp015-row8-projection"],
+      "acceptance_criteria": ["AC-REVIEW-1"],
+      "validation": ["provenance recomputation", "correctness review", "paired timing review", "boundary and maintainability review"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["finding", "handoff"]
+    },
+    {
+      "id": "task-integrate-rebaseline",
+      "title": "Retain only approved winners and regenerate complete evidence",
+      "role": "Agentic Workflow Orchestrator",
+      "write_scope": ["transformer_opt", "torch_transformer_benchmark.py", "tests", "docs/results", "docs/experiments"],
+      "depends_on": ["task-independent-review"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["two complete final matrices", "organizer default", "two five-seed held-out matrices", "source-derived validation", "target profiles", "full pytest"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "decision"]
+    },
+    {
+      "id": "task-sot-graph-closure",
+      "title": "Perform source-of-truth, workflow, graph, and scoped-tree closure",
+      "role": "Release Gatekeeper",
+      "write_scope": ["authoritative docs", "campaign ledger", "repo memory graph"],
+      "depends_on": ["task-integrate-rebaseline"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["release review", "workflow validation", "graph rebuild and strict validation", "scoped working-tree review"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "verification", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-exp013-row6",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 5,
+      "finding_condition": "A row-6 launch candidate fails correctness, target timing, profiler, boundary, or provenance gates",
+      "acceptance_condition": "One exact-row launch is reproducibly faster and fully correct, or five variants establish a plateau",
+      "escalation_role": "Release Gatekeeper"
+    },
+    {
+      "id": "loop-exp014-row7",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 5,
+      "finding_condition": "A padded-width launch candidate fails row-7 accuracy, row-11 protection, stress, timing, profile, or provenance gates",
+      "acceptance_condition": "One exact-row launch is reproducibly faster with all width-eight gates clean, or five variants establish a plateau",
+      "escalation_role": "Release Gatekeeper"
+    },
+    {
+      "id": "loop-exp015-row8",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 3,
+      "finding_condition": "The wide-model projection candidate is neutral, slower, inaccurate, or changes unsupported behavior",
+      "acceptance_condition": "A reproducible end-to-end and profile benefit clears all row-8 and neighbor gates, or the measured projection surface is closed as plateaued",
+      "escalation_role": "Release Gatekeeper"
+    },
+    {
+      "id": "loop-exp016-row11",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 3,
+      "finding_condition": "An untried row-11 query-tile or warp candidate fails correctness, row-7 protection, long-sample timing, profile, or provenance gates",
+      "acceptance_condition": "One exact-row launch is reproducibly faster with all width-eight gates clean, or three new-axis variants establish a plateau",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "validation_results": [],
+  "finalization": {
+    "prd_update_task_id": "task-sot-graph-closure",
+    "project_context_update_task_id": null,
+    "graph_closure_task_id": "task-sot-graph-closure",
+    "release_gatekeeper_task_id": "task-sot-graph-closure",
+    "final_report_sections": ["What changed in code", "Every attempt and its metrics", "What changed in PRD/docs", "What was tested", "Unresolved clarification or inconsistency", "Residual risks and holds"]
+  }
+}

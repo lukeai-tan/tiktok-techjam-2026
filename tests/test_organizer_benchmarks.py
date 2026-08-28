@@ -32,6 +32,8 @@ VALIDATION_MATRIX = ROOT / "benchmarks" / "organizer_validation_matrix.json"
 FINAL_EVALUATOR_MATRIX = ROOT / "benchmarks" / "final_evaluator_shapes.json"
 FINAL_PROFILE_MATRIX = ROOT / "benchmarks" / "final_profile_shapes.json"
 CAMPAIGN4_PROFILE_MATRIX = ROOT / "benchmarks" / "campaign4_profile_shapes.json"
+CAMPAIGN5_PROFILE_MATRIX = ROOT / "benchmarks" / "campaign5_profile_shapes.json"
+OFFICIAL_MATRIX = ROOT / "benchmarks" / "official_shapes.json"
 SUBMISSION_TORCH = ROOT / "torch_transformer_benchmark.py"
 
 PROTECTED_TORCH_DEFINITIONS = (
@@ -345,6 +347,49 @@ def test_campaign4_profile_target_matches_final_evaluator_row11():
             "causal",
         )
     } == final_case["config"]
+
+
+def test_campaign5_profile_targets_match_frozen_final_and_heldout_cases():
+    _, final_cases = load_and_expand_matrix(FINAL_EVALUATOR_MATRIX)
+    final_by_row = {case["source_row"]: case for case in final_cases}
+    heldout = json.loads(OFFICIAL_MATRIX.read_text(encoding="utf-8"))
+    heldout_by_id = {case["id"]: case for case in heldout["cases"]}
+    profile = json.loads(CAMPAIGN5_PROFILE_MATRIX.read_text(encoding="utf-8"))
+
+    assert [case["source_row"] for case in profile["cases"]] == [6, 7, 8, None, None]
+    for profile_case in profile["cases"]:
+        source_row = profile_case["source_row"]
+        if source_row is None:
+            source_case = heldout_by_id[profile_case["id"]]
+            expected = source_case
+        else:
+            source_case = final_by_row[source_row]
+            assert profile_case["id"] == source_case["id"]
+            expected = source_case["config"] | {
+                "padding_ratio": source_case["padding_ratio"]
+            }
+        assert {
+            key: profile_case[key]
+            for key in (
+                "batch_size",
+                "seq_len",
+                "d_model",
+                "num_heads",
+                "ffn_dim",
+                "num_layers",
+                "causal",
+                "padding_ratio",
+            )
+        } == {key: expected[key] for key in (
+            "batch_size",
+            "seq_len",
+            "d_model",
+            "num_heads",
+            "ffn_dim",
+            "num_layers",
+            "causal",
+            "padding_ratio",
+        )}
 
 
 def test_validation_exit_accounting_is_fail_closed():

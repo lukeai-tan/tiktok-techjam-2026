@@ -1,6 +1,6 @@
 # Bounded Agentic GPU Optimization Loop
 
-Status: executed on 2026-08-28; EXP-001, EXP-003, EXP-005-I2, and EXP-009-I2 accepted and rebaselined
+Status: executed on 2026-08-28; complete through Campaign 5
 Applies to: the PyTorch/Triton Transformer implementation in this repository
 
 ## Objective
@@ -14,10 +14,10 @@ to keep changing code until a benchmark number looks better.
 
 ## Campaign outcome
 
-The loop is complete through Campaign 4. The current implementation passed all
+The loop is complete through Campaign 5. The current implementation passed all
 13 executable final rows with zero failed elements across 938,885,120
 comparisons; the exact 100,000-token resource row remains an authorized non-pass
-skip. The primary and confirmation geomeans are 1.780075x and 1.784920x.
+skip. The current primary and confirmation geomeans are 1.911947x and 1.995117x.
 
 | Stage | Accepted change | Final geomean after integration |
 | --- | --- | ---: |
@@ -25,9 +25,13 @@ skip. The primary and confirmation geomeans are 1.780075x and 1.784920x.
 | Campaign 2 / EXP-003 | short `head_dim=32`: 64x64 tiles | 1.525823x |
 | Campaign 3 / EXP-005-I2 | short `head_dim=128`: 32x32 tiles | 1.555780x |
 | Campaign 4 / EXP-009-I2 | exact row-11 `head_dim=8`: padded-width 64x64 Triton | 1.780075x; 1.784920x confirmation |
+| Campaign 5 / EXP-010-I3 | exact row 7: layer 0 reference, layers 1-3 Triton | 1.911947x composite; row 7 1.524x |
+| Campaign 5 / EXP-011-I2 | exact row 6: layers 0-1 reference, layers 2-3 Triton | same composite; row 6 1.503x |
+| Campaign 5 / EXP-012-I1 | exact held-out long-causal SDPA route | 1.447477x held-out; prior 0.798x/0.878x targets became 1.247x/1.280x |
 
-Campaigns 2-4 retain 114 immutable attempt records: 105 passing child commands,
-9 failed child commands, and 788.748209 seconds of measured child wall time.
+Campaigns 2-5 retain immutable attempt records for every passing and failed
+child command; Campaign 5's final exact count and wall time are recorded in
+`experiments/CAMPAIGN-005.md` after closure.
 The canonical [complete optimization history](experiments/OPTIMIZATION_HISTORY.md)
 contains the chronological run-through, every meaningful candidate and
 disposition, campaign metrics, failed gates, current route table, and audit

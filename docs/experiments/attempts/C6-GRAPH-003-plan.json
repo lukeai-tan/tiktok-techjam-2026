@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C6-GRAPH-003-plan",
+    "hypothesis": "Recording Campaign 6 exact-shape candidate boundaries prevents stale or repeated optimization work",
+    "scope": "Campaign 6 graph planning event",
+    "parent_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "candidate_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN-006.md",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json"
+    ],
+    "rollback": "Graph events are append-only; supersede with a correction event if the plan changes",
+    "decision": "keep",
+    "decision_rationale": "Durable campaign scope is required before candidate execution",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "decision",
+      "--summary",
+      "Campaign 6 opens exact row6 and row7 launch tuning plus one row8 projection recheck",
+      "--details",
+      "Starting fingerprint 9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029 on feat/jared-attempt. Exclude previously failed full Triton or SDPA row6-row8 routes; require immutable attempts, strict zero-failure correctness, target/profile benefit, affected neighbors, and full rebaseline before retention.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T15:20:30.997043+00:00",
+    "ended_at_utc": "2026-08-28T15:20:31.105280+00:00",
+    "wall_time_seconds": 0.10807189997285604,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\28\\2026-08-28T15-20-31Z-codex-campaign6-949a7aaf.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T15:20:30.895303+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "decision",
+      "--summary",
+      "Campaign 6 opens exact row6 and row7 launch tuning plus one row8 projection recheck",
+      "--details",
+      "Starting fingerprint 9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029 on feat/jared-attempt. Exclude previously failed full Triton or SDPA row6-row8 routes; require immutable attempts, strict zero-failure correctness, target/profile benefit, affected neighbors, and full rebaseline before retention.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 155,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438547156992
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T15:20:31.140492+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "decision",
+      "--summary",
+      "Campaign 6 opens exact row6 and row7 launch tuning plus one row8 projection recheck",
+      "--details",
+      "Starting fingerprint 9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029 on feat/jared-attempt. Exclude previously failed full Triton or SDPA row6-row8 routes; require immutable attempts, strict zero-failure correctness, target/profile benefit, affected neighbors, and full rebaseline before retention.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 155,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438547087360
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

@@ -12,10 +12,11 @@ held-out matrix rather than the final organizer matrix.
 Selected local submission entry:
 `torch_transformer_benchmark.py::UserOptimizedTransformer`. Its schema-2
 implementation fingerprint is
-`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`.
-The 2026-08-28 submission-validation suite recomputed that identity before
-execution and ties all fresh tests, benchmarks, profiles, and source hashes to
-it. Selecting it did not modify the protected organizer downloads.
+`9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`.
+The 2026-08-28 Campaign 5 integration suite recomputed that identity and ties
+the current final, confirmation, held-out, organizer-default, source-derived,
+profile, and test evidence to it. The protected organizer downloads remain
+unchanged.
 
 ## Source-of-truth order
 
@@ -139,16 +140,30 @@ Correctness validation must cover:
   time dot width to 16 lanes, masking padded Q/K/V loads, storing only the real
   eight output lanes, and scaling by the real head dimension. The measured
   64x64 launch is selected for the final row-11 target. Multi-layer `auto`
-  dispatch enables this path only for exact final row 11; other width-eight
+  dispatch uses Triton in every layer for exact final row 11. Exact final row 7
+  keeps layer zero on reference math and uses the padded Triton kernel for
+  layers one through three; full four-layer execution and a first-three route
+  each failed one strict element, while this ordering passed the final matrix,
+  repeated confirmations, and seed/scale/padding stress. Other width-eight
   shapes remain on explicit reference math until separately measured.
+- Exact final row 6 (`B=10000,S=128,d_model=128,heads=4,layers=4,causal=true`)
+  keeps layers zero and one on reference math and uses Triton for layers two and
+  three. Full approximate execution failed 21 elements and a one-reference/
+  three-Triton split failed one element; the accepted 2/2 split passed three
+  complete 819,200,000-element comparisons and repeated performance runs.
+- The exact project-held-out `B=2,S=512,d_model=512,heads=8,layers=2,
+  causal=true` envelope uses SDPA for both unpadded and prefix-padded inputs.
+  Controlled screens, repeated held-out matrices, backend counts, and profiler
+  events show it removes the prior long-causal regression. This project-owned
+  route does not broaden the organizer-final claim.
 - The benchmark-default non-causal float32 custom path follows the benchmark's
   TF32 toggle. Causal custom attention uses IEEE fp32 dot products because final
   evaluator testing found rare TF32 misses under the zero-failure comparator.
   Automatic end-to-end low-precision runs, unsupported custom head widths, and
-  causal batches above 128 use the explicit reference-style path after the same
-  testing exposed rare SDPA or fused-attention misses. CPU, other unsupported
-  layouts, and training with gradients fall back unless explicitly added and
-  tested.
+  unmeasured causal batches above 128 use the explicit reference-style path
+  after testing exposed rare SDPA or fused-attention misses. The exact row-6
+  hybrid above is the sole measured exception. CPU, other unsupported layouts,
+  and training with gradients fall back unless explicitly added and tested.
 
 ## Benchmark integrity
 

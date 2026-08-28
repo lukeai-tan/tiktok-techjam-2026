@@ -67,7 +67,7 @@ authorized by the source and excluded from the pass count. Reproduce with:
 
 The versioned policy is `benchmarks/organizer_validation_matrix.json`; the
 fresh selected-submission evidence is
-`docs/results/rtx-5070-ti-2026-08-28-submission-source-derived.json`.
+`docs/results/rtx-5070-ti-2026-08-28-c5-integrated-source-derived.json`.
 
 ## Published final shape table
 
@@ -115,12 +115,12 @@ Run the final rows independently from the broader source-derived validation:
 
 The selected-submission run passed all 13 executable rows across five
 accuracy trials each, with zero failures in 938,885,120 comparisons. It recorded
-a 1.775778x geometric-mean speedup, 1,120 Triton attention calls, 336 explicit
+a 1.911947x geometric-mean speedup, 1,260 Triton attention calls, 196 explicit
 reference calls, zero SDPA calls, and the one authorized row-14 resource skip.
 The curated evidence is
-`docs/results/rtx-5070-ti-2026-08-28-submission-final.json`; an independent
+`docs/results/rtx-5070-ti-2026-08-28-c5-integrated-final.json`; a
 complete confirmation is
-`rtx-5070-ti-2026-08-28-submission-final-confirmation.json` at 1.770185x.
+`rtx-5070-ti-2026-08-28-c5-integrated-final-confirmation.json` at 1.995117x.
 
 ## Still needed from the organizer
 

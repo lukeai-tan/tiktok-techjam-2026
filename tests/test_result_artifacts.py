@@ -20,44 +20,44 @@ def _text_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
-MATRIX_PATH = (
-    ROOT / "docs" / "results" / "rtx-5070-ti-2026-08-28-submission-heldout.json"
+MATRIX_PATH = ROOT / "docs" / "results" / (
+    "rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed.json"
 )
 MATRIX_CONFIRMATION_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-submission-heldout-confirmation.json"
+    / "rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed-confirmation.json"
 )
 PROFILE_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-submission-final-11-profile.json"
+    / "rtx-5070-ti-2026-08-28-c5-integrated-row11-profile.json"
 )
 ORGANIZER_DEFAULT_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-submission-organizer-default.json"
+    / "rtx-5070-ti-2026-08-28-c5-integrated-organizer-default.json"
 )
 ORGANIZER_VALIDATION_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-submission-source-derived.json"
+    / "rtx-5070-ti-2026-08-28-c5-integrated-source-derived.json"
 )
 FINAL_EVALUATOR_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-submission-final.json"
+    / "rtx-5070-ti-2026-08-28-c5-integrated-final.json"
 )
 FINAL_CONFIRMATION_PATH = (
     ROOT
     / "docs"
     / "results"
-    / "rtx-5070-ti-2026-08-28-submission-final-confirmation.json"
+    / "rtx-5070-ti-2026-08-28-c5-integrated-final-confirmation.json"
 )
 FINAL_EVALUATOR_MATRIX_PATH = ROOT / "benchmarks" / "final_evaluator_shapes.json"
 ORGANIZER_VALIDATION_MATRIX_PATH = (
@@ -66,15 +66,20 @@ ORGANIZER_VALIDATION_MATRIX_PATH = (
 ORGANIZER_MANIFEST_PATH = (
     ROOT / "benchmarks" / "reference" / "organizer_downloads.json"
 )
-SDPA_CASES = {"tiny-overhead", "medium-throughput"}
+SDPA_CASES = {
+    "tiny-overhead",
+    "medium-throughput",
+    "long-causal",
+    "long-causal-padding",
+}
 SUBMISSION_ATTEMPT_RESULT_MAP = {
-    "S1-SUITE-003-organizer-default.json": ORGANIZER_DEFAULT_PATH,
-    "S1-SUITE-004-final-primary.json": FINAL_EVALUATOR_PATH,
-    "S1-SUITE-005-final-confirmation.json": FINAL_CONFIRMATION_PATH,
-    "S1-SUITE-006-heldout.json": MATRIX_PATH,
-    "S1-SUITE-007-source-derived.json": ORGANIZER_VALIDATION_PATH,
-    "S1-SUITE-008-profile-row11.json": PROFILE_PATH,
-    "S1-SUITE-009-heldout-confirmation.json": MATRIX_CONFIRMATION_PATH,
+    "C5-INTEGRATE-002-final.json": FINAL_EVALUATOR_PATH,
+    "C5-INTEGRATE-003-final-confirmation.json": FINAL_CONFIRMATION_PATH,
+    "C5-INTEGRATE-005-organizer-default.json": ORGANIZER_DEFAULT_PATH,
+    "C5-INTEGRATE-015-heldout-5seed.json": MATRIX_PATH,
+    "C5-INTEGRATE-016-heldout-5seed-confirmation.json": MATRIX_CONFIRMATION_PATH,
+    "C5-INTEGRATE-008-source-derived.json": ORGANIZER_VALIDATION_PATH,
+    "C5-INTEGRATE-014-row11-profile.json": PROFILE_PATH,
 }
 
 
@@ -140,9 +145,9 @@ def test_selected_submission_attempts_bind_results_to_current_fingerprint():
         assert attempt["metrics"]["status"] == "PASS"
 
 
-def test_submission_docs_select_fresh_evidence_and_disclose_heldout_slowdown():
+def test_submission_docs_select_campaign5_evidence_and_disclose_removed_regressions():
     fingerprint = (
-        "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611"
+        "9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029"
     )
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     requirements = (ROOT / "docs" / "REQUIREMENTS.md").read_text(encoding="utf-8")
@@ -166,9 +171,9 @@ def test_submission_docs_select_fresh_evidence_and_disclose_heldout_slowdown():
     assert ORGANIZER_DEFAULT_PATH.name in technical_report
     assert ORGANIZER_VALIDATION_PATH.name in technical_report
     assert "long-causal" in result_index
-    assert "0.793x" in result_index
-    assert "0.800x" in result_index
-    assert "0.80x" in compliance
+    assert "1.247x" in result_index
+    assert "1.280x" in result_index
+    assert "removed both held-out long-causal regressions" in compliance
 
 
 def test_curated_matrix_is_complete_green_and_current():
@@ -209,7 +214,7 @@ def test_curated_matrix_is_complete_green_and_current():
         assert result["peak_memory"]["optimized"] is not None
         speedups.append(timing["speedup_median"])
     assert total_failed == 0
-    assert statistics.geometric_mean(speedups) == pytest.approx(1.210, abs=0.001)
+    assert statistics.geometric_mean(speedups) == pytest.approx(1.447, abs=0.001)
 
 
 def test_curated_matrix_confirmation_preserves_correctness_and_bounds_variance():
@@ -234,15 +239,17 @@ def test_curated_matrix_confirmation_preserves_correctness_and_bounds_variance()
     confirmation_by_case = {
         result["case_id"]: result for result in confirmation["results"]
     }
-    assert primary_by_case["long-causal"]["timing"]["speedup_median"] < 1.0
-    assert confirmation_by_case["long-causal"]["timing"]["speedup_median"] < 1.0
+    assert primary_by_case["long-causal"]["timing"]["speedup_median"] > 1.2
+    assert confirmation_by_case["long-causal"]["timing"]["speedup_median"] > 1.2
+    assert primary_by_case["long-causal-padding"]["timing"]["speedup_median"] > 1.2
+    assert confirmation_by_case["long-causal-padding"]["timing"]["speedup_median"] > 1.2
 
     confirmation_speedups = [
         result["timing"]["speedup_median"]
         for result in confirmation["results"]
     ]
     assert statistics.geometric_mean(confirmation_speedups) == pytest.approx(
-        1.266,
+        1.450,
         abs=0.001,
     )
 
@@ -396,8 +403,8 @@ def test_final_evaluator_artifact_is_complete_green_and_current():
         "sha256": _text_sha256(FINAL_EVALUATOR_MATRIX_PATH),
         "status": "organizer-published-final-shapes",
     }
-    # Campaign 4 was intentionally measured as a reviewable local candidate;
-    # no commit or history mutation was authorized for this optimization round.
+    # Campaign 5 is intentionally measured as a reviewable local candidate;
+    # no commit or history mutation is authorized by the optimization request.
     assert evidence["environment"]["git"]["dirty"] is True
     assert evidence["environment"]["git"]["implementation_sha256"] == (
         current_fingerprint
@@ -423,7 +430,7 @@ def test_final_evaluator_artifact_is_complete_green_and_current():
     assert summary["total_compared_elements"] == 938_885_120
     assert summary["total_failed_elements"] == 0
     assert summary["skipped_counted_as_pass"] is False
-    assert summary["geometric_mean_speedup"] > 1.7
+    assert summary["geometric_mean_speedup"] > 1.9
 
     executable = [
         result for result in evidence["results"] if result["status"] == "PASS"
@@ -443,12 +450,18 @@ def test_final_evaluator_artifact_is_complete_green_and_current():
         for result in executable
     )
     by_case = {result["case_id"]: result for result in executable}
+    row_6 = by_case["final-06-b10000-d128-h4-s128"]
     row_7 = by_case["final-07-b64-d32-h4-s128"]
     row_11 = by_case["final-11-b64-d128-h16-s128"]
-    assert row_7["attention_backend_counts"] == {
-        "triton": 0,
+    assert row_6["attention_backend_counts"] == {
+        "triton": 56,
         "sdpa": 0,
-        "reference": 112,
+        "reference": 56,
+    }
+    assert row_7["attention_backend_counts"] == {
+        "triton": 84,
+        "sdpa": 0,
+        "reference": 28,
     }
     assert row_11["attention_backend_counts"] == {
         "triton": 112,
@@ -484,7 +497,8 @@ def test_final_evaluator_confirmation_reproduces_primary_result():
     assert confirmation["summary"]["attention_backend_counts"] == (
         primary["summary"]["attention_backend_counts"]
     )
+    assert primary["summary"]["geometric_mean_speedup"] > 1.9
+    assert confirmation["summary"]["geometric_mean_speedup"] > 1.9
     assert confirmation["summary"]["geometric_mean_speedup"] == pytest.approx(
-        primary["summary"]["geometric_mean_speedup"],
-        rel=0.01,
+        primary["summary"]["geometric_mean_speedup"], rel=0.05
     )

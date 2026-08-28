@@ -17,32 +17,33 @@ elements across 938,885,120 comparisons**.
 The selected local submission is
 `torch_transformer_benchmark.py::UserOptimizedTransformer`, with schema-2
 implementation SHA-256
-`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`.
-Fresh final-matrix geometric-mean end-to-end speedup is **1.776x**. Per-row
-speedups range from 1.013x to 5.456x; the Campaign 4 target (row 11,
-`head_dim=8`, sequence 128) measures **5.456x**. Backend accounting records
-1,120 Triton calls, 336 explicit reference calls for unsupported or very-large
-batch regimes, and zero SDPA calls. The complete table, stdout, environment,
-source hashes, and implementation fingerprint are in
-[the selected-submission artifact](docs/results/rtx-5070-ti-2026-08-28-submission-final.json).
+`9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`.
+Campaign 5's primary final-matrix geometric-mean end-to-end speedup is
+**1.912x**; a second complete run measured **1.995x** with identical
+correctness and aggregate backend counts. Final rows 6 and 7 now use
+accuracy-bounded hybrid execution: row 6 keeps its first two layers exact and
+uses Triton for the last two, while row 7 keeps layer zero exact and uses
+Triton for layers one through three. Primary speedups are **1.503x** and
+**1.524x**, respectively; retained Campaign 4 row 11 measures **5.948x**.
+Backend accounting is Triton 1,260 / SDPA 0 / reference 196. The complete
+table, stdout, environment, source hashes, and fingerprint are in
+[the Campaign 5 final artifact](docs/results/rtx-5070-ti-2026-08-28-c5-integrated-final.json).
 
-A second complete run of the same implementation reproduced the contract and
-backend counts at **1.770x**. Two project-owned held-out runs are **7/7 PASS at
-1.210x and 1.266x**, the untouched organizer default is **5/5 PASS at 1.352x**,
-and the source-derived matrix is **28/28 executable PASS at 1.203x** plus the
-same authorized non-pass skip. The held-out non-padded long-causal case is a
-reproduced local slowdown at about 0.80x; the published final-matrix claim does
-not hide or average away that limitation. These are separate evidence gates,
-not substitutes for the final matrix.
+Two five-seed project-owned held-out runs are **7/7 PASS at 1.447x and 1.450x**. The
+previous long-causal regressions are removed by an exact measured SDPA route:
+the primary non-padded and padded cases measure **1.247x** and **1.280x**.
+The untouched organizer default is **5/5 PASS at 1.397x**, and the
+source-derived matrix is **28/28 executable PASS at 1.205x** plus the same
+authorized non-pass skip. These are separate evidence gates, not substitutes
+for the published final matrix.
 
 The complete optimization history now has one canonical entry point:
 [what was tried, every campaign aggregate, rejected and failed work, score
-evolution, and why Campaign 4 is best](docs/experiments/OPTIMIZATION_HISTORY.md).
-Campaigns 2-4 retain all **114** immutable attempt records: 105 passing child
-commands, 9 failed child commands, and 788.748 seconds of measured child wall
-time. Submission selection adds **25** `S1-*` records: 24 passing commands, one
-retained workflow-schema failure, and 223.238 seconds of child wall time. No
-rejected or failed evidence was deleted during consolidation or selection.
+evolution, and why Campaign 5 is best](docs/experiments/OPTIMIZATION_HISTORY.md).
+Campaign 5 retains its preflight, baselines, baseline/candidate/integrated
+profiles, seven backend screens, rejected full-route candidates, hybrid
+confirmations, counterbalanced controls, integration matrices, and every failed gate under
+`docs/experiments/attempts/`. No rejected or failed evidence was deleted.
 
 The final dimensions are published, but dtype, padding, timing, tolerance, and
 backward policy remain unstated. See [the requirements](docs/REQUIREMENTS.md)
@@ -72,8 +73,10 @@ weight copy while replacing explicit attention with:
   zero-masked 16-lane dot padding for width eight;
 - measured auto-routing (short unmasked fp32 heads <=32 use SDPA; deep six-layer
   causal or batch-above-8 cases use accuracy-safe SDPA; low precision,
-  unsupported head widths, and causal batches above 128 use exact reference
-  math; validated custom fp32 regimes use Triton); and
+  unsupported head widths, and unmeasured causal batches above 128 use exact
+  reference math; exact final rows 6 and 7 use layer-bounded Triton/reference
+  hybrids; the measured held-out B2/S512/head64 causal envelope uses SDPA; other
+  validated custom fp32 regimes use Triton); and
 - observable forced triton, sdpa, and reference routing.
 
 The primary optimized end-to-end path uses the benchmark-default float32 and

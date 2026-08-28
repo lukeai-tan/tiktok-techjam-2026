@@ -119,9 +119,12 @@ Custom execution requires:
 
 `triton` mode rejects unsupported input. `auto` routes unsupported direct calls
 to SDPA. The multi-layer Transformer uses exact reference-style attention for
-low precision, head dimensions outside the custom support set, and causal
-batches above 128 because target-GPU final-shape validation exposed rare strict
-tolerance misses in those regimes.
+low precision, head dimensions outside the custom support set, and unmeasured
+causal batches above 128 because target-GPU final-shape validation exposed rare
+strict tolerance misses in those regimes. Campaign 5 added only three exact
+exceptions: a 2-reference/2-Triton split for final row 6, a 1-reference/
+3-Triton split for final row 7, and SDPA for the project-held-out
+`B=2,S=512,d_model=512,heads=8,layers=2,causal=true` envelope.
 On the RTX 5070 Ti, controlled alternating measurements also showed SDPA was
 12%-13% faster for unmasked, non-causal float32 sequences <=128 with head
 dimension <=32. `auto` uses SDPA for that launch-bound corner and Triton for the
@@ -152,15 +155,16 @@ head-dimension-128 sequences use a 32-wide K/V tile after three reproducible
 row-9 measurements showed a 26.73% latency reduction versus the fresh baseline;
 sequence 129 and above retains the prior 64-wide K/V tile.
 Head-dimension-8 direct execution uses the same 64x64 geometry at the target
-boundary; only exact final row 11 is automatically routed to it in the
-multi-layer model.
+boundary. Exact final row 11 routes all four layers to it; exact final row 7
+keeps layer zero exact and routes layers one through three to Triton. Other
+multi-layer width-eight shapes remain on reference math.
 
 ## Measured design decisions
 
 - The organizer-published final matrix passed all 13 executable rows with zero
-  failed elements and one source-authorized resource skip. It delivered a
-  fresh 1.775778x geomean end-to-end speedup; 1,120 attention calls used Triton and 336
-  unsupported or very-large-batch calls used explicit reference math.
+  failed elements and one source-authorized resource skip. Campaign 5 delivered
+  1.911947x/1.995117x primary/confirmation geomeans; aggregate attention
+  accounting is Triton 1,260 / SDPA 0 / reference 196 in both runs.
 - EXP-001 targeted the final row-10 `head_dim=64`, sequence-128 spill bottleneck.
   The former 64x128 tile reported 2,468 spills and 81,920 bytes of shared memory;
   the accepted 32x64 tile reported two spills and 49,152 bytes. Across two paired
@@ -185,6 +189,21 @@ multi-layer model.
   81.08% below the fresh exact-reference median. The integrated profile proved
   40/40 Triton calls; its ten-step model range fell from 41,658.659 us to
   10,592.605 us (-74.57%).
+- Campaign 5 full Triton and SDPA screens each missed one row-7 element. A
+  first-three Triton route also missed one element; keeping the first layer
+  exact and fusing the last three passed the published row three times plus 18
+  seed/scale/padding stress scenarios. Target speedups reproduced at
+  1.484x/1.492x/1.596x, and the ten-step model profile fell from 19,390.479 us
+  to 12,868.043 us (-33.64%) while proving 30 Triton and 10 reference calls.
+- Campaign 5 full approximate row-6 screens failed 21 elements across five
+  trials, and a 1-reference/3-Triton split failed one. The accepted first-two
+  reference/last-two Triton split passed three 819,200,000-element runs with
+  1.549x/1.488x/1.495x target speedups. Its ten-step profile fell from
+  2,790,718.259 us to 2,239,829.181 us (-19.74%) with 20 calls per backend.
+- The held-out long-causal Triton profiles spent about 5.16 ms and 5.04 ms in
+  `_attention_fwd` across ten steps. Exact SDPA screens passed at 1.199x and
+  1.230x, and five-seed integrated primary results reproduced at 1.247x and 1.280x,
+  removing both previous held-out regressions.
 - Exact-harness stress testing found rare strict-tolerance misses when Triton
   differences accumulated through six causal layers or batches above eight.
   Auto routes those deep-stack regimes to SDPA; all 28 feasible source-derived

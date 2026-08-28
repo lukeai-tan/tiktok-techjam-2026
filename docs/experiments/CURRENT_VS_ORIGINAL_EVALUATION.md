@@ -1,141 +1,119 @@
 # Current Optimized vs Original Evaluation
 
-Status: complete fresh comparison; all executable correctness gates passed
+Status: Campaign 5 comparison complete; every executable correctness gate passed
 
 Date: 2026-08-28 (Asia/Singapore)
 
-Commit: `b833f7292bf15680d0add6007a53f9f7bf747690`
+Base commit: `3be02a3ebe562a89ca360b196057a2762b425ec4`
 
 Implementation fingerprint:
-`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`
+`9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`
 
 ## Comparison definition
 
 “Original” is the byte-preserved organizer PyTorch `BaselineTransformer`.
 “Current optimized” is
 `torch_transformer_benchmark.py::UserOptimizedTransformer`. The harness copies
-the original model's weights with `strict=True`, supplies identical inputs, runs
+the original weights with `strict=True`, supplies identical inputs, runs
 correctness before timing, and alternates baseline/optimized timing order. No
-organizer source, tolerance, timing rule, implementation, or dispatch policy was
-changed for this evaluation.
+organizer source, comparator, tolerance, timing policy, or resource-skip rule
+changed for Campaign 5.
 
-The strict executable comparator passes an element when absolute error is at
-most `0.001` **or** relative error is at most `1%`. This is stricter than the
-Track 3 prose. Passing therefore means numerical equivalence under the checked
-contract, not universal bitwise identity.
-
-Fresh target environment: NVIDIA GeForce RTX 5070 Ti, driver 616.56, Windows 11,
-Python 3.12.10, PyTorch 2.13.0+cu130, CUDA 13.0, and Triton 3.7.1.
+The strict executable comparator accepts an element when absolute error is at
+most `0.001` **or** relative error is at most `1%`. The measurements are from an
+RTX 5070 Ti, driver 616.56, Windows 11, Python 3.12.10, PyTorch 2.13.0+cu130,
+CUDA 13.0, and Triton 3.7.1.
 
 ## Aggregate outcome
 
 | Evaluation | Accuracy | Original vs optimized | Speedup | Equivalent median/geomean latency reduction |
 | --- | --- | --- | ---: | ---: |
-| Untouched organizer default | 5/5 trials PASS; 0/2,621,440 failed | 1.8046 ms vs 1.3454 ms | 1.341x | 25.43% |
-| Published final matrix | 13/13 executable PASS + one authorized non-pass skip; 0/938,885,120 failed | per-row comparison below | 1.793579x geomean | 44.25% |
-| Project-held-out matrix | 7/7 PASS; 0/13,117,440 failed | five faster, two slower | 1.190136x geomean | 15.98% |
-| Source-derived matrix | 28/28 executable PASS + one authorized non-pass skip; 0/459,776,000 failed | 26 non-slower, two slower | 1.204977x geomean | 17.01% |
+| Untouched organizer default | 5/5 trials PASS; 0/2,621,440 failed | 1.8948 ms vs 1.3565 ms | 1.397x | 28.41% |
+| Published final primary | 13/13 executable PASS + one authorized non-pass skip; 0/938,885,120 failed | per-row comparison below | 1.911947x geomean | 47.70% |
+| Published final confirmation | same correctness and backend counts | complete independent timing run | 1.995117x geomean | 49.88% |
+| Project-held-out primary | 7/7 PASS; 0/13,117,440 failed | every case faster | 1.447477x geomean | 30.91% |
+| Project-held-out confirmation | same zero-failure contract | every case faster | 1.449715x geomean | 31.02% |
+| Source-derived matrix | 28/28 executable PASS + one authorized non-pass skip; 0/459,776,000 failed | broad mixed-dtype matrix | 1.204815x geomean | 17.00% |
 
-Across the four fresh benchmark artifacts, 245 accuracy trials compared
-1,414,400,000 output elements with zero failures. The total includes intentional
-overlap between the organizer-default, final, held-out, and source-derived
-matrices. The largest observed absolute difference was `0.00131607`; it passed
-through the relative-error branch of the OR comparator. Exact-reference routes
-often had zero difference.
+The primary final geomean is 7.62% above the fresh Campaign 5 starting
+implementation (1.776534x). Relative to the earlier selected-submission primary
+at 1.775778x, it is 7.67% higher. Accuracy did not trade away: the primary and
+confirmation final runs each retained zero failures across 938,885,120 checked
+elements.
 
-The organizer-default throughput increased from 567,446 to 761,089 tokens/s
-(+34.13%). Its mean latency fell 25.65% and p90 latency fell 26.12%.
+The organizer-default optimized throughput increased from 540,426 to 754,895
+tokens/s (+39.69%). Median latency fell 28.41%, mean latency fell 26.20%, and
+p90 latency fell 27.03%.
 
 ## Published final rows
 
-| Row | Original median | Optimized median | Speedup | Latency change | Optimized attention route |
+| Row | Original median | Optimized median | Speedup | Latency reduction | Optimized attention route |
 | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | 1.4152 ms | 0.8129 ms | 1.741x | -42.56% | Triton |
-| 2 | 1.5439 ms | 0.8772 ms | 1.760x | -43.18% | Triton |
-| 3 | 1.3663 ms | 0.8064 ms | 1.694x | -40.98% | Triton |
-| 4 | 1.3538 ms | 0.7799 ms | 1.736x | -42.39% | Triton |
-| 5 | 2.7009 ms | 1.4835 ms | 1.821x | -45.07% | Triton |
-| 6 | 394.9666 ms | 366.9252 ms | 1.076x | -7.10% | reference fallback |
-| 7 | 1.4500 ms | 1.3023 ms | 1.113x | -10.19% | reference fallback |
-| 8 | 14.2202 ms | 13.9654 ms | 1.018x | -1.79% | reference fallback |
-| 9 | 1.2025 ms | 0.8994 ms | 1.337x | -25.21% | Triton |
-| 10 | 1.3308 ms | 0.8587 ms | 1.550x | -35.47% | Triton |
-| 11 | 5.8184 ms | 1.0613 ms | 5.482x | -81.76% | Triton |
-| 12 | 1.4018 ms | 0.7666 ms | 1.829x | -45.31% | Triton |
-| 13 | 87.1028 ms | 18.2129 ms | 4.782x | -79.09% | Triton |
+| 1 | 1.5312 ms | 0.8595 ms | 1.781x | 43.87% | Triton |
+| 2 | 1.5842 ms | 0.8898 ms | 1.780x | 43.83% | Triton |
+| 3 | 1.4291 ms | 0.8133 ms | 1.757x | 43.09% | Triton |
+| 4 | 1.3422 ms | 0.7950 ms | 1.688x | 40.77% | Triton |
+| 5 | 2.9995 ms | 1.6647 ms | 1.802x | 44.50% | Triton |
+| 6 | 449.1052 ms | 298.7559 ms | 1.503x | 33.48% | layers 0-1 reference; layers 2-3 Triton |
+| 7 | 1.3750 ms | 0.9024 ms | 1.524x | 34.37% | layer 0 reference; layers 1-3 Triton |
+| 8 | 15.7496 ms | 15.2777 ms | 1.031x | 3.00% | reference |
+| 9 | 1.2159 ms | 0.9240 ms | 1.316x | 24.01% | Triton |
+| 10 | 1.4777 ms | 0.8725 ms | 1.694x | 40.96% | Triton |
+| 11 | 6.4429 ms | 1.0832 ms | 5.948x | 83.19% | padded-width Triton |
+| 12 | 1.4170 ms | 0.7879 ms | 1.799x | 44.40% | Triton |
+| 13 | 95.9056 ms | 20.0648 ms | 4.780x | 79.08% | Triton |
 | 14 | not executed | not executed | not counted | authorized resource skip | none |
 
-All 13 executable rows improved. The largest gain is final row 11, the exact
-Campaign 4 padded-width `head_dim=8` target. Final row 8 is effectively near
-parity because both implementations retain correctness-first reference
-attention and most work is vendor GEMM/normalization rather than the custom
-kernel. Aggregate backend accounting recorded 1,120 Triton calls, 336 reference
-calls, and no SDPA calls.
+Every executable row improved in the primary timing run. Backend accounting was
+1,260 Triton calls, 196 reference calls, and no SDPA calls. Row 8 remains the
+residual near-parity case: its forced-SDPA accuracy screen failed 1 of
+41,943,040 compared elements, and its profile attributed about 71% of runtime
+to vendor `aten::addmm`, leaving too little safe attention-only leverage.
 
 ## Held-out performance and memory
 
-| Case | Original median | Optimized median | Speedup | Latency change | Incremental peak-memory change |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| tiny-overhead | 0.4724 ms | 0.3073 ms | 1.537x | -34.95% | unchanged |
-| medium-throughput | 0.4180 ms | 0.3197 ms | 1.307x | -23.51% | -26.67% |
-| medium-padding | 0.6480 ms | 0.4832 ms | 1.341x | -25.43% | -31.25% |
-| long-causal | 0.6822 ms | 0.8566 ms | 0.796x | **+25.57% slower** | -50.27% |
-| long-causal-padding | 0.8266 ms | 0.9440 ms | 0.876x | **+14.21% slower** | -54.41% |
-| long-attention | 0.8079 ms | 0.5129 ms | 1.575x | -36.51% | -71.79% |
-| wide-model | 0.2350 ms | 0.2057 ms | 1.142x | -12.47% | unchanged |
+| Case | Original median | Optimized median | Speedup | Latency reduction | Route |
+| --- | ---: | ---: | ---: | ---: | --- |
+| tiny-overhead | 0.5204 ms | 0.3216 ms | 1.618x | 38.21% | SDPA |
+| medium-throughput | 0.5264 ms | 0.2632 ms | 2.000x | 50.00% | SDPA |
+| medium-padding | 0.6889 ms | 0.5042 ms | 1.366x | 26.79% | Triton |
+| long-causal | 0.7217 ms | 0.5788 ms | 1.247x | 19.80% | exact-shape SDPA |
+| long-causal-padding | 0.8954 ms | 0.6993 ms | 1.280x | 21.90% | exact-shape SDPA |
+| long-attention | 0.8400 ms | 0.5191 ms | 1.618x | 38.20% | Triton |
+| wide-model | 0.2445 ms | 0.2098 ms | 1.165x | 14.19% | Triton |
 
-The held-out aggregate is faster, but the two long-causal regressions are real
-and reproduced. They remain numerically correct and trade latency for a large
-reduction in incremental peak allocation. They must not be described as wins.
+The two old flagship regressions are removed. The earlier implementation's
+fresh Campaign 5 baseline measured 0.798x for `long-causal` and 0.878x for
+`long-causal-padding`; the selected route measures 1.247x/1.280x in the primary
+run and 1.216x/1.423x in confirmation. Both complete five-seed runs are retained.
 
-## Source-derived breadth
+## Accuracy and rejected alternatives
 
-- Float32: 15 cases, all non-slower, 1.392322x geomean.
-- Float16: 12 cases, 1.018418x geomean; two small regressions at 0.963x and
-  0.989x. Automatic low-precision routing uses exact reference math, so these
-  near-parity differences are timing variation rather than custom-kernel gains.
-- Bfloat16: one exact-reference case, 1.038x.
-- Best broad-matrix result: the 1024-token float32 case at 2.919x
-  (24.3439 ms to 8.3393 ms).
+- Row 7 full Triton and full SDPA each failed 1/1,310,720 elements. A two-Triton-
+  layer hybrid passed, but the selected three-Triton-layer hybrid was faster and
+  passed 18 seed/scale/padding stress scenarios.
+- Row 6 full Triton and full SDPA each failed 21/819,200,000 elements. A
+  three-Triton-layer hybrid still failed one element; the selected two-layer
+  hybrid passed all 819,200,000 comparisons.
+- Row 8 SDPA failed one element and was not implemented.
+- Exact held-out long-causal SDPA passed the full padded/unpadded multi-seed
+  stress set and both complete held-out matrices.
 
-## Logged execution evidence
+The largest reported relative errors occur around reference values near zero;
+the executable OR comparator and absolute-error branch determine correctness.
+No failed element, OOM, crash, or unauthorized skip was recast as a pass.
 
-| Attempt | Status | Child wall time |
-| --- | --- | ---: |
-| `E2-PREFLIGHT-001-FULL-TESTS` | PASS; 115 tests, 14 upstream warnings | 7.732788 s |
-| `E2-COMPARE-001-ORGANIZER-DEFAULT` | PASS | 2.962283 s |
-| `E2-COMPARE-002-FINAL-MATRIX` | PASS | 50.999552 s |
-| `E2-COMPARE-003-HELDOUT` | PASS | 2.991622 s |
-| `E2-COMPARE-004-SOURCE-DERIVED` | PASS | 63.628299 s |
-| `E2-CLOSE-001-ARTIFACT-VALIDATION` | PASS | 0.043384 s |
+## Evidence
 
-Benchmark and preflight child-command time: **128.314544 seconds**. Including
-closure validation, all six records total **128.357928 seconds**. Every command
-has an immutable record under `attempts/E2-*.json`, including timestamps, command,
-stdout/stderr, return code, wall time, environment, Git state, implementation
-fingerprint, artifact hash, and parsed metrics. Fresh result artifacts are:
+- [Campaign 5 ledger](CAMPAIGN-005.md)
+- [Primary final matrix](../results/rtx-5070-ti-2026-08-28-c5-integrated-final.json)
+- [Final confirmation](../results/rtx-5070-ti-2026-08-28-c5-integrated-final-confirmation.json)
+- [Primary held-out matrix](../results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed.json)
+- [Held-out confirmation](../results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed-confirmation.json)
+- [Untouched organizer default](../results/rtx-5070-ti-2026-08-28-c5-integrated-organizer-default.json)
+- [Source-derived matrix](../results/rtx-5070-ti-2026-08-28-c5-integrated-source-derived.json)
+- [Immutable attempts](attempts/)
 
-- [organizer default](../results/rtx-5070-ti-2026-08-28-current-vs-original-organizer-default.json)
-- [published final matrix](../results/rtx-5070-ti-2026-08-28-current-vs-original-final.json)
-- [held-out matrix](../results/rtx-5070-ti-2026-08-28-current-vs-original-heldout.json)
-- [source-derived matrix](../results/rtx-5070-ti-2026-08-28-current-vs-original-source-derived.json)
-
-The evaluation started from a clean pushed commit. Later artifacts truthfully
-record a dirty worktree because earlier E2 evidence files were already
-untracked; the implementation fingerprint and commit remained unchanged. No
-code, test, organizer source, tolerance, or benchmark policy changed.
-
-## Conclusion
-
-The current implementation is materially better than the original for the
-published float32 workload: it is correct under the strict comparator and
-delivers a fresh 1.794x final-matrix geomean, with the largest gains on the
-custom-attention targets. It also improves the held-out and broad aggregates.
-It is not universally faster: long-causal held-out latency and two low-precision
-source-derived cases regress. The correct claim is therefore “substantially
-faster on the published final matrix with zero observed comparator failures,”
-not “faster for every possible Transformer shape.”
-
-These conclusions are specific to the recorded RTX 5070 Ti environment and the
+These conclusions are specific to the recorded target environment and the
 published/derived forward-inference workloads. They do not establish backward,
 training, other-GPU, or unstated organizer-policy performance.
