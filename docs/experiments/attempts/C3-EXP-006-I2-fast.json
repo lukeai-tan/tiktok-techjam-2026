@@ -14,9 +14,9 @@
       "tests/test_dispatch.py"
     ],
     "rollback": "Discard candidate commits 595325e and eadf601; retain Triton routing for short causal head dimension 128",
-    "decision": "keep",
-    "decision_rationale": "All 47 focused routing, masked OR-tolerance, direct-kernel, and model tests passed; retain provisionally for production timing and alternating confirmation",
-    "review_status": "pending"
+    "decision": "reject",
+    "decision_rationale": "All 47 focused tests passed, but alternating production timing selected the narrower EXP-005-I2 launch change: its 0.9042 ms three-run median was 6.16% faster than this candidate's 0.9636 ms median",
+    "review_status": "not_required"
   },
   "execution": {
     "command": [
