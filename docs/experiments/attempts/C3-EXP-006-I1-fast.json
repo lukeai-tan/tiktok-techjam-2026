@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C3-EXP-006-I1-FAST",
+    "hypothesis": "Exact short causal unmasked head-dimension-128 SDPA routing preserves dispatch boundaries, direct Triton coverage elsewhere, and end-to-end correctness",
+    "scope": "Focused dispatch, direct GPU attention, and GPU Transformer tests for EXP-006-I1",
+    "parent_commit": "138a23e",
+    "candidate_commit": "595325eccca0245faf2fe0e55db1716e89e570ba",
+    "branch": "exp/c3-exp006-row9-sdpa",
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "transformer_opt/dispatch.py",
+      "tests/test_dispatch.py"
+    ],
+    "rollback": "Discard candidate commit 595325e and retain Triton routing for short causal head dimension 128",
+    "decision": "rework",
+    "decision_rationale": "Focused tests passed, but the route excluded the organizer's all-valid mask at padding_ratio=0 and therefore did not exercise the production row-9 path",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T05:06:21.586927+00:00",
+    "ended_at_utc": "2026-08-28T05:06:38.268156+00:00",
+    "wall_time_seconds": 16.68127409997396,
+    "timeout_seconds": 300.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "..............................................                           [100%]\n============================== warnings summary ===============================\ntests/test_gpu_transformer.py: 14 warnings\n  <home>\\AppData\\Local\\Codex\\venvs\\tiktok-techjam-2026\\Lib\\site-packages\\torch\\jit\\_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n46 passed, 14 warnings in 16.02s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T05:06:21.499543+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "595325eccca0245faf2fe0e55db1716e89e570ba",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "5a0ad2ffbcccb7b357fb207aa2790854f2f9c8a01d337f1359e21a0f6f8339c2",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445438943232
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T05:06:38.309192+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py",
+      "tests/test_gpu_transformer.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "595325eccca0245faf2fe0e55db1716e89e570ba",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "5a0ad2ffbcccb7b357fb207aa2790854f2f9c8a01d337f1359e21a0f6f8339c2",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445432254464
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "6df40a7e3c78b33d418016d23225d713c45ea5cb78bb528255834d9203062a3b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}
