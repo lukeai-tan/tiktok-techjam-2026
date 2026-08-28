@@ -70,6 +70,15 @@ def attention_launch_config(head_dim: int, seq_len: int) -> AttentionLaunchConfi
             num_warps=4,
             num_stages=2,
         )
+    if head_dim == 32 and seq_len <= 128:
+        # Isolate K/V-tile pressure while retaining the established Q tile for
+        # the official short narrow-head shapes.
+        return AttentionLaunchConfig(
+            block_m=64,
+            block_n=64,
+            num_warps=4,
+            num_stages=2,
+        )
     if head_dim <= 64:
         return AttentionLaunchConfig(
             block_m=64,

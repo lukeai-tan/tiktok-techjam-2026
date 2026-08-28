@@ -146,11 +146,26 @@ def test_head_dim_64_short_sequence_uses_spill_avoiding_tiles():
 
 
 def test_spill_avoiding_tiles_do_not_expand_to_neighboring_shapes():
-    narrower = attention_launch_config(head_dim=32, seq_len=128)
+    neighboring_width = attention_launch_config(head_dim=48, seq_len=128)
     longer = attention_launch_config(head_dim=64, seq_len=129)
 
-    assert (narrower.block_m, narrower.block_n) == (64, 128)
+    assert (neighboring_width.block_m, neighboring_width.block_n) == (64, 128)
     assert (longer.block_m, longer.block_n) == (64, 64)
+
+
+def test_short_head_dim_32_reduces_kv_tile_only_through_sequence_128():
+    short_narrow = attention_launch_config(head_dim=32, seq_len=128)
+    longer = attention_launch_config(head_dim=32, seq_len=129)
+    smaller_head = attention_launch_config(head_dim=16, seq_len=128)
+
+    assert (
+        short_narrow.block_m,
+        short_narrow.block_n,
+        short_narrow.num_warps,
+        short_narrow.num_stages,
+    ) == (64, 64, 4, 2)
+    assert (longer.block_m, longer.block_n) == (64, 64)
+    assert (smaller_head.block_m, smaller_head.block_n) == (64, 128)
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
