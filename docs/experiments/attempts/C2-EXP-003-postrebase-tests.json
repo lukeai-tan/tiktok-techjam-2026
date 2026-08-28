@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C2-EXP-003-POSTREBASE-TESTS",
+    "hypothesis": "All tests and curated-evidence invariants pass after the EXP-003 rebaseline",
+    "scope": "Complete repository pytest suite at rebaselined integrated commit",
+    "parent_commit": "51196ad",
+    "candidate_commit": "c81a4956e20185b8bb840ac7c99d4e44aaba83fb",
+    "branch": "feat/transformer-gpu-kernel-implementation",
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "tests/test_dispatch.py"
+    ],
+    "rollback": "Revert integrated candidate commit 085d6bc and curated rebaseline commits",
+    "decision": "rework",
+    "decision_rationale": "The rebaselined suite left one stale held-out geomean assertion (expected 1.221 vs measured 1.228) and exposed a Windows cp1252 UnicodeEncodeError in the logger tee thread; update the assertion, harden tee encoding, and rerun.",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T01:19:29.114822+00:00",
+    "ended_at_utc": "2026-08-28T01:19:36.565761+00:00",
+    "wall_time_seconds": 7.45151919987984,
+    "timeout_seconds": 600.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "........................................................................ [ 71%]\n........................F....                                            [100%]\n================================== FAILURES ===================================\n______________ test_curated_matrix_is_complete_green_and_current ______________\n\n    def test_curated_matrix_is_complete_green_and_current():\n        matrix = _load(MATRIX_PATH)\n        current_fingerprint, current_paths = implementation_fingerprint()\n        captured_git = matrix[\"environment\"][\"git\"]\n        assert captured_git[\"implementation_sha256\"] == current_fingerprint\n        assert captured_git[\"implementation_fingerprint_schema\"] == 2\n        assert \"implementation_fingerprint_migrated_from_sha256\" not in captured_git\n        assert captured_git[\"implementation_paths\"] == current_paths\n        assert matrix[\"manifest\"][\"path\"] == \"benchmarks/official_shapes.json\"\n        assert Path(matrix[\"environment\"][\"python\"][\"executable\"]).stem == \"python\"\n        assert matrix[\"environment\"][\"disk\"][\"path\"] == \".\"\n        assert matrix[\"manifest\"][\"status\"] == \"provisional\"\n        assert matrix[\"summary\"] == {\n            \"requested\": 7,\n            \"completed\": 7,\n            \"counts\": {\"ERROR\": 0, \"FAIL\": 0, \"OOM\": 0, \"PASS\": 7},\n        }\n    \n        speedups = []\n        total_failed = 0\n        for result in matrix[\"results\"]:\n            assert result[\"status\"] == \"PASS\"\n            assert len(result[\"accuracy\"][\"trials\"]) == 5\n            total_failed += sum(\n                trial[\"failed_elements\"] for trial in result[\"accuracy\"][\"trials\"]\n            )\n            timing = result[\"timing\"]\n            assert len(timing[\"baseline\"][\"raw_ms\"]) == 90\n            assert len(timing[\"optimized\"][\"raw_ms\"]) == 90\n            selected = \"sdpa\" if result[\"case_id\"] in SDPA_CASES else \"triton\"\n            other = \"triton\" if selected == \"sdpa\" else \"sdpa\"\n            assert timing[\"backend_counts\"][selected] > 0\n            assert timing[\"backend_counts\"][other] == 0\n            assert timing[\"backend_counts\"][\"reference\"] == 0\n            assert result[\"peak_memory\"][\"baseline\"] is not None\n            assert result[\"peak_memory\"][\"optimized\"] is not None\n            speedups.append(timing[\"speedup_median\"])\n        assert total_failed == 0\n>       assert statistics.geometric_mean(speedups) == pytest.approx(1.221, abs=0.001)\nE       assert 1.2282770410607757 == 1.221 \ufffd 0.001\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T01:19:29.035971+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "git": {
+      "commit": "c81a4956e20185b8bb840ac7c99d4e44aaba83fb",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445393055744
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T01:19:36.607814+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "git": {
+      "commit": "c81a4956e20185b8bb840ac7c99d4e44aaba83fb",
+      "dirty": false,
+      "changed_path_count": 0,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "8eb7d21551ab69e83f532deaeefb2ce1999dc3e198f48a8d4be5753ad2c93a8a",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 445393158144
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "dfe2c3db28f1cdaed5bf4af094fafa13d1bcee3e3ab2ba5dcabeee61f5f79712"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

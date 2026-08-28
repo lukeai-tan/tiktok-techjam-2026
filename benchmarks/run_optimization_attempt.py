@@ -329,7 +329,12 @@ def _pump_stream(stream: TextIO, sink: TextIO, chunks: list[str], tee: bool) -> 
         for chunk in iter(stream.readline, ""):
             chunks.append(chunk)
             if tee:
-                sink.write(chunk)
+                try:
+                    sink.write(chunk)
+                except UnicodeEncodeError:
+                    encoding = getattr(sink, "encoding", None) or "utf-8"
+                    safe_chunk = chunk.encode(encoding, errors="replace").decode(encoding)
+                    sink.write(safe_chunk)
                 sink.flush()
     finally:
         stream.close()

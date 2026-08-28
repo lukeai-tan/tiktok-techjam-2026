@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 import json
 import subprocess
 import sys
@@ -10,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from benchmarks.run_optimization_attempt import (
+    _pump_stream,
     load_result_artifact,
     portable_command,
     run_logged_command,
@@ -159,6 +161,18 @@ def test_failed_command_is_captured_instead_of_disappearing():
     assert result["wall_time_seconds"] >= 0
     assert "logged stdout" in result["stdout"]
     assert "logged stderr" in result["stderr"]
+
+
+def test_live_tee_replaces_characters_unsupported_by_console_encoding():
+    raw_sink = io.BytesIO()
+    sink = io.TextIOWrapper(raw_sink, encoding="ascii", errors="strict")
+    chunks: list[str] = []
+
+    _pump_stream(io.StringIO("before \ufffd after\n"), sink, chunks, tee=True)
+    sink.flush()
+
+    assert chunks == ["before \ufffd after\n"]
+    assert raw_sink.getvalue().decode("ascii") == "before ? after\n"
 
 
 def test_timed_out_command_is_captured():
