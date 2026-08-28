@@ -96,9 +96,10 @@ missing or invalid artifacts remain in the ledger.
 | --- | --- | --- | ---: | --- | --- |
 | C3-PREFLIGHT-001-WORKFLOW | Campaign workflow is mechanically complete | workflow validator | 0.049 s | 0 errors; 0 warnings | keep |
 | C3-PREFLIGHT-002-BASELINE | Accepted baseline remains source/evidence current | focused integrity tests | 3.388 s | 33/33 passed; fingerprint unchanged | keep |
+| C3-PREFLIGHT-003-PROFILE-MANIFEST | Row 9 is an exact versioned profile case | focused manifest test | 1.381 s | 1/1 passed; dimensions match final row 9 | keep |
 
-Campaign 3 currently contains two passing attempt records and zero failed
-commands. Recorded child-command wall time totals 3.437 seconds; orchestration,
+Campaign 3 currently contains three passing attempt records and zero failed
+commands. Recorded child-command wall time totals 4.818 seconds; orchestration,
 documentation, commits, and review time are excluded.
 
 ## Source-of-truth impact

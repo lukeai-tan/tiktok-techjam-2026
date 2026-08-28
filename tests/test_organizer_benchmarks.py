@@ -303,7 +303,7 @@ def test_final_profile_subset_matches_final_evaluator_rows():
     final_by_row = {case["source_row"]: case for case in final_cases}
     profile = json.loads(FINAL_PROFILE_MATRIX.read_text(encoding="utf-8"))
 
-    assert [case["source_row"] for case in profile["cases"]] == [1, 10, 13]
+    assert [case["source_row"] for case in profile["cases"]] == [1, 9, 10, 13]
     for profile_case in profile["cases"]:
         final_case = final_by_row[profile_case["source_row"]]
         assert profile_case["id"] == final_case["id"]
