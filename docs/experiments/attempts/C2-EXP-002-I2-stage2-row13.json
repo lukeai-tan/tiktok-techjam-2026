@@ -2,11 +2,11 @@
   "schema_version": 1,
   "record_status": "RECORDED",
   "attempt": {
-    "id": "C2-EXP-002-I2-FAST",
+    "id": "C2-EXP-002-I2-ROW13",
     "hypothesis": "Long head_dim=32 attention improves when pipeline stages drop from 3 to 2 without changing tile geometry",
-    "scope": "Focused dispatch and launch-policy regression tests",
+    "scope": "Official final row 13 single-case correctness and performance screen",
     "parent_commit": "69f3921",
-    "candidate_commit": "f4bbf7d5bd4b871bbd9475014e99e57c2338f4f0",
+    "candidate_commit": "dab582af7cdf243704da4ac4dfdfc001bc482807",
     "branch": "exp/c2-long-h32-stage2",
     "changed_paths": [
       "transformer_opt/config.py",
@@ -14,40 +14,46 @@
     ],
     "rollback": "Drop candidate commit f4bbf7d and restore the parent three-stage policy",
     "decision": "reject",
-    "decision_rationale": "Structural gate passed, but the paired row-13 screen measured 17.9966 ms versus the 17.6598 ms logged baseline, so this stage-only policy is rejected.",
+    "decision_rationale": "Correctness passed with 0/41943040 failed elements, but optimized median latency regressed from the 17.6598 ms baseline to 17.9966 ms and speedup fell from 4.790x to 4.701x.",
     "review_status": "not_required"
   },
   "execution": {
     "command": [
       "python.exe",
-      "-m",
-      "pytest",
-      "tests/test_dispatch.py",
-      "-q"
+      "benchmarks/run_organizer_validation.py",
+      "--matrix",
+      "benchmarks/final_evaluator_shapes.json",
+      "--case",
+      "final-13-b64-d128-h4-s1024",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c2-exp002-i2-stage2-row13.json"
     ],
     "cwd": ".",
-    "started_at_utc": "2026-08-28T00:25:32.361636+00:00",
-    "ended_at_utc": "2026-08-28T00:25:34.105626+00:00",
-    "wall_time_seconds": 1.743983200052753,
-    "timeout_seconds": 120.0,
+    "started_at_utc": "2026-08-28T00:25:51.399487+00:00",
+    "ended_at_utc": "2026-08-28T00:25:57.993347+00:00",
+    "wall_time_seconds": 6.594659800175577,
+    "timeout_seconds": 180.0,
     "timed_out": false,
     "status": "PASS",
     "return_code": 0,
     "launch_error": null,
-    "stdout": "................                                                         [100%]\n16 passed in 1.36s\n",
+    "stdout": "[01/01] final-13-b64-d128-h4-s1024: running\n[01/01] final-13-b64-d128-h4-s1024: PASS max_abs=0.00114191\n\n| case | dtype | status | max abs | speedup | backends |\n| --- | --- | --- | ---: | ---: | --- |\n| final-13-b64-d128-h4-s1024 | float32 | PASS | 0.00114191 | 4.701x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\naggregate: 1/1 executable PASS, 0 resource skip, 0/41943040 failed elements\ngeomean speedup=4.701x\nsaved docs\\results\\rtx-5070-ti-2026-08-28-c2-exp002-i2-stage2-row13.json\n",
     "stderr": ""
   },
   "environment_before": {
-    "captured_at_utc": "2026-08-28T00:25:32.266463+00:00",
+    "captured_at_utc": "2026-08-28T00:25:51.314377+00:00",
     "command": [
       "python.exe",
-      "-m",
-      "pytest",
-      "tests/test_dispatch.py",
-      "-q"
+      "benchmarks/run_organizer_validation.py",
+      "--matrix",
+      "benchmarks/final_evaluator_shapes.json",
+      "--case",
+      "final-13-b64-d128-h4-s1024",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c2-exp002-i2-stage2-row13.json"
     ],
     "git": {
-      "commit": "f4bbf7d5bd4b871bbd9475014e99e57c2338f4f0",
+      "commit": "dab582af7cdf243704da4ac4dfdfc001bc482807",
       "dirty": false,
       "changed_path_count": 0,
       "implementation_fingerprint_schema": 2,
@@ -87,7 +93,7 @@
     "disk": {
       "path": ".",
       "total_bytes": 999125151744,
-      "free_bytes": 445428817920
+      "free_bytes": 445425201152
     },
     "framework": {
       "torch": "2.13.0+cu130",
@@ -111,18 +117,21 @@
     }
   },
   "environment_after": {
-    "captured_at_utc": "2026-08-28T00:25:34.146626+00:00",
+    "captured_at_utc": "2026-08-28T00:25:58.035844+00:00",
     "command": [
       "python.exe",
-      "-m",
-      "pytest",
-      "tests/test_dispatch.py",
-      "-q"
+      "benchmarks/run_organizer_validation.py",
+      "--matrix",
+      "benchmarks/final_evaluator_shapes.json",
+      "--case",
+      "final-13-b64-d128-h4-s1024",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c2-exp002-i2-stage2-row13.json"
     ],
     "git": {
-      "commit": "f4bbf7d5bd4b871bbd9475014e99e57c2338f4f0",
-      "dirty": false,
-      "changed_path_count": 0,
+      "commit": "dab582af7cdf243704da4ac4dfdfc001bc482807",
+      "dirty": true,
+      "changed_path_count": 1,
       "implementation_fingerprint_schema": 2,
       "implementation_sha256": "1fdbccd090dbfa9aa5b7ed22ca2773b751d07239d0e2b52fcb627e655b3a255a",
       "implementation_paths": [
@@ -160,7 +169,7 @@
     "disk": {
       "path": ".",
       "total_bytes": 999125151744,
-      "free_bytes": 445428752384
+      "free_bytes": 445423968256
     },
     "framework": {
       "torch": "2.13.0+cu130",
@@ -188,9 +197,82 @@
     "sha256": "fd4c7d9e20e5abc35a0d62f49be298af695ee943f42ed0a48ad62079eb7a8284"
   },
   "result_artifact": {
-    "path": null,
-    "expected": false,
-    "exists": false
+    "path": "docs/results/rtx-5070-ti-2026-08-28-c2-exp002-i2-stage2-row13.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 7928,
+    "sha256": "a28db30d7c45a437d59b9b9e1402ef3770762374eac4034f8d00bb015efa6a2d",
+    "schema_version": 1,
+    "created_at_utc": "2026-08-28T00:25:57.851808+00:00"
   },
-  "metrics": null
+  "metrics": {
+    "kind": "organizer_validation",
+    "status": "PASS",
+    "correctness": {
+      "requested": 1,
+      "executable": 1,
+      "passed": 1,
+      "skipped_resource": 0,
+      "skipped_counted_as_pass": false,
+      "all_executable_passed": true,
+      "counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "OOM": 0,
+        "PASS": 1,
+        "SKIPPED_RESOURCE": 0
+      },
+      "total_compared_elements": 41943040,
+      "total_failed_elements": 0,
+      "max_abs_error": 0.00114191,
+      "max_relative_error": 3080.38,
+      "accuracy_trials": 5,
+      "accuracy_trials_per_case": 5
+    },
+    "performance": {
+      "geometric_mean_speedup": 4.701,
+      "total_case_duration_seconds": 5.390908400062472,
+      "per_case": [
+        {
+          "case_id": "final-13-b64-d128-h4-s1024",
+          "status": "PASS",
+          "duration_seconds": 5.390908400062472,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00114191,
+            "max_relative_error": 3080.38,
+            "failed_elements": 0,
+            "total_elements": 41943040
+          },
+          "baseline": {
+            "median_ms": 84.596,
+            "mean_ms": 84.6076,
+            "p90_ms": 84.6901,
+            "min_ms": 84.4532,
+            "tokens_per_second": 774693.55
+          },
+          "optimized": {
+            "median_ms": 17.9966,
+            "mean_ms": 18.0109,
+            "p90_ms": 18.0418,
+            "min_ms": 17.976,
+            "tokens_per_second": 3641571.89
+          },
+          "speedup_median": 4.701,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        }
+      ]
+    },
+    "attention_backend_counts": {
+      "triton": 112,
+      "sdpa": 0,
+      "reference": 0
+    },
+    "memory": null,
+    "profiler": null
+  }
 }
