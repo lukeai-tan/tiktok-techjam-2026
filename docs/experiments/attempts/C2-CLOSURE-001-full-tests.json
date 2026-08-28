@@ -17,7 +17,7 @@
     "rollback": "Revert commit 9c5067e",
     "decision": "keep",
     "decision_rationale": "The complete post-review suite passed 103 tests with zero failures in 6.86 seconds; 14 warnings are upstream PyTorch deprecations already tracked by the project.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [

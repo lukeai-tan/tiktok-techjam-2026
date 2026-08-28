@@ -15,7 +15,7 @@
     "rollback": "Revert portable_output and its regression test",
     "decision": "keep",
     "decision_rationale": "All 18 focused logger and curated-result tests passed; persisted stdout, stderr, and exception text now remove repository and home-directory prefixes.",
-    "review_status": "pending"
+    "review_status": "approved"
   },
   "execution": {
     "command": [
