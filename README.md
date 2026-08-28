@@ -222,7 +222,7 @@ docs/
   TECH_REPORT.md                      measured technical report
   TRACK3_COMPLIANCE.md                brief-to-evidence audit and external holds
   results/                            curated raw evidence
-notebooks/colab_benchmark.ipynb       fail-closed Colab reproduction workflow
+notebooks/colab_benchmark.ipynb       fingerprint-pinned full-suite Colab workflow
 DEMO_RUNBOOK.md                       public walkthrough sequence
 ~~~
 
@@ -253,7 +253,7 @@ verified names and responsibilities here and on Devpost before submission.
 The repo-local submission entry is selected at the fingerprint above. It passes
 all 13 executable final rows, both project-held-out confirmations, the untouched
 organizer default, all 28 feasible source-derived organizer validation cases,
-and the complete 115-test CPU/GPU suite. The immutable validation artifacts were
+and the complete 117-test CPU/GPU suite. The immutable validation artifacts were
 captured before Git packaging and therefore record a dirty local candidate;
 committing or pushing this checkpoint does not relabel those measurements as a
 clean run. Organizer policy clarification and YouTube/Devpost steps remain

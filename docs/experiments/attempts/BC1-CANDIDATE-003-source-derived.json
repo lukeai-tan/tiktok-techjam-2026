@@ -1,0 +1,879 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "BC1-CANDIDATE-003-SOURCE-DERIVED",
+    "hypothesis": "The older SDPA branch preserves accuracy across all feasible dtype, shape, mask, and causal cases derived from the supplied organizer contracts",
+    "scope": "Complete 29-entry source-derived organizer validation matrix with exact authorized resource skip",
+    "parent_commit": "651fe8ee9a19a36d8d36c4135c525161114f7cae",
+    "candidate_commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+    "branch": null,
+    "changed_paths": [
+      "torch_transformer_benchmark.py"
+    ],
+    "rollback": "Synthetic evaluation worktree only; retain every failing and unobservable case",
+    "decision": "observation",
+    "decision_rationale": "Measure candidate breadth before the matching flagship source-derived run",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "benchmarks\\run_organizer_validation.py",
+      "--device",
+      "cuda",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-28-branchfix-candidate-source-derived.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T11:45:59.830948+00:00",
+    "ended_at_utc": "2026-08-28T11:47:00.977253+00:00",
+    "wall_time_seconds": 61.14585510012694,
+    "timeout_seconds": 1800.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "[01/29] pytorch-default-fp32: running\n[01/29] pytorch-default-fp32: ERROR max_abs=0.000710778\n[02/29] pytorch-default-causal-fp32: running\n[02/29] pytorch-default-causal-fp32: ERROR max_abs=0.00118431\n[03/29] pytorch-default-padding-fp32: running\n[03/29] pytorch-default-padding-fp32: ERROR max_abs=0.000712216\n[04/29] pytorch-default-causal-padding-fp32: running\n[04/29] pytorch-default-causal-padding-fp32: ERROR max_abs=0.00118431\n[05/29] pytorch-default-fp16: running\n[05/29] pytorch-default-fp16: FAIL max_abs=0.0078125\n[06/29] pytorch-default-bf16: running\n[06/29] pytorch-default-bf16: FAIL max_abs=0.0625\n[07/29] tf-01-b1-d128-h4-s32-float32: running\n[07/29] tf-01-b1-d128-h4-s32-float32: ERROR max_abs=0.000694662\n[08/29] tf-01-b1-d128-h4-s32-float16: running\n[08/29] tf-01-b1-d128-h4-s32-float16: FAIL max_abs=0.00585938\n[09/29] tf-02-b4-d128-h4-s32-float32: running\n[09/29] tf-02-b4-d128-h4-s32-float32: ERROR max_abs=0.000737503\n[10/29] tf-02-b4-d128-h4-s32-float16: running\n[10/29] tf-02-b4-d128-h4-s32-float16: FAIL max_abs=0.0078125\n[11/29] tf-03-b16-d128-h4-s32-float32: running\n[11/29] tf-03-b16-d128-h4-s32-float32: ERROR max_abs=0.000868082\n[12/29] tf-03-b16-d128-h4-s32-float16: running\n[12/29] tf-03-b16-d128-h4-s32-float16: FAIL max_abs=0.0078125\n[13/29] tf-04-b128-d128-h4-s32-float32: running\n[13/29] tf-04-b128-d128-h4-s32-float32: ERROR max_abs=0.000868082\n[14/29] tf-04-b128-d128-h4-s32-float16: running\n[14/29] tf-04-b128-d128-h4-s32-float16: FAIL max_abs=0.0078125\n[15/29] tf-05-b10000-d128-h4-s32-float32: running\n[15/29] tf-05-b10000-d128-h4-s32-float32: ERROR max_abs=0.00107181\n[16/29] tf-05-b10000-d128-h4-s32-float16: running\n[16/29] tf-05-b10000-d128-h4-s32-float16: FAIL max_abs=0.00976562\n[17/29] tf-06-b16-d32-h4-s32-float32: running\n[17/29] tf-06-b16-d32-h4-s32-float32: ERROR max_abs=0.000756189\n[18/29] tf-06-b16-d32-h4-s32-float16: running\n[18/29] tf-06-b16-d32-h4-s32-float16: FAIL max_abs=0.00585938\n[19/29] tf-07-b16-d1024-h4-s32-float32: running\n[19/29] tf-07-b16-d1024-h4-s32-float32: ERROR max_abs=0.000855446\n[20/29] tf-07-b16-d1024-h4-s32-float16: running\n[20/29] tf-07-b16-d1024-h4-s32-float16: FAIL max_abs=0.0117188\n[21/29] tf-08-b16-d128-h1-s32-float32: running\n[21/29] tf-08-b16-d128-h1-s32-float32: ERROR max_abs=0.000819921\n[22/29] tf-08-b16-d128-h1-s32-float16: running\n[22/29] tf-08-b16-d128-h1-s32-float16: FAIL max_abs=0.0078125\n[23/29] tf-09-b16-d128-h2-s32-float32: running\n[23/29] tf-09-b16-d128-h2-s32-float32: ERROR max_abs=0.000850573\n[24/29] tf-09-b16-d128-h2-s32-float16: running\n[24/29] tf-09-b16-d128-h2-s32-float16: FAIL max_abs=0.0078125\n[25/29] tf-10-b16-d128-h16-s32-float32: running\n[25/29] tf-10-b16-d128-h16-s32-float32: ERROR max_abs=0.000849664\n[26/29] tf-10-b16-d128-h16-s32-float16: running\n[26/29] tf-10-b16-d128-h16-s32-float16: FAIL max_abs=0.00585938\n[27/29] tf-11-b16-d128-h4-s1024-float32: running\n[27/29] tf-11-b16-d128-h4-s1024-float32: ERROR max_abs=0.000885665\n[28/29] tf-11-b16-d128-h4-s1024-float16: running\n[28/29] tf-11-b16-d128-h4-s1024-float16: FAIL max_abs=0.0078125\n[29/29] tf-12-b32-d1024-h16-s100000-resource-skip: SKIPPED_RESOURCE (source-authorized preflight)\n\n| case | dtype | status | max abs | speedup | backends |\n| --- | --- | --- | ---: | ---: | --- |\n| pytorch-default-fp32 | float32 | ERROR | 0.000710778 | 1.317x | - |\n| pytorch-default-causal-fp32 | float32 | ERROR | 0.00118431 | 1.278x | - |\n| pytorch-default-padding-fp32 | float32 | ERROR | 0.000712216 | 1.167x | - |\n| pytorch-default-causal-padding-fp32 | float32 | ERROR | 0.00118431 | 1.322x | - |\n| pytorch-default-fp16 | float16 | FAIL | 0.0078125 | - | - |\n| pytorch-default-bf16 | bfloat16 | FAIL | 0.0625 | - | - |\n| tf-01-b1-d128-h4-s32-float32 | float32 | ERROR | 0.000694662 | 1.446x | - |\n| tf-01-b1-d128-h4-s32-float16 | float16 | FAIL | 0.00585938 | - | - |\n| tf-02-b4-d128-h4-s32-float32 | float32 | ERROR | 0.000737503 | 1.372x | - |\n| tf-02-b4-d128-h4-s32-float16 | float16 | FAIL | 0.0078125 | - | - |\n| tf-03-b16-d128-h4-s32-float32 | float32 | ERROR | 0.000868082 | 1.818x | - |\n| tf-03-b16-d128-h4-s32-float16 | float16 | FAIL | 0.0078125 | - | - |\n| tf-04-b128-d128-h4-s32-float32 | float32 | ERROR | 0.000868082 | 1.623x | - |\n| tf-04-b128-d128-h4-s32-float16 | float16 | FAIL | 0.0078125 | - | - |\n| tf-05-b10000-d128-h4-s32-float32 | float32 | ERROR | 0.00107181 | 1.304x | - |\n| tf-05-b10000-d128-h4-s32-float16 | float16 | FAIL | 0.00976562 | - | - |\n| tf-06-b16-d32-h4-s32-float32 | float32 | ERROR | 0.000756189 | 1.477x | - |\n| tf-06-b16-d32-h4-s32-float16 | float16 | FAIL | 0.00585938 | - | - |\n| tf-07-b16-d1024-h4-s32-float32 | float32 | ERROR | 0.000855446 | 1.078x | - |\n| tf-07-b16-d1024-h4-s32-float16 | float16 | FAIL | 0.0117188 | - | - |\n| tf-08-b16-d128-h1-s32-float32 | float32 | ERROR | 0.000819921 | 1.301x | - |\n| tf-08-b16-d128-h1-s32-float16 | float16 | FAIL | 0.0078125 | - | - |\n| tf-09-b16-d128-h2-s32-float32 | float32 | ERROR | 0.000850573 | 1.579x | - |\n| tf-09-b16-d128-h2-s32-float16 | float16 | FAIL | 0.0078125 | - | - |\n| tf-10-b16-d128-h16-s32-float32 | float32 | ERROR | 0.000849664 | 1.687x | - |\n| tf-10-b16-d128-h16-s32-float16 | float16 | FAIL | 0.00585938 | - | - |\n| tf-11-b16-d128-h4-s1024-float32 | float32 | ERROR | 0.000885665 | 2.914x | - |\n| tf-11-b16-d128-h4-s1024-float16 | float16 | FAIL | 0.0078125 | - | - |\n| tf-12-b32-d1024-h16-s100000-resource-skip | float16 | SKIPPED_RESOURCE | - | - | - |\naggregate: 0/28 executable PASS, 1 resource skip, 1008926/459776000 failed elements\nsaved docs\\results\\rtx-5070-ti-2026-08-28-branchfix-candidate-source-derived.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T11:45:59.741806+00:00",
+    "command": [
+      "python.exe",
+      "benchmarks\\run_organizer_validation.py",
+      "--device",
+      "cuda",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-28-branchfix-candidate-source-derived.json"
+    ],
+    "git": {
+      "commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+      "dirty": true,
+      "changed_path_count": 7,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "20c3c74144c0b1b6b095e82f2af51f53b51f232ffd6fc891abf2442bcd689354",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/triton_impl.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438503198720
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T11:47:01.023156+00:00",
+    "command": [
+      "python.exe",
+      "benchmarks\\run_organizer_validation.py",
+      "--device",
+      "cuda",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-28-branchfix-candidate-source-derived.json"
+    ],
+    "git": {
+      "commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+      "dirty": true,
+      "changed_path_count": 8,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "20c3c74144c0b1b6b095e82f2af51f53b51f232ffd6fc891abf2442bcd689354",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/triton_impl.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438488612864
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "b5de3aefb1e6a1fc048671564e265e0cdac8dfbc984949d1ef78790b2c4dbfbf"
+  },
+  "result_artifact": {
+    "path": "docs/results/rtx-5070-ti-2026-08-28-branchfix-candidate-source-derived.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 109564,
+    "sha256": "2d913c00c623395a6b1fb923d4045923cafd1ce09f3357d805c25e33abfbcfb2",
+    "schema_version": 1,
+    "created_at_utc": "2026-08-28T11:47:00.807950+00:00"
+  },
+  "metrics": {
+    "kind": "organizer_validation",
+    "status": "FAIL",
+    "correctness": {
+      "requested": 29,
+      "executable": 28,
+      "passed": 0,
+      "skipped_resource": 1,
+      "skipped_counted_as_pass": false,
+      "all_executable_passed": false,
+      "counts": {
+        "ERROR": 15,
+        "FAIL": 13,
+        "OOM": 0,
+        "PASS": 0,
+        "SKIPPED_RESOURCE": 1
+      },
+      "total_compared_elements": 459776000,
+      "total_failed_elements": 1008926,
+      "max_abs_error": 0.0625,
+      "max_relative_error": 692844000.0,
+      "accuracy_trials": 140,
+      "accuracy_trials_per_case": 5
+    },
+    "performance": {
+      "geometric_mean_speedup": null,
+      "total_case_duration_seconds": 59.62935029924847,
+      "per_case": [
+        {
+          "case_id": "pytorch-default-fp32",
+          "status": "ERROR",
+          "duration_seconds": 2.0107372999191284,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000710778,
+            "max_relative_error": 19462.0,
+            "failed_elements": 0,
+            "total_elements": 2621440
+          },
+          "baseline": {
+            "median_ms": 2.0955,
+            "mean_ms": 2.225,
+            "p90_ms": 2.7592,
+            "min_ms": 1.8008,
+            "tokens_per_second": 488657.8
+          },
+          "optimized": {
+            "median_ms": 1.5912,
+            "mean_ms": 1.7241,
+            "p90_ms": 2.0196,
+            "min_ms": 1.4938,
+            "tokens_per_second": 643552.41
+          },
+          "speedup_median": 1.317,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "pytorch-default-causal-fp32",
+          "status": "ERROR",
+          "duration_seconds": 1.9654637000057846,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00118431,
+            "max_relative_error": 153.821,
+            "failed_elements": 0,
+            "total_elements": 2621440
+          },
+          "baseline": {
+            "median_ms": 2.1692,
+            "mean_ms": 2.3005,
+            "p90_ms": 2.8679,
+            "min_ms": 1.8851,
+            "tokens_per_second": 472052.99
+          },
+          "optimized": {
+            "median_ms": 1.6971,
+            "mean_ms": 1.7424,
+            "p90_ms": 1.9851,
+            "min_ms": 1.5031,
+            "tokens_per_second": 603369.45
+          },
+          "speedup_median": 1.278,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "pytorch-default-padding-fp32",
+          "status": "ERROR",
+          "duration_seconds": 1.9655957999639213,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000712216,
+            "max_relative_error": 292.433,
+            "failed_elements": 0,
+            "total_elements": 2621440
+          },
+          "baseline": {
+            "median_ms": 1.9051,
+            "mean_ms": 2.0188,
+            "p90_ms": 2.3433,
+            "min_ms": 1.7335,
+            "tokens_per_second": 537517.01
+          },
+          "optimized": {
+            "median_ms": 1.6331,
+            "mean_ms": 1.6788,
+            "p90_ms": 1.9296,
+            "min_ms": 1.5009,
+            "tokens_per_second": 627045.25
+          },
+          "speedup_median": 1.167,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "pytorch-default-causal-padding-fp32",
+          "status": "ERROR",
+          "duration_seconds": 1.98052869993262,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00118431,
+            "max_relative_error": 153.821,
+            "failed_elements": 0,
+            "total_elements": 2621440
+          },
+          "baseline": {
+            "median_ms": 2.1702,
+            "mean_ms": 2.2715,
+            "p90_ms": 2.6428,
+            "min_ms": 1.9496,
+            "tokens_per_second": 471844.18
+          },
+          "optimized": {
+            "median_ms": 1.642,
+            "mean_ms": 1.7208,
+            "p90_ms": 2.0345,
+            "min_ms": 1.5092,
+            "tokens_per_second": 623623.65
+          },
+          "speedup_median": 1.322,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "pytorch-default-fp16",
+          "status": "FAIL",
+          "duration_seconds": 1.8776010998990387,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0078125,
+            "max_relative_error": 304.8,
+            "failed_elements": 3609,
+            "total_elements": 2621440
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "pytorch-default-bf16",
+          "status": "FAIL",
+          "duration_seconds": 1.9375858998391777,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0625,
+            "max_relative_error": 1786.8,
+            "failed_elements": 604560,
+            "total_elements": 2621440
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-01-b1-d128-h4-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.8536407998763025,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000694662,
+            "max_relative_error": 4.31565,
+            "failed_elements": 0,
+            "total_elements": 20480
+          },
+          "baseline": {
+            "median_ms": 1.9721,
+            "mean_ms": 2.0513,
+            "p90_ms": 2.3808,
+            "min_ms": 1.8056,
+            "tokens_per_second": 16226.52
+          },
+          "optimized": {
+            "median_ms": 1.3642,
+            "mean_ms": 1.4398,
+            "p90_ms": 1.6724,
+            "min_ms": 1.2691,
+            "tokens_per_second": 23457.38
+          },
+          "speedup_median": 1.446,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-01-b1-d128-h4-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.7887823998462409,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.00585938,
+            "max_relative_error": 4.80723,
+            "failed_elements": 34,
+            "total_elements": 20480
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-02-b4-d128-h4-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.8401284001301974,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000737503,
+            "max_relative_error": 1.9564,
+            "failed_elements": 0,
+            "total_elements": 81920
+          },
+          "baseline": {
+            "median_ms": 1.9337,
+            "mean_ms": 2.0742,
+            "p90_ms": 2.3968,
+            "min_ms": 1.8456,
+            "tokens_per_second": 66192.84
+          },
+          "optimized": {
+            "median_ms": 1.4091,
+            "mean_ms": 1.4429,
+            "p90_ms": 1.709,
+            "min_ms": 1.1559,
+            "tokens_per_second": 90836.83
+          },
+          "speedup_median": 1.372,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-02-b4-d128-h4-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.7956776998471469,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0078125,
+            "max_relative_error": 40.6667,
+            "failed_elements": 194,
+            "total_elements": 81920
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-03-b16-d128-h4-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.871856200043112,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000868082,
+            "max_relative_error": 103.394,
+            "failed_elements": 0,
+            "total_elements": 327680
+          },
+          "baseline": {
+            "median_ms": 2.4159,
+            "mean_ms": 2.3439,
+            "p90_ms": 2.8429,
+            "min_ms": 1.7514,
+            "tokens_per_second": 211927.55
+          },
+          "optimized": {
+            "median_ms": 1.329,
+            "mean_ms": 1.4851,
+            "p90_ms": 1.9879,
+            "min_ms": 1.1076,
+            "tokens_per_second": 385263.66
+          },
+          "speedup_median": 1.818,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-03-b16-d128-h4-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.8377979998476803,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0078125,
+            "max_relative_error": 85.7324,
+            "failed_elements": 903,
+            "total_elements": 327680
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-04-b128-d128-h4-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.8480531999375671,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000868082,
+            "max_relative_error": 3064.38,
+            "failed_elements": 0,
+            "total_elements": 2621440
+          },
+          "baseline": {
+            "median_ms": 1.8283,
+            "mean_ms": 1.8699,
+            "p90_ms": 2.0834,
+            "min_ms": 1.6348,
+            "tokens_per_second": 2240308.01
+          },
+          "optimized": {
+            "median_ms": 1.1268,
+            "mean_ms": 1.1592,
+            "p90_ms": 1.43,
+            "min_ms": 0.9737,
+            "tokens_per_second": 3635124.3
+          },
+          "speedup_median": 1.623,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-04-b128-d128-h4-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.825983599992469,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0078125,
+            "max_relative_error": 870.714,
+            "failed_elements": 6566,
+            "total_elements": 2621440
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-05-b10000-d128-h4-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 6.841790100093931,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00107181,
+            "max_relative_error": 20124.6,
+            "failed_elements": 0,
+            "total_elements": 204800000
+          },
+          "baseline": {
+            "median_ms": 102.4539,
+            "mean_ms": 101.3123,
+            "p90_ms": 103.0794,
+            "min_ms": 94.8818,
+            "tokens_per_second": 3123355.75
+          },
+          "optimized": {
+            "median_ms": 78.5583,
+            "mean_ms": 78.0794,
+            "p90_ms": 79.1385,
+            "min_ms": 72.3228,
+            "tokens_per_second": 4073409.48
+          },
+          "speedup_median": 1.304,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-05-b10000-d128-h4-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 2.321617799811065,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.00976562,
+            "max_relative_error": 692844000.0,
+            "failed_elements": 373922,
+            "total_elements": 204800000
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-06-b16-d32-h4-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.8322519999928772,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000756189,
+            "max_relative_error": 38.1836,
+            "failed_elements": 0,
+            "total_elements": 81920
+          },
+          "baseline": {
+            "median_ms": 2.1592,
+            "mean_ms": 2.1652,
+            "p90_ms": 2.3878,
+            "min_ms": 1.9085,
+            "tokens_per_second": 237124.87
+          },
+          "optimized": {
+            "median_ms": 1.4619,
+            "mean_ms": 1.5426,
+            "p90_ms": 1.8622,
+            "min_ms": 1.2796,
+            "tokens_per_second": 350220.53
+          },
+          "speedup_median": 1.477,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-06-b16-d32-h4-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.7551464000716805,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.00585938,
+            "max_relative_error": 12.8504,
+            "failed_elements": 268,
+            "total_elements": 81920
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-07-b16-d1024-h4-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 2.4530656000133604,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000855446,
+            "max_relative_error": 1401.46,
+            "failed_elements": 0,
+            "total_elements": 2621440
+          },
+          "baseline": {
+            "median_ms": 2.7535,
+            "mean_ms": 2.8438,
+            "p90_ms": 3.3105,
+            "min_ms": 2.4616,
+            "tokens_per_second": 185942.73
+          },
+          "optimized": {
+            "median_ms": 2.5547,
+            "mean_ms": 2.6008,
+            "p90_ms": 2.8921,
+            "min_ms": 2.2995,
+            "tokens_per_second": 200413.35
+          },
+          "speedup_median": 1.078,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-07-b16-d1024-h4-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 2.3169532001484185,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0117188,
+            "max_relative_error": 4613.0,
+            "failed_elements": 9091,
+            "total_elements": 2621440
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-08-b16-d128-h1-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.8407527999952435,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000819921,
+            "max_relative_error": 9.66449,
+            "failed_elements": 0,
+            "total_elements": 327680
+          },
+          "baseline": {
+            "median_ms": 1.5777,
+            "mean_ms": 1.6164,
+            "p90_ms": 1.8698,
+            "min_ms": 1.3084,
+            "tokens_per_second": 324513.99
+          },
+          "optimized": {
+            "median_ms": 1.2127,
+            "mean_ms": 1.2785,
+            "p90_ms": 1.542,
+            "min_ms": 1.0682,
+            "tokens_per_second": 422191.45
+          },
+          "speedup_median": 1.301,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-08-b16-d128-h1-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.7903017001226544,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0078125,
+            "max_relative_error": 48.6736,
+            "failed_elements": 832,
+            "total_elements": 327680
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-09-b16-d128-h2-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.8369690000545233,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000850573,
+            "max_relative_error": 130.069,
+            "failed_elements": 0,
+            "total_elements": 327680
+          },
+          "baseline": {
+            "median_ms": 1.8696,
+            "mean_ms": 1.8974,
+            "p90_ms": 2.0508,
+            "min_ms": 1.685,
+            "tokens_per_second": 273860.06
+          },
+          "optimized": {
+            "median_ms": 1.1839,
+            "mean_ms": 1.2298,
+            "p90_ms": 1.4257,
+            "min_ms": 1.0507,
+            "tokens_per_second": 432473.34
+          },
+          "speedup_median": 1.579,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-09-b16-d128-h2-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.891170399961993,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0078125,
+            "max_relative_error": 117.264,
+            "failed_elements": 843,
+            "total_elements": 327680
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-10-b16-d128-h16-s32-float32",
+          "status": "ERROR",
+          "duration_seconds": 1.8678794999141246,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000849664,
+            "max_relative_error": 64.6344,
+            "failed_elements": 0,
+            "total_elements": 327680
+          },
+          "baseline": {
+            "median_ms": 2.0156,
+            "mean_ms": 1.9947,
+            "p90_ms": 2.2201,
+            "min_ms": 1.5538,
+            "tokens_per_second": 254016.63
+          },
+          "optimized": {
+            "median_ms": 1.195,
+            "mean_ms": 1.2232,
+            "p90_ms": 1.4299,
+            "min_ms": 1.038,
+            "tokens_per_second": 428443.27
+          },
+          "speedup_median": 1.687,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-10-b16-d128-h16-s32-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.8080337999854237,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.00585938,
+            "max_relative_error": 535.0,
+            "failed_elements": 839,
+            "total_elements": 327680
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-11-b16-d128-h4-s1024-float32",
+          "status": "ERROR",
+          "duration_seconds": 2.785157799953595,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000885665,
+            "max_relative_error": 5245.0,
+            "failed_elements": 0,
+            "total_elements": 10485760
+          },
+          "baseline": {
+            "median_ms": 27.3006,
+            "mean_ms": 27.1056,
+            "p90_ms": 27.5487,
+            "min_ms": 26.3153,
+            "tokens_per_second": 600132.45
+          },
+          "optimized": {
+            "median_ms": 9.3694,
+            "mean_ms": 9.4024,
+            "p90_ms": 9.8828,
+            "min_ms": 8.8748,
+            "tokens_per_second": 1748675.65
+          },
+          "speedup_median": 2.914,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-11-b16-d128-h4-s1024-float16",
+          "status": "FAIL",
+          "duration_seconds": 1.8888274000491947,
+          "accuracy": {
+            "status": "FAIL",
+            "max_abs_error": 0.0078125,
+            "max_relative_error": 2701.0,
+            "failed_elements": 7265,
+            "total_elements": 10485760
+          },
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        },
+        {
+          "case_id": "tf-12-b32-d1024-h16-s100000-resource-skip",
+          "status": "SKIPPED_RESOURCE",
+          "duration_seconds": null,
+          "accuracy": null,
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        }
+      ]
+    },
+    "attention_backend_counts": {
+      "triton": 0,
+      "sdpa": 0,
+      "reference": 0
+    },
+    "memory": null,
+    "profiler": null
+  }
+}

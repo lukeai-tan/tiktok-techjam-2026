@@ -75,6 +75,14 @@ The Campaign 4 record maps every run to its final disposition. They are now
 historical optimization evidence for the same implementation fingerprint; the
 `submission-*` artifacts above are the fresh selection-validation evidence.
 
+`rtx-5070-ti-2026-08-28-branchfix-*.json` files and the matching `BC1-*`
+attempt records retain the fresh comparison between the selected flagship and
+`origin/fix/google-colab-accuracy-issue`. The candidate files use the current
+frozen harness in an isolated synthetic worktree; the `candidate-adapted-*`
+files add telemetry only and remain separately fingerprinted failed evidence.
+They are not substitutes for the selected-submission artifacts. See the
+[complete branch comparison](../experiments/BRANCH_IMPLEMENTATION_COMPARISON.md).
+
 ## Historical filename note
 
 The legacy `rtx-5070-ti-2026-08-27*.json` filenames were regenerated during

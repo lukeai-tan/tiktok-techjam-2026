@@ -1,0 +1,669 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "BC1-FLAGSHIP-002-FINAL",
+    "hypothesis": "The flagship clears every executable published final row and establishes the valid performance reference for the branch comparison",
+    "scope": "Complete 14-row organizer-published final matrix using the frozen comparator and exact resource skip",
+    "parent_commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+    "candidate_commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+    "branch": "feat/transformer-gpu-kernel-implementation",
+    "changed_paths": [],
+    "rollback": "Evidence-only run; no implementation change",
+    "decision": "observation",
+    "decision_rationale": "Measure the flagship before the candidate in this counterbalanced suite",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_organizer_validation.py",
+      "--matrix",
+      "benchmarks\\final_evaluator_shapes.json",
+      "--device",
+      "cuda",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-28-branchfix-flagship-final.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T11:43:01.559448+00:00",
+    "ended_at_utc": "2026-08-28T11:44:06.313334+00:00",
+    "wall_time_seconds": 64.75384629983455,
+    "timeout_seconds": 1800.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "[01/14] final-01-b64-d128-h4-s128: running\n[01/14] final-01-b64-d128-h4-s128: PASS max_abs=0.00114846\n[02/14] final-02-b1-d128-h4-s128: running\n[02/14] final-02-b1-d128-h4-s128: PASS max_abs=0.000717282\n[03/14] final-03-b4-d128-h4-s128: running\n[03/14] final-03-b4-d128-h4-s128: PASS max_abs=0.000993431\n[04/14] final-04-b16-d128-h4-s128: running\n[04/14] final-04-b16-d128-h4-s128: PASS max_abs=0.00114846\n[05/14] final-05-b128-d128-h4-s128: running\n[05/14] final-05-b128-d128-h4-s128: PASS max_abs=0.00114846\n[06/14] final-06-b10000-d128-h4-s128: running\n[06/14] final-06-b10000-d128-h4-s128: PASS max_abs=0\n[07/14] final-07-b64-d32-h4-s128: running\n[07/14] final-07-b64-d32-h4-s128: PASS max_abs=0\n[08/14] final-08-b64-d1024-h4-s128: running\n[08/14] final-08-b64-d1024-h4-s128: PASS max_abs=0\n[09/14] final-09-b64-d128-h1-s128: running\n[09/14] final-09-b64-d128-h1-s128: PASS max_abs=0.00106275\n[10/14] final-10-b64-d128-h2-s128: running\n[10/14] final-10-b64-d128-h2-s128: PASS max_abs=0.0010339\n[11/14] final-11-b64-d128-h16-s128: running\n[11/14] final-11-b64-d128-h16-s128: PASS max_abs=0.00106898\n[12/14] final-12-b64-d128-h4-s32: running\n[12/14] final-12-b64-d128-h4-s32: PASS max_abs=0.00114846\n[13/14] final-13-b64-d128-h4-s1024: running\n[13/14] final-13-b64-d128-h4-s1024: PASS max_abs=0.00114191\n[14/14] final-14-b32-d1024-h16-s100000-resource-skip: SKIPPED_RESOURCE (source-authorized preflight)\n\n| case | dtype | status | max abs | speedup | backends |\n| --- | --- | --- | ---: | ---: | --- |\n| final-01-b64-d128-h4-s128 | float32 | PASS | 0.00114846 | 1.743x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-02-b1-d128-h4-s128 | float32 | PASS | 0.000717282 | 1.806x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-03-b4-d128-h4-s128 | float32 | PASS | 0.000993431 | 1.860x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-04-b16-d128-h4-s128 | float32 | PASS | 0.00114846 | 1.733x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-05-b128-d128-h4-s128 | float32 | PASS | 0.00114846 | 1.631x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-06-b10000-d128-h4-s128 | float32 | PASS | 0.0 | 1.049x | {'triton': 0, 'sdpa': 0, 'reference': 112} |\n| final-07-b64-d32-h4-s128 | float32 | PASS | 0.0 | 1.094x | {'triton': 0, 'sdpa': 0, 'reference': 112} |\n| final-08-b64-d1024-h4-s128 | float32 | PASS | 0.0 | 0.999x | {'triton': 0, 'sdpa': 0, 'reference': 112} |\n| final-09-b64-d128-h1-s128 | float32 | PASS | 0.00106275 | 1.432x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-10-b64-d128-h2-s128 | float32 | PASS | 0.0010339 | 1.528x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-11-b64-d128-h16-s128 | float32 | PASS | 0.00106898 | 5.550x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-12-b64-d128-h4-s32 | float32 | PASS | 0.00114846 | 1.753x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-13-b64-d128-h4-s1024 | float32 | PASS | 0.00114191 | 4.922x | {'triton': 112, 'sdpa': 0, 'reference': 0} |\n| final-14-b32-d1024-h16-s100000-resource-skip | float32 | SKIPPED_RESOURCE | - | - | - |\naggregate: 13/13 executable PASS, 1 resource skip, 0/938885120 failed elements\ngeomean speedup=1.794x\nsaved docs\\results\\rtx-5070-ti-2026-08-28-branchfix-flagship-final.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T11:43:01.462884+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_organizer_validation.py",
+      "--matrix",
+      "benchmarks\\final_evaluator_shapes.json",
+      "--device",
+      "cuda",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-28-branchfix-flagship-final.json"
+    ],
+    "git": {
+      "commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+      "dirty": true,
+      "changed_path_count": 2,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438495477760
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T11:44:06.356977+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_organizer_validation.py",
+      "--matrix",
+      "benchmarks\\final_evaluator_shapes.json",
+      "--device",
+      "cuda",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-28-branchfix-flagship-final.json"
+    ],
+    "git": {
+      "commit": "b529b8356118a71ecb961280c533c0f9f863324f",
+      "dirty": true,
+      "changed_path_count": 3,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438517276672
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": "docs/results/rtx-5070-ti-2026-08-28-branchfix-flagship-final.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 52517,
+    "sha256": "5d4e184a038d5ab1793162b31e60f9302e320e348924b82afff519c83c76da27",
+    "schema_version": 1,
+    "created_at_utc": "2026-08-28T11:44:06.148063+00:00"
+  },
+  "metrics": {
+    "kind": "organizer_validation",
+    "status": "PASS",
+    "correctness": {
+      "requested": 14,
+      "executable": 13,
+      "passed": 13,
+      "skipped_resource": 1,
+      "skipped_counted_as_pass": false,
+      "all_executable_passed": true,
+      "counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "OOM": 0,
+        "PASS": 13,
+        "SKIPPED_RESOURCE": 1
+      },
+      "total_compared_elements": 938885120,
+      "total_failed_elements": 0,
+      "max_abs_error": 0.00114846,
+      "max_relative_error": 3080.38,
+      "accuracy_trials": 65,
+      "accuracy_trials_per_case": 5
+    },
+    "performance": {
+      "geometric_mean_speedup": 1.793596518804411,
+      "total_case_duration_seconds": 63.34547649999149,
+      "per_case": [
+        {
+          "case_id": "final-01-b64-d128-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 1.9573572999797761,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00114846,
+            "max_relative_error": 1053.44,
+            "failed_elements": 0,
+            "total_elements": 5242880
+          },
+          "baseline": {
+            "median_ms": 1.4852,
+            "mean_ms": 1.6021,
+            "p90_ms": 1.981,
+            "min_ms": 1.3841,
+            "tokens_per_second": 5515755.5
+          },
+          "optimized": {
+            "median_ms": 0.852,
+            "mean_ms": 0.9076,
+            "p90_ms": 1.1247,
+            "min_ms": 0.8119,
+            "tokens_per_second": 9614482.04
+          },
+          "speedup_median": 1.743,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-02-b1-d128-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 1.9383958999533206,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000717282,
+            "max_relative_error": 6.67246,
+            "failed_elements": 0,
+            "total_elements": 81920
+          },
+          "baseline": {
+            "median_ms": 1.5383,
+            "mean_ms": 1.6158,
+            "p90_ms": 1.8627,
+            "min_ms": 1.4253,
+            "tokens_per_second": 83207.65
+          },
+          "optimized": {
+            "median_ms": 0.8518,
+            "mean_ms": 0.8858,
+            "p90_ms": 1.0271,
+            "min_ms": 0.6879,
+            "tokens_per_second": 150274.25
+          },
+          "speedup_median": 1.806,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-03-b4-d128-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 1.9137488000560552,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.000993431,
+            "max_relative_error": 151.013,
+            "failed_elements": 0,
+            "total_elements": 327680
+          },
+          "baseline": {
+            "median_ms": 1.4727,
+            "mean_ms": 1.4965,
+            "p90_ms": 1.6994,
+            "min_ms": 1.3328,
+            "tokens_per_second": 347671.16
+          },
+          "optimized": {
+            "median_ms": 0.7918,
+            "mean_ms": 0.8287,
+            "p90_ms": 1.006,
+            "min_ms": 0.5561,
+            "tokens_per_second": 646621.4
+          },
+          "speedup_median": 1.86,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-04-b16-d128-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 1.9290821000467986,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00114846,
+            "max_relative_error": 336.751,
+            "failed_elements": 0,
+            "total_elements": 1310720
+          },
+          "baseline": {
+            "median_ms": 1.4018,
+            "mean_ms": 1.4625,
+            "p90_ms": 1.6459,
+            "min_ms": 1.3188,
+            "tokens_per_second": 1460937.02
+          },
+          "optimized": {
+            "median_ms": 0.8088,
+            "mean_ms": 0.828,
+            "p90_ms": 0.9406,
+            "min_ms": 0.717,
+            "tokens_per_second": 2532296.67
+          },
+          "speedup_median": 1.733,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-05-b128-d128-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 2.0342292999848723,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00114846,
+            "max_relative_error": 1053.44,
+            "failed_elements": 0,
+            "total_elements": 10485760
+          },
+          "baseline": {
+            "median_ms": 2.991,
+            "mean_ms": 3.0816,
+            "p90_ms": 3.4392,
+            "min_ms": 2.7084,
+            "tokens_per_second": 5477722.65
+          },
+          "optimized": {
+            "median_ms": 1.8333,
+            "mean_ms": 2.0386,
+            "p90_ms": 2.5604,
+            "min_ms": 1.4933,
+            "tokens_per_second": 8936831.39
+          },
+          "speedup_median": 1.631,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-06-b10000-d128-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 35.94316229992546,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0,
+            "failed_elements": 0,
+            "total_elements": 819200000
+          },
+          "baseline": {
+            "median_ms": 637.0823,
+            "mean_ms": 622.5759,
+            "p90_ms": 652.5834,
+            "min_ms": 550.3468,
+            "tokens_per_second": 2009159.46
+          },
+          "optimized": {
+            "median_ms": 607.4203,
+            "mean_ms": 607.6388,
+            "p90_ms": 617.7872,
+            "min_ms": 590.8291,
+            "tokens_per_second": 2107272.49
+          },
+          "speedup_median": 1.049,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 0,
+            "reference": 112
+          }
+        },
+        {
+          "case_id": "final-07-b64-d32-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 1.826753299916163,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0,
+            "failed_elements": 0,
+            "total_elements": 1310720
+          },
+          "baseline": {
+            "median_ms": 1.4163,
+            "mean_ms": 1.4418,
+            "p90_ms": 1.6919,
+            "min_ms": 1.2158,
+            "tokens_per_second": 5784264.95
+          },
+          "optimized": {
+            "median_ms": 1.2945,
+            "mean_ms": 1.3881,
+            "p90_ms": 1.6719,
+            "min_ms": 1.0812,
+            "tokens_per_second": 6328253.55
+          },
+          "speedup_median": 1.094,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 0,
+            "reference": 112
+          }
+        },
+        {
+          "case_id": "final-08-b64-d1024-h4-s128",
+          "status": "PASS",
+          "duration_seconds": 2.7924689000938088,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.0,
+            "max_relative_error": 0.0,
+            "failed_elements": 0,
+            "total_elements": 41943040
+          },
+          "baseline": {
+            "median_ms": 15.7148,
+            "mean_ms": 15.8389,
+            "p90_ms": 16.505,
+            "min_ms": 14.9004,
+            "tokens_per_second": 521293.62
+          },
+          "optimized": {
+            "median_ms": 15.7252,
+            "mean_ms": 15.784,
+            "p90_ms": 16.4989,
+            "min_ms": 14.9758,
+            "tokens_per_second": 520946.74
+          },
+          "speedup_median": 0.999,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 0,
+            "reference": 112
+          }
+        },
+        {
+          "case_id": "final-09-b64-d128-h1-s128",
+          "status": "PASS",
+          "duration_seconds": 1.9225021000020206,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00106275,
+            "max_relative_error": 622.217,
+            "failed_elements": 0,
+            "total_elements": 5242880
+          },
+          "baseline": {
+            "median_ms": 1.3035,
+            "mean_ms": 1.3608,
+            "p90_ms": 1.5843,
+            "min_ms": 1.1202,
+            "tokens_per_second": 6284599.1
+          },
+          "optimized": {
+            "median_ms": 0.9101,
+            "mean_ms": 0.9889,
+            "p90_ms": 1.195,
+            "min_ms": 0.901,
+            "tokens_per_second": 9000931.76
+          },
+          "speedup_median": 1.432,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-10-b64-d128-h2-s128",
+          "status": "PASS",
+          "duration_seconds": 1.9323507000226527,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.0010339,
+            "max_relative_error": 1858.64,
+            "failed_elements": 0,
+            "total_elements": 5242880
+          },
+          "baseline": {
+            "median_ms": 1.3589,
+            "mean_ms": 1.3965,
+            "p90_ms": 1.7078,
+            "min_ms": 1.1173,
+            "tokens_per_second": 6028565.0
+          },
+          "optimized": {
+            "median_ms": 0.8892,
+            "mean_ms": 0.9563,
+            "p90_ms": 1.1151,
+            "min_ms": 0.8547,
+            "tokens_per_second": 9212610.01
+          },
+          "speedup_median": 1.528,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-11-b64-d128-h16-s128",
+          "status": "PASS",
+          "duration_seconds": 2.0644753000233322,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00106898,
+            "max_relative_error": 1317.77,
+            "failed_elements": 0,
+            "total_elements": 5242880
+          },
+          "baseline": {
+            "median_ms": 6.3411,
+            "mean_ms": 6.3921,
+            "p90_ms": 6.733,
+            "min_ms": 5.7378,
+            "tokens_per_second": 1291898.36
+          },
+          "optimized": {
+            "median_ms": 1.1426,
+            "mean_ms": 1.2179,
+            "p90_ms": 1.4771,
+            "min_ms": 1.0618,
+            "tokens_per_second": 7169763.89
+          },
+          "speedup_median": 5.55,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-12-b64-d128-h4-s32",
+          "status": "PASS",
+          "duration_seconds": 1.9309714999981225,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00114846,
+            "max_relative_error": 182.478,
+            "failed_elements": 0,
+            "total_elements": 1310720
+          },
+          "baseline": {
+            "median_ms": 1.3836,
+            "mean_ms": 1.4541,
+            "p90_ms": 1.6965,
+            "min_ms": 1.2946,
+            "tokens_per_second": 1480145.26
+          },
+          "optimized": {
+            "median_ms": 0.7892,
+            "mean_ms": 0.8115,
+            "p90_ms": 0.9399,
+            "min_ms": 0.6549,
+            "tokens_per_second": 2595138.17
+          },
+          "speedup_median": 1.753,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-13-b64-d128-h4-s1024",
+          "status": "PASS",
+          "duration_seconds": 5.159978999989107,
+          "accuracy": {
+            "status": "PASS",
+            "max_abs_error": 0.00114191,
+            "max_relative_error": 3080.38,
+            "failed_elements": 0,
+            "total_elements": 41943040
+          },
+          "baseline": {
+            "median_ms": 96.8965,
+            "mean_ms": 95.7783,
+            "p90_ms": 97.8655,
+            "min_ms": 89.0959,
+            "tokens_per_second": 676350.25
+          },
+          "optimized": {
+            "median_ms": 19.6848,
+            "mean_ms": 19.5794,
+            "p90_ms": 20.4667,
+            "min_ms": 17.9612,
+            "tokens_per_second": 3329261.19
+          },
+          "speedup_median": 4.922,
+          "attention_backend_counts": {
+            "triton": 112,
+            "sdpa": 0,
+            "reference": 0
+          }
+        },
+        {
+          "case_id": "final-14-b32-d1024-h16-s100000-resource-skip",
+          "status": "SKIPPED_RESOURCE",
+          "duration_seconds": null,
+          "accuracy": null,
+          "baseline": null,
+          "optimized": null,
+          "speedup_median": null,
+          "attention_backend_counts": null
+        }
+      ]
+    },
+    "attention_backend_counts": {
+      "triton": 1120,
+      "sdpa": 0,
+      "reference": 336
+    },
+    "memory": null,
+    "profiler": null
+  }
+}
