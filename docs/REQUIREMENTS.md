@@ -118,6 +118,10 @@ Correctness validation must cover:
   envelope; forced `triton` mode must fail clearly when unsupported.
 - Backend choice must be inspectable in tests/results. Import or compilation
   errors may not be swallowed as successful custom execution.
+- The measured fixed launch policy uses 32x32 tiles for `head_dim == 128` only
+  through sequence 128 and returns to 32x64 at sequence 129 and above. Boundary
+  tests must preserve that exact guard; it changes launch geometry, not the
+  support envelope, arithmetic, public API, or persisted state.
 - The benchmark-default non-causal float32 custom path follows the benchmark's
   TF32 toggle. Causal custom attention uses IEEE fp32 dot products because final
   evaluator testing found rare TF32 misses under the zero-failure comparator.

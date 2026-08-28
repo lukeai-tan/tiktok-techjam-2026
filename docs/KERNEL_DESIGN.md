@@ -133,33 +133,42 @@ The measured fixed policy avoids per-process autotuning overhead:
 | 64 | <= 128 | 32 | 64 | 4 | 2 |
 | <= 64 | 129-512 | 64 | 64 | 4 | 2 |
 | <= 64 | > 512 | 64 | 64 | 4 | 3 |
-| 128 | any | 32 | 64 | 4 | 2 |
+| 128 | <= 128 | 32 | 32 | 4 | 2 |
+| 128 | > 128 | 32 | 64 | 4 | 2 |
 
 Short head-dimension-32 sequences use a 64-wide K/V tile. Three alternating
 measurements showed this retained exact organizer correctness while lowering
 row-1 optimized median latency by about 34%; the 128-wide tile remains for
 head dimension 16. Head-dimension-64 short sequences use smaller tiles to avoid
-the register spilling measured with IEEE fp32 dots on the target GPU.
+the register spilling measured with IEEE fp32 dots on the target GPU. Short
+head-dimension-128 sequences use a 32-wide K/V tile after three reproducible
+row-9 measurements showed a 26.73% latency reduction versus the fresh baseline;
+sequence 129 and above retains the prior 64-wide K/V tile.
 
 ## Measured design decisions
 
 - The organizer-published final matrix passed all 13 executable rows with zero
   failed elements and one source-authorized resource skip. It delivered a
-  1.526x geomean end-to-end speedup; 1,008 attention calls used Triton and 448
+  1.556x geomean end-to-end speedup; 1,008 attention calls used Triton and 448
   unsupported or very-large-batch calls used explicit reference math.
 - EXP-001 targeted the final row-10 `head_dim=64`, sequence-128 spill bottleneck.
   The former 64x128 tile reported 2,468 spills and 81,920 bytes of shared memory;
   the accepted 32x64 tile reported two spills and 49,152 bytes. Across two paired
   full-matrix trials, aggregate speedup improved by 8.98% and 10.19%.
-- In the current integrated evidence, row 10 measures 1.547x end-to-end. Its
+- In the Campaign 3 final evidence, row 10 measures 1.602x end-to-end. Its
   `_attention_fwd` profiler time is 2,694.679 us across 40 launches, 91.11%
-  below the frozen 30,324.486 us pre-EXP-001 profile, with Triton handling all
-  40 calls.
+  below the frozen 30,324.486 us pre-EXP-001 Campaign 2 profile, with Triton
+  handling all 40 calls in that profile.
 - EXP-003 tested three bounded short-`head_dim=32` geometries. The accepted
   64x64 tile averaged 0.8201 ms over three row-1 runs versus 1.2402 ms for the
   unchanged policy, and the integrated final-matrix geomean improved 6.95%.
   Row-1 `_attention_fwd` time fell from 7,008.677 us to 2,103.978 us across 40
   launches, a 69.98% reduction.
+- Campaign 3 tested three short-`head_dim=128` geometries and a measured SDPA
+  route. Counterbalanced timing selected 32x32 Triton tiles at a 0.9042 ms
+  three-run median, 6.16% faster than SDPA. The integrated row-9 profile kept
+  40/40 calls on Triton while `_attention_fwd` time fell from 6,775.468 us to
+  3,018.182 us (-55.45%) and the ten-step model range fell 26.96%.
 - Exact-harness stress testing found rare strict-tolerance misses when Triton
   differences accumulated through six causal layers or batches above eight.
   Auto routes those deep-stack regimes to SDPA; all 28 feasible source-derived
@@ -174,9 +183,9 @@ the register spilling measured with IEEE fp32 dots on the target GPU.
   120 us across five forwards versus 4,613 us for the profiled model range. The small
   share and slower standalone kernel did not justify residual/LayerNorm fusion
   risk for this iteration.
-- A causal loop-frontier prune and alternate tile/stage configurations were
-  tested on the target. Neither improved the full end-to-end matrix, so the
-  simpler fixed loop and prior launch policy were retained.
+- A causal loop-frontier prune and other alternate tile/stage configurations
+  were tested on the target and rejected when they failed to improve the
+  relevant end-to-end target.
 - Profiler evidence records `_attention_fwd` ten times for five two-layer
   forwards, matching dispatch counts exactly.
 

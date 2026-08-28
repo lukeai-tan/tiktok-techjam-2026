@@ -52,8 +52,8 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    ```
 
    Point out 13/13 executable `PASS`, 0/938,885,120 failed elements, the
-   authorized row-14 resource skip, 1.525823x geomean speedup, row 1 at
-   1.736x, and row 10 at 1.547x.
+   authorized row-14 resource skip, 1.555780x geomean speedup, Campaign 3 row 9
+   at 1.281x, and row 13 at 4.800x.
 
 6. Run the full source-derived organizer validation:
 
@@ -66,22 +66,22 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    one explicitly authorized 100,000-token resource skip that is not counted
    as a pass.
 
-7. Prove the accepted row-10 kernel actually ran:
+7. Prove the accepted Campaign 3 row-9 kernel actually ran:
 
    ```powershell
    & $python benchmarks/profile_cases.py `
      --manifest benchmarks/final_profile_shapes.json `
-     --case final-10-b64-d128-h2-s128 --dtype float32 `
+     --case final-09-b64-d128-h1-s128 --dtype float32 `
      --attention-backend auto --steps 10 --out results/demo-profile.json
    ```
 
    Show 40 `_attention_fwd` events and 40 matching Triton dispatches. Compare
-   the result with the recorded 89.43% profiler-time reduction in
-   `docs/experiments/EXP-001-head64-short-tiles.md`.
+   the result with the recorded 55.45% profiler-time reduction in
+   `docs/experiments/CAMPAIGN-003.md`.
 
-8. Finish on `docs/TECH_REPORT.md`: the untouched organizer default is 1.314x,
+8. Finish on `docs/TECH_REPORT.md`: the untouched organizer default is 1.367x,
    and the published final matrix is 13/13 executable PASS with zero failed
-   elements and a 1.525823x geometric-mean speedup. Show the source-derived and
+   elements and a 1.555780x geometric-mean speedup. Show the source-derived and
    held-out artifacts as broader correctness and anti-overfitting evidence.
 
 ## Failure handling

@@ -1,6 +1,6 @@
 # Bounded Agentic GPU Optimization Loop
 
-Status: executed on 2026-08-28; EXP-001 and EXP-003 accepted and rebaselined
+Status: executed on 2026-08-28; EXP-001, EXP-003, and EXP-005-I2 accepted and rebaselined
 Applies to: the PyTorch/Triton Transformer implementation in this repository
 
 ## Objective
@@ -40,11 +40,23 @@ to keep changing code until a benchmark number looks better.
   The integrated final matrix is 13/13 executable PASS plus one authorized
   resource skip, zero failed elements across 938,885,120 comparisons, and
   1.526x geometric-mean speedup, 6.95% above the post-EXP-001 matrix.
+- Campaign 3 profiled final row 9, screened three bounded short-`head_dim=128`
+  launch geometries, and counterbalanced the best Triton result against a
+  shape-aware SDPA alternative. Independent review approved only the 32x32
+  Triton tile through sequence 128.
+- The accepted Campaign 3 candidate reproduced 0.9042/0.9049/0.9034 ms optimized
+  medians, 26.73% below the fresh 1.2341 ms baseline and 6.16% faster than the
+  SDPA alternative's three-run median. Integrated `_attention_fwd` time fell
+  55.45%, and final geomean rose from 1.525823x to 1.555780x while all required
+  correctness gates remained green.
+- Campaign 3 curated artifacts share implementation SHA-256
+  `9071e3c049a7a3bc2311fc9d33997202ce4bead93d9daced375340fe6308eb9e`.
 
 The durable experiment records are
 `docs/experiments/EXP-001-head64-short-tiles.md`,
 `docs/experiments/EXP-003-short-head32-kv-tiles.md`, and
-`docs/experiments/CAMPAIGN-002.md`; rejected alternatives, failed gates, and
+`docs/experiments/CAMPAIGN-002.md`, with Campaign 3 recorded in
+`docs/experiments/CAMPAIGN-003.md`; rejected alternatives, failed gates, and
 pre-integration paired evidence remain versioned for auditability.
 
 ## Source of truth and scope

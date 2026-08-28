@@ -14,13 +14,13 @@ count. Under the recorded PyTorch assumptions (float32, no padding, and the
 stricter executable comparator), all 65 accuracy trials passed with **0 failed
 elements across 938,885,120 comparisons**.
 
-Final-matrix geometric-mean end-to-end speedup is **1.526x**. Per-row speedups
-range from 0.945x to 4.766x; the EXP-003 target (row 1, `head_dim=32`,
-sequence 128) measures **1.736x**. Backend accounting records
+Final-matrix geometric-mean end-to-end speedup is **1.556x**. Per-row speedups
+range from 0.978x to 4.800x; the Campaign 3 target (row 9,
+`head_dim=128`, sequence 128) measures **1.281x**. Backend accounting records
 1,008 Triton calls, 448 explicit reference calls for unsupported or very-large
 batch regimes, and zero SDPA calls. The complete table, stdout, environment,
 source hashes, and implementation fingerprint are in
-[the final evaluator artifact](docs/results/rtx-5070-ti-2026-08-28-final-evaluator-baseline.json).
+[the final evaluator artifact](docs/results/rtx-5070-ti-2026-08-28-c3-final.json).
 
 EXP-001 replaced only the short `head_dim=64` attention tile. Two paired full
 matrix trials improved aggregate speedup by **8.98%** and **10.19%**. After
@@ -39,18 +39,28 @@ including rejected and failed gates, is recorded under
 [`docs/experiments/attempts`](docs/experiments/attempts) and summarized in the
 [Campaign 2 record](docs/experiments/CAMPAIGN-002.md).
 
+Campaign 3 then tested three bounded short-`head_dim=128` launch geometries and
+one shape-aware SDPA alternative. Counterbalanced confirmation selected 32x32
+tiles with optimized medians of 0.9042/0.9049/0.9034 ms, 6.16% faster than the
+SDPA alternative's three-run median. After integration, row-9 optimized latency
+fell from 1.2055 ms to 0.9071 ms, final-matrix geomean rose 1.96% from
+1.525823x to 1.555780x, and `_attention_fwd` profiler time fell 55.45% from
+6,775.468 us to 3,018.182 us across 40 Triton calls. See the
+[Campaign 3 record](docs/experiments/CAMPAIGN-003.md) and
+[integrated row-9 profile](docs/results/rtx-5070-ti-2026-08-28-c3-final-09-profile.json).
+
 The project-owned seven-case held-out matrix also completed **7/7 PASS**, with
-zero failures across 13,117,440 comparisons and a **1.228x** geomean. It retains
+zero failures across 13,117,440 comparisons and a **1.220x** geomean. It retains
 raw alternating-order CUDA-event samples and memory measurements; the
 long-attention incremental peak allocation fell from 78 MiB to 22 MiB (71.8%).
-See [the held-out artifact](docs/results/rtx-5070-ti-2026-08-27.json) and
-[profiler evidence](docs/results/rtx-5070-ti-2026-08-27-profile.json).
+See [the held-out artifact](docs/results/rtx-5070-ti-2026-08-28-c3-heldout.json)
+and the profiler evidence linked above.
 
 The newly supplied organizer PyTorch file is also preserved untouched. Running
 that exact harness at its default six-layer configuration produced **5/5 PASS,
-0 failed elements out of 2,621,440, and 1.314x median speedup**. All 1,950
+0 failed elements out of 2,621,440, and 1.367x median speedup**. All 1,950
 optimized attention calls used Triton. See the
-[exact-harness artifact](docs/results/rtx-5070-ti-2026-08-27-organizer-default.json)
+[exact-harness artifact](docs/results/rtx-5070-ti-2026-08-28-c3-organizer-default.json)
 and [organizer-input audit](docs/ORGANIZER_INPUTS.md).
 
 The rigorous source-derived validation then ran the untouched PyTorch
@@ -59,10 +69,10 @@ from both supplied files: **28/28 executable cases passed**, with **0 failed
 elements out of 459,776,000 across 140 accuracy trials**. The matrix covers
 float32, float16, bfloat16, causal attention, prefix padding, batch sizes through
 10,000, model widths through 1,024, head counts 1/2/4/16, and sequence length
-1,024. Overall geomean speedup was **1.194x**; the float32 subset was **1.373x**.
+1,024. Overall geomean speedup was **1.201x**; the float32 subset was **1.385x**.
 The TensorFlow script's designated 100,000-token quadratic stress case is the
 single source-authorized resource skip and is not counted as a pass. See the
-[validation artifact](docs/results/rtx-5070-ti-2026-08-27-organizer-validation.json).
+[validation artifact](docs/results/rtx-5070-ti-2026-08-28-c3-source-derived.json).
 
 The final dimensions are published, but dtype, padding, timing, tolerance, and
 backward policy remain unstated. See [the requirements](docs/REQUIREMENTS.md)
