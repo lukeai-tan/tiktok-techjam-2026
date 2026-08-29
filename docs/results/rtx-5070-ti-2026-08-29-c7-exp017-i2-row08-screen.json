@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-08-29T11:54:42.707489+00:00",
+  "manifest": {
+    "path": "campaign7_profile_shapes.json",
+    "status": "campaign-7-profile-subset",
+    "organizer_matrix_available": null
+  },
+  "environment": {
+    "captured_at_utc": "2026-08-29T11:54:42.749940+00:00",
+    "command": [
+      "benchmarks\\run_matrix.py",
+      "--manifest",
+      "C:\\Users\\jared\\Downloads\\GitHub\\tiktok-techjam-2026\\benchmarks\\campaign7_profile_shapes.json",
+      "--case",
+      "final-08-b64-d1024-h4-s128",
+      "--dtype",
+      "float32",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--warmup",
+      "10",
+      "--repeats",
+      "20",
+      "--rounds",
+      "3",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "C:\\Users\\jared\\Downloads\\GitHub\\tiktok-techjam-2026\\docs\\results\\rtx-5070-ti-2026-08-29-c7-exp017-i2-row08-screen.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 5,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a99ae8d1e5bbd3300af6ae4880bf58e3c38b4f017a1a369f6cab84eceb5bdbe6",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441600761856
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "high",
+      "allow_tf32_matmul": true,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "parameters": {
+    "device": "cuda",
+    "backend": "auto",
+    "warmup": 10,
+    "repeats": 20,
+    "rounds": 3,
+    "accuracy_trials": 5
+  },
+  "summary": {
+    "requested": 1,
+    "completed": 1,
+    "counts": {
+      "ERROR": 0,
+      "FAIL": 1,
+      "OOM": 0,
+      "PASS": 0
+    }
+  },
+  "results": [
+    {
+      "case_id": "final-08-b64-d1024-h4-s128",
+      "dtype": "float32",
+      "backend_requested": "auto",
+      "config": {
+        "id": "final-08-b64-d1024-h4-s128",
+        "source_row": 8,
+        "batch_size": 64,
+        "seq_len": 128,
+        "d_model": 1024,
+        "num_heads": 4,
+        "ffn_dim": 1024,
+        "num_layers": 4,
+        "causal": true,
+        "padding_ratio": 0.0,
+        "input_scale": 1.0
+      },
+      "status": "FAIL",
+      "accuracy": {
+        "rtol": 0.01,
+        "atol": 0.001,
+        "trials": [
+          {
+            "seed": 1234,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 8388608,
+            "max_abs_error": 0.0009987950325012207,
+            "max_relative_error": 245.73770141601562,
+            "mean_abs_error": 9.427790791960433e-05,
+            "worst_index": [
+              3,
+              1,
+              400
+            ]
+          },
+          {
+            "seed": 1235,
+            "passed": false,
+            "failed_elements": 1,
+            "total_elements": 8388608,
+            "max_abs_error": 0.0010997913777828217,
+            "max_relative_error": 615.5672607421875,
+            "mean_abs_error": 9.425969619769603e-05,
+            "worst_index": [
+              38,
+              1,
+              507
+            ]
+          },
+          {
+            "seed": 1236,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 8388608,
+            "max_abs_error": 0.0009851455688476562,
+            "max_relative_error": 547.511962890625,
+            "mean_abs_error": 9.435493120690808e-05,
+            "worst_index": [
+              29,
+              1,
+              291
+            ]
+          },
+          {
+            "seed": 1237,
+            "passed": true,
+            "failed_elements": 0,
+            "total_elements": 8388608,
+            "max_abs_error": 0.0010374188423156738,
+            "max_relative_error": 303.9140625,
+            "mean_abs_error": 9.446088370168582e-05,
+            "worst_index": [
+              57,
+              1,
+              608
+            ]
+          },
+          {
+            "seed": 1238,
+            "passed": false,
+            "failed_elements": 1,
+            "total_elements": 8388608,
+            "max_abs_error": 0.0010894536972045898,
+            "max_relative_error": 211.14736938476562,
+            "mean_abs_error": 9.422982111573219e-05,
+            "worst_index": [
+              26,
+              1,
+              122
+            ]
+          }
+        ],
+        "backend_counts": {
+          "triton": 20,
+          "sdpa": 0,
+          "reference": 0
+        }
+      },
+      "timing": null,
+      "peak_memory": null
+    }
+  ]
+}

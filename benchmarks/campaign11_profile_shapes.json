@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "status": "campaign-11-profile-subset",
+  "source": "Exact final rows 9, 10, and 1 selected from the published organizer matrix after Campaign 10 integration",
+  "defaults": {
+    "dtypes": ["float32"],
+    "seeds": [1234],
+    "input_scale": 1.0,
+    "accuracy_rtol": 0.01,
+    "accuracy_atol": 0.001,
+    "warmup": 3,
+    "repeats": 10,
+    "rounds": 2
+  },
+  "cases": [
+    {
+      "id": "final-09-b64-d128-h1-s128",
+      "source_row": 9,
+      "batch_size": 64,
+      "seq_len": 128,
+      "d_model": 128,
+      "num_heads": 1,
+      "ffn_dim": 128,
+      "num_layers": 4,
+      "causal": true,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "final-10-b64-d128-h2-s128",
+      "source_row": 10,
+      "batch_size": 64,
+      "seq_len": 128,
+      "d_model": 128,
+      "num_heads": 2,
+      "ffn_dim": 128,
+      "num_layers": 4,
+      "causal": true,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "final-01-b64-d128-h4-s128",
+      "source_row": 1,
+      "batch_size": 64,
+      "seq_len": 128,
+      "d_model": 128,
+      "num_heads": 4,
+      "ffn_dim": 128,
+      "num_layers": 4,
+      "causal": false,
+      "padding_ratio": 0.0
+    }
+  ]
+}
