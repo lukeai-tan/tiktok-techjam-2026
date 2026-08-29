@@ -6,7 +6,7 @@
 scaled dot-product attention kernel. It replaces the reference sequence of QK
 matmul, score tensor, softmax, and P@V matmul with one tiled launch.
 `transformer_opt/kernels/residual_layer_norm.py` additionally fuses the residual
-add and downstream LayerNorm for exact final rows 5, 6, and 11. Projection and FFN math
+add and downstream LayerNorm for exact final rows 5, 6, 9, and 11. Projection and FFN math
 remains in PyTorch/cuBLAS; measured eager-fp32 shapes through `d_model=512` and
 exact `d_model=1024` combine the three Q/K/V projections into one vendor GEMM.
 

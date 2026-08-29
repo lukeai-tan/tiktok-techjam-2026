@@ -11,6 +11,11 @@ Campaign 6 base commit: `7f4fcba4ffb891cb876fa9ec27afa2395b99c77a`
 Selected implementation SHA-256:
 `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`
 
+Start with the [documentation hub](../README.md) for the reading order. This
+file is the executive campaign story and ranking; use
+[OPTIMIZATION_HISTORY](OPTIMIZATION_HISTORY.md) only when you need the denser
+chronology and accounting.
+
 ## Purpose and scope
 
 This document tells the complete optimization story: what the team started
@@ -1014,9 +1019,9 @@ change requires a fresh full validation.
 ## Audit trail
 
 - Contract and acceptance criteria: [requirements](../REQUIREMENTS.md)
-- Bounded loop and stopping rules: [optimization loop plan](../OPTIMIZATION_LOOP_PLAN.md)
+- Bounded loop and stopping rules: [optimization loop plan](../AGENT_OPTIMIZATION_LOOP_PLAN.md)
 - Canonical cross-campaign evidence index: [optimization history](OPTIMIZATION_HISTORY.md)
-- Foundational accepted experiment: [EXP-001](EXP-001-head64-short-tiles.md)
+- Foundational short-head decisions: [foundational phase](CAMPAIGN_RUN_THROUGH.md#foundational-phase-from-prototype-to-a-defensible-baseline)
 - Campaign 2 ledger: [CAMPAIGN-002](CAMPAIGN-002.md)
 - Campaign 3 ledger: [CAMPAIGN-003](CAMPAIGN-003.md)
 - Campaign 4 ledger: [CAMPAIGN-004](CAMPAIGN-004.md)
@@ -1029,7 +1034,7 @@ change requires a fresh full validation.
 - Campaign 11 ledger: [CAMPAIGN-011](CAMPAIGN-011.md)
 - Consolidation Council decision: [final consolidation review](reviews/CAMPAIGN-CONSOLIDATION-FINAL-REVIEW.json)
 - Selection and full-suite validation: [submission validation](SUBMISSION_VALIDATION.md)
-- Fresh original comparison: [current versus original evaluation](CURRENT_VS_ORIGINAL_EVALUATION.md)
+- Current-versus-original snapshot: [optimization history](OPTIMIZATION_HISTORY.md#current-optimized-versus-original-snapshot)
 - Current final result: [Campaign 11 final JSON](../results/rtx-5070-ti-2026-08-29-c11-integrated-final.json)
 - Current held-out result: [Campaign 11 five-seed held-out JSON](../results/rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json)
 - Immutable attempt records: [`attempts/`](attempts/)

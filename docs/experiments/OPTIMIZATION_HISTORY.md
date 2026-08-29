@@ -2,10 +2,18 @@
 
 Status: canonical cross-campaign history, reconciled through Campaign 11 closure on 2026-08-30
 
-Current accepted implementation: Campaign 11 local candidate based on checkpoint
-`8c89d1d`; Campaign 11 implementation and evidence remain local and uncommitted
+Current accepted implementation: Campaign 11 is integrated on
+`feat/jared-attempt` with the selected fingerprint below. Its immutable evidence
+was captured from the pre-packaging checkpoint `8c89d1d`; the artifacts retain
+that historical dirty-state provenance even though the implementation is now
+checked in.
 
 Implementation SHA-256: `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`
+
+Start with the [documentation hub](../README.md) or the
+[campaign run-through](CAMPAIGN_RUN_THROUGH.md). This file is the detailed
+chronology, metric ledger, and evidence index; it is intentionally not the
+first-read narrative.
 
 This is the canonical metric, chronology, and evidence index for the complete
 optimization program. The shorter executive ranking and narrative live in
@@ -65,6 +73,33 @@ Campaign 8 extends that same forward only to exact row 11. Campaign 9 closes
 two unsuitable surfaces, Campaign 10 extends the proven forward only to exact
 row 5, and Campaign 11 extends it only to exact row 9.
 
+## Current optimized versus original snapshot
+
+The current comparison is consolidated here rather than kept as a separate
+report. “Original” is the byte-preserved organizer `BaselineTransformer`; the
+optimized side is the Campaign 11 fingerprint above. Both use strict-copied
+weights and identical inputs, correctness runs before timing, and baseline and
+optimized timing order alternates. The raw JSON remains authoritative for every
+sample and backend count.
+
+| Gate | Correctness | Current result versus original |
+| --- | --- | ---: |
+| Untouched organizer default | 5/5 PASS; 0/2,621,440 failed | 1.385x median speedup |
+| Published final primary | 13/13 executable PASS + authorized resource skip; 0/938,885,120 failed | 1.977420x geomean |
+| Published final confirmation | same zero-failure contract and backend counts | 1.986499x geomean |
+| Project-held-out primary / confirmation | 7/7 PASS twice; 0/13,117,440 failed per run | 1.339847x / 1.386495x geomean |
+| Source-derived matrix | 28/28 executable PASS + authorized resource skip; 0/459,776,000 failed | 1.206505x geomean |
+
+The dedicated long gates show where the cumulative implementation earns its
+latency: row 5 is `2.186832 -> 1.163168 ms` (1.880066x), row 6 is
+`291.417252 -> 188.457397 ms` (1.546330x), row 9 is
+`0.825328 -> 0.717648 ms` (1.150046x), and row 11 is
+`4.195168 -> 0.890672 ms` (4.710116x). Campaign 11's isolated row-9 change is
+the controlled decision: two unchanged controls average 0.815968 ms, the
+optimized median is 0.717648 ms (-12.05%), and incremental peak allocation is
+unchanged at 29,360,128 bytes. See the [curated result index](../results/README.md)
+for the exact artifact links.
+
 ## Evidence authority and inventory
 
 Evidence is read in this order:
@@ -91,7 +126,7 @@ unwrapped orchestration and pre-ledger work.
 | Campaign 3 | 31 | 31 | 0 | 218.214354 s | [CAMPAIGN-003](CAMPAIGN-003.md) |
 | Campaign 4 | 44 | 39 | 5 | 315.261251 s | [CAMPAIGN-004](CAMPAIGN-004.md) |
 | Submission selection | 25 | 24 | 1 | 223.237808 s | [SUBMISSION_VALIDATION](SUBMISSION_VALIDATION.md) |
-| Current vs original | 6 | 6 | 0 | 128.357928 s | [CURRENT_VS_ORIGINAL_EVALUATION](CURRENT_VS_ORIGINAL_EVALUATION.md) |
+| Current vs original | 6 | 6 | 0 | 128.357928 s | [consolidated snapshot](OPTIMIZATION_HISTORY.md#current-optimized-versus-original-snapshot) |
 | Alternate-branch comparison | 19 | 15 | 4 | 352.965078 s | [BRANCH_IMPLEMENTATION_COMPARISON](BRANCH_IMPLEMENTATION_COMPARISON.md) |
 | Campaign 5 | 74 | 65 | 9 | 736.085883 s | [CAMPAIGN-005](CAMPAIGN-005.md) |
 | Campaign 6 | 121 | 118 | 3 | 874.998508 s | [CAMPAIGN-006](CAMPAIGN-006.md) |
@@ -259,7 +294,7 @@ memory. The accepted 32x64 tile reduced compiled evidence to two spills and
 Exact-reference routing projected only about a 4.7% aggregate gain and left row
 10 below parity. SDPA failed one element in five exact row-10 trials. Both were
 rejected. The bounded `head_dim == 64 and seq_len <= 128` Triton tile was
-independently approved. See [EXP-001](EXP-001-head64-short-tiles.md).
+independently approved. See the [foundational phase](CAMPAIGN_RUN_THROUGH.md#foundational-phase-from-prototype-to-a-defensible-baseline).
 
 ### 6. Campaign 2: long and short `head_dim=32`, then the first width-eight probe
 
@@ -285,7 +320,7 @@ EXP-003 then tested the short row-1 path:
 Two alternating confirmations selected 64x64 at a 0.8201 ms mean and 0.0036
 ms sample standard deviation, versus 1.2402 ms for the unchanged policy. After
 integration, the final geomean rose from 1.426692x to 1.525823x (+6.948%), and
-row-1 attention time fell 69.98%. See [EXP-003](EXP-003-short-head32-kv-tiles.md).
+row-1 attention time fell 69.98%. See the [Campaign 2 ledger](CAMPAIGN-002.md).
 
 EXP-004 tried to add direct `head_dim=8` support without changing the kernel's
 dot width. Eleven other direct tests passed, but Triton compilation rejected
@@ -731,11 +766,10 @@ is implied by the optimization approval.
 ## Audit index
 
 - Contract: [requirements](../REQUIREMENTS.md)
-- Loop controls: [optimization loop plan](../OPTIMIZATION_LOOP_PLAN.md)
+- Loop controls: [optimization loop plan](../AGENT_OPTIMIZATION_LOOP_PLAN.md)
 - Public technical narrative: [technical report](../TECH_REPORT.md)
-- EXP-001 decision: [short head-dimension-64 tiles](EXP-001-head64-short-tiles.md)
-- Campaign 2 and EXP-003: [CAMPAIGN-002](CAMPAIGN-002.md) and
-  [EXP-003](EXP-003-short-head32-kv-tiles.md)
+- Foundational short-head decisions: [campaign run-through](CAMPAIGN_RUN_THROUGH.md#foundational-phase-from-prototype-to-a-defensible-baseline)
+- Campaign 2 short-head decisions: [CAMPAIGN-002](CAMPAIGN-002.md)
 - Campaign 3: [CAMPAIGN-003](CAMPAIGN-003.md)
 - Campaign 4: [CAMPAIGN-004](CAMPAIGN-004.md)
 - Campaign 5: [CAMPAIGN-005](CAMPAIGN-005.md)

@@ -224,6 +224,6 @@ their exact evidence conditions are under `reviews/`. The final seal is 125/125
 repository tests, completed workflow validation, strict graph validation, and
 diff hygiene, all recorded as the terminal attempts named by the final review.
 
-The exact pause state and pre-closure metrics are preserved in
-`CAMPAIGN-006-CHECKPOINT-2026-08-29.md`. No commit, push, tag, release, or public
+The exact pause state and pre-closure metrics are retained in this ledger's
+attempt tables and closure summary. No commit, push, tag, release, or public
 action is authorized for the post-checkpoint closure changes.

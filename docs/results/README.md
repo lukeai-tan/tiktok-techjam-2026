@@ -1,5 +1,9 @@
 # Result artifacts
 
+Use the [documentation hub](../README.md) to choose the right report first.
+This page owns artifact purpose, provenance, and reproduction commands; it is
+not a second campaign narrative.
+
 Curated evidence in this directory is intentionally versioned; scratch traces
 and exploratory runs stay under ignored `results/`.
 
@@ -7,6 +11,18 @@ Use [the campaign run-through](../experiments/CAMPAIGN_RUN_THROUGH.md) for the
 executive flagship ranking and [the complete optimization history](../experiments/OPTIMIZATION_HISTORY.md)
 for chronology, attempt totals, and candidate decisions. This index owns
 artifact purpose and reproduction.
+
+## Fast lookup
+
+| Need | Start with |
+| --- | --- |
+| Published final correctness and speed | [`c11-integrated-final.json`](rtx-5070-ti-2026-08-29-c11-integrated-final.json) |
+| Independent final confirmation | [`c11-integrated-final-confirmation.json`](rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json) |
+| Held-out generalization and long-causal stability | [held-out artifacts](#current-selected-submission-run) |
+| Untouched organizer default | [`c11-integrated-organizer-default.json`](rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json) |
+| Source-derived contract breadth | [`c11-integrated-source-derived.json`](rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json) |
+| Proof that fused routes actually ran | [row-5, row-6, row-9, and row-11 profiles](#current-selected-submission-run) |
+| Every command, including failures and timing | [`experiments/attempts/`](../experiments/attempts/) |
 
 ## Current selected-submission run
 
@@ -111,7 +127,8 @@ The actual entry is `torch_transformer_benchmark.py::UserOptimizedTransformer`.
 candidate evidence used for the acceptance decision. They are historical
 pre-integration evidence, not substitutes for the curated post-merge artifacts.
 The decision and noise waiver are recorded in
-`docs/experiments/EXP-001-head64-short-tiles.md`.
+`docs/experiments/CAMPAIGN_RUN_THROUGH.md` and
+`docs/experiments/OPTIMIZATION_HISTORY.md`.
 
 `rtx-5070-ti-2026-08-28-c2-*.json` files and the matching records under
 `docs/experiments/attempts/` retain every Campaign 2 observation, candidate,

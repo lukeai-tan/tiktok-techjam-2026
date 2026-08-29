@@ -1,5 +1,9 @@
 # Technical Report — Transformer Layer GPU Kernel
 
+For a quick orientation, use the [documentation hub](README.md). This report is
+the implementation and measurement narrative; the [campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md)
+owns the shorter optimization outcome and ranking.
+
 ## 1. Executive summary
 
 This project implements a forward fused-attention GPU kernel in Triton for the
@@ -49,7 +53,7 @@ This is stricter than the Track 3 prose values of 0.002 absolute and 0.02
 relative. The executable rule governed all implementation and validation.
 
 Organizer download provenance and unresolved evaluator questions are recorded
-in docs/ORGANIZER_INPUTS.md, docs/REQUIREMENTS.md, and
+in `hackathon-docs/ORGANIZER_INPUTS.md`, `docs/REQUIREMENTS.md`, and
 benchmarks/reference/organizer_downloads.json. The older
 benchmarks/reference/manifest.json remains frozen because it is part of the
 existing result-artifact fingerprint.
@@ -634,7 +638,7 @@ applicable.
 - Re-evaluate residual/normalization fusion on other shapes only after a fresh
   profile and exact boundary proof; the current route is exact to rows 5, 6, 9, and 11.
 - A public demo video and Devpost submission remain external human deliverables;
-  DEMO_RUNBOOK.md gives the verified recording sequence.
+  `guides/DEMO_RUNBOOK.md` gives the verified recording sequence.
 
 ## 11. Evidence
 
@@ -644,7 +648,7 @@ applicable.
   docs/experiments/OPTIMIZATION_HISTORY.md
 - Final organizer-shape matrix:
   docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json
-- EXP-001 decision: docs/experiments/EXP-001-head64-short-tiles.md
+- Foundational and short-head decisions: docs/experiments/CAMPAIGN_RUN_THROUGH.md
 - Integrated Campaign 11 profiles:
   docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row05-profile.json,
   docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row06-profile.json,
@@ -657,9 +661,9 @@ applicable.
   docs/results/rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json
 - Supplied-contract validation matrix:
   docs/results/rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json
-- Organizer inputs: docs/ORGANIZER_INPUTS.md
+- Organizer inputs: hackathon-docs/ORGANIZER_INPUTS.md
 - Organizer checksums: benchmarks/reference/organizer_downloads.json
 - Requirements: docs/REQUIREMENTS.md
 - Kernel design: docs/KERNEL_DESIGN.md
-- Track 3 compliance: docs/TRACK3_COMPLIANCE.md
-- Demo procedure: DEMO_RUNBOOK.md
+- Track 3 compliance: hackathon-docs/TRACK3_COMPLIANCE.md
+- Demo procedure: guides/DEMO_RUNBOOK.md

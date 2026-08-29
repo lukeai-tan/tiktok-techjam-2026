@@ -1,5 +1,10 @@
 # Flagship vs `fix/google-colab-accuracy-issue`
 
+Start with the [documentation hub](../README.md) for the repository-wide
+decision. This page is the isolated alternate-branch comparison; its raw
+attempts and result artifacts are retained for audit and are not submission
+evidence for the flagship.
+
 Date: 2026-08-28  
 Hardware: NVIDIA GeForce RTX 5070 Ti, compute capability 12.0  
 Verdict: retain the flagship implementation. The alternate branch is not an

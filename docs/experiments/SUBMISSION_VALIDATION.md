@@ -1,5 +1,9 @@
 # Selected Submission Validation
 
+Start with the [documentation hub](../README.md) for the reading order. This
+file is the release-gate record for the selected fingerprint, not a replacement
+for the campaign history or raw result artifacts.
+
 Status: complete through Campaign 11; approved for repo-local submission selection with external holds
 
 Date: 2026-08-29 (Asia/Singapore)
