@@ -283,6 +283,278 @@ def test_final_row7_hybrid_route_passes_seed_scale_and_padding_stress():
     }
 
 
+def test_final_row6_uses_exact_fused_residual_layer_norm_route():
+    config = TransformerConfig(10000, 128, 128, 4, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(10000, 128, 128, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        output = model(x)
+
+    assert output.shape == x.shape
+    assert model.fused_residual_layer_norm_calls == 8
+
+
+def test_row6_fused_residual_layer_norm_does_not_expand_to_neighbor():
+    config = TransformerConfig(2, 128, 128, 4, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(2, 128, 128, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        output = model(x)
+
+    assert output.shape == x.shape
+    assert model.fused_residual_layer_norm_calls == 0
+
+
+def test_row6_config_with_runtime_batch_neighbor_does_not_fuse():
+    config = TransformerConfig(10000, 128, 128, 4, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(2, 128, 128, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        output = model(x)
+
+    assert output.shape == x.shape
+    assert model.fused_residual_layer_norm_calls == 0
+
+
+def test_row6_noncontiguous_mask_falls_back_before_fused_wrapper():
+    config = TransformerConfig(10000, 128, 128, 4, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.empty(10000, 128, 128, device="cuda", dtype=torch.float32)
+    valid_mask = torch.ones(128, 10000, device="cuda", dtype=torch.bool).t()
+
+    assert not valid_mask.is_contiguous()
+    with torch.inference_mode():
+        assert not model._use_fused_residual_layer_norm(x, valid_mask)
+
+
+def test_final_row5_uses_exact_fused_residual_layer_norm_route():
+    config = TransformerConfig(128, 128, 128, 4, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(128, 128, 128, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        output = model(x)
+
+    assert output.shape == x.shape
+    assert model.fused_residual_layer_norm_calls == 8
+    assert model.attention_backend_counts == {
+        "triton": 4,
+        "sdpa": 0,
+        "reference": 0,
+    }
+
+
+def test_row5_fused_residual_layer_norm_preserves_common_boundaries():
+    config = TransformerConfig(128, 128, 128, 4, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").eval()
+    x = torch.empty(128, 128, 128, device="cuda", dtype=torch.float32)
+    valid_mask = torch.ones(128, 128, device="cuda", dtype=torch.bool).t()
+
+    assert not valid_mask.is_contiguous()
+    assert not model._use_fused_residual_layer_norm(x, None)
+    with torch.inference_mode():
+        assert not model._use_fused_residual_layer_norm(x.cpu(), None)
+        assert not model._use_fused_residual_layer_norm(x.half(), None)
+        assert not model._use_fused_residual_layer_norm(x.transpose(1, 2), None)
+        assert not model._use_fused_residual_layer_norm(x[:127], None)
+        assert not model._use_fused_residual_layer_norm(x, valid_mask)
+        head_neighbor = UserOptimizedTransformer(
+            TransformerConfig(128, 128, 128, 8, 128, 4, True),
+            attention_backend="auto",
+        ).eval()
+        assert not head_neighbor._use_fused_residual_layer_norm(x, None)
+        model.train()
+        assert not model._use_fused_residual_layer_norm(x, None)
+
+
+def test_final_row5_fused_residual_layer_norm_passes_stress_matrix():
+    torch.manual_seed(10023)
+    config = TransformerConfig(128, 128, 128, 4, 128, 4, True)
+    baseline = BaselineTransformer(config)
+    optimized = UserOptimizedTransformer(config, attention_backend="auto")
+    copy_model_weights(baseline, optimized, strict=True)
+    baseline = baseline.cuda().eval()
+    optimized = optimized.cuda().eval()
+
+    scenarios = 0
+    with torch.inference_mode():
+        for seed in (1234, 2026, 4096):
+            for input_scale in (0.25, 1.0, 4.0):
+                for padding_ratio in (0.0, 0.25):
+                    x, valid_mask = generate_random_case(
+                        config,
+                        torch.device("cuda"),
+                        torch.float32,
+                        seed=seed,
+                        padding_ratio=padding_ratio,
+                        input_scale=input_scale,
+                    )
+                    reference = baseline(x, valid_mask)
+                    actual = optimized(x, valid_mask)
+                    result = compare_outputs(
+                        reference,
+                        actual,
+                        rtol=0.01,
+                        atol=0.001,
+                    )
+                    assert result.passed, (
+                        f"seed={seed} scale={input_scale} "
+                        f"padding={padding_ratio} "
+                        f"failed={result.failed_elements}/{result.total_elements} "
+                        f"max_abs={result.max_abs_error:.6g}"
+                    )
+                    scenarios += 1
+
+    assert optimized.fused_residual_layer_norm_calls == scenarios * 8
+    assert optimized.attention_backend_counts == {
+        "triton": scenarios * config.num_layers,
+        "sdpa": 0,
+        "reference": 0,
+    }
+
+
+def test_final_row9_uses_exact_fused_residual_layer_norm_route():
+    config = TransformerConfig(64, 128, 128, 1, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.randn(64, 128, 128, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        output = model(x)
+
+    assert output.shape == x.shape
+    assert model.fused_residual_layer_norm_calls == 8
+    assert model.attention_backend_counts == {
+        "triton": 4,
+        "sdpa": 0,
+        "reference": 0,
+    }
+
+
+def test_row9_fused_residual_layer_norm_preserves_exact_boundaries():
+    config = TransformerConfig(64, 128, 128, 1, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").eval()
+    x = torch.empty(64, 128, 128, device="cuda", dtype=torch.float32)
+    valid_mask = torch.ones(128, 64, device="cuda", dtype=torch.bool).t()
+
+    assert not valid_mask.is_contiguous()
+    assert not model._use_fused_residual_layer_norm(x, None)
+    with torch.inference_mode():
+        assert not model._use_fused_residual_layer_norm(x.cpu(), None)
+        assert not model._use_fused_residual_layer_norm(x.half(), None)
+        assert not model._use_fused_residual_layer_norm(x.transpose(1, 2), None)
+        assert not model._use_fused_residual_layer_norm(x[:63], None)
+        assert not model._use_fused_residual_layer_norm(x, valid_mask)
+        assert not UserOptimizedTransformer(
+            TransformerConfig(64, 128, 128, 2, 128, 4, True),
+            attention_backend="auto",
+        ).eval()._use_fused_residual_layer_norm(x, None)
+        assert not UserOptimizedTransformer(
+            TransformerConfig(64, 128, 128, 1, 256, 4, True),
+            attention_backend="auto",
+        ).eval()._use_fused_residual_layer_norm(x, None)
+        assert not UserOptimizedTransformer(
+            TransformerConfig(64, 128, 128, 1, 128, 4, False),
+            attention_backend="auto",
+        ).eval()._use_fused_residual_layer_norm(x, None)
+        model.train()
+        assert not model._use_fused_residual_layer_norm(x, None)
+
+
+def test_final_row9_fused_residual_layer_norm_passes_stress_matrix():
+    torch.manual_seed(11025)
+    config = TransformerConfig(64, 128, 128, 1, 128, 4, True)
+    baseline = BaselineTransformer(config)
+    optimized = UserOptimizedTransformer(config, attention_backend="auto")
+    copy_model_weights(baseline, optimized, strict=True)
+    baseline = baseline.cuda().eval()
+    optimized = optimized.cuda().eval()
+
+    scenarios = 0
+    with torch.inference_mode():
+        for seed in (1234, 2026, 4096):
+            for input_scale in (0.25, 1.0, 4.0):
+                for padding_ratio in (0.0, 0.25):
+                    x, valid_mask = generate_random_case(
+                        config,
+                        torch.device("cuda"),
+                        torch.float32,
+                        seed=seed,
+                        padding_ratio=padding_ratio,
+                        input_scale=input_scale,
+                    )
+                    reference = baseline(x, valid_mask)
+                    actual = optimized(x, valid_mask)
+                    result = compare_outputs(
+                        reference,
+                        actual,
+                        rtol=0.01,
+                        atol=0.001,
+                    )
+                    assert result.passed, (
+                        f"seed={seed} scale={input_scale} "
+                        f"padding={padding_ratio} "
+                        f"failed={result.failed_elements}/{result.total_elements} "
+                        f"max_abs={result.max_abs_error:.6g}"
+                    )
+                    scenarios += 1
+
+    assert optimized.fused_residual_layer_norm_calls == scenarios * 8
+    assert optimized.attention_backend_counts == {
+        "triton": scenarios * config.num_layers,
+        "sdpa": 0,
+        "reference": 0,
+    }
+
+
+def test_final_row6_fused_residual_layer_norm_passes_stress_matrix():
+    torch.manual_seed(7018)
+    config = TransformerConfig(10000, 128, 128, 4, 128, 4, True)
+    baseline = BaselineTransformer(config)
+    optimized = UserOptimizedTransformer(config, attention_backend="auto")
+    copy_model_weights(baseline, optimized, strict=True)
+    baseline = baseline.cuda().eval()
+    optimized = optimized.cuda().eval()
+
+    scenarios = 0
+    with torch.inference_mode():
+        for seed in (1234, 2026, 4096):
+            for input_scale in (0.25, 1.0, 4.0):
+                for padding_ratio in (0.0, 0.25):
+                    x, valid_mask = generate_random_case(
+                        config,
+                        torch.device("cuda"),
+                        torch.float32,
+                        seed=seed,
+                        padding_ratio=padding_ratio,
+                        input_scale=input_scale,
+                    )
+                    reference = baseline(x, valid_mask)
+                    actual = optimized(x, valid_mask)
+                    result = compare_outputs(
+                        reference,
+                        actual,
+                        rtol=0.01,
+                        atol=0.001,
+                    )
+                    assert result.passed, (
+                        f"seed={seed} scale={input_scale} "
+                        f"padding={padding_ratio} "
+                        f"failed={result.failed_elements}/{result.total_elements} "
+                        f"max_abs={result.max_abs_error:.6g}"
+                    )
+                    scenarios += 1
+
+    assert optimized.fused_residual_layer_norm_calls == scenarios * 8
+    assert optimized.attention_backend_counts == {
+        "triton": scenarios * 2,
+        "sdpa": 0,
+        "reference": scenarios * 2,
+    }
+
+
 @pytest.mark.parametrize("padding_ratio", [0.0, 0.3])
 def test_heldout_long_causal_auto_uses_accuracy_proven_sdpa(padding_ratio):
     config = TransformerConfig(2, 512, 512, 8, 2048, 2, True)
@@ -360,6 +632,34 @@ def test_final_row11_padded_triton_route_passes_seed_scale_and_padding_stress():
         "sdpa": 0,
         "reference": 0,
     }
+    assert optimized.fused_residual_layer_norm_calls == 3 * 3 * 2 * 8
+
+
+def test_row11_fused_residual_layer_norm_does_not_expand_to_head_neighbor():
+    config = TransformerConfig(64, 128, 128, 8, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").cuda().eval()
+    x = torch.empty(64, 128, 128, device="cuda", dtype=torch.float32)
+
+    with torch.inference_mode():
+        assert not model._use_fused_residual_layer_norm(x, None)
+
+
+def test_row11_fused_residual_layer_norm_preserves_common_boundaries():
+    config = TransformerConfig(64, 128, 128, 16, 128, 4, True)
+    model = UserOptimizedTransformer(config, attention_backend="auto").eval()
+    x = torch.empty(64, 128, 128, device="cuda", dtype=torch.float32)
+    valid_mask = torch.ones(128, 64, device="cuda", dtype=torch.bool).t()
+
+    assert not valid_mask.is_contiguous()
+    assert not model._use_fused_residual_layer_norm(x, None)
+    with torch.inference_mode():
+        assert not model._use_fused_residual_layer_norm(x.cpu(), None)
+        assert not model._use_fused_residual_layer_norm(x.half(), None)
+        assert not model._use_fused_residual_layer_norm(x.transpose(1, 2), None)
+        assert not model._use_fused_residual_layer_norm(x[:2], None)
+        assert not model._use_fused_residual_layer_norm(x, valid_mask)
+        model.train()
+        assert not model._use_fused_residual_layer_norm(x, None)
 
 
 @pytest.mark.skipif(not hasattr(torch, "compile"), reason="torch.compile unavailable")
