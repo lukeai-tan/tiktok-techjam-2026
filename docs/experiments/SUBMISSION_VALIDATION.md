@@ -1,35 +1,56 @@
 # Selected Submission Validation
 
-Status: complete; approved for repo-local submission selection with residuals
+Status: complete through Campaign 11; approved for repo-local submission selection with external holds
 
-Date: 2026-08-28 (Asia/Singapore)
+Date: 2026-08-29 (Asia/Singapore)
 
-Base commit: `b41fdaf90f869a920346401b2b9fd93899fe805e`
+Base commit: `8c89d1d4170c58d16fb75d79f212e990565fba7d`
 
 Selected implementation SHA-256:
-`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`
 
 ## Selection outcome
 
-The repository has no separate candidate registry. Its actual submission entry
-is `torch_transformer_benchmark.py::UserOptimizedTransformer`, which
+The actual submission entry remains
+`torch_transformer_benchmark.py::UserOptimizedTransformer`, which
 `benchmarks/run_organizer_torch.py` injects into the byte-preserved organizer
-PyTorch harness. Independent schema-2 fingerprint recomputation showed that
-this live root entry already equals the requested SHA-256 across all 13
-fingerprinted implementation paths. No implementation byte was copied or
-rewritten, because doing so would have changed the selected fingerprint or
-created a false selector.
+PyTorch harness. Campaign 11 extends the accepted fused residual/LayerNorm
+forward only to exact final row 9 while retaining the exact-shape and eval-mode boundary. The
+schema-2 fingerprint above binds the current source, final matrices, held-out
+matrices, organizer-default run, source-derived run, profiles, and tests.
 
 The untouched organizer downloads remain frozen at:
 
 - PyTorch: `1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`;
 - TensorFlow: `00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798`.
 
-Five focused integration tests independently checked those hashes, protected
-baseline definitions, CPU harness injection, final-row transcription, and the
-row-11 profile manifest before GPU benchmarking.
+Fifty-one preflight contract tests independently checked those hashes,
+protected baseline definitions, harness injection, final-row transcription,
+logger behavior, and evidence policy before candidate integration.
 
-## Full measured suite
+## Current Campaign 11 measured suite
+
+| Gate | Correctness | Performance / backend |
+| --- | --- | --- |
+| Complete final primary | 13/13 executable PASS + exact non-pass skip; 0/938,885,120 failed | 1.977420x; row 5 2.314x; row 9 1.780x; row 11 6.377x; Triton 1,260 / SDPA 0 / reference 196 |
+| Complete final confirmation | same zero-failure contract and backend counts | 1.986499x |
+| Untouched organizer default | 5/5 PASS; 0/2,621,440 failed | 1.385x; 1,950 Triton calls |
+| Held-out primary / confirmation | 7/7 PASS twice; 0/13,117,440 failed each | 1.339847x / 1.386495x |
+| Held-out stability | four current-fingerprint matrices plus one 300-sample target run; zero failures | long-causal 1.198x-1.204x; SDPA-only; aggregate geomean 1.340x-1.515x |
+| Source-derived | 28/28 executable PASS + exact non-pass skip; 0/459,776,000 failed | 1.206505x; Triton 672 / SDPA 1,344 / reference 2,688 |
+| Exact row 9 long/profile | five trials; zero failures; 240 fused calls in each profile | 0.717648 ms; controlled optimized latency -12.05%; mean subsystem time -41.77%; memory-neutral |
+| Exact row 5 long | five trials; zero failures | 1.163168 ms, 1.880066x, memory-neutral |
+| Exact row 6 long | five trials; zero failures | 188.457397 ms, 1.546330x, memory-neutral |
+| Exact row 11 long/profile | five trials; zero failures; 240 fused calls in profile | 0.890672 ms, 4.710116x; profile model time -22.09%; memory-neutral |
+| Complete pytest | 148/148 PASS; 14 upstream warnings | CPU and CUDA coverage; no required test removed |
+
+Campaign 11's immutable attempt ledger and wall-time aggregate are recorded in
+[CAMPAIGN-011](CAMPAIGN-011.md). Campaign 10 remains the immutable before-state
+and row-9 control. The detailed table below is retained as the
+historical 2026-08-28 selection baseline; its older fingerprint and slowdown
+finding are not current submission evidence.
+
+## Historical 2026-08-28 measured suite
 
 | Gate | Correctness | Performance / backend | Child wall time |
 | --- | --- | --- | ---: |
@@ -48,7 +69,7 @@ counts are identical. Their selected-submission JSON is
 [primary](../results/rtx-5070-ti-2026-08-28-submission-final.json) and
 [confirmation](../results/rtx-5070-ti-2026-08-28-submission-final-confirmation.json).
 
-## Residual performance finding
+## Historical residual performance finding
 
 The held-out aggregate remains above baseline, but the non-padded
 `long-causal` case reproduced below baseline at 0.793x and 0.800x. The padded
@@ -108,9 +129,9 @@ external unknowns exactly as recorded in `docs/REQUIREMENTS.md`.
 
 ## Release decision
 
-The independent review and AI Council approve the exact fingerprint for the
+The independent review and AI Council approve the current exact fingerprint for the
 repo-local submission entry. This is not approval for a public release or a
 claim that every shape is faster. Required controls are to retain the held-out
-slowdown disclosure, regenerate evidence after any fingerprint change, retest
+stability evidence, regenerate evidence after any fingerprint change, retest
 on a different evaluator GPU, and obtain separate authority for every Git or
 public-submission action.

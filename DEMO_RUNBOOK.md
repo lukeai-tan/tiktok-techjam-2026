@@ -53,8 +53,9 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
 
    Point out 13/13 executable `PASS`, 0/938,885,120 failed elements, the
    authorized row-14 resource skip, and the live speedups. The fresh selected-
-   submission artifact records 1.911947x geomean, row 11 at 5.948x, and row 13
-   at 4.788x; quote the demo's actual output if it differs.
+   submission artifact records 1.977420x geomean, row 5 at 2.314x, newly fused
+   row 9 at 1.780x, row 11 at 6.377x, and row 13 at 4.791x; quote the demo's
+   actual output if it differs.
 
 6. Run the full source-derived organizer validation:
 
@@ -67,24 +68,28 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    one explicitly authorized 100,000-token resource skip that is not counted
    as a pass.
 
-7. Prove the accepted Campaign 5 hybrid and retained row-11 kernels actually ran:
+7. Prove the newly retained row-9 fusion actually ran:
 
    ```powershell
    & $python benchmarks/profile_cases.py `
-     --manifest benchmarks/campaign5_profile_shapes.json `
-     --case final-07-b64-d32-h4-s128 --dtype float32 `
-     --attention-backend auto --steps 10 --out results/demo-profile.json
+     --manifest benchmarks/campaign11_profile_shapes.json `
+     --case final-09-b64-d128-h1-s128 --dtype float32 `
+     --attention-backend auto --steps 30 --out results/demo-profile.json
    ```
 
-   Show 30 `_attention_fwd` Triton events plus 10 reference attention calls.
-   Then point to the row-6, row-11, and long-causal profiles in the Campaign 5
-   ledger for the complete backend proof.
+   Show 120 `_attention_fwd` Triton events and 240 fused residual/LayerNorm
+   launches over 30 forwards, replacing 240 adds and 240 native norms. Then
+   point to the Campaign 11 row-5, row-6, row-8, row-11, and long-causal profiles for
+   complete backend proof. Show the historical Campaign 6 row-8
+   control/current profile pair separately:
+   it proves packed-QKV projection work fell from 240 to 160 `addmm` calls and
+   model device time fell 7.91%, while attention correctly remains reference.
 
-8. Finish on `docs/TECH_REPORT.md`: the fresh untouched organizer default is 1.397x,
+8. Finish on `docs/TECH_REPORT.md`: the fresh untouched organizer default is 1.385x,
    and the published final matrix is 13/13 executable PASS with zero failed
-   elements and a 1.911947x geometric-mean speedup. Show the source-derived and
-   both held-out artifacts as broader correctness and anti-overfitting evidence,
-   including the former long-causal regressions now at 1.247x and 1.280x.
+   elements and a 1.977420x geometric-mean speedup. Show the source-derived and
+   four held-out artifacts as broader correctness and anti-overfitting evidence,
+   including the long-causal 1.198x-1.204x stability band.
 
 ## Failure handling
 

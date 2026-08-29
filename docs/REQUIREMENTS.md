@@ -12,8 +12,8 @@ held-out matrix rather than the final organizer matrix.
 Selected local submission entry:
 `torch_transformer_benchmark.py::UserOptimizedTransformer`. Its schema-2
 implementation fingerprint is
-`9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`.
-The 2026-08-28 Campaign 5 integration suite recomputed that identity and ties
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+The 2026-08-29 Campaign 11 integration suite recomputed that identity and ties
 the current final, confirmation, held-out, organizer-default, source-derived,
 profile, and test evidence to it. The protected organizer downloads remain
 unchanged.
@@ -132,6 +132,12 @@ Correctness validation must cover:
   envelope; forced `triton` mode must fail clearly when unsupported.
 - Backend choice must be inspectable in tests/results. Import or compilation
   errors may not be swallowed as successful custom execution.
+- Eager CUDA float32 inference may cache a derived packed QKV projection for
+  measured `d_model <= 512` shapes and exact `d_model == 1024`. Widths 513-1023,
+  widths above 1024, CPU, low precision, compiled execution, gradients, or an
+  otherwise unsupported layout must retain separate projections. The derived
+  cache must invalidate after parameter/state/device/dtype changes, remain
+  non-persistent, and preserve strict state-dict compatibility.
 - The measured fixed launch policy uses 32x32 tiles for `head_dim == 128` only
   through sequence 128 and returns to 32x64 at sequence 129 and above. Boundary
   tests must preserve that exact guard; it changes launch geometry, not the
@@ -150,7 +156,21 @@ Correctness validation must cover:
   keeps layers zero and one on reference math and uses Triton for layers two and
   three. Full approximate execution failed 21 elements and a one-reference/
   three-Triton split failed one element; the accepted 2/2 split passed three
-  complete 819,200,000-element comparisons and repeated performance runs.
+  complete 819,200,000-element comparisons and repeated performance runs. For
+  eval-mode CUDA float32 inference outside compilation, this exact runtime shape
+  also fuses each residual add with the following LayerNorm. Exact final row 5
+  (`B=128,S=128,d_model=128,heads=4,layers=4,causal=true`), row 9
+  (`B=64,S=128,d_model=128,heads=1,layers=4,causal=true`), and row 11
+  (`B=64,S=128,d_model=128,heads=16,layers=4,causal=true`) reuse the same
+  fused forward while retaining all four Triton attention layers. Rows 5 and 9
+  are admitted only by exact static configuration and runtime-shape guards; their
+  neighboring batches, sequence lengths, dimensions, head counts, layer counts,
+  causal modes, and feed-forward widths remain unfused. The fused
+  kernel must
+  preserve optional bias, epsilon, strict state-dict compatibility, padded-row
+  zeroing, and each shape's established attention routing. Noncontiguous masks, neighboring
+  shapes, training, CPU, other dtypes, and compiled execution retain the eager
+  PyTorch path.
 - The exact project-held-out `B=2,S=512,d_model=512,heads=8,layers=2,
   causal=true` envelope uses SDPA for both unpadded and prefix-padded inputs.
   Controlled screens, repeated held-out matrices, backend counts, and profiler
@@ -218,6 +238,10 @@ dispatcher and may fall back to SDPA until measured.
   all 13 executable rows pass the untouched selected PyTorch comparator in
   isolated processes, and the exact 100000-token resource skip is excluded
   from the pass count.
+- **AC-10:** Exact-row residual/LayerNorm fusion remains limited to final rows 5,
+  6, 9, and 11 in eval-mode eager CUDA float32 inference; direct, stress, neighbor,
+  training, gradient, dtype, device, layout, mask, memory, and profiler gates
+  must remain current for the selected fingerprint.
 
 ## Deliverables
 

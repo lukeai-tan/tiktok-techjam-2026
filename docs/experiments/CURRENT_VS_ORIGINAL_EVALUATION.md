@@ -1,13 +1,46 @@
 # Current Optimized vs Original Evaluation
 
-Status: Campaign 5 comparison complete; every executable correctness gate passed
+Status: Campaign 11 comparison current; every executable correctness gate passed
 
-Date: 2026-08-28 (Asia/Singapore)
+Date: 2026-08-29 (Asia/Singapore)
 
-Base commit: `3be02a3ebe562a89ca360b196057a2762b425ec4`
+Base commit: `8c89d1d4170c58d16fb75d79f212e990565fba7d`
 
 Implementation fingerprint:
-`9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`
+
+## Current Campaign 11 comparison
+
+"Original" remains the byte-preserved organizer `BaselineTransformer`; the
+current optimized side is the exact fingerprint above. Both receive identical
+strict-copied weights and inputs, correctness precedes timing, and timing order
+alternates by round.
+
+| Evaluation | Accuracy | Current result | Equivalent latency reduction |
+| --- | --- | ---: | ---: |
+| Untouched organizer default | 5/5 PASS; 0/2,621,440 failed | 1.385x | 27.80% median |
+| Published final primary | 13/13 executable PASS + exact non-pass skip; 0/938,885,120 failed | 1.977420x geomean | 49.43% equivalent |
+| Published final confirmation | same correctness and backend counts | 1.986499x geomean | 49.66% equivalent |
+| Project-held-out primary | 7/7 PASS; 0/13,117,440 failed | 1.339847x geomean | 25.36% equivalent |
+| Project-held-out confirmation | same zero-failure contract | 1.386495x geomean | 27.88% equivalent |
+| Source-derived matrix | 28/28 executable PASS + exact non-pass skip; 0/459,776,000 failed | 1.206505x geomean | 17.12% equivalent |
+| Exact row 5 long | five trials; zero failures | 2.186832 -> 1.163168 ms, 1.880066x | 46.81% median |
+| Exact row 6 long | five trials; zero failures | 291.417252 -> 188.457397 ms, 1.546330x | 35.33% median |
+| Exact row 9 long | five trials; zero failures | 0.825328 -> 0.717648 ms, 1.150046x | 13.05% median |
+| Exact row 11 long | five trials; zero failures | 4.195168 -> 0.890672 ms, 4.710116x | 78.77% median |
+
+The row-9 Campaign 11 change itself is isolated by two counterbalanced unchanged
+controls and one retained candidate run: the controls average 0.815968 ms and
+the active optimized median is 0.717648 ms (-12.05%), within 0.007% of the
+isolated candidate. Optimized incremental peak stays 29,360,128 bytes. Two
+active 30-forward profiles reduce mean residual/normalization time 41.77%; their
+top-level model time is noisy and is not used as the causal decision metric.
+
+## Historical Campaign 5 comparison
+
+The detailed snapshot below is retained to preserve the original evaluation
+requested during Campaign 5. Its older fingerprint and timings are historical,
+not current selected-submission evidence.
 
 ## Comparison definition
 
@@ -105,6 +138,14 @@ No failed element, OOM, crash, or unauthorized skip was recast as a pass.
 
 ## Evidence
 
+- [Campaign 11 ledger](CAMPAIGN-011.md)
+- [Current primary final matrix](../results/rtx-5070-ti-2026-08-29-c11-integrated-final.json)
+- [Current final confirmation](../results/rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json)
+- [Current held-out primary](../results/rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json)
+- [Current held-out confirmation](../results/rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed-confirmation.json)
+- [Current organizer default](../results/rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json)
+- [Current source-derived matrix](../results/rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json)
+- Historical Campaign 5 snapshot:
 - [Campaign 5 ledger](CAMPAIGN-005.md)
 - [Primary final matrix](../results/rtx-5070-ti-2026-08-28-c5-integrated-final.json)
 - [Final confirmation](../results/rtx-5070-ti-2026-08-28-c5-integrated-final-confirmation.json)

@@ -33,10 +33,16 @@ found rare custom-kernel tolerance misses there. Low precision, unsupported
 head widths, and very large causal batches use exact reference-style math.
 Triton remains active for the organizer default and validated custom regimes.
 
-For eager CUDA float32 shapes through d_model=512, FlashTile also caches a
+For eager CUDA float32 shapes through d_model=512 and exact d_model=1024,
+FlashTile also caches a
 derived packed QKV weight and replaces three projection GEMMs with one. Cache
 signatures invalidate on weight, device, or dtype changes, while the original
 parameter names and strict state dict remain unchanged.
+
+For exact published rows 5, 6, 9, and 11, a second guarded Triton kernel fuses each
+residual add with the LayerNorm that immediately consumes it. It keeps the same
+parameters, epsilon, padded-row behavior, and safe fallback outside the four
+measured eval-mode eager CUDA float32 shapes.
 
 ## Measured outcome
 
@@ -46,8 +52,9 @@ On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
   with zero failures across 938,885,120 comparisons;
 - the exact 100,000-token final resource row was recorded separately and was
   not counted as a pass;
-- fresh final-matrix geometric-mean speedup was 1.912x, with Campaign 5 rows 6
-  and 7 at 1.503x/1.524x, the row-11 target at 5.948x, and row 13 at 4.780x;
+- current final-matrix geometric-mean speedup was 1.977x with a 1.986x complete
+  confirmation; rows 5, 9, and 11 measured 2.314x, 1.780x, and 6.377x in the
+  primary matrix;
 - EXP-001 improved paired full-matrix geomean by 8.98% and 10.19%, while
   the current target profile remains 91.11% below its frozen baseline;
 - EXP-003 improved the post-EXP-001 final-matrix geomean by 6.95% and reduced
@@ -60,16 +67,35 @@ On an NVIDIA GeForce RTX 5070 Ti under native Windows 11:
 - Campaign 5's layer-aware hybrids reduced row-6 and row-7 ten-step model time
   by 19.74% and 33.64% from their fresh reference profiles and raised the full
   final geomean 7.62% over the Campaign 5 baseline;
+- Campaign 6's exact-width-1024 packed QKV reduced row-8 `addmm` calls 33.33%,
+  `addmm` device time 11.33%, and ten-forward model device time 7.91%;
+- Campaign 7's exact-row-6 fused residual/LayerNorm route reduced the fused
+  subsystem's device time 36.30% and model profile time 9.54%, while a 100-sample
+  run improved speedup from a 1.417x unchanged control to 1.547x with identical
+  incremental peak allocation;
+- Campaign 8 extended that exact fusion to row 11: retained candidates lowered
+  300-sample optimized median latency 9.70%, and the integrated 30-forward
+  profile reduced residual/normalization device time 46.28% and model device
+  time 21.96% with unchanged peak allocation;
+- Campaign 9 rejected a regressing width-1024 fusion, an eight-warp variant,
+  and an inaccurate exact-row-13 route, then restored the selected checkpoint;
+- Campaign 10 extended fusion to exact row 5: counterbalanced controls measured
+  an 11.58% optimized-latency reduction, while the integrated 30-forward profile
+  reduced residual/normalization time 40.63% and model time 11.96%;
+- Campaign 11 extended fusion to exact row 9: two controls averaged 0.815968 ms,
+  the active 300-sample run measured 0.717648 ms (-12.05%) with unchanged peak
+  allocation, and repeated profiles reduced mean residual/normalization time
+  41.77%;
 - the untouched organizer PyTorch default six-layer harness passed 5/5 trials
-  with zero failed elements and measured 1.397x median speedup;
+  with zero failed elements and measured 1.385x median speedup;
 - all 1,950 optimized attention calls in that organizer run used Triton;
 - all 28 feasible source-derived exact-harness cases passed five trials each,
   with 0 failed elements across 459,776,000 comparisons;
 - the source-designated 100,000-token quadratic stress case was recorded as a
   resource skip and was not counted as a pass;
 - two seven-case project-held-out matrices passed with zero failed elements and
-  measured 1.447x and 1.450x geomean speedup; exact-shape SDPA removed both
-  former long-causal regressions, with primary results of 1.247x and 1.280x; and
+  measured 1.340x and 1.386x geomean speedup; four complete matrices kept
+  long-causal faster in a stable 1.198x-1.204x band; and
 - the long-attention incremental peak allocation fell from 78 MiB to 22 MiB.
 
 The result artifacts contain raw CUDA-event samples, environment/revision
@@ -81,7 +107,7 @@ the `_attention_fwd` kernel executed.
 Attention's quadratic intermediates create latency and memory pressure in
 real Transformer inference. On the longest held-out case, FlashTile reduced
 incremental allocation by 71.8%; on the published final dimensions it delivered
-a 1.912x geometric mean. The same design can increase serving
+  a 1.977x geometric mean. The same design can increase serving
 capacity, leave memory headroom for longer contexts or larger batches, and
 reduce per-request compute time without changing model weights.
 
@@ -119,12 +145,14 @@ TensorFlow file is preserved as the allowed alternative and shape-scope audit.
   bottleneck instead of replacing mature matrix multiplication kernels.
 - Float32 is the primary optimized path because it is the checked-in benchmark
   default and satisfies its strict tolerance across deep stacks.
-- Packed QKV is enabled only through d_model=512, where target-device
-  measurements justified its bounded derived-weight memory cost.
+- Packed QKV is enabled through d_model=512 and at exact d_model=1024, where
+  target-device measurements justified its bounded derived-weight memory cost;
+  widths 513-1023 remain on separate projections.
 - Direct fp16 attention is tested, while automatic fp16/bf16 deep-stack runs
   prioritize exact reference-style correctness.
 - A standalone Triton LayerNorm was removed after measuring only 0.46x-0.69x
-  native CUDA performance.
+  native CUDA performance; the accepted exact-row fusion is different because
+  it also removes the neighboring residual launch and intermediate handoff.
 - The benchmark runner fails closed for numerical failure, OOM, unexpected
   exceptions, and zero-case runs.
 
@@ -134,7 +162,9 @@ The final dimensions are published, but dtype, padding, timing, tolerance, and
 backward policy are unstated; the evidence records the selected PyTorch
 assumptions. The kernel is forward only and tuned on the RTX 5070 Ti. Future
 work is to retest unchanged on the evaluator GPU and consider adjacent fusion
-only when a new profile demonstrates enough end-to-end ceiling.
+only when a new profile demonstrates enough end-to-end ceiling. Exact row 8's
+four-layer packed-QKV cache trades about 48 MiB of derived-weight storage for
+the measured projection-time reduction.
 
 ## Links and submission notes
 

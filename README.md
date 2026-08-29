@@ -17,38 +17,68 @@ elements across 938,885,120 comparisons**.
 The selected local submission is
 `torch_transformer_benchmark.py::UserOptimizedTransformer`, with schema-2
 implementation SHA-256
-`9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029`.
-Campaign 5's primary final-matrix geometric-mean end-to-end speedup is
-**1.912x**; a second complete run measured **1.995x** with identical
-correctness and aggregate backend counts. Final rows 6 and 7 now use
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+Campaign 11's primary final-matrix geometric-mean end-to-end speedup is
+**1.977x**; a second complete run measured **1.986x** with identical
+correctness and aggregate backend counts. Final rows 6 and 7 use
 accuracy-bounded hybrid execution: row 6 keeps its first two layers exact and
 uses Triton for the last two, while row 7 keeps layer zero exact and uses
-Triton for layers one through three. Primary speedups are **1.503x** and
-**1.524x**, respectively; retained Campaign 4 row 11 measures **5.948x**.
+Triton for layers one through three. Exact rows 5 and 9 also use the guarded
+fused residual-plus-LayerNorm path. Row 9's dedicated 300-sample optimized
+median is **0.718 ms**, **12.05% below** two counterbalanced Campaign 10
+controls and within 0.007% of the isolated candidate. The inherited row-5,
+row-6, and row-11 long gates measure **1.880x**, **1.546x**, and **4.710x**.
 Backend accounting is Triton 1,260 / SDPA 0 / reference 196. The complete
 table, stdout, environment, source hashes, and fingerprint are in
-[the Campaign 5 final artifact](docs/results/rtx-5070-ti-2026-08-28-c5-integrated-final.json).
+[the Campaign 11 final artifact](docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json).
 
-Two five-seed project-owned held-out runs are **7/7 PASS at 1.447x and 1.450x**. The
-previous long-causal regressions are removed by an exact measured SDPA route:
-the primary non-padded and padded cases measure **1.247x** and **1.280x**.
-The untouched organizer default is **5/5 PASS at 1.397x**, and the
-source-derived matrix is **28/28 executable PASS at 1.205x** plus the same
+Two five-seed project-owned held-out runs are **7/7 PASS at 1.340x and 1.386x**.
+Two additional current-fingerprint rechecks and a 300-sample confirmation put
+the exact long-causal SDPA route in a stable **1.198x-1.204x** band; the four
+padded runs span **1.213x-1.335x**. The untouched organizer default is **5/5
+PASS at 1.385x**, and the source-derived matrix is **28/28 executable PASS at
+1.207x** plus the same
 authorized non-pass skip. These are separate evidence gates, not substitutes
 for the published final matrix.
 
-The complete optimization history now has one canonical entry point:
-[what was tried, every campaign aggregate, rejected and failed work, score
-evolution, and why Campaign 5 is best](docs/experiments/OPTIMIZATION_HISTORY.md).
-Campaign 5 retains its preflight, baselines, baseline/candidate/integrated
-profiles, seven backend screens, rejected full-route candidates, hybrid
-confirmations, counterbalanced controls, integration matrices, and every failed gate under
+Campaign 7 introduced a guarded fused residual-add plus LayerNorm route for
+exact row 6. Campaign 8 reused that kernel for exact row 11, and Campaign 10
+extended it to exact row 5. Campaign 11 now extends it to exact row 9. The route explicitly
+blocks training mode as well as gradients, compilation, unsupported layouts,
+dtypes, masks, devices, and neighboring shapes. Over 30 row-11 forwards the
+active profile preserves 240 fused launches plus 30 native norms. On row 9,
+two active profiles reduce mean residual/normalization device time **41.77%**
+versus two Campaign 10 controls, while top-level profiler time remains noisy;
+the counterbalanced 300-sample CUDA-event gate measures the causal **12.05%**
+optimized-latency reduction. Peak allocation remains 29,360,128 bytes.
+Campaign 7's rejected head-width-256 route remains closed.
+
+The campaign record has two non-overlapping canonical entry points:
+[the executive run-through and flagship ranking](docs/experiments/CAMPAIGN_RUN_THROUGH.md)
+and [the detailed metric/evidence history](docs/experiments/OPTIMIZATION_HISTORY.md).
+Campaign 11 is now the selected successor and retains its preflight, baselines,
+baseline/candidate/integrated
+profiles, bounded candidate screens, rejected variants, confirmations,
+counterbalanced controls, integration matrices, and every failed gate under
 `docs/experiments/attempts/`. No rejected or failed evidence was deleted.
 
 The final dimensions are published, but dtype, padding, timing, tolerance, and
 backward policy remain unstated. See [the requirements](docs/REQUIREMENTS.md)
 for the exact assumptions and [the result index](docs/results/README.md) for all
 current reproducibility commands.
+
+## Which campaign is the flagship?
+
+Use **Campaign 11** and fingerprint
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+It is the current cumulative implementation, has the latest complete
+zero-failure final pair, and passed the 148-test repository gate. Campaign 5's
+1.995117x confirmation is the highest historical aggregate and the strongest
+broad generalization snapshot, but it is an older timing window rather than the
+current submission. Campaign 7 is the best high-volume row-6 specialist; the
+Campaign 4 plus Campaign 8 row-11 lineage is the strongest single-row result.
+The [ranked comparison](docs/experiments/CAMPAIGN_RUN_THROUGH.md#flagship-and-strongest-specialist-campaigns)
+explains the evidence and limits behind each label.
 
 ## What is implemented
 
@@ -67,8 +97,8 @@ weight copy while replacing explicit attention with:
 - fp32 online-softmax state and accumulator;
 - causal and prefix-padding bounds inside the kernel;
 - no [B,H,S,S] score, probability, or dense combined-mask allocation;
-- one cached QKV projection for measured eager-fp32 shapes up to d_model=512,
-  with automatic invalidation and no state-dict changes;
+- one cached QKV projection for measured eager-fp32 shapes up to d_model=512
+  and exact d_model=1024, with automatic invalidation and no state-dict changes;
 - a measured fixed launch policy for head dimensions 8/16/32/64/128, with
   zero-masked 16-lane dot padding for width eight;
 - measured auto-routing (short unmasked fp32 heads <=32 use SDPA; deep six-layer
@@ -77,6 +107,8 @@ weight copy while replacing explicit attention with:
   reference math; exact final rows 6 and 7 use layer-bounded Triton/reference
   hybrids; the measured held-out B2/S512/head64 causal envelope uses SDPA; other
   validated custom fp32 regimes use Triton); and
+- exact-row fused residual plus LayerNorm execution for final rows 5, 6, and 11,
+  guarded to eval-mode eager CUDA float32 inference; and
 - observable forced triton, sdpa, and reference routing.
 
 The primary optimized end-to-end path uses the benchmark-default float32 and
@@ -188,6 +220,11 @@ $python = ".venv\Scripts\python.exe"
 & $python benchmarks/profile_cases.py --case long-causal-padding --dtype float32 --attention-backend auto --steps 5 --out results/profile.json --trace results/profile-trace.json
 ~~~
 
+The Colab notebook is locally pinned to `feat/jared-attempt` and the Campaign 11
+fingerprint. It will not reproduce from GitHub until these uncommitted local
+changes are separately committed and pushed; the final test result proves
+its structure and pinning locally, not remote branch availability.
+
 The matrix runner fails closed:
 
 - unexpected exceptions are ERROR;
@@ -204,6 +241,7 @@ transformer_opt/
   config.py                           support envelope and launch policy
   dispatch.py                         custom/SDPA/reference routing
   kernels/attention.py                Triton fused attention
+  kernels/residual_layer_norm.py      guarded fused residual plus LayerNorm
 benchmarks/
   torch_transformer_benchmark.py      untouched organizer PyTorch download
   tensorflow_transformer_benchmark.py untouched organizer TensorFlow download
@@ -240,8 +278,10 @@ DEMO_RUNBOOK.md                       public walkthrough sequence
 - Tuning evidence is specific to the RTX 5070 Ti.
 - Float16/bfloat16 deep-stack auto runs prioritize exact benchmark correctness
   over fused speed.
-- Packed QKV duplicates up to 6 MiB of derived float32 weights for a two-layer
-  d_model=512 model; it is disabled where measurement did not justify the cost.
+- Packed QKV duplicates about 6 MiB of derived float32 weights for a two-layer
+  d_model=512 model and about 48 MiB for the measured four-layer d_model=1024
+  row. The row-8 cache raises pre-forward allocated memory by 50,380,800 bytes;
+  widths 513-1023 and wider unmeasured widths remain disabled.
 - There is no production deployment because Track 3 explicitly excludes it.
 
 ## Team contributions
@@ -256,7 +296,7 @@ verified names and responsibilities here and on Devpost before submission.
 The repo-local submission entry is selected at the fingerprint above. It passes
 all 13 executable final rows, both project-held-out confirmations, the untouched
 organizer default, all 28 feasible source-derived organizer validation cases,
-and the complete 117-test CPU/GPU suite. The immutable validation artifacts were
+  and the complete **148/148-test** CPU/GPU suite. The immutable validation artifacts were
 captured before Git packaging and therefore record a dirty local candidate;
 committing or pushing this checkpoint does not relabel those measurements as a
 clean run. Organizer policy clarification and YouTube/Devpost steps remain

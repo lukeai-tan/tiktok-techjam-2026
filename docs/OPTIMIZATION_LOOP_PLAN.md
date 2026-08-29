@@ -1,6 +1,6 @@
 # Bounded Agentic GPU Optimization Loop
 
-Status: executed on 2026-08-28; complete through Campaign 5
+Status: stopped and consolidated after Campaign 11 on 2026-08-30
 Applies to: the PyTorch/Triton Transformer implementation in this repository
 
 ## Objective
@@ -14,10 +14,13 @@ to keep changing code until a benchmark number looks better.
 
 ## Campaign outcome
 
-The loop is complete through Campaign 5. The current implementation passed all
+The loop completed Campaign 11's candidate, integration, review, documentation,
+workflow, and graph gates. The current implementation passed all
 13 executable final rows with zero failed elements across 938,885,120
 comparisons; the exact 100,000-token resource row remains an authorized non-pass
-skip. The current primary and confirmation geomeans are 1.911947x and 1.995117x.
+skip. The current primary and confirmation geomeans are 1.977420x and 1.986499x.
+Campaign 12 was drafted but stopped before preflight, profiling, benchmarking,
+or source changes; its unused scaffold was removed and it has no campaign result.
 
 | Stage | Accepted change | Final geomean after integration |
 | --- | --- | ---: |
@@ -28,14 +31,19 @@ skip. The current primary and confirmation geomeans are 1.911947x and 1.995117x.
 | Campaign 5 / EXP-010-I3 | exact row 7: layer 0 reference, layers 1-3 Triton | 1.911947x composite; row 7 1.524x |
 | Campaign 5 / EXP-011-I2 | exact row 6: layers 0-1 reference, layers 2-3 Triton | same composite; row 6 1.503x |
 | Campaign 5 / EXP-012-I1 | exact held-out long-causal SDPA route | 1.447477x held-out; prior 0.798x/0.878x targets became 1.247x/1.280x |
+| Campaign 6 / EXP-015-I1R | exact-width-1024 packed QKV | 1.872916x current composite; row-8 profile time -7.91% versus same-window control |
+| Campaign 7 / EXP-018-I2R | exact-row-6 fused residual plus LayerNorm | 1.880620x current composite; row-6 model profile -9.54%, 100-sample speedup 1.417x control to 1.547x candidate, no peak-memory increase |
+| Campaign 8 / EXP-019-I1R | exact-row-11 fused residual plus LayerNorm | 1.876167x current composite; retained row-11 median -9.70%, integrated model profile -21.96%, no peak-memory increase |
+| Campaign 10 / EXP-023-I1 | exact-row-5 fused residual plus LayerNorm | 1.926716x current composite; retained row-5 median -11.58%, integrated model profile -11.96%, 2.001995x over 300 samples |
+| Campaign 11 / EXP-025-I1 | exact-row-9 fused residual plus LayerNorm | 1.977420x current composite; controlled optimized median -12.05%, mean residual/normalization profile time -41.77%, memory-neutral |
 
-Campaigns 2-5 retain immutable attempt records for every passing and failed
-child command; Campaign 5's final exact count and wall time are recorded in
-`experiments/CAMPAIGN-005.md` after closure.
-The canonical [complete optimization history](experiments/OPTIMIZATION_HISTORY.md)
-contains the chronological run-through, every meaningful candidate and
-disposition, campaign metrics, failed gates, current route table, and audit
-links. The individual campaign records remain immutable-detail appendices.
+Campaigns 2-11 retain immutable attempt records for every passing and failed
+child command; each campaign's exact count and wall time are recorded in its
+ledger after closure.
+The canonical [campaign run-through and flagship ranking](experiments/CAMPAIGN_RUN_THROUGH.md)
+owns the executive narrative. The [complete optimization history](experiments/OPTIMIZATION_HISTORY.md)
+owns the detailed chronology, metrics, route table, and evidence index. The
+individual campaign records remain immutable-detail appendices.
 
 ## Source of truth and scope
 
@@ -56,7 +64,8 @@ requirements decision and a separately reviewed update.
 Current implementation context:
 
 - The repository already has a fused online-softmax Triton attention kernel,
-  guarded dispatch, packed-QKV inference, and target-GPU evidence.
+  exact-row-5, exact-row-6, exact-row-9, and exact-row-11 fused residual/LayerNorm routes, guarded dispatch, packed-QKV
+  inference, and target-GPU evidence.
 - The organizer now publishes 14 final shape rows. Framework, dtype, padding,
   timing, tolerance, and backward policy remain unstated, so the final-shape
   runner records the selected PyTorch defaults as explicit assumptions.
@@ -273,20 +282,24 @@ immutable sidecar, but measured fields are never hand-edited.
 Keep rejected and inconclusive records. They prevent the agents from repeating
 the same low-value idea and make the final technical report honest.
 
-## Recommended first campaign for this repository
+## Most recent campaign
 
-1. Repair the native-Windows artifact hash portability problem and resolve the
-   branch/main notebook conflict.
-2. Reconfirm the clean baseline and its evidence fingerprint.
-3. Profile the full Transformer to identify the largest remaining end-to-end
-   contributor after packed QKV and fused attention.
-4. Run at most three independent candidates against that bottleneck: one kernel
-   configuration/layout candidate, one launch/intermediate-reduction candidate,
-   and one dispatch or projection candidate.
-5. Validate each candidate on the current and held-out shapes before considering
-   any broader fusion.
-6. Keep the best accepted candidate, reject the rest, and publish refreshed
-   evidence only after integration.
+1. Campaign 11 started from selected Campaign 10 fingerprint
+   `f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4`.
+2. Fresh row-9 profiling exposed a 19.10% residual/normalization ceiling. A
+   bounded exact-row-9 reuse of the accepted fused forward passed direct,
+   neighbor, 18-scenario stress, long-run, memory, repeated-profile, final,
+   held-out, source-derived, organizer-default, inherited-route, and suite gates.
+3. Two unchanged controls averaged 0.815968 ms. The active 300-sample optimized
+   median is 0.717648 ms (-12.05%), within 0.007% of the isolated candidate,
+   while repeated profiles reduce mean subsystem time 41.77%. Top-level
+   profiler time is noisy and is disclosed rather than used as causal proof.
+4. The selected fingerprint is now
+   `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+5. EXP-026 row-10 fusion was deliberately unrun because EXP-025 produced an
+   accepted winner. The next loop must profile a materially different surface
+   and must not retry Campaign 9's width-1024/row-13 arithmetic or Campaign
+   11's conditional row-10 fallback without a new campaign and fresh evidence.
 
 Avoid forcing Triton everywhere, changing tolerances to save a candidate,
 blanket-enabling `torch.compile`, or reviving standalone LayerNorm fusion without
