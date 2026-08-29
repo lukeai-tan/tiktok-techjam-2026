@@ -1,5 +1,8 @@
 # Transformer GPU Kernel Requirements
 
+Use the [documentation hub](README.md) for the repository reading order. This
+file owns the executable contract and its unresolved organizer assumptions.
+
 Status: implementation contract reconciled with the two participant-supplied
 organizer downloads received on 2026-08-27 and the 14-row Track 3 test-shape
 table published in the organizer document's Section 3.7. PyTorch is the
@@ -26,7 +29,7 @@ unchanged.
    `benchmarks/final_evaluator_shapes.json` and its live source metadata.
 3. The older result-linked snapshot identified by
    `benchmarks/reference/manifest.json`.
-4. Track 3 in `docs/hackathon-details.md`, lines 674-780.
+4. Track 3 in `hackathon-docs/hackathon-details.md`, lines 674-780.
 5. Reproduced behavior on the target GPU.
 6. Design and explanatory documentation in this repository.
 
@@ -68,7 +71,7 @@ The files are not interchangeable evaluator specifications. PyTorch defaults
 to one configurable float32 case and the stricter 0.001/0.01 OR rule;
 TensorFlow defaults to a float16 compact dimension sweep and the prose-level
 0.002/0.02 OR rule. The final table supplies dimensions but does not resolve
-those framework-level differences. See `docs/ORGANIZER_INPUTS.md` for the exact
+those framework-level differences. See `hackathon-docs/ORGANIZER_INPUTS.md` for the exact
 differences and remaining clarifications.
 
 ## Required behavior

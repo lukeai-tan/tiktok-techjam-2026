@@ -5,6 +5,11 @@ benchmark. It fuses QK, online softmax, masking, and P@V without materializing
 the quadratic attention matrix, then routes unsupported cases to explicit,
 auditable fallbacks.
 
+For the shortest path through the repository, start with the
+[documentation hub](docs/README.md). It separates the executive campaign
+outcome, implementation contract, reproducibility artifacts, and submission
+holds.
+
 ## Verified result
 
 On an NVIDIA GeForce RTX 5070 Ti under native Windows 11, the
@@ -53,32 +58,30 @@ the counterbalanced 300-sample CUDA-event gate measures the causal **12.05%**
 optimized-latency reduction. Peak allocation remains 29,360,128 bytes.
 Campaign 7's rejected head-width-256 route remains closed.
 
-The campaign record has two non-overlapping canonical entry points:
-[the executive run-through and flagship ranking](docs/experiments/CAMPAIGN_RUN_THROUGH.md)
-and [the detailed metric/evidence history](docs/experiments/OPTIMIZATION_HISTORY.md).
-Campaign 11 is now the selected successor and retains its preflight, baselines,
-baseline/candidate/integrated
-profiles, bounded candidate screens, rejected variants, confirmations,
-counterbalanced controls, integration matrices, and every failed gate under
-`docs/experiments/attempts/`. No rejected or failed evidence was deleted.
+Campaign 11 is the selected successor. Its preflight, baselines,
+candidate/integrated profiles, bounded screens, rejected variants,
+confirmations, counterbalanced controls, integration matrices, and failed gates
+remain under `docs/experiments/attempts/`; no evidence was deleted. Use the
+[campaign run-through](docs/experiments/CAMPAIGN_RUN_THROUGH.md) for the readable
+outcome, the [optimization history](docs/experiments/OPTIMIZATION_HISTORY.md)
+for chronology and accounting, and the [result index](docs/results/README.md)
+for artifact-level reproduction.
 
 The final dimensions are published, but dtype, padding, timing, tolerance, and
-backward policy remain unstated. See [the requirements](docs/REQUIREMENTS.md)
-for the exact assumptions and [the result index](docs/results/README.md) for all
-current reproducibility commands.
+backward policy remain unstated. The exact assumptions are in the
+[requirements](docs/REQUIREMENTS.md).
 
 ## Which campaign is the flagship?
 
 Use **Campaign 11** and fingerprint
 `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
-It is the current cumulative implementation, has the latest complete
-zero-failure final pair, and passed the 148-test repository gate. Campaign 5's
-1.995117x confirmation is the highest historical aggregate and the strongest
-broad generalization snapshot, but it is an older timing window rather than the
-current submission. Campaign 7 is the best high-volume row-6 specialist; the
-Campaign 4 plus Campaign 8 row-11 lineage is the strongest single-row result.
-The [ranked comparison](docs/experiments/CAMPAIGN_RUN_THROUGH.md#flagship-and-strongest-specialist-campaigns)
-explains the evidence and limits behind each label.
+It is the current cumulative implementation, owns the latest complete
+zero-failure final pair, and passed the 148-test repository gate. Campaign 5
+is the strongest historical broad-generalization snapshot, Campaign 7 is the
+best high-volume row-6 specialist, and the Campaign 4 plus Campaign 8 lineage
+is the strongest single-row result. The [documentation hub](docs/README.md) and
+[ranked comparison](docs/experiments/CAMPAIGN_RUN_THROUGH.md#flagship-and-strongest-specialist-campaigns)
+explain the evidence and limits behind each label.
 
 ## What is implemented
 
@@ -107,7 +110,7 @@ weight copy while replacing explicit attention with:
   reference math; exact final rows 6 and 7 use layer-bounded Triton/reference
   hybrids; the measured held-out B2/S512/head64 causal envelope uses SDPA; other
   validated custom fp32 regimes use Triton); and
-- exact-row fused residual plus LayerNorm execution for final rows 5, 6, and 11,
+- exact-row fused residual plus LayerNorm execution for final rows 5, 6, 9, and 11,
   guarded to eval-mode eager CUDA float32 inference; and
 - observable forced triton, sdpa, and reference routing.
 
@@ -220,10 +223,10 @@ $python = ".venv\Scripts\python.exe"
 & $python benchmarks/profile_cases.py --case long-causal-padding --dtype float32 --attention-backend auto --steps 5 --out results/profile.json --trace results/profile-trace.json
 ~~~
 
-The Colab notebook is locally pinned to `feat/jared-attempt` and the Campaign 11
-fingerprint. It will not reproduce from GitHub until these uncommitted local
-changes are separately committed and pushed; the final test result proves
-its structure and pinning locally, not remote branch availability.
+The Colab notebook is pinned to `feat/jared-attempt` and the Campaign 11
+fingerprint. That pin is committed on this branch; a clean GitHub reproduction
+still requires access to the branch and a matching CUDA environment. The
+notebook test proves its structure and pinning locally, not remote availability.
 
 The matrix runner fails closed:
 
@@ -257,14 +260,15 @@ benchmarks/
   reference/organizer_downloads.json  exact supplied-file checksums/contracts
 tests/                                CPU contract + direct/end-to-end GPU tests
 docs/
-  ORGANIZER_INPUTS.md                 received/missing organizer resource audit
+  README.md                             documentation map and reading order
   REQUIREMENTS.md                     source-of-truth and acceptance criteria
   KERNEL_DESIGN.md                    kernel algorithm and trade-offs
   TECH_REPORT.md                      measured technical report
-  TRACK3_COMPLIANCE.md                brief-to-evidence audit and external holds
+  experiments/                         campaign narratives, ledgers, and attempts
+  guides/                              operational demo procedure
   results/                            curated raw evidence
+hackathon-docs/                       competition context and submission material
 notebooks/colab_benchmark.ipynb       fingerprint-pinned full-suite Colab workflow
-DEMO_RUNBOOK.md                       public walkthrough sequence
 ~~~
 
 ## Limitations
@@ -296,10 +300,10 @@ verified names and responsibilities here and on Devpost before submission.
 The repo-local submission entry is selected at the fingerprint above. It passes
 all 13 executable final rows, both project-held-out confirmations, the untouched
 organizer default, all 28 feasible source-derived organizer validation cases,
-  and the complete **148/148-test** CPU/GPU suite. The immutable validation artifacts were
+and the complete **148/148-test** CPU/GPU suite. The immutable validation artifacts were
 captured before Git packaging and therefore record a dirty local candidate;
 committing or pushing this checkpoint does not relabel those measurements as a
 clean run. Organizer policy clarification and YouTube/Devpost steps remain
 external holds. See the
-[Track 3 compliance matrix](docs/TRACK3_COMPLIANCE.md) and follow the
-[demo runbook](DEMO_RUNBOOK.md).
+[Track 3 compliance matrix](hackathon-docs/TRACK3_COMPLIANCE.md) and follow the
+[demo runbook](docs/guides/DEMO_RUNBOOK.md).
