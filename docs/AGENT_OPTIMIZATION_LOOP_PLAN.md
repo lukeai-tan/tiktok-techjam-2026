@@ -3,6 +3,11 @@
 Status: stopped and consolidated after Campaign 11 on 2026-08-30
 Applies to: the PyTorch/Triton Transformer implementation in this repository
 
+For the reader-facing summary, start with the [documentation hub](README.md).
+This plan records the experiment controls and stopping rules; campaign outcomes
+belong in the [campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md) and
+the [optimization history](experiments/OPTIMIZATION_HISTORY.md).
+
 ## Objective
 
 Improve end-to-end Transformer performance and memory use on the target GPU while
@@ -53,7 +58,7 @@ Use these sources in this order:
    `benchmarks/reference/organizer_downloads.json`.
 2. The 14-row final organizer shape table frozen in
    `benchmarks/final_evaluator_shapes.json`.
-3. `docs/REQUIREMENTS.md` and the checked-in executable comparator.
+3. `docs/REQUIREMENTS.md`, `hackathon-docs/hackathon-details.md`, and the checked-in executable comparator.
 4. Measured behavior on the target GPU.
 5. `docs/KERNEL_DESIGN.md`, `docs/TECH_REPORT.md`, and README claims.
 
