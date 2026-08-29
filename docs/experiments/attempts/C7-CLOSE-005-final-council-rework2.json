@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C7-CLOSE-005-final-council-rework2",
+    "hypothesis": "A fail-closed review validator with literal inner variables proves the Campaign 7 final review after two retained quoting failures",
+    "scope": "second rework of integrated release-gate review validation",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json"
+    ],
+    "rollback": "Rework the validator while retaining all prior records",
+    "decision": "keep",
+    "decision_rationale": "Literal inner variables and single-quoted comparison values prevent both outer-shell expansion and inner quote loss",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      "$ErrorActionPreference = 'Stop'; $j = Get-Content -LiteralPath 'docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json' -Raw -Encoding utf8 | ConvertFrom-Json; if ($j.decision -ne 'APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL') { exit 1 }; if ($j.blocking_findings.Count -ne 0) { exit 1 }; if ($j.implementation_sha256 -ne 'a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b') { exit 1 }; if ($j.git_actions_authorized.Count -ne 0) { exit 1 }; Write-Output 'review_valid=true'"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T12:54:08.968259+00:00",
+    "ended_at_utc": "2026-08-29T12:54:09.150599+00:00",
+    "wall_time_seconds": 0.1823492997791618,
+    "timeout_seconds": 300.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "review_valid=true\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T12:54:08.879160+00:00",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      "$ErrorActionPreference = 'Stop'; $j = Get-Content -LiteralPath 'docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json' -Raw -Encoding utf8 | ConvertFrom-Json; if ($j.decision -ne 'APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL') { exit 1 }; if ($j.blocking_findings.Count -ne 0) { exit 1 }; if ($j.implementation_sha256 -ne 'a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b') { exit 1 }; if ($j.git_actions_authorized.Count -ne 0) { exit 1 }; Write-Output 'review_valid=true'"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 145,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441163354112
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T12:54:09.189284+00:00",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      "$ErrorActionPreference = 'Stop'; $j = Get-Content -LiteralPath 'docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json' -Raw -Encoding utf8 | ConvertFrom-Json; if ($j.decision -ne 'APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL') { exit 1 }; if ($j.blocking_findings.Count -ne 0) { exit 1 }; if ($j.implementation_sha256 -ne 'a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b') { exit 1 }; if ($j.git_actions_authorized.Count -ne 0) { exit 1 }; Write-Output 'review_valid=true'"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 145,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441163354112
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C9-PREFLIGHT-004-candidate-worktree",
+    "hypothesis": "The detached candidate worktree exactly matches the Campaign 8 source fingerprint while isolating Campaign 9 source edits from the active integration tree.",
+    "scope": "Candidate-worktree Git identity, implementation fingerprint, and environment capture.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": null,
+    "changed_paths": [
+      "docs/results/rtx-5070-ti-2026-08-29-c9-candidate-environment.json"
+    ],
+    "rollback": "Do not edit the candidate until its fingerprint is reconciled; recreate isolation only if identity differs.",
+    "decision": "observation",
+    "decision_rationale": "Candidate source changes require an isolated workspace with the exact frozen parent implementation.",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "tools\\capture_environment.py",
+      "--out",
+      "rtx-5070-ti-2026-08-29-c9-candidate-environment.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T14:00:34.116980+00:00",
+    "ended_at_utc": "2026-08-29T14:00:35.509585+00:00",
+    "wall_time_seconds": 1.3922011000104249,
+    "timeout_seconds": 60.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Downloads\\GitHub\\tiktok-techjam-2026\\docs\\results\\rtx-5070-ti-2026-08-29-c9-candidate-environment.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T14:00:34.029620+00:00",
+    "command": [
+      "python.exe",
+      "tools\\capture_environment.py",
+      "--out",
+      "rtx-5070-ti-2026-08-29-c9-candidate-environment.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 5,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440010063872
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T14:00:35.554206+00:00",
+    "command": [
+      "python.exe",
+      "tools\\capture_environment.py",
+      "--out",
+      "rtx-5070-ti-2026-08-29-c9-candidate-environment.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 5,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440010059776
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "b5de3aefb1e6a1fc048671564e265e0cdac8dfbc984949d1ef78790b2c4dbfbf"
+  },
+  "result_artifact": {
+    "path": "rtx-5070-ti-2026-08-29-c9-candidate-environment.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 2134,
+    "sha256": "ac8ee686ff1b886530caa29d7408cada8cebed479cbd467ad08f2aa563dd1f5f",
+    "schema_version": null,
+    "created_at_utc": null
+  },
+  "metrics": {
+    "kind": "unknown",
+    "status": null,
+    "correctness": null,
+    "performance": null,
+    "attention_backend_counts": null,
+    "memory": null,
+    "profiler": null
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C11-INTEGRATE-025-pre-doc-full-suite",
+    "hypothesis": "The implementation tests will pass and any pre-documentation failures will identify stale selected-fingerprint or artifact-contract references requiring Campaign 11 migration.",
+    "scope": "Complete repository suite before Campaign 11 documentation and artifact-pointer migration.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "torch_transformer_benchmark.py",
+      "tests/test_gpu_transformer.py"
+    ],
+    "rollback": "Repair only Campaign 11 implementation or stale in-scope artifact references revealed by the suite.",
+    "decision": "pending",
+    "decision_rationale": "Use the complete suite to establish the exact pre-closure state.",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T15:39:44.657535+00:00",
+    "ended_at_utc": "2026-08-29T15:40:05.415111+00:00",
+    "wall_time_seconds": 20.75737899984233,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "........................................................................ [ 48%]\n............................................................F.F...FFF..F [ 97%]\nFF.                                                                      [100%]\n================================== FAILURES ===================================\n____ test_selected_submission_attempts_bind_results_to_current_fingerprint ____\n\n    def test_selected_submission_attempts_bind_results_to_current_fingerprint():\n        current_fingerprint, _ = implementation_fingerprint()\n        attempt_root = ROOT / \"docs\" / \"experiments\" / \"attempts\"\n    \n        for attempt_name, result_path in SUBMISSION_ATTEMPT_RESULT_MAP.items():\n            attempt = _load(attempt_root / attempt_name)\n            assert attempt[\"record_status\"] == \"RECORDED\"\n            assert attempt[\"execution\"][\"status\"] == \"PASS\"\n            assert attempt[\"execution\"][\"return_code\"] == 0\n>           assert attempt[\"environment_before\"][\"git\"][\"implementation_sha256\"] == (\n                current_fingerprint\n            )\nE           AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE             \nE             - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE             + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:218: AssertionError\n______________ test_curated_matrix_is_complete_green_and_current ______________\n\n    def test_curated_matrix_is_complete_green_and_current():\n        matrix = _load(MATRIX_PATH)\n        current_fingerprint, current_paths = implementation_fingerprint()\n        captured_git = matrix[\"environment\"][\"git\"]\n>       assert captured_git[\"implementation_sha256\"] == current_fingerprint\nE       AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE         \nE         - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE         + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:267: AssertionError\n__________ test_campaign10_row11_profile_preserves_exact_fused_route __________\n\n    def test_campaign10_row11_profile_preserves_exact_fused_route():\n        current_fingerprint, _ = implementation_fingerprint()\n        attempt = _load(\n            ROOT\n            / \"docs\"\n            / \"experiments\"\n            / \"attempts\"\n            / \"C10-INTEGRATE-010-row11-profile.json\"\n        )\n        profile = _load(ROW11_PROFILE_PATH)\n    \n        assert attempt[\"execution\"][\"status\"] == \"PASS\"\n        assert attempt[\"result_artifact\"][\"sha256\"] == _sha256(ROW11_PROFILE_PATH)\n>       assert profile[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE         \nE         - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE         + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:437: AssertionError\n___ test_campaign10_row8_profile_preserves_packed_qkv_projection_reduction ____\n\n    def test_campaign10_row8_profile_preserves_packed_qkv_projection_reduction():\n        current_fingerprint, _ = implementation_fingerprint()\n        attempt = _load(\n            ROOT\n            / \"docs\"\n            / \"experiments\"\n            / \"attempts\"\n            / \"C10-INTEGRATE-016-row8-profile.json\"\n        )\n        profile = _load(ROW8_PROFILE_PATH)\n        control = _load(ROW8_CONTROL_PROFILE_PATH)\n    \n        assert attempt[\"execution\"][\"status\"] == \"PASS\"\n        assert attempt[\"metrics\"][\"kind\"] == \"profile\"\n        assert attempt[\"metrics\"][\"status\"] == \"INCONCLUSIVE\"\n        assert attempt[\"result_artifact\"][\"path\"] == ROW8_PROFILE_PATH.relative_to(\n            ROOT\n        ).as_posix()\n        assert attempt[\"result_artifact\"][\"sha256\"] == _sha256(ROW8_PROFILE_PATH)\n>       assert profile[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE         \nE         - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE         + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:477: AssertionError\n______ test_campaign10_row6_profile_proves_fused_residual_norm_reduction ______\n\n    def test_campaign10_row6_profile_proves_fused_residual_norm_reduction():\n        current_fingerprint, _ = implementation_fingerprint()\n        attempt = _load(\n            ROOT\n            / \"docs\"\n            / \"experiments\"\n            / \"attempts\"\n            / \"C10-INTEGRATE-009-row6-profile.json\"\n        )\n        profile = _load(ROW6_PROFILE_PATH)\n        control = _load(ROW6_CONTROL_PROFILE_PATH)\n    \n        assert attempt[\"execution\"][\"status\"] == \"PASS\"\n        assert attempt[\"result_artifact\"][\"sha256\"] == _sha256(ROW6_PROFILE_PATH)\n>       assert profile[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE         \nE         - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE         + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:513: AssertionError\n_ test_organizer_default_artifact_uses_untouched_harness_and_current_submission _\n\n    def test_organizer_default_artifact_uses_untouched_harness_and_current_submission():\n        evidence = _load(ORGANIZER_DEFAULT_PATH)\n        manifest = _load(ORGANIZER_MANIFEST_PATH)\n        current_fingerprint, _ = implementation_fingerprint()\n        pytorch_download = next(\n            artifact\n            for artifact in manifest[\"artifacts\"]\n            if artifact[\"framework\"] == \"pytorch\"\n        )\n    \n        assert evidence[\"exit_code\"] == 0\n        assert evidence[\"framework\"] == \"pytorch\"\n        assert evidence[\"organizer_script\"] == {\n            \"path\": \"benchmarks/torch_transformer_benchmark.py\",\n            \"sha256\": pytorch_download[\"sha256\"],\n            \"manifest\": \"benchmarks/reference/organizer_downloads.json\",\n            \"modified\": False,\n        }\n        assert evidence[\"organizer_arguments\"] == [\"--device\", \"cuda\"]\n        runner_path = ROOT / evidence[\"submission\"][\"runner_path\"]\n        assert evidence[\"submission\"][\"runner_sha256\"] == _text_sha256(runner_path)\n        assert evidence[\"parsed\"][\"accuracy\"][\"status\"] == \"PASS\"\n        assert evidence[\"parsed\"][\"accuracy\"][\"failed_elements\"] == 0\n        assert evidence[\"parsed\"][\"accuracy\"][\"total_elements\"] == 2_621_440\n        assert evidence[\"parsed\"][\"speedup_median\"] > 1.0\n        assert evidence[\"attention_backend_counts\"] == {\n            \"triton\": 1950,\n            \"sdpa\": 0,\n            \"reference\": 0,\n        }\n>       assert evidence[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE         \nE         - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE         + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:616: AssertionError\n____ test_organizer_validation_artifact_is_complete_green_and_fail_closed _____\n\n    def test_organizer_validation_artifact_is_complete_green_and_fail_closed():\n        evidence = _load(ORGANIZER_VALIDATION_PATH)\n        current_fingerprint, _ = implementation_fingerprint()\n    \n        def strings(value):\n            if isinstance(value, str):\n                yield value\n            elif isinstance(value, dict):\n                for nested in value.values():\n                    yield from strings(nested)\n            elif isinstance(value, list):\n                for nested in value:\n                    yield from strings(nested)\n    \n        host_home = str(Path.home()).lower()\n        assert all(host_home not in value.lower() for value in strings(evidence))\n        assert evidence[\"status\"] == \"PASS\"\n        assert evidence[\"matrix\"][\"path\"] == (\n            \"benchmarks/organizer_validation_matrix.json\"\n        )\n        assert evidence[\"matrix\"][\"sha256\"] == _text_sha256(\n            ORGANIZER_VALIDATION_MATRIX_PATH\n        )\n        manifest_path = ROOT / evidence[\"organizer_sources\"][\"manifest_path\"]\n        assert evidence[\"organizer_sources\"][\"manifest_sha256\"] == _text_sha256(\n            manifest_path\n        )\n        for path_key, hash_key in (\n            (\"runner_path\", \"runner_sha256\"),\n            (\"validation_runner_path\", \"validation_runner_sha256\"),\n        ):\n            path = ROOT / evidence[\"organizer_sources\"][path_key]\n            assert evidence[\"organizer_sources\"][hash_key] == _text_sha256(path)\n>       assert evidence[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE         \nE         - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE         + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:654: AssertionError\n_________ test_final_evaluator_artifact_is_complete_green_and_current _________\n\n    def test_final_evaluator_artifact_is_complete_green_and_current():\n        evidence = _load(FINAL_EVALUATOR_PATH)\n        current_fingerprint, _ = implementation_fingerprint()\n    \n        assert evidence[\"status\"] == \"PASS\"\n        assert evidence[\"matrix\"] == {\n            \"path\": \"benchmarks/final_evaluator_shapes.json\",\n            \"sha256\": _text_sha256(FINAL_EVALUATOR_MATRIX_PATH),\n            \"status\": \"organizer-published-final-shapes\",\n        }\n        # Campaign 10 is intentionally measured as a reviewable local candidate;\n        # no commit or history mutation is authorized by the optimization request.\n        assert evidence[\"environment\"][\"git\"][\"dirty\"] is True\n>       assert evidence[\"environment\"][\"git\"][\"implementation_sha256\"] == (\n            current_fingerprint\n        )\nE       AssertionError: assert 'f7ad2a86a68f...c658cd64538d4' == '9c326536ea27...8191bbb0804eb'\nE         \nE         - 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\nE         + f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4\n\ntests\\test_result_artifacts.py:717: AssertionError\n============================== warnings summary ===============================\ntests/test_gpu_transformer.py: 14 warnings\n  .\\.venv\\Lib\\site-packages\\torch\\jit\\_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests/test_result_artifacts.py::test_selected_submission_attempts_bind_results_to_current_fingerprint\nFAILED tests/test_result_artifacts.py::test_curated_matrix_is_complete_green_and_current\nFAILED tests/test_result_artifacts.py::test_campaign10_row11_profile_preserves_exact_fused_route\nFAILED tests/test_result_artifacts.py::test_campaign10_row8_profile_preserves_packed_qkv_projection_reduction\nFAILED tests/test_result_artifacts.py::test_campaign10_row6_profile_proves_fused_residual_norm_reduction\nFAILED tests/test_result_artifacts.py::test_organizer_default_artifact_uses_untouched_harness_and_current_submission\nFAILED tests/test_result_artifacts.py::test_organizer_validation_artifact_is_complete_green_and_fail_closed\nFAILED tests/test_result_artifacts.py::test_final_evaluator_artifact_is_complete_green_and_current\n8 failed, 139 passed, 14 warnings in 20.03s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T15:39:44.575118+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 486,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439854985216
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T15:40:05.459208+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 486,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439848136704
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

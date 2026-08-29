@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-CLEANUP-005-cleanup-verification",
+    "hypothesis": "Cleanup removed only unused scaffolds, caches, smoke outputs, and obsolete worktrees while retaining the selected implementation and raw EXP-025 provenance.",
+    "scope": "Verify exact absence, remaining worktree count, candidate-source parity, curated result count, and zero Campaign 12 attempts.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "README.md",
+      "docs",
+      "results"
+    ],
+    "rollback": "Restore any required evidence from its retained source; do not delete additional artifacts.",
+    "decision": "keep",
+    "decision_rationale": "Required evidence-preserving cleanup proof.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nimport subprocess\n\nroot = pathlib.Path('.').resolve()\nremoved = [\n    root / 'benchmarks/campaign12_profile_shapes.json',\n    root / 'docs/experiments/CAMPAIGN-012.md',\n    root / 'docs/experiments/CAMPAIGN-012-WORKFLOW.json',\n    root / 'results/matrix-smoke.json',\n    root / 'results/memory-smoke.json',\n    root / 'results/profile-smoke.json',\n]\ncaches = [\n    root / '.pytest_cache',\n    root / '__pycache__',\n    root / 'benchmarks/__pycache__',\n    root / 'tests/__pycache__',\n    root / 'tools/__pycache__',\n    root / 'transformer_opt/__pycache__',\n    root / 'transformer_opt/kernels/__pycache__',\n]\nassert not any(path.exists() for path in removed)\nassert not any(path.exists() for path in caches)\ncompleted = subprocess.run(['git', 'worktree', 'list', '--porcelain'], check=True, capture_output=True, text=True)\nworktrees = [line[9:] for line in completed.stdout.splitlines() if line.startswith('worktree ')]\nassert len(worktrees) == 2, worktrees\nretained = pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018').resolve()\nassert retained.exists()\nfor relative in ['torch_transformer_benchmark.py', 'tests/test_gpu_transformer.py', 'transformer_opt/kernels/__init__.py']:\n    active_text = (root / relative).read_text(encoding='utf-8').replace('\\r\\n', '\\n')\n    retained_text = (retained / relative).read_text(encoding='utf-8').replace('\\r\\n', '\\n')\n    assert active_text == retained_text, relative\noutput = {\n    'removed_scaffold_and_smoke_files': len(removed),\n    'cache_directories_absent': len(caches),\n    'remaining_worktrees': worktrees,\n    'retained_candidate_source_normalized_equal': True,\n    'curated_result_json_count': len(list((root / 'docs/results').glob('*.json'))),\n    'campaign12_attempt_count': len(list((root / 'docs/experiments/attempts').glob('C12-*.json'))),\n}\nassert output['curated_result_json_count'] == 361\nassert output['campaign12_attempt_count'] == 0\nprint(json.dumps(output, indent=2))"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T16:23:46.066078+00:00",
+    "ended_at_utc": "2026-08-29T16:23:46.132400+00:00",
+    "wall_time_seconds": 0.06632740003988147,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\n  \"removed_scaffold_and_smoke_files\": 6,\n  \"cache_directories_absent\": 7,\n  \"remaining_worktrees\": [\n    \".\",\n    \"<home>/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018\"\n  ],\n  \"retained_candidate_source_normalized_equal\": true,\n  \"curated_result_json_count\": 361,\n  \"campaign12_attempt_count\": 0\n}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T16:23:45.977181+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nimport subprocess\n\nroot = pathlib.Path('.').resolve()\nremoved = [\n    root / 'benchmarks/campaign12_profile_shapes.json',\n    root / 'docs/experiments/CAMPAIGN-012.md',\n    root / 'docs/experiments/CAMPAIGN-012-WORKFLOW.json',\n    root / 'results/matrix-smoke.json',\n    root / 'results/memory-smoke.json',\n    root / 'results/profile-smoke.json',\n]\ncaches = [\n    root / '.pytest_cache',\n    root / '__pycache__',\n    root / 'benchmarks/__pycache__',\n    root / 'tests/__pycache__',\n    root / 'tools/__pycache__',\n    root / 'transformer_opt/__pycache__',\n    root / 'transformer_opt/kernels/__pycache__',\n]\nassert not any(path.exists() for path in removed)\nassert not any(path.exists() for path in caches)\ncompleted = subprocess.run(['git', 'worktree', 'list', '--porcelain'], check=True, capture_output=True, text=True)\nworktrees = [line[9:] for line in completed.stdout.splitlines() if line.startswith('worktree ')]\nassert len(worktrees) == 2, worktrees\nretained = pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018').resolve()\nassert retained.exists()\nfor relative in ['torch_transformer_benchmark.py', 'tests/test_gpu_transformer.py', 'transformer_opt/kernels/__init__.py']:\n    active_text = (root / relative).read_text(encoding='utf-8').replace('\\r\\n', '\\n')\n    retained_text = (retained / relative).read_text(encoding='utf-8').replace('\\r\\n', '\\n')\n    assert active_text == retained_text, relative\noutput = {\n    'removed_scaffold_and_smoke_files': len(removed),\n    'cache_directories_absent': len(caches),\n    'remaining_worktrees': worktrees,\n    'retained_candidate_source_normalized_equal': True,\n    'curated_result_json_count': len(list((root / 'docs/results').glob('*.json'))),\n    'campaign12_attempt_count': len(list((root / 'docs/experiments/attempts').glob('C12-*.json'))),\n}\nassert output['curated_result_json_count'] == 361\nassert output['campaign12_attempt_count'] == 0\nprint(json.dumps(output, indent=2))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 520,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440049766400
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T16:23:46.171942+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nimport subprocess\n\nroot = pathlib.Path('.').resolve()\nremoved = [\n    root / 'benchmarks/campaign12_profile_shapes.json',\n    root / 'docs/experiments/CAMPAIGN-012.md',\n    root / 'docs/experiments/CAMPAIGN-012-WORKFLOW.json',\n    root / 'results/matrix-smoke.json',\n    root / 'results/memory-smoke.json',\n    root / 'results/profile-smoke.json',\n]\ncaches = [\n    root / '.pytest_cache',\n    root / '__pycache__',\n    root / 'benchmarks/__pycache__',\n    root / 'tests/__pycache__',\n    root / 'tools/__pycache__',\n    root / 'transformer_opt/__pycache__',\n    root / 'transformer_opt/kernels/__pycache__',\n]\nassert not any(path.exists() for path in removed)\nassert not any(path.exists() for path in caches)\ncompleted = subprocess.run(['git', 'worktree', 'list', '--porcelain'], check=True, capture_output=True, text=True)\nworktrees = [line[9:] for line in completed.stdout.splitlines() if line.startswith('worktree ')]\nassert len(worktrees) == 2, worktrees\nretained = pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018').resolve()\nassert retained.exists()\nfor relative in ['torch_transformer_benchmark.py', 'tests/test_gpu_transformer.py', 'transformer_opt/kernels/__init__.py']:\n    active_text = (root / relative).read_text(encoding='utf-8').replace('\\r\\n', '\\n')\n    retained_text = (retained / relative).read_text(encoding='utf-8').replace('\\r\\n', '\\n')\n    assert active_text == retained_text, relative\noutput = {\n    'removed_scaffold_and_smoke_files': len(removed),\n    'cache_directories_absent': len(caches),\n    'remaining_worktrees': worktrees,\n    'retained_candidate_source_normalized_equal': True,\n    'curated_result_json_count': len(list((root / 'docs/results').glob('*.json'))),\n    'campaign12_attempt_count': len(list((root / 'docs/experiments/attempts').glob('C12-*.json'))),\n}\nassert output['curated_result_json_count'] == 361\nassert output['campaign12_attempt_count'] == 0\nprint(json.dumps(output, indent=2))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 520,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440049766400
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

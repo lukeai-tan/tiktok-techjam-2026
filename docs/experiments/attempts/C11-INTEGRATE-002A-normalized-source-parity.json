@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-INTEGRATE-002A-normalized-source-parity",
+    "hypothesis": "After normalizing platform line endings, the active source and test transplant is identical to the reviewed isolated candidate.",
+    "scope": "Correct the raw-byte parity gate by comparing normalized UTF-8 content for the two reviewed files.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "torch_transformer_benchmark.py",
+      "tests/test_gpu_transformer.py"
+    ],
+    "rollback": "Remove or reapply only the row-9 hunks if normalized source parity fails.",
+    "decision": "keep",
+    "decision_rationale": "Normalized content plus the exact implementation fingerprint closes the transplant provenance gate; the prior mismatch was newline-only.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import hashlib,pathlib,json; root=pathlib.Path(r'C:/Users/jared/Downloads/GitHub/tiktok-techjam-2026'); cand=pathlib.Path(r'C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018'); files=['torch_transformer_benchmark.py','tests/test_gpu_transformer.py']; h=lambda p: hashlib.sha256(p.read_text(encoding='utf-8').replace('\\\\r\\\\n','\\\\n').encode()).hexdigest(); rows={f:{'active':h(root/f),'candidate':h(cand/f)} for f in files}; print(json.dumps(rows,sort_keys=True)); assert all(v['active']==v['candidate'] for v in rows.values())"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T15:27:05.891447+00:00",
+    "ended_at_utc": "2026-08-29T15:27:05.933003+00:00",
+    "wall_time_seconds": 0.040819300105795264,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\"tests/test_gpu_transformer.py\": {\"active\": \"f605fd2abf9291465ba3958641949d6a56567461581a5496fc10b677e85c10e9\", \"candidate\": \"f605fd2abf9291465ba3958641949d6a56567461581a5496fc10b677e85c10e9\"}, \"torch_transformer_benchmark.py\": {\"active\": \"212c749c1b71670d7cc0a273a3e455b8f7f242d829aec6fd2bba0aa30e06110d\", \"candidate\": \"212c749c1b71670d7cc0a273a3e455b8f7f242d829aec6fd2bba0aa30e06110d\"}}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T15:27:05.808906+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import hashlib,pathlib,json; root=pathlib.Path(r'C:/Users/jared/Downloads/GitHub/tiktok-techjam-2026'); cand=pathlib.Path(r'C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018'); files=['torch_transformer_benchmark.py','tests/test_gpu_transformer.py']; h=lambda p: hashlib.sha256(p.read_text(encoding='utf-8').replace('\\\\r\\\\n','\\\\n').encode()).hexdigest(); rows={f:{'active':h(root/f),'candidate':h(cand/f)} for f in files}; print(json.dumps(rows,sort_keys=True)); assert all(v['active']==v['candidate'] for v in rows.values())"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 445,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439872876544
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T15:27:05.974962+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import hashlib,pathlib,json; root=pathlib.Path(r'C:/Users/jared/Downloads/GitHub/tiktok-techjam-2026'); cand=pathlib.Path(r'C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018'); files=['torch_transformer_benchmark.py','tests/test_gpu_transformer.py']; h=lambda p: hashlib.sha256(p.read_text(encoding='utf-8').replace('\\\\r\\\\n','\\\\n').encode()).hexdigest(); rows={f:{'active':h(root/f),'candidate':h(cand/f)} for f in files}; print(json.dumps(rows,sort_keys=True)); assert all(v['active']==v['candidate'] for v in rows.values())"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 445,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439872876544
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

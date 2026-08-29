@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C8-INTEGRATE-016-long-causal-long",
+    "hypothesis": "A dedicated 300-sample long-causal run provides a stable non-regression estimate for the unchanged held-out SDPA route",
+    "scope": "Campaign 8 integrated long-causal 300-sample held-out confirmation",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "torch_transformer_benchmark.py"
+    ],
+    "rollback": "Investigate the inherited SDPA route if long-run accuracy, routing, or material speedup fails",
+    "decision": "observation",
+    "decision_rationale": "Use longer raw timing rather than a brittle 1.200x point threshold",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_matrix.py",
+      "--case",
+      "long-causal",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--warmup",
+      "10",
+      "--repeats",
+      "50",
+      "--rounds",
+      "6",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-long-causal-long.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T13:33:11.276629+00:00",
+    "ended_at_utc": "2026-08-29T13:33:13.427596+00:00",
+    "wall_time_seconds": 2.1517048000823706,
+    "timeout_seconds": 900.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "[long-causal:float32] running\n[long-causal:float32] PASS\n\n| case | dtype | status | baseline ms | optimized ms | speedup | backend counts |\n| --- | --- | --- | ---: | ---: | ---: | --- |\n| long-causal | float32 | PASS | 0.6789439916610718 | 0.5682240128517151 | 1.195x | {'triton': 0, 'sdpa': 620, 'reference': 0} |\ngeomean speedup=1.195x\nsaved docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-long-causal-long.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T13:33:11.186978+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_matrix.py",
+      "--case",
+      "long-causal",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--warmup",
+      "10",
+      "--repeats",
+      "50",
+      "--rounds",
+      "6",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-long-causal-long.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 234,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440016900096
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T13:33:13.476125+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_matrix.py",
+      "--case",
+      "long-causal",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--warmup",
+      "10",
+      "--repeats",
+      "50",
+      "--rounds",
+      "6",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-long-causal-long.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 235,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440016764928
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": "docs/results/rtx-5070-ti-2026-08-29-c8-integrated-long-causal-long.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 26782,
+    "sha256": "7a3420c9eb51f771a20d5ec0fdd63b77b8e04ca407aa970bbb4af3d43f018485",
+    "schema_version": 1,
+    "created_at_utc": "2026-08-29T13:33:13.130547+00:00"
+  },
+  "metrics": {
+    "kind": "project_matrix",
+    "status": "PASS",
+    "correctness": {
+      "requested": 1,
+      "executable": 1,
+      "passed": 1,
+      "counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "OOM": 0,
+        "PASS": 1
+      },
+      "accuracy_trials": 5,
+      "total_compared_elements": 2621440,
+      "total_failed_elements": 0,
+      "max_abs_error": 0.0005990266799926758,
+      "max_relative_error": 97.56417846679688
+    },
+    "performance": {
+      "geometric_mean_speedup": 1.1948526924332048,
+      "per_case": [
+        {
+          "case_id": "long-causal",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.6789439916610718,
+            "mean_ms": 0.7069276817639669,
+            "p90_ms": 0.8318144142627719,
+            "min_ms": 0.6722880005836487,
+            "sample_count": 300,
+            "sample_stdev_ms": 0.06571437973984386,
+            "sample_max_ms": 0.9526079893112183
+          },
+          "optimized": {
+            "median_ms": 0.5682240128517151,
+            "mean_ms": 0.5976956834395727,
+            "p90_ms": 0.7413504123687745,
+            "min_ms": 0.5651199817657471,
+            "sample_count": 300,
+            "sample_stdev_ms": 0.07507196989717325,
+            "sample_max_ms": 1.0721280574798584
+          },
+          "speedup_median": 1.1948526924332048,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 620,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 48496640,
+            "optimized_incremental_peak_bytes": 24117248,
+            "reduction_percent": 50.27027027027027
+          }
+        }
+      ]
+    },
+    "attention_backend_counts": {
+      "triton": 0,
+      "sdpa": 620,
+      "reference": 0
+    },
+    "memory": {
+      "per_case": [
+        {
+          "case_id": "long-causal",
+          "baseline_incremental_peak_bytes": 48496640,
+          "optimized_incremental_peak_bytes": 24117248,
+          "reduction_percent": 50.27027027027027
+        }
+      ]
+    },
+    "profiler": null
+  }
+}

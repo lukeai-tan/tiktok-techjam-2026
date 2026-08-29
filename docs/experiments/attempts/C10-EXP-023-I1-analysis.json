@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C10-EXP-023-I1-analysis",
+    "hypothesis": "Counterbalanced controls and paired profiles will confirm that the row-5 gain exceeds drift and is caused by fused residual-normalization with memory parity.",
+    "scope": "Read-only analysis of two row-5 controls, one candidate long run, and baseline/candidate profiles.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [],
+    "rollback": "Reject or hold I1 if normalized timing, profile mechanism, correctness, or memory evidence contradicts acceptance.",
+    "decision": "keep",
+    "decision_rationale": "Candidate passed all gates and requires quantified causal comparison for Council review.",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; load=lambda p:json.loads(pathlib.Path(p).read_text()); row=lambda d:d['results'][0]; controls=[row(load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-long-a.json')),row(load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-long-c.json'))]; cand=row(load('docs/results/rtx-5070-ti-2026-08-29-c10-exp023-i1-row05-long-b.json')); bp=load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json'); cp=load('docs/results/rtx-5070-ti-2026-08-29-c10-exp023-i1-row05-profile.json'); bev={e['name']:e for e in bp['top_events'] if e['self_device_time_us']>0}; cev={e['name']:e for e in cp['top_events'] if e['self_device_time_us']>0}; com=statistics.mean(r['timing']['optimized']['median_ms'] for r in controls); cbm=statistics.mean(r['timing']['baseline']['median_ms'] for r in controls); csm=statistics.mean(r['timing']['speedup_median'] for r in controls); cm=cand['timing']['optimized']['median_ms']; cs=cand['timing']['speedup_median']; bsub=bev['aten::add']['self_device_time_us']+bev['aten::native_layer_norm']['self_device_time_us']; csub=cev['_residual_layer_norm_fwd']['self_device_time_us']+cev['aten::native_layer_norm']['self_device_time_us']; out={'control_mean_optimized_median_ms':com,'candidate_optimized_median_ms':cm,'optimized_median_reduction_percent':100*(com-cm)/com,'control_mean_baseline_median_ms':cbm,'control_baseline_range_percent':100*(max(r['timing']['baseline']['median_ms'] for r in controls)-min(r['timing']['baseline']['median_ms'] for r in controls))/cbm,'control_mean_speedup':csm,'candidate_speedup':cs,'normalized_speedup_gain_percent':100*(cs-csm)/csm,'failed_elements':sum(t['failed_elements'] for t in cand['accuracy']['trials']),'compared_elements':sum(t['total_elements'] for t in cand['accuracy']['trials']),'samples':len(cand['timing']['optimized']['raw_ms']),'control_peak_bytes':[r['peak_memory']['optimized']['incremental_peak_bytes'] for r in controls],'candidate_peak_bytes':cand['peak_memory']['optimized']['incremental_peak_bytes'],'baseline_profile_model_us':bev['optimized_transformer']['self_device_time_us'],'candidate_profile_model_us':cev['optimized_transformer']['self_device_time_us'],'profile_model_reduction_percent':100*(bev['optimized_transformer']['self_device_time_us']-cev['optimized_transformer']['self_device_time_us'])/bev['optimized_transformer']['self_device_time_us'],'baseline_subsystem_us':bsub,'candidate_subsystem_us':csub,'profile_subsystem_reduction_percent':100*(bsub-csub)/bsub,'baseline_add_calls':bev['aten::add']['count'],'baseline_native_norm_calls':bev['aten::native_layer_norm']['count'],'candidate_fused_calls':cev['_residual_layer_norm_fwd']['count'],'candidate_native_norm_calls':cev['aten::native_layer_norm']['count'],'baseline_backends':bp['backend_counts'],'candidate_backends':cp['backend_counts']}; print(json.dumps(out,sort_keys=True))"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T14:24:54.227094+00:00",
+    "ended_at_utc": "2026-08-29T14:24:54.271808+00:00",
+    "wall_time_seconds": 0.0444928000215441,
+    "timeout_seconds": 60.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\"baseline_add_calls\": 240, \"baseline_backends\": {\"reference\": 0, \"sdpa\": 0, \"triton\": 120}, \"baseline_native_norm_calls\": 270, \"baseline_profile_model_us\": 41581.111999999994, \"baseline_subsystem_us\": 12089.646000000019, \"candidate_backends\": {\"reference\": 0, \"sdpa\": 0, \"triton\": 120}, \"candidate_fused_calls\": 240, \"candidate_native_norm_calls\": 30, \"candidate_optimized_median_ms\": 1.1715840101242065, \"candidate_peak_bytes\": 58720256, \"candidate_profile_model_us\": 36960.626, \"candidate_speedup\": 1.8732382786700676, \"candidate_subsystem_us\": 7168.170000000032, \"compared_elements\": 10485760, \"control_baseline_range_percent\": 0.009619840709219863, \"control_mean_baseline_median_ms\": 2.1624080538749695, \"control_mean_optimized_median_ms\": 1.3250960111618042, \"control_mean_speedup\": 1.631893217067561, \"control_peak_bytes\": [58720256, 58720256], \"failed_elements\": 0, \"normalized_speedup_gain_percent\": 14.789268015721815, \"optimized_median_reduction_percent\": 11.584971937467607, \"profile_model_reduction_percent\": 11.11198276756042, \"profile_subsystem_reduction_percent\": 40.70818947056001, \"samples\": 300}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T14:24:54.132733+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; load=lambda p:json.loads(pathlib.Path(p).read_text()); row=lambda d:d['results'][0]; controls=[row(load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-long-a.json')),row(load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-long-c.json'))]; cand=row(load('docs/results/rtx-5070-ti-2026-08-29-c10-exp023-i1-row05-long-b.json')); bp=load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json'); cp=load('docs/results/rtx-5070-ti-2026-08-29-c10-exp023-i1-row05-profile.json'); bev={e['name']:e for e in bp['top_events'] if e['self_device_time_us']>0}; cev={e['name']:e for e in cp['top_events'] if e['self_device_time_us']>0}; com=statistics.mean(r['timing']['optimized']['median_ms'] for r in controls); cbm=statistics.mean(r['timing']['baseline']['median_ms'] for r in controls); csm=statistics.mean(r['timing']['speedup_median'] for r in controls); cm=cand['timing']['optimized']['median_ms']; cs=cand['timing']['speedup_median']; bsub=bev['aten::add']['self_device_time_us']+bev['aten::native_layer_norm']['self_device_time_us']; csub=cev['_residual_layer_norm_fwd']['self_device_time_us']+cev['aten::native_layer_norm']['self_device_time_us']; out={'control_mean_optimized_median_ms':com,'candidate_optimized_median_ms':cm,'optimized_median_reduction_percent':100*(com-cm)/com,'control_mean_baseline_median_ms':cbm,'control_baseline_range_percent':100*(max(r['timing']['baseline']['median_ms'] for r in controls)-min(r['timing']['baseline']['median_ms'] for r in controls))/cbm,'control_mean_speedup':csm,'candidate_speedup':cs,'normalized_speedup_gain_percent':100*(cs-csm)/csm,'failed_elements':sum(t['failed_elements'] for t in cand['accuracy']['trials']),'compared_elements':sum(t['total_elements'] for t in cand['accuracy']['trials']),'samples':len(cand['timing']['optimized']['raw_ms']),'control_peak_bytes':[r['peak_memory']['optimized']['incremental_peak_bytes'] for r in controls],'candidate_peak_bytes':cand['peak_memory']['optimized']['incremental_peak_bytes'],'baseline_profile_model_us':bev['optimized_transformer']['self_device_time_us'],'candidate_profile_model_us':cev['optimized_transformer']['self_device_time_us'],'profile_model_reduction_percent':100*(bev['optimized_transformer']['self_device_time_us']-cev['optimized_transformer']['self_device_time_us'])/bev['optimized_transformer']['self_device_time_us'],'baseline_subsystem_us':bsub,'candidate_subsystem_us':csub,'profile_subsystem_reduction_percent':100*(bsub-csub)/bsub,'baseline_add_calls':bev['aten::add']['count'],'baseline_native_norm_calls':bev['aten::native_layer_norm']['count'],'candidate_fused_calls':cev['_residual_layer_norm_fwd']['count'],'candidate_native_norm_calls':cev['aten::native_layer_norm']['count'],'baseline_backends':bp['backend_counts'],'candidate_backends':cp['backend_counts']}; print(json.dumps(out,sort_keys=True))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 346,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439974780928
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T14:24:54.309855+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; load=lambda p:json.loads(pathlib.Path(p).read_text()); row=lambda d:d['results'][0]; controls=[row(load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-long-a.json')),row(load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-long-c.json'))]; cand=row(load('docs/results/rtx-5070-ti-2026-08-29-c10-exp023-i1-row05-long-b.json')); bp=load('docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json'); cp=load('docs/results/rtx-5070-ti-2026-08-29-c10-exp023-i1-row05-profile.json'); bev={e['name']:e for e in bp['top_events'] if e['self_device_time_us']>0}; cev={e['name']:e for e in cp['top_events'] if e['self_device_time_us']>0}; com=statistics.mean(r['timing']['optimized']['median_ms'] for r in controls); cbm=statistics.mean(r['timing']['baseline']['median_ms'] for r in controls); csm=statistics.mean(r['timing']['speedup_median'] for r in controls); cm=cand['timing']['optimized']['median_ms']; cs=cand['timing']['speedup_median']; bsub=bev['aten::add']['self_device_time_us']+bev['aten::native_layer_norm']['self_device_time_us']; csub=cev['_residual_layer_norm_fwd']['self_device_time_us']+cev['aten::native_layer_norm']['self_device_time_us']; out={'control_mean_optimized_median_ms':com,'candidate_optimized_median_ms':cm,'optimized_median_reduction_percent':100*(com-cm)/com,'control_mean_baseline_median_ms':cbm,'control_baseline_range_percent':100*(max(r['timing']['baseline']['median_ms'] for r in controls)-min(r['timing']['baseline']['median_ms'] for r in controls))/cbm,'control_mean_speedup':csm,'candidate_speedup':cs,'normalized_speedup_gain_percent':100*(cs-csm)/csm,'failed_elements':sum(t['failed_elements'] for t in cand['accuracy']['trials']),'compared_elements':sum(t['total_elements'] for t in cand['accuracy']['trials']),'samples':len(cand['timing']['optimized']['raw_ms']),'control_peak_bytes':[r['peak_memory']['optimized']['incremental_peak_bytes'] for r in controls],'candidate_peak_bytes':cand['peak_memory']['optimized']['incremental_peak_bytes'],'baseline_profile_model_us':bev['optimized_transformer']['self_device_time_us'],'candidate_profile_model_us':cev['optimized_transformer']['self_device_time_us'],'profile_model_reduction_percent':100*(bev['optimized_transformer']['self_device_time_us']-cev['optimized_transformer']['self_device_time_us'])/bev['optimized_transformer']['self_device_time_us'],'baseline_subsystem_us':bsub,'candidate_subsystem_us':csub,'profile_subsystem_reduction_percent':100*(bsub-csub)/bsub,'baseline_add_calls':bev['aten::add']['count'],'baseline_native_norm_calls':bev['aten::native_layer_norm']['count'],'candidate_fused_calls':cev['_residual_layer_norm_fwd']['count'],'candidate_native_norm_calls':cev['aten::native_layer_norm']['count'],'baseline_backends':bp['backend_counts'],'candidate_backends':cp['backend_counts']}; print(json.dumps(out,sort_keys=True))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 346,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439974780928
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

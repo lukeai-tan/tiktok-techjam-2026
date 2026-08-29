@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-GRAPH-007-consolidation",
+    "hypothesis": "The repository graph records the Campaign 11 flagship decision, strongest specialist campaigns, stopped Campaign 12 boundary, cleanup actions, retained evidence worktree, and no-Git boundary.",
+    "scope": "Append the final consolidated campaign handoff to the repository knowledge graph.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "docs/experiments/reviews/CAMPAIGN-CONSOLIDATION-FINAL-REVIEW.json"
+    ],
+    "rollback": "Append a corrective graph event if a relationship is inaccurate; do not rewrite graph history.",
+    "decision": "keep",
+    "decision_rationale": "Required terminal repository-memory handoff after campaign consolidation.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign11-cleanup",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 11 is the consolidated flagship and optimization stops",
+      "--details",
+      "Campaign 11 fingerprint 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb is the current cumulative flagship: two complete final runs pass 13 executable rows plus exact skip with zero of 938885120 failed elements at 1.977420x and 1.986499x, and the repository suite passes 148 tests. Campaign 5 remains the highest historical aggregate and best broad-generalization snapshot; Campaign 7 is the strongest high-volume row-6 specialist; the Campaign 4 plus Campaign 8 row-11 lineage is the strongest single-row result. Campaign 12 never reached preflight or execution and its scaffold was removed. Cleanup removed twelve obsolete worktrees, seven caches, and three unreferenced smoke outputs. One EXP-025 worktree remains because four immutable attempts reference raw artifacts there. No immutable evidence, branch, commit, tag, or remote was deleted or changed.",
+      "--path",
+      "README.md",
+      "--path",
+      "docs/OPTIMIZATION_LOOP_PLAN.md",
+      "--path",
+      "docs/TECH_REPORT.md",
+      "--path",
+      "docs/results/README.md",
+      "--path",
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-011.md",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-CONSOLIDATION-FINAL-REVIEW.json",
+      "--confidence",
+      "high",
+      "--status",
+      "verified"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T16:23:11.668215+00:00",
+    "ended_at_utc": "2026-08-29T16:23:11.773245+00:00",
+    "wall_time_seconds": 0.10502319992519915,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\29\\2026-08-29T16-23-11Z-codex-campaign11-cleanup-9b9c219a.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T16:23:11.585637+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign11-cleanup",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 11 is the consolidated flagship and optimization stops",
+      "--details",
+      "Campaign 11 fingerprint 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb is the current cumulative flagship: two complete final runs pass 13 executable rows plus exact skip with zero of 938885120 failed elements at 1.977420x and 1.986499x, and the repository suite passes 148 tests. Campaign 5 remains the highest historical aggregate and best broad-generalization snapshot; Campaign 7 is the strongest high-volume row-6 specialist; the Campaign 4 plus Campaign 8 row-11 lineage is the strongest single-row result. Campaign 12 never reached preflight or execution and its scaffold was removed. Cleanup removed twelve obsolete worktrees, seven caches, and three unreferenced smoke outputs. One EXP-025 worktree remains because four immutable attempts reference raw artifacts there. No immutable evidence, branch, commit, tag, or remote was deleted or changed.",
+      "--path",
+      "README.md",
+      "--path",
+      "docs/OPTIMIZATION_LOOP_PLAN.md",
+      "--path",
+      "docs/TECH_REPORT.md",
+      "--path",
+      "docs/results/README.md",
+      "--path",
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-011.md",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-CONSOLIDATION-FINAL-REVIEW.json",
+      "--confidence",
+      "high",
+      "--status",
+      "verified"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 517,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440050667520
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T16:23:11.810448+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign11-cleanup",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 11 is the consolidated flagship and optimization stops",
+      "--details",
+      "Campaign 11 fingerprint 9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb is the current cumulative flagship: two complete final runs pass 13 executable rows plus exact skip with zero of 938885120 failed elements at 1.977420x and 1.986499x, and the repository suite passes 148 tests. Campaign 5 remains the highest historical aggregate and best broad-generalization snapshot; Campaign 7 is the strongest high-volume row-6 specialist; the Campaign 4 plus Campaign 8 row-11 lineage is the strongest single-row result. Campaign 12 never reached preflight or execution and its scaffold was removed. Cleanup removed twelve obsolete worktrees, seven caches, and three unreferenced smoke outputs. One EXP-025 worktree remains because four immutable attempts reference raw artifacts there. No immutable evidence, branch, commit, tag, or remote was deleted or changed.",
+      "--path",
+      "README.md",
+      "--path",
+      "docs/OPTIMIZATION_LOOP_PLAN.md",
+      "--path",
+      "docs/TECH_REPORT.md",
+      "--path",
+      "docs/results/README.md",
+      "--path",
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-011.md",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-CONSOLIDATION-FINAL-REVIEW.json",
+      "--confidence",
+      "high",
+      "--status",
+      "verified"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 517,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440050663424
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

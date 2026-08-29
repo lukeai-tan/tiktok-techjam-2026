@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C6-CLOSE-002-curated-evidence-rework",
+    "hypothesis": "Explicit row-8 profile semantics preserve strict provenance without misclassifying reference-attention profiling as a custom-kernel PASS",
+    "scope": "Campaign 6 curated evidence and notebook rework excluding pending docs-content assertion",
+    "parent_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "tests/test_result_artifacts.py",
+      "tests/test_colab_notebook.py",
+      "notebooks/colab_benchmark.ipynb"
+    ],
+    "rollback": "Rework only the row-8 profile assertion if artifact semantics differ",
+    "decision": "keep",
+    "decision_rationale": "The row-8 command must PASS while its generic custom-kernel metric remains explicitly INCONCLUSIVE; projection events are asserted separately",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_colab_notebook.py",
+      "tests\\test_result_artifacts.py",
+      "-q",
+      "-k",
+      "not submission_docs"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T11:12:06.968929+00:00",
+    "ended_at_utc": "2026-08-29T11:12:08.591780+00:00",
+    "wall_time_seconds": 1.6227359001059085,
+    "timeout_seconds": 600.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "............                                                             [100%]\n12 passed, 1 deselected in 1.24s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T11:12:06.877720+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_colab_notebook.py",
+      "tests\\test_result_artifacts.py",
+      "-q",
+      "-k",
+      "not submission_docs"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 4,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441515515904
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T11:12:08.629858+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_colab_notebook.py",
+      "tests\\test_result_artifacts.py",
+      "-q",
+      "-k",
+      "not submission_docs"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 4,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441515540480
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

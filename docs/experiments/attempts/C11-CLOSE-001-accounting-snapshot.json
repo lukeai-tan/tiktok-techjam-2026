@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-CLOSE-001-accounting-snapshot",
+    "hypothesis": "Campaign 11 attempt records through final Council review are parseable and yield exact pass, failure, timeout, group, and wall-time accounting.",
+    "scope": "Immutable Campaign 11 accounting snapshot before terminal workflow and graph closure records.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/attempts"
+    ],
+    "rollback": "Repair malformed metadata or disclose any accounting inconsistency; never remove a failed attempt.",
+    "decision": "keep",
+    "decision_rationale": "Freeze exact pre-terminal accounting for the Campaign 11 ledger.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nfrom collections import Counter, defaultdict\n\nroot = pathlib.Path('docs/experiments/attempts')\nrecords = []\nfor path in sorted(root.glob('C11-*.json')):\n    payload = json.loads(path.read_text())\n    execution = payload['execution']\n    records.append(\n        {\n            'id': payload['attempt']['id'],\n            'status': execution['status'],\n            'wall_s': execution['wall_time_seconds'],\n            'group': payload['attempt']['id'].split('-')[1],\n        }\n    )\nstatus = Counter(item['status'] for item in records)\ngroups = defaultdict(lambda: {'attempts': 0, 'pass': 0, 'fail': 0, 'wall_s': 0.0})\nfor item in records:\n    group = groups[item['group']]\n    group['attempts'] += 1\n    group['pass'] += item['status'] == 'PASS'\n    group['fail'] += item['status'] != 'PASS'\n    group['wall_s'] += item['wall_s']\noutput = {\n    'through': records[-1]['id'],\n    'attempts': len(records),\n    'pass': status['PASS'],\n    'nonpass': len(records) - status['PASS'],\n    'timeouts': status['TIMEOUT'],\n    'wall_time_seconds': sum(item['wall_s'] for item in records),\n    'groups': groups,\n    'nonpass_attempts': [item for item in records if item['status'] != 'PASS'],\n}\nprint(json.dumps(output, indent=2))\nassert len(records) == status['PASS'] + output['nonpass']\nassert status['TIMEOUT'] == 0"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T16:01:05.232122+00:00",
+    "ended_at_utc": "2026-08-29T16:01:05.413276+00:00",
+    "wall_time_seconds": 0.18155330000445247,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\n  \"through\": \"C11-REVIEW-002-final-council\",\n  \"attempts\": 62,\n  \"pass\": 57,\n  \"nonpass\": 5,\n  \"timeouts\": 0,\n  \"wall_time_seconds\": 506.1394633993041,\n  \"groups\": {\n    \"BASE\": {\n      \"attempts\": 8,\n      \"pass\": 8,\n      \"fail\": 0,\n      \"wall_s\": 70.83520490000956\n    },\n    \"EXP\": {\n      \"attempts\": 9,\n      \"pass\": 9,\n      \"fail\": 0,\n      \"wall_s\": 86.76007949979976\n    },\n    \"GRAPH\": {\n      \"attempts\": 3,\n      \"pass\": 3,\n      \"fail\": 0,\n      \"wall_s\": 0.8156640999950469\n    },\n    \"INTEGRATE\": {\n      \"attempts\": 35,\n      \"pass\": 31,\n      \"fail\": 4,\n      \"wall_s\": 339.7970924996771\n    },\n    \"PREFLIGHT\": {\n      \"attempts\": 4,\n      \"pass\": 4,\n      \"fail\": 0,\n      \"wall_s\": 7.854999600211158\n    },\n    \"REVIEW\": {\n      \"attempts\": 3,\n      \"pass\": 2,\n      \"fail\": 1,\n      \"wall_s\": 0.07642279961146414\n    }\n  },\n  \"nonpass_attempts\": [\n    {\n      \"id\": \"C11-INTEGRATE-002-source-parity\",\n      \"status\": \"FAIL\",\n      \"wall_s\": 0.04226140002720058,\n      \"group\": \"INTEGRATE\"\n    },\n    {\n      \"id\": \"C11-INTEGRATE-007-row9-analysis\",\n      \"status\": \"FAIL\",\n      \"wall_s\": 0.04452860006131232,\n      \"group\": \"INTEGRATE\"\n    },\n    {\n      \"id\": \"C11-INTEGRATE-010-profile-analysis\",\n      \"status\": \"FAIL\",\n      \"wall_s\": 0.02355650020763278,\n      \"group\": \"INTEGRATE\"\n    },\n    {\n      \"id\": \"C11-INTEGRATE-025-pre-doc-full-suite\",\n      \"status\": \"FAIL\",\n      \"wall_s\": 20.75737899984233,\n      \"group\": \"INTEGRATE\"\n    },\n    {\n      \"id\": \"C11-REVIEW-001-exp025-council\",\n      \"status\": \"ERROR\",\n      \"wall_s\": 0.0012016999535262585,\n      \"group\": \"REVIEW\"\n    }\n  ]\n}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T16:01:05.139784+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nfrom collections import Counter, defaultdict\n\nroot = pathlib.Path('docs/experiments/attempts')\nrecords = []\nfor path in sorted(root.glob('C11-*.json')):\n    payload = json.loads(path.read_text())\n    execution = payload['execution']\n    records.append(\n        {\n            'id': payload['attempt']['id'],\n            'status': execution['status'],\n            'wall_s': execution['wall_time_seconds'],\n            'group': payload['attempt']['id'].split('-')[1],\n        }\n    )\nstatus = Counter(item['status'] for item in records)\ngroups = defaultdict(lambda: {'attempts': 0, 'pass': 0, 'fail': 0, 'wall_s': 0.0})\nfor item in records:\n    group = groups[item['group']]\n    group['attempts'] += 1\n    group['pass'] += item['status'] == 'PASS'\n    group['fail'] += item['status'] != 'PASS'\n    group['wall_s'] += item['wall_s']\noutput = {\n    'through': records[-1]['id'],\n    'attempts': len(records),\n    'pass': status['PASS'],\n    'nonpass': len(records) - status['PASS'],\n    'timeouts': status['TIMEOUT'],\n    'wall_time_seconds': sum(item['wall_s'] for item in records),\n    'groups': groups,\n    'nonpass_attempts': [item for item in records if item['status'] != 'PASS'],\n}\nprint(json.dumps(output, indent=2))\nassert len(records) == status['PASS'] + output['nonpass']\nassert status['TIMEOUT'] == 0"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 499,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439958921216
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T16:01:05.452881+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nfrom collections import Counter, defaultdict\n\nroot = pathlib.Path('docs/experiments/attempts')\nrecords = []\nfor path in sorted(root.glob('C11-*.json')):\n    payload = json.loads(path.read_text())\n    execution = payload['execution']\n    records.append(\n        {\n            'id': payload['attempt']['id'],\n            'status': execution['status'],\n            'wall_s': execution['wall_time_seconds'],\n            'group': payload['attempt']['id'].split('-')[1],\n        }\n    )\nstatus = Counter(item['status'] for item in records)\ngroups = defaultdict(lambda: {'attempts': 0, 'pass': 0, 'fail': 0, 'wall_s': 0.0})\nfor item in records:\n    group = groups[item['group']]\n    group['attempts'] += 1\n    group['pass'] += item['status'] == 'PASS'\n    group['fail'] += item['status'] != 'PASS'\n    group['wall_s'] += item['wall_s']\noutput = {\n    'through': records[-1]['id'],\n    'attempts': len(records),\n    'pass': status['PASS'],\n    'nonpass': len(records) - status['PASS'],\n    'timeouts': status['TIMEOUT'],\n    'wall_time_seconds': sum(item['wall_s'] for item in records),\n    'groups': groups,\n    'nonpass_attempts': [item for item in records if item['status'] != 'PASS'],\n}\nprint(json.dumps(output, indent=2))\nassert len(records) == status['PASS'] + output['nonpass']\nassert status['TIMEOUT'] == 0"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 499,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439958921216
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

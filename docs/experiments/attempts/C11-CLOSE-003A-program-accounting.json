@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C11-CLOSE-003A-program-accounting",
+    "hypothesis": "The complete immutable attempt corpus through the retained first accounting failure reconciles exact record, PASS, non-pass, timeout, wall-time, and namespace totals.",
+    "scope": "Corrected cross-campaign program accounting through C11-CLOSE-003-program-accounting before terminal prose and workflow records append.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/attempts"
+    ],
+    "rollback": "Correct prose totals from immutable JSON without rewriting attempt history.",
+    "decision": "keep",
+    "decision_rationale": "Corrected canonical cross-campaign accounting refresh; the failed compact counter remains retained.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections\nimport json\nimport pathlib\n\npaths = sorted(pathlib.Path(docs/experiments/attempts).glob(*.json))\nrecords = [(path, json.loads(path.read_text(encoding=utf-8))) for path in paths]\ngroups = collections.defaultdict(lambda: {attempts: 0, pass: 0, nonpass: 0, wall_s: 0.0})\nfor path, payload in records:\n    execution = payload.get(execution, {})\n    status = execution.get(status)\n    group = groups[path.name.split(-)[0]]\n    group[attempts] += 1\n    group[pass] += status == PASS\n    group[nonpass] += status != PASS\n    group[wall_s] += float(execution.get(wall_time_seconds) or 0)\noutput = {\n    through: C11-CLOSE-003-program-accounting,\n    attempts: len(records),\n    pass: sum(payload.get(execution, {}).get(status) == PASS for _, payload in records),\n    nonpass: sum(payload.get(execution, {}).get(status) != PASS for _, payload in records),\n    timeouts: sum(bool(payload.get(execution, {}).get(timed_out)) for _, payload in records),\n    wall_time_seconds: sum(float(payload.get(execution, {}).get(wall_time_seconds) or 0) for _, payload in records),\n    groups: dict(sorted(groups.items())),\n}\nprint(json.dumps(output, indent=2))\nassert output[attempts] == output[pass] + output[nonpass]"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T16:07:19.826474+00:00",
+    "ended_at_utc": "2026-08-29T16:07:19.851474+00:00",
+    "wall_time_seconds": 0.02408199990168214,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "",
+    "stderr": "  File \"<string>\", line 17\n    through: C11-CLOSE-003-program-accounting,\n                       ^^\nSyntaxError: leading zeros in decimal integer literals are not permitted; use an 0o prefix for octal integers\n"
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T16:07:19.730086+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections\nimport json\nimport pathlib\n\npaths = sorted(pathlib.Path(docs/experiments/attempts).glob(*.json))\nrecords = [(path, json.loads(path.read_text(encoding=utf-8))) for path in paths]\ngroups = collections.defaultdict(lambda: {attempts: 0, pass: 0, nonpass: 0, wall_s: 0.0})\nfor path, payload in records:\n    execution = payload.get(execution, {})\n    status = execution.get(status)\n    group = groups[path.name.split(-)[0]]\n    group[attempts] += 1\n    group[pass] += status == PASS\n    group[nonpass] += status != PASS\n    group[wall_s] += float(execution.get(wall_time_seconds) or 0)\noutput = {\n    through: C11-CLOSE-003-program-accounting,\n    attempts: len(records),\n    pass: sum(payload.get(execution, {}).get(status) == PASS for _, payload in records),\n    nonpass: sum(payload.get(execution, {}).get(status) != PASS for _, payload in records),\n    timeouts: sum(bool(payload.get(execution, {}).get(timed_out)) for _, payload in records),\n    wall_time_seconds: sum(float(payload.get(execution, {}).get(wall_time_seconds) or 0) for _, payload in records),\n    groups: dict(sorted(groups.items())),\n}\nprint(json.dumps(output, indent=2))\nassert output[attempts] == output[pass] + output[nonpass]"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 506,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439977091072
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T16:07:19.889473+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections\nimport json\nimport pathlib\n\npaths = sorted(pathlib.Path(docs/experiments/attempts).glob(*.json))\nrecords = [(path, json.loads(path.read_text(encoding=utf-8))) for path in paths]\ngroups = collections.defaultdict(lambda: {attempts: 0, pass: 0, nonpass: 0, wall_s: 0.0})\nfor path, payload in records:\n    execution = payload.get(execution, {})\n    status = execution.get(status)\n    group = groups[path.name.split(-)[0]]\n    group[attempts] += 1\n    group[pass] += status == PASS\n    group[nonpass] += status != PASS\n    group[wall_s] += float(execution.get(wall_time_seconds) or 0)\noutput = {\n    through: C11-CLOSE-003-program-accounting,\n    attempts: len(records),\n    pass: sum(payload.get(execution, {}).get(status) == PASS for _, payload in records),\n    nonpass: sum(payload.get(execution, {}).get(status) != PASS for _, payload in records),\n    timeouts: sum(bool(payload.get(execution, {}).get(timed_out)) for _, payload in records),\n    wall_time_seconds: sum(float(payload.get(execution, {}).get(wall_time_seconds) or 0) for _, payload in records),\n    groups: dict(sorted(groups.items())),\n}\nprint(json.dumps(output, indent=2))\nassert output[attempts] == output[pass] + output[nonpass]"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 506,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439977091072
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C7-EXP-017-I3-compile-direct",
+    "hypothesis": "A 16x64 head-256 launch compiles and preserves direct strict correctness while reducing the causal sequence to two online-softmax partitions",
+    "scope": "EXP-017 I3 launch policy, compile, and direct correctness",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": null,
+    "changed_paths": [
+      "transformer_opt/config.py",
+      "tests/test_dispatch.py",
+      "tests/test_gpu_attention.py"
+    ],
+    "rollback": "Reject I3 and advance only within the four-geometry cap if compilation or direct correctness fails",
+    "decision": "pending",
+    "decision_rationale": "I3 tests whether much lower partition count changes the invariant stacked miss pattern",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_dispatch.py::test_short_head_dim_256_uses_register_bounded_tiles",
+      "tests\\test_gpu_attention.py",
+      "-k",
+      "256",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T11:55:17.506294+00:00",
+    "ended_at_utc": "2026-08-29T11:55:20.760063+00:00",
+    "wall_time_seconds": 3.2537523999344558,
+    "timeout_seconds": 1800.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": ".F                                                                       [100%]\n================================== FAILURES ===================================\n_ test_triton_attention_matches_explicit_reference[1-128-1-256-dtype7-True-prefix-1.0] _\n\nbatch = 1, seq_len = 128, heads = 1, head_dim = 256, dtype = torch.float32\ncausal = True, mask_mode = 'prefix', input_scale = 1.0\n\n    @pytest.mark.parametrize(\n        \"batch,seq_len,heads,head_dim,dtype,causal,mask_mode,input_scale\",\n        CASES,\n    )\n    def test_triton_attention_matches_explicit_reference(\n        batch,\n        seq_len,\n        heads,\n        head_dim,\n        dtype,\n        causal,\n        mask_mode,\n        input_scale,\n    ):\n        for seed in (7, 19):\n            torch.manual_seed(seed)\n            q = torch.randn(\n                batch,\n                seq_len,\n                heads,\n                head_dim,\n                device=\"cuda\",\n                dtype=dtype,\n            ) * input_scale\n            k = torch.randn_like(q) * input_scale\n            v = torch.randn_like(q)\n            valid_mask = _mask(mask_mode, batch, seq_len)\n            with torch.inference_mode():\n>               actual, custom = attention_forward(\n                    q,\n                    k,\n                    v,\n                    valid_mask,\n                    causal=causal,\n                    backend=\"triton\",\n                )\n\ntests\\test_gpu_attention.py:94: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\ntransformer_opt\\dispatch.py:124: in attention_forward\n    output = triton_attention(\ntransformer_opt\\kernels\\attention.py:225: in triton_attention\n    _attention_fwd[grid](\n<home>\\Downloads\\GitHub\\tiktok-techjam-2026\\.venv\\Lib\\site-packages\\triton\\runtime\\jit.py:370: in <lambda>\n    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n<home>\\Downloads\\GitHub\\tiktok-techjam-2026\\.venv\\Lib\\site-packages\\triton\\runtime\\jit.py:760: in run\n    launch_metadata = kernel.launch_metadata(grid, stream, *bound_args.values())\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n<home>\\Downloads\\GitHub\\tiktok-techjam-2026\\.venv\\Lib\\site-packages\\triton\\compiler\\compiler.py:485: in launch_metadata\n    self._init_handles()\n<home>\\Downloads\\GitHub\\tiktok-techjam-2026\\.venv\\Lib\\site-packages\\triton\\compiler\\compiler.py:459: in _init_handles\n    raise_(OutOfResources(self.metadata.shared, max_shared, \"shared memory\"))\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nerr = OutOfResources(151616, 101376, 'shared memory')\n\n    def raise_(err):\n        # clone the exception object so that the one saved in the closure\n        # of the partial function below doesn't get assigned a stack trace\n        # after the subsequent raise. otherwise, the CompiledKernel instance\n        # saved in the (global) kernel cache will keep references to all the\n        # locals in the traceback via the exception instance in the closure.\n        cloned_err = copy.deepcopy(err)\n        self._run = functools.partial(_raise_error, cloned_err)\n>       raise err\nE       triton.runtime.errors.OutOfResources: out of resource: shared memory, Required: 151616, Hardware limit: 101376. Reducing block sizes or `num_stages` may help.\n\n<home>\\Downloads\\GitHub\\tiktok-techjam-2026\\.venv\\Lib\\site-packages\\triton\\compiler\\compiler.py:451: OutOfResources\n=========================== short test summary info ===========================\nFAILED tests/test_gpu_attention.py::test_triton_attention_matches_explicit_reference[1-128-1-256-dtype7-True-prefix-1.0]\n1 failed, 1 passed, 13 deselected in 2.87s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T11:55:17.422404+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_dispatch.py::test_short_head_dim_256_uses_register_bounded_tiles",
+      "tests\\test_gpu_attention.py",
+      "-k",
+      "256",
+      "-q"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 5,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "55069306132b011e5b59fcfb9f1bfe5c865078c0e62b59f29f0a28ec5ae55adb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441597857792
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T11:55:20.797627+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_dispatch.py::test_short_head_dim_256_uses_register_bounded_tiles",
+      "tests\\test_gpu_attention.py",
+      "-k",
+      "256",
+      "-q"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 5,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "55069306132b011e5b59fcfb9f1bfe5c865078c0e62b59f29f0a28ec5ae55adb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441596018688
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "b5de3aefb1e6a1fc048671564e265e0cdac8dfbc984949d1ef78790b2c4dbfbf"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}
