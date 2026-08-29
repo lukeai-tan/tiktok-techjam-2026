@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-010",
+  "experiment": "EXP-023-I1",
+  "review_stage": "final_candidate_preintegration_council_review",
+  "reviewer_role": "AI Council multi-perspective candidate reviewer",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE_PENDING_INTEGRATION_REBASELINE",
+  "objective": "Decide whether exact final row 5 may reuse the accepted fused residual-add plus LayerNorm forward without weakening accuracy, routing, memory, inherited rows, or maintainability.",
+  "base_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "starting_implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+  "candidate_implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+  "facts": [
+    "The incremental source change adds only an exact row-5 runtime/model predicate to the already accepted fused forward plus route, boundary, and stress tests; the Triton kernel is unchanged.",
+    "The 30-step baseline profile measured 12089.646 us of residual-add plus native-LayerNorm time, 29.07 percent of 41581.112 us model device time.",
+    "The candidate passed exact route and common boundary tests, 18 seed-scale-padding stress scenarios over 37748736 outputs, and the complete 37-test residual-kernel/transformer suite.",
+    "The 300-sample candidate run passed all five accuracy trials with zero failures across 10485760 elements and preserved 1240 Triton attention calls.",
+    "Two unchanged controls averaged 1.325096 ms optimized median; the candidate measured 1.171584 ms, an 11.585-percent reduction with only 0.0096-percent control baseline spread.",
+    "Normalized speedup improved 14.789 percent from a 1.631893x control mean to 1.873238x, and all three runs recorded the same 58720256-byte optimized incremental peak.",
+    "The candidate profile replaced 240 residual adds and 240 of 270 native norms with 240 fused launches, reduced subsystem device time 40.708 percent, and reduced model device time 11.112 percent while preserving 120 Triton attention calls.",
+    "The corrected complete final matrix passed 13/13 executable rows plus the exact authorized resource skip with zero failures across 938885120 elements, unchanged 1260 Triton, 0 SDPA, 196 reference attention totals, and a 1.952574x geomean."
+  ],
+  "interpretations": [
+    "The row-5 gain is supported by counterbalanced long timing and a causal profiler mechanism, not by the noisier cross-run whole-matrix delta alone.",
+    "The failed first final-matrix command was an external-manifest provenance serialization error after all executable cases passed; the candidate-local byte-identical manifest rerun is authoritative and the failure remains retained.",
+    "EXP-024 is not authorized because its fallback condition is false once EXP-023-I1 clears correctness, performance, memory, boundary, and broader gates."
+  ],
+  "council_review": {
+    "requirements": "The candidate satisfies zero-failure, exact route, approximately five-percent target benefit, truthful backend, memory, and evidence gates without changing protected policy.",
+    "architecture": "Reusing one generic exact-route forward avoids another pipeline. The predicate remains explicit to final rows 5, 6, and 11 and unsupported execution stays native.",
+    "implementation": "Only the exact row-5 predicate and tests differ from Campaign 8; the accepted kernel, attention, packed-QKV, and state-dict surfaces are unchanged.",
+    "security_privacy": "No dependency, credential, network, permission, authentication, external-system, or sensitive-data surface changes.",
+    "testing_qa": "Direct route, CPU, dtype, layout, runtime-shape, mask, head, gradient, training, stress, five-trial long timing, profile, memory, affected suite, and complete final evidence cover the candidate.",
+    "user_docs": "Integration must update requirements, design, results, technical narrative, history, run-through, submission validation, notebook fingerprint, and artifact tests without rewriting historical Campaign 8 or 9 evidence.",
+    "devils_advocate": "Whole-matrix timings drift across windows and row-5 fused arithmetic is tolerance-equivalent rather than bitwise identical. Acceptance rests on the two-control bracket, 37.7-million-output stress gate, expanded five-trial zero-failure result, exact predicate, profiler reduction, and memory parity."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Transplant only the row-5 source and test hunks relative to Campaign 8; do not copy detached-worktree documentation or stale evidence.",
+    "Regenerate complete final, organizer-default, held-out, source-derived, row-5, inherited row-6/11, profile, artifact-contract, and repository-suite evidence under the integrated fingerprint.",
+    "Skip EXP-024 because its fallback-only condition is false.",
+    "Do not perform Git packaging or public action without separate explicit authorization."
+  ],
+  "residual_risks": [
+    "Timing and launch policy remain specific to the recorded RTX 5070 Ti environment.",
+    "The fused reduction is tolerance-equivalent rather than bitwise identical to native LayerNorm.",
+    "Future forward refactors must preserve the exact predicate, eval-only behavior, activation lifetimes, route counters, and padded-row semantics."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C10-BASE-002-row5-profile.json",
+    "docs/experiments/attempts/C10-BASE-006-row5-long-a.json",
+    "docs/experiments/attempts/C10-BASE-007-row5-long-c.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-direct.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-stress.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-long-b.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-profile.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-analysis.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-affected-suite.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-final-rework.json"
+  ],
+  "recommendation": "Accept EXP-023-I1 locally, skip EXP-024, transplant only the incremental row-5 hunks, and require the complete integrated evidence and documentation closure gates.",
+  "git_actions_authorized": []
+}

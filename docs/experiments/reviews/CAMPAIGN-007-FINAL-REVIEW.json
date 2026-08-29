@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-007",
+  "review_stage": "integrated_release_gate",
+  "reviewer_role": "release gatekeeper with AI Council perspectives",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL",
+  "decision_scope": "Campaign 7 implementation, current-fingerprint evidence, tests, notebook, source-of-truth documents, and campaign history",
+  "checkpoint_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+  "facts": [
+    "The integrated source change adds one guarded fused residual-plus-LayerNorm primitive and an exact row-6 execution path; rejected wide-head attention source remains isolated and was not transplanted.",
+    "Two complete final matrices pass 13/13 executable rows plus the exact authorized resource skip with zero failed elements and identical Triton 1260, SDPA 0, reference 196 attention totals.",
+    "The current final geomeans are 1.8806204012939793x and 1.9272614229282930x, within 2.480 percent of each other.",
+    "The final candidate passed 18 seed-scale-padding stress scenarios covering 2949120000 compared outputs with zero failures and all 144 expected fused calls.",
+    "The integrated row-6 profile replaces 80 residual adds and 80 of 90 native LayerNorm calls with 80 fused launches, reduces the subsystem device time 36.30 percent, and reduces ten-forward model device time 9.54 percent.",
+    "The final 100-sample row-6 run measures 293.910400 ms baseline, 189.981712 ms optimized, and 1.547046x versus a 1.417307x unchanged control; both record 11802787840 bytes of optimized incremental peak allocation.",
+    "Organizer default, two held-out matrices, and the source-derived matrix pass their full executable correctness gates with zero failed elements.",
+    "The complete post-integration repository suite passes 137 tests with 14 upstream PyTorch deprecation warnings."
+  ],
+  "council_review": {
+    "requirements": "The stricter comparator, protected organizer sources, state dict, skip policy, exact attention routes, epsilon, affine parameters, optional bias, and invalid-row behavior remain intact.",
+    "architecture": "The separate primitive is cohesive and keeps unsupported execution on the existing path. Exact-forward duplication is a maintenance cost, but the narrow route makes the performance and fallback boundary explicit.",
+    "implementation": "I2 released consumed activations after I1 exposed a 1967128576-byte peak increase; I2R added exact runtime-shape and mask-contiguity guards. No EXP-017 code was integrated.",
+    "security_privacy": "No dependency, credential, network call, external system, permission, authentication surface, or secret-bearing output was added.",
+    "testing_qa": "Direct, optional-bias, state-dict, runtime-neighbor, noncontiguous-mask, stress, profile, long-run, final, held-out, organizer-default, source-derived, curated-artifact, notebook, and full-suite evidence cover the accepted path.",
+    "user_docs": "Requirements, kernel design, technical report, README, result index, compliance matrix, Devpost draft, runbook, loop plan, campaign ledger, history, and full run-through now distinguish current Campaign 7 evidence from historical Campaign 5 and 6 measurements.",
+    "devils_advocate": "Absolute row-6 baselines drifted substantially and the fused reduction is not bitwise identical to native LayerNorm. Acceptance rests on the counterbalanced bracket, profile event reduction, zero-failure stress volume, exact guard, and memory parity rather than one headline run."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Validate this review, run final workflow validation, append and validate graph closure, and run final diff hygiene through immutable Campaign 7 attempts.",
+    "Do not broaden the fusion beyond exact row 6 without new profile, correctness, boundary, timing, and memory evidence.",
+    "Do not describe the locally edited Colab notebook as remotely reproducible until a separately authorized commit and push publishes this fingerprint.",
+    "Do not perform any commit, push, tag, release, branch creation, history rewrite, or public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "Timing and launch policy remain specific to the recorded RTX 5070 Ti environment.",
+    "The exact route depends on prompt Python reference release for peak-memory neutrality; future forward refactors must preserve the lifetime and memory gates.",
+    "Training, backward, CPU, low precision, compilation, noncontiguous inputs, noncontiguous masks, and neighboring runtime shapes remain on the native fallback.",
+    "Organizer dtype, padding, timing, tolerance, and backward requirements remain unstated."
+  ],
+  "evidence": [
+    "docs/experiments/reviews/CAMPAIGN-007-CANDIDATE-REVIEW.json",
+    "docs/experiments/attempts/C7-INTEGRATE-002-final.json",
+    "docs/experiments/attempts/C7-INTEGRATE-003-final-confirmation.json",
+    "docs/experiments/attempts/C7-INTEGRATE-004-organizer-default.json",
+    "docs/experiments/attempts/C7-INTEGRATE-005-heldout-5seed.json",
+    "docs/experiments/attempts/C7-INTEGRATE-006-heldout-confirmation.json",
+    "docs/experiments/attempts/C7-INTEGRATE-007-source-derived.json",
+    "docs/experiments/attempts/C7-INTEGRATE-008-row6-profile.json",
+    "docs/experiments/attempts/C7-INTEGRATE-014-row6-long.json",
+    "docs/experiments/attempts/C7-CLOSE-001-curated-evidence.json",
+    "docs/experiments/attempts/C7-CLOSE-002-full-suite.json"
+  ],
+  "final_seal_evidence": [
+    "docs/experiments/attempts/C7-CLOSE-008-final-suite.json",
+    "docs/experiments/attempts/C7-CLOSE-009-workflow-final.json",
+    "docs/experiments/attempts/C7-CLOSE-010-final-diff-check.json",
+    "docs/experiments/attempts/C7-GRAPH-004-closure.json",
+    "docs/experiments/attempts/C7-GRAPH-005-rebuild.json",
+    "docs/experiments/attempts/C7-GRAPH-006-validate.json"
+  ],
+  "git_actions_authorized": []
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-008",
+  "review_stage": "integrated_release_gate",
+  "reviewer_role": "release gatekeeper with AI Council perspectives",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL",
+  "decision_scope": "Campaign 8 implementation, current-fingerprint evidence, tests, notebook, source-of-truth documents, campaign history, workflow, and knowledge graph",
+  "checkpoint_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "starting_implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+  "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+  "facts": [
+    "The integrated source change generalizes Campaign 7's exact fused residual-add plus LayerNorm path from final row 6 to final rows 6 and 11; the Triton residual-normalization kernel itself is unchanged.",
+    "The row-11 route is gated by exact runtime and model shape, eval mode, CUDA float32, contiguous input, a compatible contiguous boolean mask, disabled gradients, and non-compiled execution.",
+    "Two complete final matrices pass 13/13 executable rows plus the exact authorized resource skip with zero failed elements and identical Triton 1260, SDPA 0, reference 196 attention totals.",
+    "The current final geomeans are 1.876167393x and 1.911051769x, within 1.860 percent of each other.",
+    "The retained fingerprint passed ten direct and boundary tests, all 34 affected tests, and 36 row-6 and row-11 stress scenarios covering 2967994368 outputs with zero failures and 288 expected fused calls.",
+    "The 300-sample integrated row-11 run measures 4.172384 ms baseline, 0.896928 ms optimized, and 4.651860x with the same 29360128-byte optimized incremental peak as candidate controls.",
+    "Versus the Campaign 7 row-11 control profile, integrated model device time falls from 41211.814 to 32159.723 us and the residual-normalization subsystem falls from 5978.920 to 3211.676 us while 120 Triton attention calls remain.",
+    "The inherited row-6 route remains correct, memory-neutral, and faster in its current 100-sample run at 1.547529x with the exact 2-reference/2-Triton attention split.",
+    "Organizer default, four held-out matrices, one dedicated 300-sample long-causal run, and the source-derived matrix pass their full executable correctness gates with zero failed elements.",
+    "The complete post-integration repository suite passes 139 tests with 14 upstream PyTorch deprecation warnings, and the curated current-evidence contract passes 15 tests."
+  ],
+  "council_review": {
+    "requirements": "The stricter comparator, protected organizer sources, state dict, skip policy, attention routes, epsilon, affine parameters, optional bias, and invalid-row behavior remain intact. EXP-020 was correctly not run because its fallback-only condition was false.",
+    "architecture": "One generic exact-route predicate and forward path serves only measured rows 6 and 11, avoiding a second duplicated pipeline while preserving the native fallback everywhere else.",
+    "implementation": "The candidate review found and repaired an inference-mode training boundary by adding not self.training. Route counters and neighbor tests prove the narrow predicate; no rejected attention experiment was integrated.",
+    "security_privacy": "No dependency, credential, network call, external system, permission, authentication surface, or secret-bearing output was added.",
+    "testing_qa": "Direct, dtype, device, layout, mask, runtime-shape, training, gradient, stress, affected-suite, long-run, memory, profile, final, held-out, organizer-default, source-derived, artifact, notebook, workflow, graph, and repository-suite evidence cover the accepted path.",
+    "user_docs": "Requirements, kernel design, technical report, README, result index, compliance matrix, Devpost draft, runbook, campaign ledger, optimization history, submission validation, and current-versus-original comparisons select the Campaign 8 fingerprint while retaining historical outcomes.",
+    "devils_advocate": "The first short candidate profile contradicted the long timings, absolute GPU timings drift, and the fused reduction is tolerance-equivalent rather than bitwise identical. Acceptance rests on two retained candidate runs, three controls, paired 30-step and integrated profiles, complete zero-failure matrices, exact guards, and memory parity rather than one best measurement."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Validate this review, rerun the artifact contract and complete repository suite, revalidate the workflow, and run final diff hygiene through immutable Campaign 8 attempts.",
+    "Do not broaden fused residual normalization beyond exact final rows 6 and 11 without new profile, correctness, boundary, timing, and memory evidence.",
+    "Do not describe the locally edited Colab notebook as remotely reproducible until a separately authorized commit and push publishes this fingerprint.",
+    "Do not perform any commit, push, tag, release, branch creation, history rewrite, or public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "Timing and launch policy remain specific to the recorded RTX 5070 Ti, CUDA 13.0, PyTorch 2.13.0, and Triton 3.7.1 environment.",
+    "The fused reduction is tolerance-equivalent rather than bitwise identical to native LayerNorm.",
+    "Future forward refactors must preserve the exact guard, eval-only behavior, activation lifetimes, route counters, padded-row semantics, and row-6 memory gate.",
+    "Organizer dtype, padding, timing, tolerance, and backward requirements remain unstated."
+  ],
+  "evidence": [
+    "docs/experiments/reviews/CAMPAIGN-008-EXP-019-REVIEW.json",
+    "docs/experiments/attempts/C8-INTEGRATE-002-final.json",
+    "docs/experiments/attempts/C8-INTEGRATE-003-final-confirmation.json",
+    "docs/experiments/attempts/C8-INTEGRATE-004-organizer-default.json",
+    "docs/experiments/attempts/C8-INTEGRATE-005-heldout-5seed.json",
+    "docs/experiments/attempts/C8-INTEGRATE-006-heldout-confirmation.json",
+    "docs/experiments/attempts/C8-INTEGRATE-014-heldout-recheck-a.json",
+    "docs/experiments/attempts/C8-INTEGRATE-015-heldout-recheck-b.json",
+    "docs/experiments/attempts/C8-INTEGRATE-016-long-causal-long.json",
+    "docs/experiments/attempts/C8-INTEGRATE-007-source-derived.json",
+    "docs/experiments/attempts/C8-INTEGRATE-008-row6-profile.json",
+    "docs/experiments/attempts/C8-INTEGRATE-009-row11-profile.json",
+    "docs/experiments/attempts/C8-INTEGRATE-010-row6-long.json",
+    "docs/experiments/attempts/C8-INTEGRATE-011-row11-long.json",
+    "docs/experiments/attempts/C8-INTEGRATE-020-artifact-contract.json",
+    "docs/experiments/attempts/C8-INTEGRATE-023-full-suite.json",
+    "docs/experiments/attempts/C8-CLOSE-002-workflow.json",
+    "docs/experiments/attempts/C8-GRAPH-006-validate.json"
+  ],
+  "final_seal_evidence": [
+    "docs/experiments/attempts/C8-CLOSE-003-final-review.json",
+    "docs/experiments/attempts/C8-CLOSE-004-diff-check.json",
+    "docs/experiments/attempts/C8-CLOSE-005-artifact-contract.json",
+    "docs/experiments/attempts/C8-CLOSE-006-full-suite.json",
+    "docs/experiments/attempts/C8-CLOSE-008-artifact-postreconcile.json",
+    "docs/experiments/attempts/C8-CLOSE-009-workflow-final.json",
+    "docs/experiments/attempts/C8-CLOSE-010-final-diff-check.json"
+  ],
+  "git_actions_authorized": []
+}

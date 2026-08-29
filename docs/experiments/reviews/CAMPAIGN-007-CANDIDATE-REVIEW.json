@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-007",
+  "review_stage": "final_candidate_preintegration_council_review",
+  "reviewer_role": "AI Council multi-perspective candidate reviewer",
+  "objective": "Decide whether EXP-018-I2R exact-row-6 fused residual-add plus LayerNorm is sufficiently correct, bounded, faster, memory-neutral, maintainable, and evidence-complete to transplant into the active integration tree.",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE_PENDING_INTEGRATION_REBASELINE",
+  "base_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+  "assumptions": [
+    "The organizer's executable float32 tolerance, shape matrix, and resource skip remain authoritative.",
+    "Candidate evidence is local to the RTX 5070 Ti environment and must not be generalized to other GPUs without new measurements.",
+    "No commit, push, tag, release, new branch, or public action is authorized by the continuous optimization request."
+  ],
+  "council_review": {
+    "requirements": [
+      "The route is inference-only, CUDA-only, float32-only, causal, and exact to runtime shape 10000x128x128 plus the complete row-6 model configuration.",
+      "The kernel preserves LayerNorm epsilon, affine weight, optional bias, residual output, invalid-row zeroing, final-output zeroing, and strict state-dict compatibility.",
+      "Every test, profile, benchmark, failure, and control is retained through the immutable attempt logger."
+    ],
+    "architecture": [
+      "A separate repository-owned Triton primitive keeps attention code unchanged and exposes one focused kernel import.",
+      "The exact route pipelines each residual sum into the next required LayerNorm, replacing eight add-plus-normalize pairs while retaining the initial native norm.",
+      "The duplicated exact-row forward sequence is a maintenance cost, but its explicitness keeps fallback behavior unchanged and auditable."
+    ],
+    "implementation": [
+      "I1 proved arithmetic and speed but retained three obsolete 625-MiB loop tensors, increasing optimized peak by 1967128576 bytes.",
+      "I2 explicitly releases consumed activations and restored optimized incremental peak to the unchanged control's exact 11802787840 bytes.",
+      "I2R added runtime-shape equality and contiguous-mask guards so configured models with neighboring inputs or unsupported mask layouts fall back before entering the strict wrapper."
+    ],
+    "security_privacy": [
+      "No dependencies, credentials, network calls, file permissions, authentication surfaces, or external systems are added or changed.",
+      "The strict wrapper raises on unsupported devices, dtypes, layouts, masks, gradients, and feature widths instead of silently broadening execution."
+    ],
+    "testing_qa": [
+      "The final fingerprint passed 10 direct and boundary gates, 63 focused affected tests, and 122 functional repository tests.",
+      "The 18-scenario stress matrix passed across three seeds, three scales, and two padding modes, comparing 2949120000 output elements with zero failures.",
+      "The full detached suite passed 128 tests and retained five expected stale-fingerprint artifact failures; those gates must remain red until integration evidence is regenerated."
+    ],
+    "user_docs": [
+      "Kernel design, requirements, technical report, optimization history, campaign run-through, result index, and notebook guidance require synchronized post-integration updates.",
+      "The memory-neutral I2R result and rejected EXP-017 wide-head route must both be disclosed; failed attempts must not be omitted."
+    ],
+    "devils_advocate": [
+      "Absolute row-6 timing drift was large enough that one unpaired screen was misleading; selection therefore relies on the final E-F-G-H bracket and same-fingerprint profiles.",
+      "The fusion uses a different reduction order from native LayerNorm; direct 1e-5 checks and 2.949-billion-element model stress reduce but do not eliminate unmeasured-input risk.",
+      "The win is target- and shape-specific, and the exact forward duplication could drift if the baseline block contract changes later."
+    ]
+  },
+  "acceptance_basis": {
+    "correctness_failed_elements": 0,
+    "screen_compared_elements": 819200000,
+    "stress_scenarios": 18,
+    "stress_compared_elements": 2949120000,
+    "maximum_screen_absolute_error": 0.000944703817367554,
+    "candidate_long_run_count": 2,
+    "control_long_run_count": 2,
+    "optimized_samples_per_run": 100,
+    "candidate_mean_speedup": 1.55431438973617,
+    "control_mean_speedup": 1.41903091784357,
+    "normalized_speedup_gain_percent": 9.533511,
+    "candidate_mean_optimized_ms": 181.707160949707,
+    "control_mean_optimized_ms": 197.826908111572,
+    "optimized_latency_reduction_percent": 8.14841,
+    "control_optimized_incremental_peak_bytes": 11802787840,
+    "candidate_optimized_incremental_peak_bytes": 11802787840,
+    "profile_baseline_model_device_time_us": 2026089.666,
+    "profile_candidate_model_device_time_us": 1799039.344,
+    "profile_model_time_reduction_percent": 11.206,
+    "profile_baseline_add_plus_norm_us": 486023.333,
+    "profile_candidate_fused_plus_native_norm_us": 302200.048,
+    "profile_subsystem_time_reduction_percent": 37.822,
+    "profile_baseline_add_calls": 80,
+    "profile_baseline_native_norm_calls": 90,
+    "profile_candidate_fused_calls": 80,
+    "profile_candidate_native_norm_calls": 10
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Transplant only transformer_opt/kernels/residual_layer_norm.py, transformer_opt/kernels/__init__.py, the surgical torch_transformer_benchmark.py hunk, and the two candidate test changes.",
+    "Regenerate all selected fingerprint-bound final, organizer-default, held-out, source-derived, profile, and result-index evidence after integration.",
+    "Do not weaken the five stale result-artifact failures; the complete integrated suite must pass only after their authoritative pointers and artifacts are current.",
+    "Run a second complete final matrix and counterbalanced row-6 profile or long confirmation under the integrated fingerprint before closure.",
+    "Update authoritative requirements and public-facing documentation with the exact route, numerical boundary, timing evidence, and memory result.",
+    "Do not perform any Git packaging or public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "Only the exact row-6 runtime and configuration envelope is performance-authorized.",
+    "Training, backward, CPU, float16, bfloat16, compilation, non-contiguous inputs, non-contiguous masks, and neighboring shapes remain on native fallback.",
+    "The final route depends on prompt Python reference release for peak-memory neutrality; future forward refactors must preserve the lifetime test and memory gate.",
+    "Native LayerNorm and the fused reduction are not bitwise identical even though every declared comparator and stress gate passes."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C7-EXP-018-I2R-gates.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-screen.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-stress.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-profile.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-long-e.json",
+    "docs/experiments/attempts/C7-BASE-008-row6-long-f.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-long-g.json",
+    "docs/experiments/attempts/C7-BASE-009-row6-long-h.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-focused-suite.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-candidate-suite.json",
+    "docs/experiments/attempts/C7-EXP-018-I2R-functional-suite.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c7-exp018-i2r-row06-screen.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c7-exp018-i2r-row06-profile.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c7-exp018-i2r-row06-long-e.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c7-exp018-i2r-row06-long-g.json"
+  ],
+  "git_actions_authorized": []
+}

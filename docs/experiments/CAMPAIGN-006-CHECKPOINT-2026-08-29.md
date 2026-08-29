@@ -3,6 +3,12 @@
 Status: paused after integration and current-fingerprint benchmark validation;
 documentation curation and final closure remain pending.
 
+Historical snapshot note: this pause state was subsequently committed and
+pushed as `8c89d1d4170c58d16fb75d79f212e990565fba7d` (`Campaign 6 Checkpoint`).
+The resumed closure is recorded in `CAMPAIGN-006.md`; its later documentation,
+test, review, workflow, and graph changes remain local until separately
+authorized Git packaging.
+
 ## Exact resume state
 
 | Field | Value |

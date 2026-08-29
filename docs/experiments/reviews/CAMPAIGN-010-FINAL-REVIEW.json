@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-010",
+  "review_stage": "integration_release_gate",
+  "reviewer_role": "release gatekeeper with AI Council perspectives",
+  "decision": "ACCEPT_EXP_023_ROW5_AND_SELECT_CAMPAIGN_10",
+  "decision_scope": "Campaign 10 exact-row-5 residual-plus-LayerNorm candidate, retained failures, integrated evidence, documentation, and terminal closure gates",
+  "checkpoint_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "starting_implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+  "selected_implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+  "facts": [
+    "Forty-nine protected contract tests passed before candidate integration, and the active and detached starting workspaces matched the Campaign 8 fingerprint.",
+    "The fresh row-5 30-forward profile measured 12089.646 us of residual-add plus native-LayerNorm time, 29.07 percent of 41581.112 us model device time.",
+    "EXP-023-I1 passed direct route and boundary checks, 18 seed-scale-padding-neighbor stress scenarios, 37 affected tests, and 150994944 compared outputs with zero failed elements.",
+    "Two counterbalanced unchanged controls averaged 1.325096 ms optimized median; the retained 300-sample candidate measured 1.171584 ms, an 11.58 percent reduction, and normalized speedup improved 14.79 percent.",
+    "Candidate and control optimized incremental peak allocation were both 58720256 bytes.",
+    "The integrated row-5 300-sample gate passed with zero failed elements at 1.162976 ms and 2.001995x, with 1240 Triton attention calls.",
+    "The integrated 30-forward row-5 profile records 240 fused residual-normalization launches, 30 remaining native norms, no residual-add event, and 120 Triton attention calls; subsystem and model device time fall 40.63 and 11.96 percent versus the fresh baseline.",
+    "Primary and confirmation final matrices each pass 13 of 13 executable rows plus the exact authorized skip with zero of 938885120 failed elements at 1.926716x and 1.939005x and identical aggregate backend counts.",
+    "Organizer default passes 5 of 5 at 1.361x, source-derived passes 28 of 28 executable cases at 1.214174x, and held-out passes 7 of 7 twice at 1.394370x and 1.378630x with stable long-causal speedups.",
+    "The complete repository suite passes 144 of 144 tests with 14 upstream deprecation warnings; the earlier stale-artifact failure and candidate-path serialization failure remain retained as fail-closed evidence.",
+    "EXP-024 row-7 fusion was deliberately unrun because its fallback condition became false when EXP-023 produced an accepted winner."
+  ],
+  "council_review": {
+    "requirements": "The candidate preserves the organizer harness, zero-failure comparator, resource-skip rule, backend accounting, and exact inference-only support contract while producing current evidence for every required matrix.",
+    "architecture": "Reusing the already accepted fused primitive behind an exact row-5 predicate is a bounded extension. It does not broaden attention routing, packed-QKV policy, public APIs, state dictionaries, dependencies, or persistence surfaces.",
+    "implementation": "The source change is limited to admitting exact row 5 in the existing predicate and three boundary-focused tests. Unsupported shapes and execution modes retain the established PyTorch path.",
+    "security_privacy": "No dependency, credential, network, permission, authentication, external-system, telemetry, or sensitive-data surface changed.",
+    "testing_qa": "Direct, stress, neighbor, counterbalanced timing, memory, profile, affected-suite, two final matrices, organizer-default, source-derived, held-out, inherited-route, notebook, artifact-contract, and full-suite gates support acceptance.",
+    "user_docs": "Requirements, design, README, report, compliance, Devpost, demo, result index, notebook, comparison, campaign ledger, history, and run-through identify Campaign 10, disclose historical failures, and bind claims to the selected fingerprint.",
+    "devils_advocate": "The full-matrix geomean is noisy and Campaign 5 observed a higher historical aggregate, so acceptance must rest on the counterbalanced row-5 causality and profile mechanism. Those gates clear the five-percent threshold without accuracy or memory regression."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Validate this review, the migrated artifact contract, and the complete repository suite through immutable Campaign 10 attempts.",
+    "Complete workflow validation, append and validate graph closure, and run scoped diff hygiene before declaring the campaign closed.",
+    "Keep row-5 fusion exact; any neighboring or broader fusion requires fresh profile, correctness, boundary, timing, memory, and complete-matrix evidence.",
+    "Do not perform any commit, push, branch, tag, release, deployment, or public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "Performance is specific to the recorded RTX 5070 Ti software and driver environment.",
+    "The organizer still omits dtype, padding, timing, tolerance, backward, and evaluator-hardware policy from the final table.",
+    "The implementation is forward inference only and exact-shape fusion adds benchmark-specific maintenance cost.",
+    "Historical aggregate geomeans are affected by cross-window baseline drift and must not be presented as causal candidate comparisons."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C10-BASE-001-final.json",
+    "docs/experiments/attempts/C10-BASE-002-row5-profile.json",
+    "docs/experiments/attempts/C10-BASE-006-row5-long-a.json",
+    "docs/experiments/attempts/C10-BASE-007-row5-long-c.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-direct.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-stress.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-long-b.json",
+    "docs/experiments/attempts/C10-EXP-023-I1-profile.json",
+    "docs/experiments/reviews/CAMPAIGN-010-EXP-023-REVIEW.json",
+    "docs/experiments/attempts/C10-INTEGRATE-002-final.json",
+    "docs/experiments/attempts/C10-INTEGRATE-003-final-confirmation.json",
+    "docs/experiments/attempts/C10-INTEGRATE-004-organizer-default.json",
+    "docs/experiments/attempts/C10-INTEGRATE-005-heldout-5seed.json",
+    "docs/experiments/attempts/C10-INTEGRATE-006-heldout-confirmation.json",
+    "docs/experiments/attempts/C10-INTEGRATE-007-source-derived.json",
+    "docs/experiments/attempts/C10-INTEGRATE-008-row5-profile.json",
+    "docs/experiments/attempts/C10-INTEGRATE-011-row5-long.json",
+    "docs/experiments/attempts/C10-INTEGRATE-020-artifact-contract-tests.json",
+    "docs/experiments/attempts/C10-INTEGRATE-021-full-suite.json"
+  ],
+  "git_actions_authorized": []
+}

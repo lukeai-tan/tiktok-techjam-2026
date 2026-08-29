@@ -1,7 +1,7 @@
 {
   "task_id": "track3-campaign-006",
   "title": "Long-run exact-shape launch and projection optimization campaign",
-  "status": "active",
+  "status": "complete",
   "source_of_truth": {
     "prd_path": "docs/REQUIREMENTS.md",
     "prd_reviewed": true,
@@ -180,7 +180,48 @@
       "escalation_role": "Release Gatekeeper"
     }
   ],
-  "validation_results": [],
+  "validation_results": [
+    {
+      "gate": "workflow_and_attempt_logging",
+      "result": "pass",
+      "evidence": "116 attempts through the final suite plus five non-mutating final seal records yield 121 Campaign 6 attempts: 118 child PASS, 3 retained child FAIL, and 0 timeouts"
+    },
+    {
+      "gate": "protected_contract_and_fingerprint",
+      "result": "pass",
+      "evidence": "Protected organizer sources and matrices remain unchanged; selected schema-2 implementation fingerprint is 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4"
+    },
+    {
+      "gate": "correctness_and_final_performance",
+      "result": "pass",
+      "evidence": "Two complete final matrices pass 13/13 executable rows plus the exact authorized skip with 0/938885120 failed elements and 1.872916x/1.863721x geomeans"
+    },
+    {
+      "gate": "broader_validation",
+      "result": "pass",
+      "evidence": "Organizer default is 5/5 PASS at 1.338x; two five-seed held-out matrices are 7/7 PASS at 1.365499x/1.380821x; source-derived validation is 28/28 executable PASS at 1.244108x"
+    },
+    {
+      "gate": "target_profile_and_tradeoff",
+      "result": "pass",
+      "evidence": "Exact-width row-8 packed QKV reduces addmm calls 240 to 160, addmm device time 11.33 percent, and model device time 7.91 percent while explicitly recording 50380800 bytes of additional derived-weight storage"
+    },
+    {
+      "gate": "backend_and_profiler_proof",
+      "result": "pass",
+      "evidence": "Row 6 proves 20 Triton/20 reference calls, row 7 proves 30 Triton/10 reference, row 11 proves 40 Triton, and both exact long-causal profiles prove 20 SDPA calls"
+    },
+    {
+      "gate": "tests_static_and_graph",
+      "result": "pass",
+      "evidence": "125 repository tests pass with 14 upstream warnings; final diff hygiene passes; strict graph validation reports zero errors and zero warnings"
+    },
+    {
+      "gate": "independent_and_council_review",
+      "result": "pass",
+      "evidence": "CAMPAIGN-006-CANDIDATE-REVIEW-I1R.json independently approves the boundary-exact candidate; CAMPAIGN-006-FINAL-REVIEW.json records the integrated AI Council and release-gate challenge with no blockers"
+    }
+  ],
   "finalization": {
     "prd_update_task_id": "task-sot-graph-closure",
     "project_context_update_task_id": null,

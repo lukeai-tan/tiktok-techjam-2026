@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-009",
+  "review_stage": "candidate_plateau_release_gate",
+  "reviewer_role": "release gatekeeper with AI Council perspectives",
+  "decision": "CLOSE_NO_WINNER_RETAIN_CAMPAIGN_8",
+  "decision_scope": "Campaign 9 width-1024 row-8 fusion variants, conditional row-13 fusion, retained failures, restored candidate identity, and terminal closure gates",
+  "checkpoint_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "starting_implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+  "selected_implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+  "facts": [
+    "The fresh complete baseline passed 13/13 executable final rows plus the exact authorized resource skip with zero failures across 938885120 compared elements and a 1.893x geomean.",
+    "The row-8 30-step profile measured 41319.075 us of residual-add plus native-LayerNorm time, 10.44 percent of 395759.491 us model device time.",
+    "EXP-021-I1 passed direct width-1024 arithmetic, exact routing, boundary checks, and 18 stress scenarios covering 150994944 outputs with zero failures.",
+    "I1's 300-sample optimized median was 13.209216 ms versus the 13.144816 ms control, a 0.49 percent regression; its fused subsystem was 1.54 percent slower than the separate baseline.",
+    "I2's eight-warp launch preserved the fast gates but increased fused-plus-native-norm time to 43624.204 us, 5.58 percent above the separate baseline subsystem.",
+    "The row-13 profile measured a 9.67-percent residual-normalization ceiling and authorized the conditional fallback only after both row-8 variants closed.",
+    "EXP-022-I1 passed route, boundary, and 18 stress scenarios but failed the harder five-trial gate at seed 1238 by one element out of 41943040 overall, so timing and memory were not run.",
+    "Both rejected candidates were removed and the detached workspace again resolves to the exact Campaign 8 fingerprint."
+  ],
+  "council_review": {
+    "requirements": "The zero-failure accuracy gate correctly overrides stress passes and launch reductions. No candidate satisfies Campaign 9 acceptance criteria.",
+    "architecture": "The exact-row approach contained risk and made rollback complete. No rejected row-8 or row-13 predicate remains, and no earlier attention or projection route was reopened.",
+    "implementation": "I1 reused the accepted primitive; I2 changed only the width-1024 warp count. The fallback reused width-128 arithmetic. All candidate hunks were removed after rejection.",
+    "security_privacy": "No dependency, credential, network, permission, authentication, external-system, or sensitive-data surface changed.",
+    "testing_qa": "Direct, boundary, stress, 300-sample timing, five-trial accuracy, profile, route, memory where admissible, fingerprint restoration, and protected-contract evidence support the plateau decision.",
+    "user_docs": "The campaign ledger discloses both analysis-command failures, slower width-1024 variants, the exact row-13 failed-element count, and the absence of any integrated source change.",
+    "devils_advocate": "The row-8 I1 regression is small and could be timing noise, but its mechanism profile is independently slower and I2 worsens it. The row-13 failure is only one element, but the declared contract permits no failed element and cannot be relaxed."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Run the complete repository suite, validate this review and workflow, append/rebuild/validate graph closure, and run final diff hygiene through immutable Campaign 9 attempts.",
+    "Do not revive width-1024 residual fusion or exact-row-13 residual fusion without a materially different arithmetic design and fresh numerical evidence.",
+    "Do not perform any Git packaging or public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "The retained Campaign 8 timing remains hardware- and environment-specific.",
+    "Row-8 residual-normalization remains a measured ceiling, but this one-program-per-row Triton reduction cannot beat native operations on the target GPU.",
+    "Row-13 fusion is numerically close but not zero-failure under the supplied comparator across the expanded seed gate."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C9-BASE-001-final.json",
+    "docs/experiments/attempts/C9-BASE-002-row8-profile.json",
+    "docs/experiments/attempts/C9-BASE-003-row13-profile.json",
+    "docs/experiments/attempts/C9-BASE-004B-profile-analysis-rework2.json",
+    "docs/experiments/attempts/C9-BASE-005-row8-long-a.json",
+    "docs/experiments/attempts/C9-EXP-021-I1-direct.json",
+    "docs/experiments/attempts/C9-EXP-021-I1-stress.json",
+    "docs/experiments/attempts/C9-EXP-021-I1-long-b.json",
+    "docs/experiments/attempts/C9-EXP-021-I1-profile.json",
+    "docs/experiments/attempts/C9-EXP-021-I2-direct.json",
+    "docs/experiments/attempts/C9-EXP-021-I2-profile.json",
+    "docs/experiments/attempts/C9-EXP-021-REJECT-001-restore.json",
+    "docs/experiments/attempts/C9-EXP-022-I1-direct.json",
+    "docs/experiments/attempts/C9-EXP-022-I1-stress.json",
+    "docs/experiments/attempts/C9-EXP-022-I1-long-b.json",
+    "docs/experiments/attempts/C9-EXP-022-REJECT-001-restore.json"
+  ],
+  "git_actions_authorized": []
+}

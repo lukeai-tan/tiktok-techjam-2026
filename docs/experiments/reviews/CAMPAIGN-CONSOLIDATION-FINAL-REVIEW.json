@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "review_stage": "terminal_campaign_consolidation",
+  "reviewer_role": "release gatekeeper with AI Council perspectives",
+  "decision": "APPROVE_CONSOLIDATED_HANDOFF_AND_CAMPAIGN_11_FLAGSHIP",
+  "decision_scope": "Cross-campaign ranking, terminal accounting, canonical-document roles, cleanup safety, and retained-evidence boundaries after optimization stopped",
+  "checkpoint_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "selected_implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+  "facts": [
+    "Campaign 11 is the current cumulative implementation and owns complete final runs at 1.977420x and 1.986499x with zero of 938885120 failed elements per run.",
+    "The current implementation passes the complete 148-test repository suite with 14 upstream deprecation warnings and no test failures.",
+    "Campaign 5 retains the highest historical final observation at 1.995117x and the strongest historical held-out pair at 1.447477x and 1.449715x, but it is an older fingerprint and timing window.",
+    "Campaign 11 row-9 selection is supported by two unchanged controls averaging 0.815968 ms versus 0.717648 ms active optimized median, a 12.049 percent reduction with unchanged measured peak allocation.",
+    "Campaign 7 is the strongest high-volume specialist: current inherited row-6 long timing is 291.417252 ms baseline versus 188.457397 ms optimized, a 35.33 percent latency reduction.",
+    "The Campaign 4 plus Campaign 8 row-11 lineage is the strongest single-row result: current long timing is 4.710116x and the final matrix measures 6.377x.",
+    "Campaign 10 remains a strong narrow win: current inherited row-5 long timing is 1.880066x and the isolated Campaign 10 candidate reduced optimized median 11.58 percent versus same-window controls.",
+    "Through C11-CLOSE-007, 668 immutable attempts record 616 PASS, 52 retained non-pass, zero timeouts, and 5895.071878 seconds of measured child-command wall time.",
+    "Campaign 12 was drafted but stopped before preflight, profile, benchmark, source change, or immutable attempt; its three unused scaffold files were removed and it is not represented as an executed campaign.",
+    "Cleanup removed twelve obsolete auxiliary worktrees, seven generated cache directories, and three unreferenced smoke outputs without deleting experiment branches or immutable evidence.",
+    "One detached EXP-025 worktree remains because four immutable candidate attempts reference raw artifacts stored there; its selected source is normalized-byte identical to the active implementation.",
+    "CAMPAIGN_RUN_THROUGH owns executive narrative and ranking, OPTIMIZATION_HISTORY owns chronology and evidence indexing, individual campaign files own immutable detail, and docs/results/README owns artifact reproduction.",
+    "No commit, push, tag, branch deletion, history rewrite, release, deployment, or public action was performed during consolidation."
+  ],
+  "council_review": {
+    "requirements": "Campaign 11 is the defensible submission choice because it is current, cumulative, zero-failure, fully revalidated, and bound to the selected fingerprint. Historical and specialist rankings are separately labeled rather than conflated.",
+    "architecture": "The consolidated docs preserve the cumulative design lineage: Campaign 5 owns hybrid attention and long-causal routing, Campaign 6 exact-width packed QKV, Campaigns 7, 8, 10, and 11 exact residual-normalization fusions, and Campaign 4 the width-eight attention mechanism.",
+    "implementation": "No implementation bytes changed during consolidation. The unexecuted Campaign 12 scaffold and disposable local artifacts were removed; the active Campaign 11 source remains selected.",
+    "security_privacy": "No credential, dependency, network, authentication, authorization, permission, telemetry, or external-system surface changed. Cleanup targets were resolved and bounded before destructive worktree removal.",
+    "testing_qa": "The ranking is backed by complete final pairs, dedicated long runs, held-out and source-derived matrices, same-window candidate controls, profiler mechanisms, immutable failures, artifact contracts, and the repository-wide suite.",
+    "user_docs": "README, loop plan, result index, technical report, campaign run-through, optimization history, and Campaign 11 ledger now identify one flagship, explain the best specialist campaigns, disclose Campaign 12 as unrun, and state what cleanup preserved.",
+    "devils_advocate": "Campaign 5 has a slightly higher historical aggregate and stronger historical held-out pair, while Campaign 11 adds benchmark-specific exact guards. Selecting Campaign 11 is still preferable for submission because cross-window aggregate differences are not causal and only Campaign 11 is the current cumulative fully validated fingerprint."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Keep Campaign 11 as the submission fingerprint unless a future campaign starts with fresh evidence and completes every gate.",
+    "Do not delete the retained EXP-025 worktree until its four raw artifacts are relocated and immutable provenance remains resolvable.",
+    "Preserve every immutable attempt, result, review, trace, and individual campaign ledger even when the executive docs are further shortened.",
+    "Do not perform any Git or public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "All performance rankings are specific to the recorded RTX 5070 Ti software and driver environment.",
+    "Whole-matrix geomeans vary across timing windows, so same-window target evidence remains the causal basis for candidate selection.",
+    "The selected implementation contains exact-shape policies that require fresh evidence on other GPUs or evaluator assumptions.",
+    "The organizer still omits dtype, padding, timing, tolerance, backward, and evaluator-hardware details from the published shape table."
+  ],
+  "evidence": [
+    "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+    "docs/experiments/OPTIMIZATION_HISTORY.md",
+    "docs/experiments/CAMPAIGN-011.md",
+    "docs/experiments/reviews/CAMPAIGN-011-FINAL-REVIEW.json",
+    "docs/experiments/attempts/C11-CLEANUP-001-program-accounting.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c5-integrated-final-confirmation.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row06-long.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row11-long.json"
+  ],
+  "git_actions_authorized": []
+}
