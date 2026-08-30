@@ -31,8 +31,8 @@ but Campaign 11 is the current cumulative, fully revalidated submission.
 
 All artifacts in this section independently record schema-2 implementation
 SHA-256
-`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
-The actual entry is `torch_transformer_benchmark.py::UserOptimizedTransformer`.
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
+The actual entry is `transformer_opt/submission.py::UserOptimizedTransformer`.
 
 - `rtx-5070-ti-2026-08-29-c11-integrated-final.json`: primary organizer-published
   final matrix. All 13 executable rows passed with zero failed elements across
@@ -216,7 +216,7 @@ rather than claiming unstated organizer rules or performance on another GPU.
 The current artifacts were generated directly with fingerprint schema 2, which
 canonicalizes checkout line endings and redacts host-specific paths. They share
 implementation SHA-256
-`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 They truthfully record a dirty local candidate based on commit
 `8c89d1d4170c58d16fb75d79f212e990565fba7d`. At
 capture time no commit, tag, branch rewrite, push, or public action had been

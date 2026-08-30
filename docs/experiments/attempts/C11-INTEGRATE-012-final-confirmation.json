@@ -9,7 +9,7 @@
     "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
     "branch": "feat/jared-attempt",
     "changed_paths": [
-      "torch_transformer_benchmark.py",
+      "transformer_opt/submission.py",
       "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json"
     ],
     "rollback": "Reject the Campaign 11 selection if the confirmation matrix fails correctness, skip, or backend gates.",
@@ -53,7 +53,7 @@
       "dirty": true,
       "changed_path_count": 461,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -62,7 +62,7 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
+        "transformer_opt/submission.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
@@ -128,7 +128,7 @@
       "dirty": true,
       "changed_path_count": 462,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -137,7 +137,7 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
+        "transformer_opt/submission.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
@@ -197,7 +197,7 @@
     "expected": true,
     "exists": true,
     "size_bytes": 52818,
-    "sha256": "bf480822f92c0764d995c66eb7684a180403211702a2a1e7abdb4030efcfbd6d",
+    "sha256": "68a6c0690a4d349afce7ba35af3995d8382b69769cdeabc68e08ddea2405e297",
     "schema_version": 1,
     "created_at_utc": "2026-08-29T15:33:42.118033+00:00"
   },

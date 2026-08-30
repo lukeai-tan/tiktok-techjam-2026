@@ -4,15 +4,15 @@
   "framework": "pytorch",
   "organizer_script": {
     "path": "benchmarks/torch_transformer_benchmark.py",
-    "sha256": "1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22",
+    "sha256": "5529c96a80799b51f68092e1444a30b17994554dffdf52da98ba701489a7f36e",
     "manifest": "benchmarks/reference/organizer_downloads.json",
     "modified": false
   },
   "submission": {
-    "class": "torch_transformer_benchmark.UserOptimizedTransformer",
+    "class": "transformer_opt.submission.UserOptimizedTransformer",
     "injection_point": "UserOptimizedTransformer",
     "runner_path": "benchmarks/run_organizer_torch.py",
-    "runner_sha256": "7f8754734e1dd029f44cc60db8a6b4eda3f1e87cb55767d383e0adfbe6309499"
+    "runner_sha256": "da07a09cafee6a6f6b88413cd6eed8d7904221975913c244c2822b50b5c70a33"
   },
   "organizer_arguments": [
     "--device",
@@ -63,7 +63,7 @@
       "dirty": true,
       "changed_path_count": 463,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -72,13 +72,13 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
         "transformer_opt/kernels/__init__.py",
         "transformer_opt/kernels/attention.py",
-        "transformer_opt/kernels/residual_layer_norm.py"
+        "transformer_opt/kernels/residual_layer_norm.py",
+        "transformer_opt/submission.py"
       ]
     },
     "python": {

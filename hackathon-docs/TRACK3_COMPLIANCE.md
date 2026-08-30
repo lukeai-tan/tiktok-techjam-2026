@@ -30,7 +30,7 @@ Three external items cannot be completed truthfully from repository code alone:
 
 | Brief requirement | Status | Repository evidence | Remaining action |
 | --- | --- | --- | --- |
-| Submit one or more GPU kernels implementing the fixed Transformer layer | PASS | `transformer_opt/kernels/attention.py` owns the Triton `_attention_fwd` kernel; `torch_transformer_benchmark.py` integrates it in `UserOptimizedTransformer`. | None for the checked-in contract. |
+| Submit one or more GPU kernels implementing the fixed Transformer layer | PASS | `transformer_opt/kernels/attention.py` owns the Triton `_attention_fwd` kernel; `transformer_opt/submission.py` integrates it in `UserOptimizedTransformer` while reusing the untouched organizer harness. | None for the checked-in contract. |
 | Use either PyTorch or TensorFlow and choose which operations to fuse | PASS | PyTorch path selected; QK, online softmax, causal/padding masking, and P@V are fused in one launch. | None. |
 | Keep output within relative error 0.02 and absolute error 0.002 | PASS | The project enforces the stricter executable rule: abs <= 0.001 **or** relative <= 0.01. The exact-harness matrix has 140/140 passing trials and zero failed elements across 459,776,000 comparisons. | Rerun if the organizer changes the executable rule. |
 | Handle varied batch, sequence, and dimension shapes; shape checks are allowed | PASS / HOLD | All 13 executable published final rows pass with zero failures across 938,885,120 comparisons; all 28 feasible source-derived cases also pass. The exact 100,000-token resource row is an authorized skip, not a pass. | HOLD only for the final table's unstated execution policy. |
@@ -86,7 +86,7 @@ Three external items cannot be completed truthfully from repository code alone:
   warnings were reported and no required coverage was removed.
 - Long-attention incremental peak allocation: 78 MiB to 22 MiB (71.8%).
 - Implementation fingerprint:
-  `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+  `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 
 These values apply only to the exact fingerprinted implementation, recorded
 RTX 5070 Ti environment, published dimensions, and explicit PyTorch assumptions.

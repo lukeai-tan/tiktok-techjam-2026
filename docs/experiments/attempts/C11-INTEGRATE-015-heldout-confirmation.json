@@ -9,7 +9,7 @@
     "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
     "branch": "feat/jared-attempt",
     "changed_paths": [
-      "torch_transformer_benchmark.py",
+      "transformer_opt/submission.py",
       "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed-confirmation.json"
     ],
     "rollback": "Reject or repair the selection if held-out confirmation fails or materially contradicts the primary run.",
@@ -61,7 +61,7 @@
       "dirty": true,
       "changed_path_count": 467,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -70,7 +70,7 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
+        "transformer_opt/submission.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
@@ -140,7 +140,7 @@
       "dirty": true,
       "changed_path_count": 468,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -149,7 +149,7 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
+        "transformer_opt/submission.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
@@ -209,7 +209,7 @@
     "expected": true,
     "exists": true,
     "size_bytes": 72639,
-    "sha256": "c272e3901eac531d6e4699a5b7c3de15f40f716c83931fb98e847c9cf0d6aad3",
+    "sha256": "50e7f7b5216dae5a15f67b67f8f65d21e8e4df4fba30eeb07a4d4b2082a0817a",
     "schema_version": 1,
     "created_at_utc": "2026-08-29T15:34:46.260464+00:00"
   },

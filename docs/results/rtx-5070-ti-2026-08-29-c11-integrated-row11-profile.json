@@ -236,7 +236,7 @@
       "dirty": true,
       "changed_path_count": 479,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -245,13 +245,13 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
         "transformer_opt/kernels/__init__.py",
         "transformer_opt/kernels/attention.py",
-        "transformer_opt/kernels/residual_layer_norm.py"
+        "transformer_opt/kernels/residual_layer_norm.py",
+        "transformer_opt/submission.py"
       ]
     },
     "python": {

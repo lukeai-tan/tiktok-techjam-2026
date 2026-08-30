@@ -9,9 +9,9 @@
   },
   "organizer_sources": {
     "manifest_path": "benchmarks/reference/organizer_downloads.json",
-    "manifest_sha256": "c272c825f805f6aa3249966a3ba4f17234860c4664770f45ceee472b1db4fbaf",
+    "manifest_sha256": "b3e5929410a75c69b1e9a0e36af689d15eb9418894d6f6c33bc03f564e0c02ca",
     "runner_path": "benchmarks/run_organizer_torch.py",
-    "runner_sha256": "7f8754734e1dd029f44cc60db8a6b4eda3f1e87cb55767d383e0adfbe6309499",
+    "runner_sha256": "da07a09cafee6a6f6b88413cd6eed8d7904221975913c244c2822b50b5c70a33",
     "validation_runner_path": "benchmarks/run_organizer_validation.py",
     "validation_runner_sha256": "b9445eb2a404eca3751899db3a22f9d1cdf0ec35206aabcc7e1961fa4b13f5e4"
   },
@@ -49,7 +49,7 @@
       "dirty": true,
       "changed_path_count": 469,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -58,13 +58,13 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
         "transformer_opt/kernels/__init__.py",
         "transformer_opt/kernels/attention.py",
-        "transformer_opt/kernels/residual_layer_norm.py"
+        "transformer_opt/kernels/residual_layer_norm.py",
+        "transformer_opt/submission.py"
       ]
     },
     "python": {

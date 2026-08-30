@@ -9,7 +9,7 @@
     "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
     "branch": "feat/jared-attempt",
     "changed_paths": [
-      "torch_transformer_benchmark.py",
+      "transformer_opt/submission.py",
       "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json"
     ],
     "rollback": "Reject or repair the selection if organizer-default correctness or routing regresses.",
@@ -53,7 +53,7 @@
       "dirty": true,
       "changed_path_count": 463,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -62,7 +62,7 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
+        "transformer_opt/submission.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
@@ -128,7 +128,7 @@
       "dirty": true,
       "changed_path_count": 464,
       "implementation_fingerprint_schema": 2,
-      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_sha256": "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9",
       "implementation_paths": [
         "benchmarks/official_shapes.json",
         "benchmarks/profile_cases.py",
@@ -137,7 +137,7 @@
         "scripts/run-wsl.ps1",
         "tools/capture_environment.py",
         "tools/triton-cc",
-        "torch_transformer_benchmark.py",
+        "transformer_opt/submission.py",
         "transformer_opt/__init__.py",
         "transformer_opt/config.py",
         "transformer_opt/dispatch.py",
@@ -197,7 +197,7 @@
     "expected": true,
     "exists": true,
     "size_bytes": 5087,
-    "sha256": "0b81b6ec4693ab5ed47ac06ae48bbe118677f8de23abb471b934ac0bcc1680d0",
+    "sha256": "4cd7eb24c933107e547cde7feb6fbc8202ecf379c01bf59b02014b8e21a092d1",
     "schema_version": 1,
     "created_at_utc": "2026-08-29T15:34:04.516491+00:00"
   },

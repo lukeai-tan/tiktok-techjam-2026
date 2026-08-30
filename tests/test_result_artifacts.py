@@ -235,9 +235,7 @@ def test_selected_submission_attempts_bind_results_to_current_fingerprint():
 
 
 def test_submission_docs_select_campaign11_evidence_and_disclose_removed_regressions():
-    fingerprint = (
-        "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb"
-    )
+    fingerprint, _ = implementation_fingerprint()
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     requirements = (ROOT / "docs" / "REQUIREMENTS.md").read_text(encoding="utf-8")
     result_index = (ROOT / "docs" / "results" / "README.md").read_text(

@@ -24,8 +24,8 @@ the canonical hackathon-context prose is under `hackathon-docs/`.
 
 | Question | Current answer | Evidence |
 | --- | --- | --- |
-| What is the selected entry? | `torch_transformer_benchmark.py::UserOptimizedTransformer` | [requirements](REQUIREMENTS.md) |
-| Which implementation is the flagship? | Campaign 11, fingerprint `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb` | [campaign ranking](experiments/CAMPAIGN_RUN_THROUGH.md#flagship-and-strongest-specialist-campaigns) |
+| What is the selected entry? | `transformer_opt/submission.py::UserOptimizedTransformer` | [requirements](REQUIREMENTS.md) |
+| Which implementation is the flagship? | Campaign 11, fingerprint `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9` | [campaign ranking](experiments/CAMPAIGN_RUN_THROUGH.md#flagship-and-strongest-specialist-campaigns) |
 | Does it pass the published final matrix? | 13/13 executable rows PASS; 0 failed elements across 938,885,120 comparisons; one authorized resource skip | [final artifact](results/rtx-5070-ti-2026-08-29-c11-integrated-final.json) |
 | How fast is the final matrix? | 1.977420x primary geomean; 1.986499x confirmation | [result index](results/README.md#current-selected-submission-run) |
 | Does it generalize? | Two held-out 7/7 PASS runs at 1.339847x and 1.386495x; long-causal stays in the 1.198x–1.204x band | [held-out artifacts](results/README.md#current-selected-submission-run) |

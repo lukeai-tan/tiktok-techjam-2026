@@ -22,11 +22,12 @@ origin evidence and exact sizes/checksums are in
 
 ## How the two files are used
 
-PyTorch is the selected framework, as permitted by the brief. The root
-`torch_transformer_benchmark.py` keeps the organizer's baseline Transformer,
-weight-copy contract, and correctness comparator, and replaces the documented
-`UserOptimizedTransformer` extension point. The protected definitions are
-AST-compared in tests.
+PyTorch is the selected framework, as permitted by the brief. The untouched
+`benchmarks/torch_transformer_benchmark.py` remains the canonical organizer
+baseline, weight-copy contract, and correctness comparator. The optimized
+`transformer_opt/submission.py` adapter reuses those definitions and supplies
+the documented `UserOptimizedTransformer` extension point. The protected
+definitions are checked for identity in tests.
 
 For the strongest end-to-end proof, `benchmarks/run_organizer_torch.py` loads
 the untouched download, injects the submitted class at that extension point,

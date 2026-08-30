@@ -9,11 +9,12 @@ There are now two provenance layers:
   revision-linked RTX 5070 Ti result artifacts. It remains immutable so those
   results retain their original implementation fingerprint.
 
-PyTorch is the selected submission framework. The root
-`torch_transformer_benchmark.py` is its optimized copy, while
-`benchmarks/run_organizer_torch.py` injects the same submitted class into the
-untouched organizer harness. Automated tests compare protected baseline
-definitions and strict state-dict compatibility. The TensorFlow download is
+PyTorch is the selected submission framework. The untouched
+`benchmarks/torch_transformer_benchmark.py` is the canonical organizer harness;
+`transformer_opt/submission.py` supplies the optimized adapter, while
+`benchmarks/run_organizer_torch.py` injects that class into the harness.
+Automated tests compare protected baseline definitions and strict state-dict
+compatibility. The TensorFlow download is
 retained as an alternative-framework and shape-scope cross-check; Track 3 says
 only one framework implementation is required.
 

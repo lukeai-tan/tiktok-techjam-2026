@@ -13,9 +13,9 @@ requirements. `benchmarks/official_shapes.json` remains a project-owned
 held-out matrix rather than the final organizer matrix.
 
 Selected local submission entry:
-`torch_transformer_benchmark.py::UserOptimizedTransformer`. Its schema-2
+`transformer_opt/submission.py::UserOptimizedTransformer`. Its schema-2
 implementation fingerprint is
-`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 The 2026-08-29 Campaign 11 integration suite recomputed that identity and ties
 the current final, confirmation, held-out, organizer-default, source-derived,
 profile, and test evidence to it. The protected organizer downloads remain
@@ -45,7 +45,7 @@ campaign ledgers and raw JSON remain the authority for individual executions.
 ## Organizer download reconciliation
 
 - Untouched PyTorch SHA-256:
-  `1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`.
+  `5529c96a80799b51f68092e1444a30b17994554dffdf52da98ba701489a7f36e`.
 - Untouched TensorFlow SHA-256:
   `00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798`.
 - `benchmarks/run_organizer_torch.py` injects only the submitted class into the
@@ -76,9 +76,9 @@ differences and remaining clarifications.
 
 ## Required behavior
 
-The selected PyTorch implementation is the pre-LayerNorm Transformer in the
-untouched `benchmarks/torch_transformer_benchmark.py`; the optimized submission
-copy is `torch_transformer_benchmark.py`:
+The selected PyTorch implementation reuses the pre-LayerNorm Transformer and
+contract helpers from the untouched `benchmarks/torch_transformer_benchmark.py`.
+The optimized submission adapter is `transformer_opt/submission.py`:
 
 ```text
 for each block:

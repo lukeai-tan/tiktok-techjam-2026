@@ -20,9 +20,9 @@ stricter executable comparator), all 65 accuracy trials passed with **0 failed
 elements across 938,885,120 comparisons**.
 
 The selected local submission is
-`torch_transformer_benchmark.py::UserOptimizedTransformer`, with schema-2
+`transformer_opt/submission.py::UserOptimizedTransformer`, with schema-2
 implementation SHA-256
-`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 Campaign 11's primary final-matrix geometric-mean end-to-end speedup is
 **1.977x**; a second complete run measured **1.986x** with identical
 correctness and aggregate backend counts. Final rows 6 and 7 use
@@ -74,7 +74,7 @@ backward policy remain unstated. The exact assumptions are in the
 ## Which campaign is the flagship?
 
 Use **Campaign 11** and fingerprint
-`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 It is the current cumulative implementation, owns the latest complete
 zero-failure final pair, and passed the 148-test repository gate. Campaign 5
 is the strongest historical broad-generalization snapshot, Campaign 7 is the
@@ -201,8 +201,8 @@ $python = ".venv\Scripts\python.exe"
 # Entire CPU + GPU suite
 & $python -m pytest tests -q
 
-# One direct benchmark using the competition integration point
-& $python torch_transformer_benchmark.py --device cuda --dtype float32 --attention-backend auto --accuracy-trials 5
+# One direct benchmark using the untouched organizer harness and submission adapter
+& $python benchmarks/run_organizer_torch.py --device cuda
 
 # Strongest contract proof: untouched organizer parser/comparator/timing harness
 & $python benchmarks/run_organizer_torch.py --device cuda
@@ -239,7 +239,7 @@ The matrix runner fails closed:
 ## Repository layout
 
 ~~~text
-torch_transformer_benchmark.py        reference + required optimized class
+transformer_opt/submission.py         optimized submission adapter
 transformer_opt/
   config.py                           support envelope and launch policy
   dispatch.py                         custom/SDPA/reference routing
