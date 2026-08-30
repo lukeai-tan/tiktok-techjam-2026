@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -57,6 +58,40 @@ def display_path(path: str | Path) -> str:
         return candidate.relative_to(REPO_ROOT).as_posix()
     except ValueError:
         return candidate.name
+
+
+def portable_command(command: list[str]) -> list[str]:
+    """Remove machine-specific absolute and home paths from persisted argv."""
+    rendered: list[str] = []
+    prefixes = (REPO_ROOT, Path.home())
+
+    def portable_path(value: str) -> str:
+        candidate = Path(value).resolve()
+        if candidate == Path.home().resolve():
+            return "<home>"
+        return display_path(candidate)
+
+    for argument in command:
+        option, separator, value = argument.partition("=")
+        if separator and Path(value).is_absolute():
+            portable = f"{option}={portable_path(value)}"
+        elif Path(argument).is_absolute():
+            portable = portable_path(argument)
+        else:
+            portable = argument
+
+        # Also redact paths embedded inside larger values such as inline code
+        # or diagnostic labels, where the complete argument is not a path.
+        for prefix in prefixes:
+            for variant in {str(prefix), prefix.as_posix()}:
+                portable = re.sub(
+                    re.escape(variant),
+                    "<repo>" if prefix == REPO_ROOT else "<home>",
+                    portable,
+                    flags=re.IGNORECASE,
+                )
+        rendered.append(portable)
+    return rendered
 
 
 def cpu_name() -> Optional[str]:
@@ -143,7 +178,7 @@ def capture_environment(command: Optional[list[str]] = None) -> dict[str, Any]:
     disk = shutil.disk_usage(REPO_ROOT)
     result: dict[str, Any] = {
         "captured_at_utc": datetime.now(timezone.utc).isoformat(),
-        "command": command if command is not None else sys.argv,
+        "command": portable_command(list(command if command is not None else sys.argv)),
         "git": {
             "commit": commit,
             "dirty": bool(git_status),

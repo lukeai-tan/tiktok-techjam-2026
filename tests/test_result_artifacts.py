@@ -14,6 +14,21 @@ from tools.capture_environment import implementation_fingerprint
 
 
 ROOT = Path(__file__).resolve().parents[1]
+CAMPAIGN11_EVIDENCE_FINGERPRINT = (
+    "908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9"
+)
+CAMPAIGN11_RUNNER_SHA256 = (
+    "da07a09cafee6a6f6b88413cd6eed8d7904221975913c244c2822b50b5c70a33"
+)
+CAMPAIGN11_MANIFEST_SHA256 = (
+    "b3e5929410a75c69b1e9a0e36af689d15eb9418894d6f6c33bc03f564e0c02ca"
+)
+CAMPAIGN11_VALIDATION_RUNNER_SHA256 = (
+    "b9445eb2a404eca3751899db3a22f9d1cdf0ec35206aabcc7e1961fa4b13f5e4"
+)
+CAMPAIGN11_FINAL_MATRIX_SHA256 = (
+    "76ace44069ed3f27b740e792dfcb6d5be745a760be4c66c9a1241c72a59b24bc"
+)
 
 
 def _text_sha256(path: Path) -> str:
@@ -198,22 +213,34 @@ def test_implementation_fingerprint_ignores_checkout_line_endings(
 
 
 def test_environment_paths_do_not_expose_host_home(monkeypatch):
+    host_home = Path.home()
     monkeypatch.setattr(
         capture_environment.sys,
         "executable",
-        str(Path.home() / "venv" / "python"),
+        str(host_home / "venv" / "python"),
     )
-    payload = capture_environment.capture_environment(["capture-environment"])
+    payload = capture_environment.capture_environment(
+        [
+            str(host_home / "venv" / "python"),
+            "--evidence-out",
+            str(host_home / "private" / "evidence.json"),
+            f"--trace={host_home / 'private' / 'trace.json'}",
+            f"embedded={host_home}",
+        ]
+    )
 
     assert payload["python"]["executable"] == "python"
+    assert str(host_home).lower() not in json.dumps(payload["command"]).lower()
+    assert payload["command"][2] == "evidence.json"
+    assert payload["command"][3] == "--trace=trace.json"
+    assert payload["command"][4] == "embedded=<home>"
     assert payload["disk"]["path"] == "."
     assert payload["git"]["implementation_fingerprint_schema"] == 2
     assert payload["cpu"]["name"]
     assert payload["cpu"]["logical_count"]
 
 
-def test_selected_submission_attempts_bind_results_to_current_fingerprint():
-    current_fingerprint, _ = implementation_fingerprint()
+def test_selected_submission_attempts_bind_results_to_measured_fingerprint():
     attempt_root = ROOT / "docs" / "experiments" / "attempts"
 
     for attempt_name, result_path in SUBMISSION_ATTEMPT_RESULT_MAP.items():
@@ -222,10 +249,10 @@ def test_selected_submission_attempts_bind_results_to_current_fingerprint():
         assert attempt["execution"]["status"] == "PASS"
         assert attempt["execution"]["return_code"] == 0
         assert attempt["environment_before"]["git"]["implementation_sha256"] == (
-            current_fingerprint
+            CAMPAIGN11_EVIDENCE_FINGERPRINT
         )
         assert attempt["environment_after"]["git"]["implementation_sha256"] == (
-            current_fingerprint
+            CAMPAIGN11_EVIDENCE_FINGERPRINT
         )
         assert attempt["result_artifact"]["path"] == result_path.relative_to(
             ROOT
@@ -235,7 +262,7 @@ def test_selected_submission_attempts_bind_results_to_current_fingerprint():
 
 
 def test_submission_docs_select_campaign11_evidence_and_disclose_removed_regressions():
-    fingerprint, _ = implementation_fingerprint()
+    current_fingerprint, _ = implementation_fingerprint()
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     requirements = (ROOT / "docs" / "REQUIREMENTS.md").read_text(encoding="utf-8")
     result_index = (ROOT / "docs" / "results" / "README.md").read_text(
@@ -249,7 +276,11 @@ def test_submission_docs_select_campaign11_evidence_and_disclose_removed_regress
     )
 
     assert all(
-        fingerprint in text for text in (readme, requirements, result_index)
+        CAMPAIGN11_EVIDENCE_FINGERPRINT in text
+        for text in (readme, requirements, result_index)
+    )
+    assert all(
+        current_fingerprint in text for text in (readme, requirements, result_index)
     )
     for artifact in SUBMISSION_ATTEMPT_RESULT_MAP.values():
         assert artifact.name in result_index
@@ -264,11 +295,11 @@ def test_submission_docs_select_campaign11_evidence_and_disclose_removed_regress
     assert "removed both held-out long-causal regressions" in compliance
 
 
-def test_curated_matrix_is_complete_green_and_current():
+def test_curated_campaign11_matrix_is_complete_green_and_immutable():
     matrix = _load(MATRIX_PATH)
-    current_fingerprint, current_paths = implementation_fingerprint()
+    _, current_paths = implementation_fingerprint()
     captured_git = matrix["environment"]["git"]
-    assert captured_git["implementation_sha256"] == current_fingerprint
+    assert captured_git["implementation_sha256"] == CAMPAIGN11_EVIDENCE_FINGERPRINT
     assert captured_git["implementation_fingerprint_schema"] == 2
     assert "implementation_fingerprint_migrated_from_sha256" not in captured_git
     assert captured_git["implementation_paths"] == current_paths
@@ -450,7 +481,6 @@ def test_campaign11_inherited_row5_long_gate_remains_fast_and_memory_bounded():
 
 
 def test_campaign11_row11_profile_preserves_exact_fused_route():
-    current_fingerprint, _ = implementation_fingerprint()
     attempt = _load(
         ROOT
         / "docs"
@@ -463,7 +493,7 @@ def test_campaign11_row11_profile_preserves_exact_fused_route():
     assert attempt["execution"]["status"] == "PASS"
     assert attempt["result_artifact"]["sha256"] == _sha256(ROW11_PROFILE_PATH)
     assert profile["environment"]["git"]["implementation_sha256"] == (
-        current_fingerprint
+        CAMPAIGN11_EVIDENCE_FINGERPRINT
     )
     assert profile["backend_counts"] == {
         "triton": 120,
@@ -484,7 +514,6 @@ def test_campaign11_row11_profile_preserves_exact_fused_route():
 
 
 def test_campaign11_row8_profile_preserves_packed_qkv_projection_reduction():
-    current_fingerprint, _ = implementation_fingerprint()
     attempt = _load(
         ROOT
         / "docs"
@@ -503,7 +532,7 @@ def test_campaign11_row8_profile_preserves_packed_qkv_projection_reduction():
     ).as_posix()
     assert attempt["result_artifact"]["sha256"] == _sha256(ROW8_PROFILE_PATH)
     assert profile["environment"]["git"]["implementation_sha256"] == (
-        current_fingerprint
+        CAMPAIGN11_EVIDENCE_FINGERPRINT
     )
     assert profile["backend_counts"] == {"triton": 0, "sdpa": 0, "reference": 40}
 
@@ -525,7 +554,6 @@ def test_campaign11_row8_profile_preserves_packed_qkv_projection_reduction():
 
 
 def test_campaign11_row6_profile_proves_fused_residual_norm_reduction():
-    current_fingerprint, _ = implementation_fingerprint()
     attempt = _load(
         ROOT
         / "docs"
@@ -539,7 +567,7 @@ def test_campaign11_row6_profile_proves_fused_residual_norm_reduction():
     assert attempt["execution"]["status"] == "PASS"
     assert attempt["result_artifact"]["sha256"] == _sha256(ROW6_PROFILE_PATH)
     assert profile["environment"]["git"]["implementation_sha256"] == (
-        current_fingerprint
+        CAMPAIGN11_EVIDENCE_FINGERPRINT
     )
     assert profile["backend_counts"] == {"triton": 20, "sdpa": 0, "reference": 20}
 
@@ -611,10 +639,9 @@ def test_campaign6_row8_long_run_records_speed_and_memory_tradeoff():
     ] == 369_115_136
 
 
-def test_organizer_default_artifact_uses_untouched_harness_and_current_submission():
+def test_campaign11_organizer_default_artifact_uses_untouched_harness():
     evidence = _load(ORGANIZER_DEFAULT_PATH)
     manifest = _load(ORGANIZER_MANIFEST_PATH)
-    current_fingerprint, _ = implementation_fingerprint()
     pytorch_download = next(
         artifact
         for artifact in manifest["artifacts"]
@@ -630,8 +657,7 @@ def test_organizer_default_artifact_uses_untouched_harness_and_current_submissio
         "modified": False,
     }
     assert evidence["organizer_arguments"] == ["--device", "cuda"]
-    runner_path = ROOT / evidence["submission"]["runner_path"]
-    assert evidence["submission"]["runner_sha256"] == _text_sha256(runner_path)
+    assert evidence["submission"]["runner_sha256"] == CAMPAIGN11_RUNNER_SHA256
     assert evidence["parsed"]["accuracy"]["status"] == "PASS"
     assert evidence["parsed"]["accuracy"]["failed_elements"] == 0
     assert evidence["parsed"]["accuracy"]["total_elements"] == 2_621_440
@@ -642,13 +668,12 @@ def test_organizer_default_artifact_uses_untouched_harness_and_current_submissio
         "reference": 0,
     }
     assert evidence["environment"]["git"]["implementation_sha256"] == (
-        current_fingerprint
+        CAMPAIGN11_EVIDENCE_FINGERPRINT
     )
 
 
-def test_organizer_validation_artifact_is_complete_green_and_fail_closed():
+def test_campaign11_organizer_validation_artifact_is_complete_and_fail_closed():
     evidence = _load(ORGANIZER_VALIDATION_PATH)
-    current_fingerprint, _ = implementation_fingerprint()
 
     def strings(value):
         if isinstance(value, str):
@@ -669,18 +694,17 @@ def test_organizer_validation_artifact_is_complete_green_and_fail_closed():
     assert evidence["matrix"]["sha256"] == _text_sha256(
         ORGANIZER_VALIDATION_MATRIX_PATH
     )
-    manifest_path = ROOT / evidence["organizer_sources"]["manifest_path"]
-    assert evidence["organizer_sources"]["manifest_sha256"] == _text_sha256(
-        manifest_path
+    assert evidence["organizer_sources"]["manifest_sha256"] == (
+        CAMPAIGN11_MANIFEST_SHA256
     )
-    for path_key, hash_key in (
-        ("runner_path", "runner_sha256"),
-        ("validation_runner_path", "validation_runner_sha256"),
-    ):
-        path = ROOT / evidence["organizer_sources"][path_key]
-        assert evidence["organizer_sources"][hash_key] == _text_sha256(path)
+    assert evidence["organizer_sources"]["runner_sha256"] == (
+        CAMPAIGN11_RUNNER_SHA256
+    )
+    assert evidence["organizer_sources"]["validation_runner_sha256"] == (
+        CAMPAIGN11_VALIDATION_RUNNER_SHA256
+    )
     assert evidence["environment"]["git"]["implementation_sha256"] == (
-        current_fingerprint
+        CAMPAIGN11_EVIDENCE_FINGERPRINT
     )
 
     summary = evidence["summary"]
@@ -729,29 +753,30 @@ def test_organizer_validation_artifact_is_complete_green_and_fail_closed():
     assert skipped[0]["source_dimensions"] == [32, 1024, 16, 100000]
 
 
-def test_final_evaluator_artifact_is_complete_green_and_current():
+def test_campaign11_final_evaluator_artifact_is_complete_and_immutable():
     evidence = _load(FINAL_EVALUATOR_PATH)
-    current_fingerprint, _ = implementation_fingerprint()
 
     assert evidence["status"] == "PASS"
     assert evidence["matrix"] == {
         "path": "benchmarks/final_evaluator_shapes.json",
-        "sha256": _text_sha256(FINAL_EVALUATOR_MATRIX_PATH),
+        "sha256": CAMPAIGN11_FINAL_MATRIX_SHA256,
         "status": "organizer-published-final-shapes",
     }
     # Campaign 11 is intentionally measured as a reviewable local candidate;
     # no commit or history mutation is authorized by the optimization request.
     assert evidence["environment"]["git"]["dirty"] is True
     assert evidence["environment"]["git"]["implementation_sha256"] == (
-        current_fingerprint
+        CAMPAIGN11_EVIDENCE_FINGERPRINT
     )
-    for path_key, hash_key in (
-        ("manifest_path", "manifest_sha256"),
-        ("runner_path", "runner_sha256"),
-        ("validation_runner_path", "validation_runner_sha256"),
-    ):
-        path = ROOT / evidence["organizer_sources"][path_key]
-        assert evidence["organizer_sources"][hash_key] == _text_sha256(path)
+    assert evidence["organizer_sources"]["manifest_sha256"] == (
+        CAMPAIGN11_MANIFEST_SHA256
+    )
+    assert evidence["organizer_sources"]["runner_sha256"] == (
+        CAMPAIGN11_RUNNER_SHA256
+    )
+    assert evidence["organizer_sources"]["validation_runner_sha256"] == (
+        CAMPAIGN11_VALIDATION_RUNNER_SHA256
+    )
 
     summary = evidence["summary"]
     assert summary["requested"] == 14

@@ -4,7 +4,7 @@
   "selected_framework": "pytorch",
   "observed_at": "2026-08-27T15:35:14+08:00",
   "source": {
-    "challenge_brief_path": "docs/hackathon-details.md",
+    "challenge_brief_path": "hackathon-docs/hackathon-details.md",
     "referrer_origin": "https://bytedance.larkoffice.com/",
     "download_transport_host": "internal-api-drive-stream.larkoffice.com",
     "windows_zone_identifier_observed": true,
@@ -42,8 +42,12 @@
       "padding_ratio": 0.0
     },
     "accuracy_trials": 5,
-    "absolute_rule": "abs_error <= 0.001",
-    "relative_rule": "abs_error <= 0.01 * abs(reference)",
+    "parser_default_absolute_rule": "abs_error <= 0.002",
+    "parser_default_relative_rule": "abs_error <= 0.02 * abs(reference)",
+    "module_docstring_absolute_rule": "abs_error <= 0.001",
+    "module_docstring_relative_rule": "abs_error <= 0.01 * abs(reference)",
+    "repository_evidence_absolute_rule": "abs_error <= 0.001",
+    "repository_evidence_relative_rule": "abs_error <= 0.01 * abs(reference)",
     "timing": {
       "warmup": 20,
       "repeats": 100,
