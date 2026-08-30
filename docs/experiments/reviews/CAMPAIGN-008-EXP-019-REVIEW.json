@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-008",
+  "review_stage": "final_candidate_preintegration_council_review",
+  "reviewer_role": "AI Council multi-perspective candidate reviewer",
+  "objective": "Decide whether EXP-019-I1R may extend Campaign 7's exact fused residual-add plus LayerNorm route to final row 11 without weakening correctness, boundaries, memory, or the accepted row-6 path.",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE_PENDING_INTEGRATION_REBASELINE",
+  "base_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "starting_implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+  "candidate_implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+  "facts": [
+    "The incremental implementation change is confined to torch_transformer_benchmark.py plus boundary and route assertions in tests/test_gpu_transformer.py; it reuses Campaign 7's already accepted residual-LayerNorm kernel unchanged.",
+    "The route requires the exact row-11 runtime tensor and full model configuration, eval mode, CUDA float32, contiguous input, an absent or compatible contiguous boolean mask, disabled gradients, and non-compiled execution.",
+    "The retained fingerprint passed 10 direct and boundary tests, both 18-scenario row-6 and row-11 stress matrices, and all 34 affected residual-LayerNorm and transformer tests.",
+    "Two retained-fingerprint target runs and three unchanged controls each used 300 timing samples and five accuracy trials; all 26,214,400 timed-run accuracy elements passed with zero failed elements.",
+    "The retained candidate uses the same 29,360,128-byte optimized incremental peak allocation as every unchanged control and preserves 120 Triton attention events in the paired 30-step profile.",
+    "The first 10-step candidate profile reported an anomalous top-level regression, but the paired 30-step baseline/candidate profiles reversed it and reproduced both the wall-clock gain and the expected fused-call mechanism."
+  ],
+  "assumptions": [
+    "The organizer's float32 comparator, final matrix, and exact resource skip remain authoritative.",
+    "Results are local to the recorded RTX 5070 Ti, CUDA 13.0, PyTorch 2.13.0, and Triton 3.7.1 environment and are not generalized to unmeasured hardware.",
+    "No commit, push, tag, release, branch creation, history rewrite, or public action is authorized by the continuous optimization request."
+  ],
+  "interpretations": [
+    "The 30-step profile is the better interpretation of profiler behavior because it is paired at equal steps, reproduces the kernel-count change, and agrees with five long timing runs; the contradictory 10-step result remains disclosed as noise-sensitive evidence rather than deleted.",
+    "The training-mode guard is a compliance correction discovered during review, not a new performance surface; it narrows execution and leaves eval-mode target timing unchanged.",
+    "EXP-020 is not authorized to run by its own fallback condition because EXP-019-I1R cleared correctness, performance, memory, boundary, and maintenance gates."
+  ],
+  "council_review": {
+    "requirements": [
+      "The exact row-11 extension satisfies the campaign's approximately five-percent target requirement with zero failed elements and no route fallback.",
+      "Training mode, gradients, CPU, low precision, noncontiguous layouts and masks, runtime neighbors, and a head-count neighbor retain fallback behavior."
+    ],
+    "architecture": [
+      "Reusing the generic exact-route forward avoids a second duplicated fused pipeline while keeping both authorized shapes explicit in one predicate.",
+      "No attention dispatch, packed-QKV boundary, vendor GEMM, dependency, or state-dict surface changes."
+    ],
+    "implementation": [
+      "I1 generalized the row-6 helper and added the exact row-11 guard; I1R added the missing not-self.training boundary found by review.",
+      "The source change is small and the candidate's route counter proves eight fused residual-normalization calls per row-11 forward."
+    ],
+    "security_privacy": [
+      "No credentials, network access, external systems, authorization behavior, dependency, or sensitive-data surface changes.",
+      "The extension narrows rather than relaxes execution guards and leaves unsupported states on existing PyTorch behavior."
+    ],
+    "testing_qa": [
+      "The 36 combined stress scenarios compare 2,967,994,368 model outputs over three seeds, three scales, and padded/unpadded inputs with zero failures and 288 expected fused calls.",
+      "The accepted row-6 route remains correct at 1.548x in the fresh non-regression matrix with its exact 2-reference/2-Triton attention ordering.",
+      "Complete final, organizer-default, held-out, source-derived, artifact-contract, and repository-wide suites remain mandatory after transplant."
+    ],
+    "user_docs": [
+      "Requirements, kernel design, README, result index, optimization history, campaign run-through, notebook guidance, technical report, and submission narrative must describe both exact fused rows and disclose the rejected/noisy observations."
+    ],
+    "devils_advocate": [
+      "The gain is exact-shape and GPU-specific; broadening it without fresh evidence would be unjustified.",
+      "Profiler totals were visibly noise-sensitive, so acceptance relies on repeated raw timing plus the paired longer profile, not the best single number.",
+      "Private helper renaming expands the maintenance surface slightly; affected tests and stale-reference searches must close that risk during integration."
+    ]
+  },
+  "acceptance_basis": {
+    "correctness_failed_elements": 0,
+    "stress_scenarios": 36,
+    "stress_compared_elements": 2967994368,
+    "retained_candidate_long_run_count": 2,
+    "unchanged_control_long_run_count": 3,
+    "optimized_samples_per_run": 300,
+    "accuracy_trials_per_run": 5,
+    "timed_run_accuracy_compared_elements": 26214400,
+    "control_mean_optimized_median_ms": 0.9935253262519836,
+    "candidate_mean_optimized_median_ms": 0.8971839994192123,
+    "optimized_median_latency_reduction_percent": 9.696917057586575,
+    "control_mean_speedup": 4.262788253532486,
+    "candidate_mean_speedup": 4.697149360632352,
+    "normalized_speedup_gain_percent": 10.189600826170974,
+    "optimized_mean_latency_reduction_percent": 6.276686176411205,
+    "baseline_median_drift_percent": -0.4980388957349646,
+    "control_optimized_incremental_peak_bytes": 29360128,
+    "candidate_optimized_incremental_peak_bytes": 29360128,
+    "profile_steps": 30,
+    "profile_baseline_model_device_time_us": 41211.814,
+    "profile_candidate_model_device_time_us": 32595.834999999992,
+    "profile_model_time_reduction_percent": 20.906575478575164,
+    "profile_baseline_add_plus_norm_us": 5978.919999999979,
+    "profile_candidate_fused_plus_native_norm_us": 3383.6869999999844,
+    "profile_subsystem_time_reduction_percent": 43.40638443063302,
+    "profile_baseline_add_calls": 240,
+    "profile_baseline_native_norm_calls": 270,
+    "profile_candidate_fused_calls": 240,
+    "profile_candidate_native_norm_calls": 30,
+    "profile_attention_triton_calls": 120
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Transplant only the incremental source and test hunks relative to Campaign 7; do not copy detached-worktree documentation or stale evidence.",
+    "Regenerate complete final, organizer-default, held-out, source-derived, row-6, row-11, profile, artifact-contract, and repository-suite evidence under the integrated fingerprint.",
+    "Search for and update the renamed private helper only where it is genuinely referenced; do not broaden the exact-route predicate.",
+    "Reconcile all authoritative and public-facing documentation before closure.",
+    "Do not perform Git packaging or any public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "Only exact final rows 6 and 11 are performance-authorized for fused residual normalization.",
+    "The fused reduction is tolerance-equivalent rather than bitwise identical to native LayerNorm.",
+    "The profiler and absolute latency remain sensitive to local GPU scheduling, although the retained decision is supported by counterbalanced raw samples and mechanism counts.",
+    "Future block-forward refactors must preserve the exact guard, eval-only behavior, route counters, padded-row semantics, and row-6 lifetime management."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C8-EXP-019-I1R-boundaries.json",
+    "docs/experiments/attempts/C8-EXP-019-I1R-stress.json",
+    "docs/experiments/attempts/C8-EXP-019-I1R-affected-suite.json",
+    "docs/experiments/attempts/C8-EXP-019-I1R-long-g.json",
+    "docs/experiments/attempts/C8-BASE-007-row11-long-h.json",
+    "docs/experiments/attempts/C8-EXP-019-I1R-long-i.json",
+    "docs/experiments/attempts/C8-BASE-006-row11-profile-e.json",
+    "docs/experiments/attempts/C8-EXP-019-I1R-profile-h.json",
+    "docs/experiments/attempts/C8-EXP-019-I1-row6-nonregression.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c8-exp019-i1r-row11-long-g.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c8-exp019-i1r-row11-long-i.json",
+    "docs/results/rtx-5070-ti-2026-08-29-c8-exp019-i1r-row11-profile-h.json"
+  ],
+  "recommendation": "Accept EXP-019-I1R locally, skip conditional EXP-020, transplant the two incremental hunks, and require the complete integrated evidence and documentation closure gates.",
+  "git_actions_authorized": []
+}

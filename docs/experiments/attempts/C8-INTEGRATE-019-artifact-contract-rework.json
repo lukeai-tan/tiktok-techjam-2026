@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C8-INTEGRATE-019-artifact-contract-rework",
+    "hypothesis": "Restoring the explicit held-out-regression disclosure closes the final documentation invariant without changing measured evidence",
+    "scope": "Campaign 8 result-artifact contract documentation rework",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/TRACK3_COMPLIANCE.md"
+    ],
+    "rollback": "Correct the precise documentation mismatch if any invariant remains red",
+    "decision": "keep",
+    "decision_rationale": "The prior run had 14 passing checks and one missing disclosure phrase; the underlying artifacts were already valid",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_result_artifacts.py",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T13:44:31.338540+00:00",
+    "ended_at_utc": "2026-08-29T13:44:32.987921+00:00",
+    "wall_time_seconds": 1.6493469001725316,
+    "timeout_seconds": 900.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "...F...........                                                          [100%]\n================================== FAILURES ===================================\n_ test_submission_docs_select_campaign8_evidence_and_disclose_removed_regressions _\n\n    def test_submission_docs_select_campaign8_evidence_and_disclose_removed_regressions():\n        fingerprint = (\n            \"325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b\"\n        )\n        readme = (ROOT / \"README.md\").read_text(encoding=\"utf-8\")\n        requirements = (ROOT / \"docs\" / \"REQUIREMENTS.md\").read_text(encoding=\"utf-8\")\n        result_index = (ROOT / \"docs\" / \"results\" / \"README.md\").read_text(\n            encoding=\"utf-8\"\n        )\n        technical_report = (ROOT / \"docs\" / \"TECH_REPORT.md\").read_text(\n            encoding=\"utf-8\"\n        )\n        compliance = (ROOT / \"docs\" / \"TRACK3_COMPLIANCE.md\").read_text(\n            encoding=\"utf-8\"\n        )\n    \n        assert all(\n            fingerprint in text for text in (readme, requirements, result_index)\n        )\n        for artifact in SUBMISSION_ATTEMPT_RESULT_MAP.values():\n            assert artifact.name in result_index\n        assert FINAL_EVALUATOR_PATH.name in readme\n        assert FINAL_EVALUATOR_PATH.name in technical_report\n        assert ORGANIZER_DEFAULT_PATH.name in technical_report\n        assert ORGANIZER_VALIDATION_PATH.name in technical_report\n        assert \"long-causal\" in result_index\n        assert \"1.195x\" in result_index\n        assert \"1.221x\" in result_index\n        assert \"fused residual\" in result_index\n>       assert \"removed both held-out long-causal regressions\" in compliance\nE       AssertionError: assert 'removed both held-out long-causal regressions' in '# Track 3 Compliance Matrix\\n\\nAudit date: 2026-08-29 (Asia/Singapore)\\n\\n## Verdict\\n\\n**PASS for every repository-o... and explicit PyTorch assumptions.\\nThey are not a guarantee of placement or a claim about omitted organizer policy.\\n'\n\ntests\\test_result_artifacts.py:247: AssertionError\n=========================== short test summary info ===========================\nFAILED tests/test_result_artifacts.py::test_submission_docs_select_campaign8_evidence_and_disclose_removed_regressions\n1 failed, 14 passed in 1.28s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T13:44:31.251158+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_result_artifacts.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 241,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440003817472
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T13:44:33.026591+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_result_artifacts.py",
+      "-q"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 241,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440003768320
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

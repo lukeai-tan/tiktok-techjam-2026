@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C6-GRAPH-002-scan",
+    "hypothesis": "A focused metadata rescan refreshes graph coverage for the Campaign 6 source-of-truth files without copying secrets",
+    "scope": "Repository graph metadata scan",
+    "parent_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "candidate_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [],
+    "rollback": "Graph events are append-only; supersede the scan with a correction event if needed",
+    "decision": "keep",
+    "decision_rationale": "The existing graph predates the new Campaign 6 artifacts",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "scan_repo.py",
+      "--repo",
+      ".",
+      "--max-files",
+      "2000"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T15:20:05.019143+00:00",
+    "ended_at_utc": "2026-08-28T15:20:05.180236+00:00",
+    "wall_time_seconds": 0.16093340003862977,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "graph=<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\nselected=53\ncreated=33\nrefreshed=0\nevent=<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\28\\2026-08-28T15-20-05Z-jared-desktop-63c7be58.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T15:20:04.935200+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "scan_repo.py",
+      "--repo",
+      ".",
+      "--max-files",
+      "2000"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 154,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438552305664
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T15:20:05.215852+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "scan_repo.py",
+      "--repo",
+      ".",
+      "--max-files",
+      "2000"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 154,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438552150016
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

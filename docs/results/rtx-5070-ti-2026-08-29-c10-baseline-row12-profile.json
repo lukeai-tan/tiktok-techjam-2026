@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-08-29T14:21:30.458187+00:00",
+  "case": {
+    "id": "final-12-b64-d128-h4-s32",
+    "source_row": 12,
+    "batch_size": 64,
+    "seq_len": 32,
+    "d_model": 128,
+    "num_heads": 4,
+    "ffn_dim": 128,
+    "num_layers": 4,
+    "causal": true,
+    "padding_ratio": 0.0
+  },
+  "dtype": "float32",
+  "backend_requested": "auto",
+  "steps": 30,
+  "backend_counts": {
+    "triton": 120,
+    "sdpa": 0,
+    "reference": 0
+  },
+  "custom_kernel_expected": true,
+  "custom_kernel_profiler_proven": true,
+  "custom_kernel_events": [
+    {
+      "name": "_attention_fwd",
+      "count": 120,
+      "self_device_time_us": 2054.962000000013,
+      "cpu_time_total_us": 0.0
+    }
+  ],
+  "top_events": [
+    {
+      "name": "optimized_transformer",
+      "count": 30,
+      "self_device_time_us": 31475.62900000001,
+      "cpu_time_total_us": 0.0
+    },
+    {
+      "name": "aten::addmm",
+      "count": 480,
+      "self_device_time_us": 2452.853000000021,
+      "cpu_time_total_us": 6755.399999999994
+    },
+    {
+      "name": "_attention_fwd",
+      "count": 120,
+      "self_device_time_us": 2054.962000000013,
+      "cpu_time_total_us": 0.0
+    },
+    {
+      "name": "aten::native_layer_norm",
+      "count": 270,
+      "self_device_time_us": 1403.2310000000334,
+      "cpu_time_total_us": 6630.499999999975
+    },
+    {
+      "name": "_ZN2at6native53_GLOBAL__N__e58679f9_20_layer_norm_kernel_cu_3ff0b71f28vectorized_layer_norm_kernelIffLb0EEEviT0_PKT_S6_S6_PS3_S7_PS4_",
+      "count": 270,
+      "self_device_time_us": 1403.2310000000334,
+      "cpu_time_total_us": 0.0
+    },
+    {
+      "name": "_ZN7cutlass7Kernel2I50cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4EEvNT_6ParamsE",
+      "count": 360,
+      "self_device_time_us": 1322.6860000000152,
+      "cpu_time_total_us": 0.0
+    },
+    {
+      "name": "_ZN7cutlass7Kernel2I52cutlass_80_tensorop_s1688gemm_128x128_16x5_tn_align4EEvNT_6ParamsE",
+      "count": 120,
+      "self_device_time_us": 1130.1670000000058,
+      "cpu_time_total_us": 0.0
+    },
+    {
+      "name": "aten::add",
+      "count": 240,
+      "self_device_time_us": 355.6590000000515,
+      "cpu_time_total_us": 2382.49999999994
+    },
+    {
+      "name": "_ZN2at6native29vectorized_elementwise_kernelILi4ENS0_15CUDAFunctor_addIfEESt5arrayIPcLy3EEEEviT0_T1_",
+      "count": 240,
+      "self_device_time_us": 355.6590000000515,
+      "cpu_time_total_us": 0.0
+    },
+    {
+      "name": "aten::gelu",
+      "count": 120,
+      "self_device_time_us": 172.83399999999438,
+      "cpu_time_total_us": 1202.4999999999914
+    },
+    {
+      "name": "_ZN2at6native29vectorized_elementwise_kernelILi4EZZZNS0_18GeluCUDAKernelImplERNS_18TensorIteratorBaseENS0_8GeluTypeEENKUlvE0_clEvENKUlvE0_clEvEUlfE_St5arrayIPcLy2EEEEviT0_T1_",
+      "count": 120,
+      "self_device_time_us": 172.83399999999438,
+      "cpu_time_total_us": 0.0
+    },
+    {
+      "name": "cuLaunchKernelEx",
+      "count": 120,
+      "self_device_time_us": 17.760000000002037,
+      "cpu_time_total_us": 1108.1999999999894
+    },
+    {
+      "name": "Activity Buffer Request",
+      "count": 1,
+      "self_device_time_us": 6.528000000000247,
+      "cpu_time_total_us": 338.0
+    },
+    {
+      "name": "optimized_transformer",
+      "count": 30,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 36256.799999999996
+    },
+    {
+      "name": "aten::layer_norm",
+      "count": 270,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 7141.19999999997
+    },
+    {
+      "name": "aten::empty",
+      "count": 810,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 1483.2000000000157
+    },
+    {
+      "name": "cudaLaunchKernel",
+      "count": 630,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 4298.5999999999985
+    },
+    {
+      "name": "aten::view",
+      "count": 1740,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 454.499999999809
+    },
+    {
+      "name": "aten::linear",
+      "count": 480,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 10433.000000000035
+    },
+    {
+      "name": "aten::t",
+      "count": 480,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 1220.799999999978
+    },
+    {
+      "name": "aten::transpose",
+      "count": 480,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 717.8999999999492
+    },
+    {
+      "name": "aten::as_strided",
+      "count": 840,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 257.70000000001846
+    },
+    {
+      "name": "cudaDeviceGetAttribute",
+      "count": 480,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 89.20000000002028
+    },
+    {
+      "name": "cudaMemsetAsync",
+      "count": 480,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 43.000000000001364
+    },
+    {
+      "name": "cuLaunchKernel",
+      "count": 480,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 2830.400000000015
+    },
+    {
+      "name": "aten::unbind",
+      "count": 120,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 965.2000000000003
+    },
+    {
+      "name": "aten::select",
+      "count": 360,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 646.5000000000077
+    },
+    {
+      "name": "aten::empty_like",
+      "count": 120,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 485.3999999999687
+    },
+    {
+      "name": "aten::empty_strided",
+      "count": 120,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 296.80000000002883
+    },
+    {
+      "name": "aten::reshape",
+      "count": 120,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 176.799999999977
+    },
+    {
+      "name": "cudaDeviceSynchronize",
+      "count": 1,
+      "self_device_time_us": 0.0,
+      "cpu_time_total_us": 4.399999999994179
+    }
+  ],
+  "trace_path": null,
+  "environment": {
+    "captured_at_utc": "2026-08-29T14:21:30.501067+00:00",
+    "command": [
+      "benchmarks\\profile_cases.py",
+      "--manifest",
+      "benchmarks\\campaign10_profile_shapes.json",
+      "--case",
+      "final-12-b64-d128-h4-s32",
+      "--dtype",
+      "float32",
+      "--attention-backend",
+      "auto",
+      "--steps",
+      "30",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-29-c10-baseline-row12-profile.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 332,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439961399296
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "high",
+      "allow_tf32_matmul": true,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  }
+}

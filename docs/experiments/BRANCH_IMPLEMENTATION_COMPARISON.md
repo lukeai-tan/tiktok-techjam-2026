@@ -1,9 +1,25 @@
 # Flagship vs `fix/google-colab-accuracy-issue`
 
+Start with the [documentation hub](../README.md) for the repository-wide
+decision. This page is the isolated alternate-branch comparison; its raw
+attempts and result artifacts are retained for audit and are not submission
+evidence for the flagship.
+
 Date: 2026-08-28  
 Hardware: NVIDIA GeForce RTX 5070 Ti, compute capability 12.0  
 Verdict: retain the flagship implementation. The alternate branch is not an
 accuracy-valid or evidence-complete submission candidate.
+
+Current-selection note (2026-08-29): the frozen comparison below remains the
+authoritative apples-to-apples branch evaluation, while the retained branch has
+  since advanced through Campaign 11 to schema-2 fingerprint
+  `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb` on
+`feat/jared-attempt`. The alternate branch was not rerun because its published
+  accuracy failures already disqualify it. Campaigns 8, 10, and 11 add exact
+  row-11, row-5, and row-9 fused residual/LayerNorm routes only to the retained
+  implementation. Those later additions do not rehabilitate the alternate
+  branch; the quantitative branch gaps below remain the frozen comparison rather
+  than a claim that the alternate was freshly rerun against Campaign 11.
 
 ## Outcome
 
@@ -197,15 +213,15 @@ affected.
 
 ## Colab update
 
-`notebooks/colab_benchmark.ipynb` now targets the checked-out flagship branch
+`notebooks/colab_benchmark.ipynb` now targets `feat/jared-attempt`
 and fails before testing if its implementation fingerprint differs from
-`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`.
+`f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4`.
 It also rejects a reused clone with local changes, preserves the temporary
 `GIT_ASKPASS` token flow, runs the full pytest suite, organizer default,
-published-final matrix, source-derived matrix, project held-out matrix, and two
+published-final matrix, source-derived matrix, project held-out matrix, and six
 profiler cases, then bundles every JSON result and trace for download. The
-checked-in notebook and comparison-artifact regression tests bring the final
-repository suite to 117 passing tests.
+checked-in notebook and current artifact regression tests bring the Campaign 10
+repository suite to 144 passing tests.
 
 Colab measurements remain GPU-specific and must not be merged numerically with
 the RTX 5070 Ti evidence above.

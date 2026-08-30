@@ -4,9 +4,11 @@
 
 `transformer_opt/kernels/attention.py` implements the repository-owned forward
 scaled dot-product attention kernel. It replaces the reference sequence of QK
-matmul, score tensor, softmax, and P@V matmul with one tiled launch. Projection
-and FFN math remains in PyTorch/cuBLAS; measured eager-fp32 shapes through
-`d_model=512` combine the three Q/K/V projections into one vendor GEMM.
+matmul, score tensor, softmax, and P@V matmul with one tiled launch.
+`transformer_opt/kernels/residual_layer_norm.py` additionally fuses the residual
+add and downstream LayerNorm for exact final rows 5, 6, 9, and 11. Projection and FFN math
+remains in PyTorch/cuBLAS; measured eager-fp32 shapes through `d_model=512` and
+exact `d_model=1024` combine the three Q/K/V projections into one vendor GEMM.
 
 ## Interface and layout
 
@@ -30,9 +32,29 @@ The cache signature includes every source parameter's data pointer, mutation
 version, device, and dtype. A load, in-place update, or device/dtype move
 therefore rebuilds the packed tensors. The cache is a plain derived-data
 dictionary, so state-dict keys remain byte-for-byte compatible with the
-baseline. Training, compilation, CPU, low precision, and `d_model > 512` keep
-the original three-projection path. The widest measured model showed no packed
-projection benefit.
+baseline. Training, compilation, CPU, low precision, widths 513-1023, and widths
+above 1024 keep the original three-projection path.
+
+## Fused residual plus LayerNorm
+
+Exact final rows 5 (`B=128,S=128,d_model=128,heads=4,layers=4`), 6
+(`B=10000,S=128,d_model=128,heads=4,layers=4`), 9
+(`B=64,S=128,d_model=128,heads=1,layers=4`), and 11
+(`B=64,S=128,d_model=128,heads=16,layers=4`) have measured
+residual/normalization profiler ceilings. During eval-mode eager CUDA float32
+inference, each residual add is fused with the LayerNorm that immediately consumes it. One
+Triton program writes both the residual tensor needed by the block and the
+normalized tensor used by the next attention or FFN operation. Row statistics
+and affine math are fp32 and retain the module's epsilon and optional bias.
+
+The route is deliberately narrower than the attention support envelope: it
+requires either exact runtime/model shape, contiguous tensors, an absent or
+contiguous valid-token mask, eval mode, inference mode, and non-compiled CUDA float32
+execution. Invalid rows remain zero. Neighboring shapes, noncontiguous masks,
+CPU, low precision, gradients, and compiled execution retain the two original
+PyTorch operations. Derived temporaries are released before the next sublayer,
+which keeps optimized incremental peak allocation identical to the unchanged
+row-5, row-6, row-9, and row-11 controls.
 
 ## Tiling and online softmax
 
@@ -119,9 +141,12 @@ Custom execution requires:
 
 `triton` mode rejects unsupported input. `auto` routes unsupported direct calls
 to SDPA. The multi-layer Transformer uses exact reference-style attention for
-low precision, head dimensions outside the custom support set, and causal
-batches above 128 because target-GPU final-shape validation exposed rare strict
-tolerance misses in those regimes.
+low precision, head dimensions outside the custom support set, and unmeasured
+causal batches above 128 because target-GPU final-shape validation exposed rare
+strict tolerance misses in those regimes. Campaign 5 added only three exact
+exceptions: a 2-reference/2-Triton split for final row 6, a 1-reference/
+3-Triton split for final row 7, and SDPA for the project-held-out
+`B=2,S=512,d_model=512,heads=8,layers=2,causal=true` envelope.
 On the RTX 5070 Ti, controlled alternating measurements also showed SDPA was
 12%-13% faster for unmasked, non-causal float32 sequences <=128 with head
 dimension <=32. `auto` uses SDPA for that launch-bound corner and Triton for the
@@ -152,15 +177,16 @@ head-dimension-128 sequences use a 32-wide K/V tile after three reproducible
 row-9 measurements showed a 26.73% latency reduction versus the fresh baseline;
 sequence 129 and above retains the prior 64-wide K/V tile.
 Head-dimension-8 direct execution uses the same 64x64 geometry at the target
-boundary; only exact final row 11 is automatically routed to it in the
-multi-layer model.
+boundary. Exact final row 11 routes all four layers to it; exact final row 7
+keeps layer zero exact and routes layers one through three to Triton. Other
+multi-layer width-eight shapes remain on reference math.
 
 ## Measured design decisions
 
 - The organizer-published final matrix passed all 13 executable rows with zero
-  failed elements and one source-authorized resource skip. It delivered a
-  fresh 1.775778x geomean end-to-end speedup; 1,120 attention calls used Triton and 336
-  unsupported or very-large-batch calls used explicit reference math.
+  failed elements and one source-authorized resource skip. Campaign 11 delivers
+  1.977420x/1.986499x primary/confirmation geomeans; aggregate attention
+  accounting is Triton 1,260 / SDPA 0 / reference 196 in both runs.
 - EXP-001 targeted the final row-10 `head_dim=64`, sequence-128 spill bottleneck.
   The former 64x128 tile reported 2,468 spills and 81,920 bytes of shared memory;
   the accepted 32x64 tile reported two spills and 49,152 bytes. Across two paired
@@ -185,6 +211,21 @@ multi-layer model.
   81.08% below the fresh exact-reference median. The integrated profile proved
   40/40 Triton calls; its ten-step model range fell from 41,658.659 us to
   10,592.605 us (-74.57%).
+- Campaign 5 full Triton and SDPA screens each missed one row-7 element. A
+  first-three Triton route also missed one element; keeping the first layer
+  exact and fusing the last three passed the published row three times plus 18
+  seed/scale/padding stress scenarios. Target speedups reproduced at
+  1.484x/1.492x/1.596x, and the ten-step model profile fell from 19,390.479 us
+  to 12,868.043 us (-33.64%) while proving 30 Triton and 10 reference calls.
+- Campaign 5 full approximate row-6 screens failed 21 elements across five
+  trials, and a 1-reference/3-Triton split failed one. The accepted first-two
+  reference/last-two Triton split passed three 819,200,000-element runs with
+  1.549x/1.488x/1.495x target speedups. Its ten-step profile fell from
+  2,790,718.259 us to 2,239,829.181 us (-19.74%) with 20 calls per backend.
+- The held-out long-causal Triton profiles spent about 5.16 ms and 5.04 ms in
+  `_attention_fwd` across ten steps. Exact SDPA screens passed at 1.199x and
+  1.230x, and five-seed integrated primary results reproduced at 1.247x and 1.280x,
+  removing both previous held-out regressions.
 - Exact-harness stress testing found rare strict-tolerance misses when Triton
   differences accumulated through six causal layers or batches above eight.
   Auto routes those deep-stack regimes to SDPA; all 28 feasible source-derived
@@ -193,12 +234,45 @@ multi-layer model.
 - Packed QKV reduced the two-layer profile from the architectural 60 `addmm`
   calls to 40 across five forwards. Isolated projection measurements were
   bit-identical and improved most in overhead-bound and medium shapes.
+- Campaign 6 extended packed QKV only to exact `d_model == 1024` after three
+  300-sample row-8 candidates measured 1.022x-1.030x internal speedup while two
+  same-window unchanged controls measured 0.982x and 0.994x. The integrated
+  ten-forward profile cut `aten::addmm` calls from 240 to 160, `addmm` device
+  time 11.33%, and model device time 7.91%. A width-768 boundary test keeps the
+  unmeasured 513-1023 interval on separate projections.
 - The inherited standalone Triton LayerNorm was benchmarked at only 0.46x to
   0.69x the native CUDA LayerNorm across representative widths and was removed.
-- In the current causal-padding profile, native LayerNorm accounted for about
-  120 us across five forwards versus 4,613 us for the profiled model range. The small
-  share and slower standalone kernel did not justify residual/LayerNorm fusion
-  risk for this iteration.
+- Campaign 7's exact-row-6 fusion does not revive that standalone kernel. Over
+  ten forwards it replaces 80 residual adds and 80 of 90 native norms with 80
+  fused launches, reducing combined subsystem time from 486,023.333 us to
+  309,611.219 us (-36.30%) and model time 9.54%. A 100-sample run measured
+  1.547046x versus a 1.417307x unchanged control with identical
+  11,802,787,840-byte incremental peak allocation.
+- Campaign 8 extends only that accepted fused forward to exact row 11. Two
+  retained 300-sample candidate runs averaged 0.897184 ms versus 0.993525 ms
+  across three unchanged controls (-9.70%), with identical 29,360,128-byte
+  incremental peak allocation. The active 30-forward profile replaces 240 adds
+  and 240 of 270 native norms with 240 fused launches, reducing combined
+  subsystem time 46.28% and model device time 21.96%. Direct and 36-scenario
+  row-6/row-11 stress gates compared 2,967,994,368 outputs with zero failures.
+- Campaign 10 extends the same accepted fused forward to exact row 5 after a
+  bounded width-1024 candidate and an eight-warp row-5 variant both regressed
+  their profiled targets. The exact route passed 18 stress scenarios plus
+  10,485,760 compared outputs in its 300-sample gate with zero failures. Against
+  counterbalanced unchanged controls, optimized median latency fell 11.58%; the
+  active 30-forward profile reduced model device time 11.96% and the residual/
+  normalization subsystem 40.63%. The integrated long gate measured 1.162976 ms
+  and 2.001995x with 58,720,256-byte incremental peak allocation.
+- Campaign 11 extends the fused forward only to exact row 9. Two unchanged
+  300-sample controls average 0.815968 ms optimized median; the active route is
+  0.717648 ms (-12.05%) and matches the isolated candidate within 0.007%, with
+  zero failures and identical 29,360,128-byte peak allocation. Two active
+  profiles each record 240 fused launches, 30 native norms, and 120 Triton calls;
+  their mean residual/normalization time is 41.77% below two baseline profiles.
+  Top-level profiler time is noisy and is not used as the causal speed claim.
+- Direct `head_dim=256` attention was rejected: full-layer 16x16/16x32 variants
+  each failed two strict elements, an exact-first-layer repair regressed model
+  time 8.50%, and 16x64 exceeded the target's shared-memory limit.
 - A causal loop-frontier prune and other alternate tile/stage configurations
   were tested on the target and rejected when they failed to improve the
   relevant end-to-end target.
@@ -212,7 +286,8 @@ multi-layer model.
   current validation records the selected PyTorch defaults as assumptions.
 - Support beyond sequence 8192 or the declared head dimensions is unvalidated.
 - Packed QKV trades bounded persistent memory for fewer launches/GEMMs (about
-  6 MiB for two float32 d_model=512 layers) and is disabled outside its measured
-  winning envelope.
+  6 MiB for two float32 d_model=512 layers and about 48 MiB for the measured
+  four-layer d_model=1024 row) and is disabled outside the `<=512` and exact
+  `1024` measured envelopes.
 - Fixed launch parameters are tuned only on the RTX 5070 Ti; other GPUs remain
   correct through guarded fallback but may need different performance routing.

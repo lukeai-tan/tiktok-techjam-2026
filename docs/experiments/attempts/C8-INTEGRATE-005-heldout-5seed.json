@@ -1,0 +1,537 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C8-INTEGRATE-005-heldout-5seed",
+    "hypothesis": "The integrated candidate preserves all project held-out shapes across five accuracy seeds with no fallback or latency regression",
+    "scope": "Campaign 8 integrated held-out five-seed primary matrix",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "torch_transformer_benchmark.py"
+    ],
+    "rollback": "Revert or rework the extension if any held-out case fails or loses its expected backend",
+    "decision": "pending",
+    "decision_rationale": "Exact-shape optimization must not regress broader project-held-out coverage",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_matrix.py",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-heldout-5seed.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T13:27:22.452907+00:00",
+    "ended_at_utc": "2026-08-29T13:27:25.450888+00:00",
+    "wall_time_seconds": 2.997950099874288,
+    "timeout_seconds": 900.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "[tiny-overhead:float32] running\n[tiny-overhead:float32] PASS\n[medium-throughput:float32] running\n[medium-throughput:float32] PASS\n[medium-padding:float32] running\n[medium-padding:float32] PASS\n[long-causal:float32] running\n[long-causal:float32] PASS\n[long-causal-padding:float32] running\n[long-causal-padding:float32] PASS\n[long-attention:float32] running\n[long-attention:float32] PASS\n[wide-model:float32] running\n[wide-model:float32] PASS\n\n| case | dtype | status | baseline ms | optimized ms | speedup | backend counts |\n| --- | --- | --- | ---: | ---: | ---: | --- |\n| tiny-overhead | float32 | PASS | 0.46718400716781616 | 0.31063999235630035 | 1.504x | {'triton': 0, 'sdpa': 200, 'reference': 0} |\n| medium-throughput | float32 | PASS | 0.45337601006031036 | 0.287663996219635 | 1.576x | {'triton': 0, 'sdpa': 200, 'reference': 0} |\n| medium-padding | float32 | PASS | 0.6444959938526154 | 0.4866719990968704 | 1.324x | {'triton': 200, 'sdpa': 0, 'reference': 0} |\n| long-causal | float32 | PASS | 0.6808480024337769 | 0.5682240128517151 | 1.198x | {'triton': 0, 'sdpa': 200, 'reference': 0} |\n| long-causal-padding | float32 | PASS | 0.8559359908103943 | 0.673695981502533 | 1.271x | {'triton': 0, 'sdpa': 200, 'reference': 0} |\n| long-attention | float32 | PASS | 0.8098399937152863 | 0.5128960013389587 | 1.579x | {'triton': 200, 'sdpa': 0, 'reference': 0} |\n| wide-model | float32 | PASS | 0.2888000011444092 | 0.2078079953789711 | 1.390x | {'triton': 100, 'sdpa': 0, 'reference': 0} |\ngeomean speedup=1.399x\nsaved docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-heldout-5seed.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T13:27:22.359217+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_matrix.py",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-heldout-5seed.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 213,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440001359872
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T13:27:25.501951+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "benchmarks\\run_matrix.py",
+      "--device",
+      "cuda",
+      "--attention-backend",
+      "auto",
+      "--accuracy-trials",
+      "5",
+      "--out",
+      "docs\\results\\rtx-5070-ti-2026-08-29-c8-integrated-heldout-5seed.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 214,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440001286144
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": "docs/results/rtx-5070-ti-2026-08-29-c8-integrated-heldout-5seed.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 72606,
+    "sha256": "4040b40808b744d65aad28c1c029a07e4b28cb6b6b14e96f238b27e8cd53d663",
+    "schema_version": 1,
+    "created_at_utc": "2026-08-29T13:27:25.127504+00:00"
+  },
+  "metrics": {
+    "kind": "project_matrix",
+    "status": "PASS",
+    "correctness": {
+      "requested": 7,
+      "executable": 7,
+      "passed": 7,
+      "counts": {
+        "ERROR": 0,
+        "FAIL": 0,
+        "OOM": 0,
+        "PASS": 7
+      },
+      "accuracy_trials": 35,
+      "total_compared_elements": 13117440,
+      "total_failed_elements": 0,
+      "max_abs_error": 0.0005990266799926758,
+      "max_relative_error": 465.7149658203125
+    },
+    "performance": {
+      "geometric_mean_speedup": 1.3989430526275932,
+      "per_case": [
+        {
+          "case_id": "tiny-overhead",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.46718400716781616,
+            "mean_ms": 0.4848398215240902,
+            "p90_ms": 0.5641792237758637,
+            "min_ms": 0.33689600229263306,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.06962761679228842,
+            "sample_max_ms": 0.778656005859375
+          },
+          "optimized": {
+            "median_ms": 0.31063999235630035,
+            "mean_ms": 0.33412159946229725,
+            "p90_ms": 0.39303360879421245,
+            "min_ms": 0.2809920012950897,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.0704461641505448,
+            "sample_max_ms": 0.6168320178985596
+          },
+          "speedup_median": 1.5039403124629287,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 200,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 90112,
+            "optimized_incremental_peak_bytes": 90112,
+            "reduction_percent": 0.0
+          }
+        },
+        {
+          "case_id": "medium-throughput",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.45337601006031036,
+            "mean_ms": 0.495463823278745,
+            "p90_ms": 0.6569471895694733,
+            "min_ms": 0.3514240086078644,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.11885042884605304,
+            "sample_max_ms": 0.8598399758338928
+          },
+          "optimized": {
+            "median_ms": 0.287663996219635,
+            "mean_ms": 0.31863466617133884,
+            "p90_ms": 0.4423552125692368,
+            "min_ms": 0.21593600511550903,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.08569556556648623,
+            "sample_max_ms": 0.6020159721374512
+          },
+          "speedup_median": 1.576061015693296,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 200,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 15728640,
+            "optimized_incremental_peak_bytes": 11534336,
+            "reduction_percent": 26.66666666666667
+          }
+        },
+        {
+          "case_id": "medium-padding",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.6444959938526154,
+            "mean_ms": 0.6666328900390202,
+            "p90_ms": 0.7476287961006166,
+            "min_ms": 0.625216007232666,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.05902314541433818,
+            "sample_max_ms": 0.9208319783210754
+          },
+          "optimized": {
+            "median_ms": 0.4866719990968704,
+            "mean_ms": 0.4985855996608734,
+            "p90_ms": 0.525292789936066,
+            "min_ms": 0.46508800983428955,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.042332168449317566,
+            "sample_max_ms": 0.7043840289115906
+          },
+          "speedup_median": 1.3242923263483886,
+          "attention_backend_counts": {
+            "triton": 200,
+            "sdpa": 0,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 33556480,
+            "optimized_incremental_peak_bytes": 23068672,
+            "reduction_percent": 31.25419591089411
+          }
+        },
+        {
+          "case_id": "long-causal",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.6808480024337769,
+            "mean_ms": 0.7120042675071292,
+            "p90_ms": 0.8375328183174134,
+            "min_ms": 0.6765120029449463,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.07462729467980042,
+            "sample_max_ms": 1.0363839864730835
+          },
+          "optimized": {
+            "median_ms": 0.5682240128517151,
+            "mean_ms": 0.5917802698082394,
+            "p90_ms": 0.6881824254989625,
+            "min_ms": 0.5659840106964111,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.061812879911971846,
+            "sample_max_ms": 0.845695972442627
+          },
+          "speedup_median": 1.1982035025532305,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 200,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 48496640,
+            "optimized_incremental_peak_bytes": 24117248,
+            "reduction_percent": 50.27027027027027
+          }
+        },
+        {
+          "case_id": "long-causal-padding",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.8559359908103943,
+            "mean_ms": 0.8910471108224657,
+            "p90_ms": 1.0214143633842472,
+            "min_ms": 0.795520007610321,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.09353389206712268,
+            "sample_max_ms": 1.2061439752578735
+          },
+          "optimized": {
+            "median_ms": 0.673695981502533,
+            "mean_ms": 0.6901653322908613,
+            "p90_ms": 0.7792480111122131,
+            "min_ms": 0.6477760076522827,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.050854796334651946,
+            "sample_max_ms": 0.9132480025291443
+          },
+          "speedup_median": 1.2705077873574582,
+          "attention_backend_counts": {
+            "triton": 0,
+            "sdpa": 200,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 50595840,
+            "optimized_incremental_peak_bytes": 23068672,
+            "reduction_percent": 54.40599069014369
+          }
+        },
+        {
+          "case_id": "long-attention",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.8098399937152863,
+            "mean_ms": 0.8398293316364288,
+            "p90_ms": 0.9230464160442355,
+            "min_ms": 0.8014079928398132,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.08540999916905655,
+            "sample_max_ms": 1.3761279582977295
+          },
+          "optimized": {
+            "median_ms": 0.5128960013389587,
+            "mean_ms": 0.5257813327842289,
+            "p90_ms": 0.5141471803188323,
+            "min_ms": 0.5125120282173157,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.04814836951409942,
+            "sample_max_ms": 0.7780479788780212
+          },
+          "speedup_median": 1.5789555613635706,
+          "attention_backend_counts": {
+            "triton": 200,
+            "sdpa": 0,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 81788928,
+            "optimized_incremental_peak_bytes": 23068672,
+            "reduction_percent": 71.7948717948718
+          }
+        },
+        {
+          "case_id": "wide-model",
+          "status": "PASS",
+          "accuracy_trial_count": 5,
+          "failed_elements": 0,
+          "baseline": {
+            "median_ms": 0.2888000011444092,
+            "mean_ms": 0.31134257747067345,
+            "p90_ms": 0.4107616007328034,
+            "min_ms": 0.23334400355815887,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.0776401597325644,
+            "sample_max_ms": 0.6126400232315063
+          },
+          "optimized": {
+            "median_ms": 0.2078079953789711,
+            "mean_ms": 0.22738559924893909,
+            "p90_ms": 0.27481918931007404,
+            "min_ms": 0.2067199945449829,
+            "sample_count": 90,
+            "sample_stdev_ms": 0.06109495992955072,
+            "sample_max_ms": 0.6674559712409973
+          },
+          "speedup_median": 1.3897444158379768,
+          "attention_backend_counts": {
+            "triton": 100,
+            "sdpa": 0,
+            "reference": 0
+          },
+          "memory": {
+            "baseline_incremental_peak_bytes": 10485760,
+            "optimized_incremental_peak_bytes": 10485760,
+            "reduction_percent": 0.0
+          }
+        }
+      ]
+    },
+    "attention_backend_counts": {
+      "triton": 500,
+      "sdpa": 800,
+      "reference": 0
+    },
+    "memory": {
+      "per_case": [
+        {
+          "case_id": "tiny-overhead",
+          "baseline_incremental_peak_bytes": 90112,
+          "optimized_incremental_peak_bytes": 90112,
+          "reduction_percent": 0.0
+        },
+        {
+          "case_id": "medium-throughput",
+          "baseline_incremental_peak_bytes": 15728640,
+          "optimized_incremental_peak_bytes": 11534336,
+          "reduction_percent": 26.66666666666667
+        },
+        {
+          "case_id": "medium-padding",
+          "baseline_incremental_peak_bytes": 33556480,
+          "optimized_incremental_peak_bytes": 23068672,
+          "reduction_percent": 31.25419591089411
+        },
+        {
+          "case_id": "long-causal",
+          "baseline_incremental_peak_bytes": 48496640,
+          "optimized_incremental_peak_bytes": 24117248,
+          "reduction_percent": 50.27027027027027
+        },
+        {
+          "case_id": "long-causal-padding",
+          "baseline_incremental_peak_bytes": 50595840,
+          "optimized_incremental_peak_bytes": 23068672,
+          "reduction_percent": 54.40599069014369
+        },
+        {
+          "case_id": "long-attention",
+          "baseline_incremental_peak_bytes": 81788928,
+          "optimized_incremental_peak_bytes": 23068672,
+          "reduction_percent": 71.7948717948718
+        },
+        {
+          "case_id": "wide-model",
+          "baseline_incremental_peak_bytes": 10485760,
+          "optimized_incremental_peak_bytes": 10485760,
+          "reduction_percent": 0.0
+        }
+      ]
+    },
+    "profiler": null
+  }
+}

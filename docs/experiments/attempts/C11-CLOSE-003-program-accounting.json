@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "record_status": "FAIL",
+  "attempt": {
+    "id": "C11-CLOSE-003-program-accounting",
+    "hypothesis": "The complete immutable attempt corpus through Campaign 11 accounting reconciles exact record, PASS, non-pass, timeout, wall-time, and namespace totals.",
+    "scope": "Compute cross-campaign program accounting through C11-CLOSE-002 before terminal prose and workflow records append.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/attempts"
+    ],
+    "rollback": "Correct prose totals from immutable JSON without rewriting attempt history.",
+    "decision": "keep",
+    "decision_rationale": "Required canonical cross-campaign accounting refresh.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections,json,pathlib; ps=sorted(pathlib.Path('docs/experiments/attempts').glob('*.json')); ds=[(p,json.loads(p.read_text(encoding='utf-8'))) for p in ps]; groups=collections.defaultdict(lambda:{'attempts':0,'pass':0,'nonpass':0,'wall_s':0.0}); [(groups[p.name.split('-')[0]].update(attempts=groups[p.name.split('-')[0]]['attempts']+1,pass=groups[p.name.split('-')[0]]['pass']+(d.get('execution',{}).get('status')=='PASS'),nonpass=groups[p.name.split('-')[0]]['nonpass']+(d.get('execution',{}).get('status')!='PASS'),wall_s=groups[p.name.split('-')[0]]['wall_s']+float(d.get('execution',{}).get('wall_time_seconds') or 0)) for p,d in ds]; print(json.dumps({'through':'C11-CLOSE-002-accounting-final','attempts':len(ds),'pass':sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds),'nonpass':sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds),'timeouts':sum(bool(d.get('execution',{}).get('timed_out')) for _,d in ds),'wall_time_seconds':sum(float(d.get('execution',{}).get('wall_time_seconds') or 0) for _,d in ds),'groups':dict(sorted(groups.items()))},indent=2)); assert len(ds)==sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds)+sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds)"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T16:06:59.317604+00:00",
+    "ended_at_utc": "2026-08-29T16:06:59.343648+00:00",
+    "wall_time_seconds": 0.02568550012074411,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "FAIL",
+    "return_code": 1,
+    "launch_error": null,
+    "stdout": "",
+    "stderr": "  File \"<string>\", line 1\n    import collections,json,pathlib; ps=sorted(pathlib.Path('docs/experiments/attempts').glob('*.json')); ds=[(p,json.loads(p.read_text(encoding='utf-8'))) for p in ps]; groups=collections.defaultdict(lambda:{'attempts':0,'pass':0,'nonpass':0,'wall_s':0.0}); [(groups[p.name.split('-')[0]].update(attempts=groups[p.name.split('-')[0]]['attempts']+1,pass=groups[p.name.split('-')[0]]['pass']+(d.get('execution',{}).get('status')=='PASS'),nonpass=groups[p.name.split('-')[0]]['nonpass']+(d.get('execution',{}).get('status')!='PASS'),wall_s=groups[p.name.split('-')[0]]['wall_s']+float(d.get('execution',{}).get('wall_time_seconds') or 0)) for p,d in ds]; print(json.dumps({'through':'C11-CLOSE-002-accounting-final','attempts':len(ds),'pass':sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds),'nonpass':sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds),'timeouts':sum(bool(d.get('execution',{}).get('timed_out')) for _,d in ds),'wall_time_seconds':sum(float(d.get('execution',{}).get('wall_time_seconds') or 0) for _,d in ds),'groups':dict(sorted(groups.items()))},indent=2)); assert len(ds)==sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds)+sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds)\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ^\nSyntaxError: closing parenthesis ']' does not match opening parenthesis '('\n"
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T16:06:59.227107+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections,json,pathlib; ps=sorted(pathlib.Path('docs/experiments/attempts').glob('*.json')); ds=[(p,json.loads(p.read_text(encoding='utf-8'))) for p in ps]; groups=collections.defaultdict(lambda:{'attempts':0,'pass':0,'nonpass':0,'wall_s':0.0}); [(groups[p.name.split('-')[0]].update(attempts=groups[p.name.split('-')[0]]['attempts']+1,pass=groups[p.name.split('-')[0]]['pass']+(d.get('execution',{}).get('status')=='PASS'),nonpass=groups[p.name.split('-')[0]]['nonpass']+(d.get('execution',{}).get('status')!='PASS'),wall_s=groups[p.name.split('-')[0]]['wall_s']+float(d.get('execution',{}).get('wall_time_seconds') or 0)) for p,d in ds]; print(json.dumps({'through':'C11-CLOSE-002-accounting-final','attempts':len(ds),'pass':sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds),'nonpass':sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds),'timeouts':sum(bool(d.get('execution',{}).get('timed_out')) for _,d in ds),'wall_time_seconds':sum(float(d.get('execution',{}).get('wall_time_seconds') or 0) for _,d in ds),'groups':dict(sorted(groups.items()))},indent=2)); assert len(ds)==sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds)+sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds)"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 505,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439973347328
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T16:06:59.383848+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections,json,pathlib; ps=sorted(pathlib.Path('docs/experiments/attempts').glob('*.json')); ds=[(p,json.loads(p.read_text(encoding='utf-8'))) for p in ps]; groups=collections.defaultdict(lambda:{'attempts':0,'pass':0,'nonpass':0,'wall_s':0.0}); [(groups[p.name.split('-')[0]].update(attempts=groups[p.name.split('-')[0]]['attempts']+1,pass=groups[p.name.split('-')[0]]['pass']+(d.get('execution',{}).get('status')=='PASS'),nonpass=groups[p.name.split('-')[0]]['nonpass']+(d.get('execution',{}).get('status')!='PASS'),wall_s=groups[p.name.split('-')[0]]['wall_s']+float(d.get('execution',{}).get('wall_time_seconds') or 0)) for p,d in ds]; print(json.dumps({'through':'C11-CLOSE-002-accounting-final','attempts':len(ds),'pass':sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds),'nonpass':sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds),'timeouts':sum(bool(d.get('execution',{}).get('timed_out')) for _,d in ds),'wall_time_seconds':sum(float(d.get('execution',{}).get('wall_time_seconds') or 0) for _,d in ds),'groups':dict(sorted(groups.items()))},indent=2)); assert len(ds)==sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds)+sum(d.get('execution',{}).get('status')!='PASS' for _,d in ds)"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 505,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439973347328
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

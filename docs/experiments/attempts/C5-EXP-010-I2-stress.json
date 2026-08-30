@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C5-EXP-010-I2-STRESS",
+    "hypothesis": "The two-layer hybrid remains strictly correct across row-7 seed, scale, and padding stress",
+    "scope": "18-scenario row-7 model stress",
+    "parent_commit": "3be02a3ebe562a89ca360b196057a2762b425ec4",
+    "candidate_commit": "3be02a3ebe562a89ca360b196057a2762b425ec4",
+    "branch": null,
+    "changed_paths": [
+      "torch_transformer_benchmark.py",
+      "tests/test_gpu_transformer.py"
+    ],
+    "rollback": "Discard detached worktree candidate",
+    "decision": "pending",
+    "decision_rationale": "Any stress miss requires a narrower route or rejection",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_gpu_transformer.py",
+      "-k",
+      "final_row7_hybrid_route_passes_seed_scale_and_padding_stress",
+      "-q"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T13:47:45.783692+00:00",
+    "ended_at_utc": "2026-08-28T13:47:47.873936+00:00",
+    "wall_time_seconds": 2.0905394998844713,
+    "timeout_seconds": 300.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": ".                                                                        [100%]\n1 passed, 17 deselected in 1.66s\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T13:47:45.688675+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_gpu_transformer.py",
+      "-k",
+      "final_row7_hybrid_route_passes_seed_scale_and_padding_stress",
+      "-q"
+    ],
+    "git": {
+      "commit": "3be02a3ebe562a89ca360b196057a2762b425ec4",
+      "dirty": true,
+      "changed_path_count": 8,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "1e0371354c436b8feae7debad74327ebfd7efffb3d238825ac21d6e8d97c0cce",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438553182208
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T13:47:47.916769+00:00",
+    "command": [
+      "python.exe",
+      "-m",
+      "pytest",
+      "tests\\test_gpu_transformer.py",
+      "-k",
+      "final_row7_hybrid_route_passes_seed_scale_and_padding_stress",
+      "-q"
+    ],
+    "git": {
+      "commit": "3be02a3ebe562a89ca360b196057a2762b425ec4",
+      "dirty": true,
+      "changed_path_count": 8,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "1e0371354c436b8feae7debad74327ebfd7efffb3d238825ac21d6e8d97c0cce",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438553182208
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "b5de3aefb1e6a1fc048671564e265e0cdac8dfbc984949d1ef78790b2c4dbfbf"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

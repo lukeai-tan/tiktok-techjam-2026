@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C8-GRAPH-004-closure",
+    "hypothesis": "The repository graph can record Campaign 8's accepted exact-row-11 fusion, retained failures, final evidence, and no-Git handoff without losing prior campaign context",
+    "scope": "Campaign 8 repository-memory closure event",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      ".repo-memory"
+    ],
+    "rollback": "Append a corrective event rather than rewriting graph history if any detail is wrong",
+    "decision": "keep",
+    "decision_rationale": "The integrated fingerprint is green across complete matrices, profiles, artifact contracts, and 139 tests",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign8",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 8 accepts exact-row-11 fused residual plus LayerNorm and preserves every Campaign 7 route",
+      "--details",
+      "Campaign 8 started from checkpoint 8c89d1d and fingerprint a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b. EXP-019-I1 was correct and faster but Council found its training boundary implicit; I1R added an explicit eval-mode guard and row-11 CPU, dtype, layout, shape, mask, gradient, training, and head-neighbor tests. Fingerprint 325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b passed 36 stress scenarios over 2967994368 outputs with zero failures. Retained 300-sample target medians improved 9.70 percent with 29360128-byte peak parity; integrated row-11 profile time fell 21.96 percent and residual-normalization time fell 46.28 percent. Final pair is 13 of 13 plus exact skip at 1.876167x and 1.911052x; organizer default is 1.351x, source-derived is 1.208961x, held-out pair is 1.398943x and 1.401668x, and full suite is 139 passed. EXP-020 was deliberately unrun because its fallback condition was false. Six preclosure failures remain logged. No commit, push, branch, tag, release, or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-008.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-008-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "docs/results/README.md",
+      "--path",
+      "torch_transformer_benchmark.py",
+      "--path",
+      "tests/test_gpu_transformer.py"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T13:48:19.201915+00:00",
+    "ended_at_utc": "2026-08-29T13:48:19.314731+00:00",
+    "wall_time_seconds": 0.11314160004258156,
+    "timeout_seconds": 300.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\29\\2026-08-29T13-48-19Z-codex-campaign8-ce3c5337.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T13:48:19.106161+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign8",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 8 accepts exact-row-11 fused residual plus LayerNorm and preserves every Campaign 7 route",
+      "--details",
+      "Campaign 8 started from checkpoint 8c89d1d and fingerprint a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b. EXP-019-I1 was correct and faster but Council found its training boundary implicit; I1R added an explicit eval-mode guard and row-11 CPU, dtype, layout, shape, mask, gradient, training, and head-neighbor tests. Fingerprint 325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b passed 36 stress scenarios over 2967994368 outputs with zero failures. Retained 300-sample target medians improved 9.70 percent with 29360128-byte peak parity; integrated row-11 profile time fell 21.96 percent and residual-normalization time fell 46.28 percent. Final pair is 13 of 13 plus exact skip at 1.876167x and 1.911052x; organizer default is 1.351x, source-derived is 1.208961x, held-out pair is 1.398943x and 1.401668x, and full suite is 139 passed. EXP-020 was deliberately unrun because its fallback condition was false. Six preclosure failures remain logged. No commit, push, branch, tag, release, or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-008.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-008-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "docs/results/README.md",
+      "--path",
+      "torch_transformer_benchmark.py",
+      "--path",
+      "tests/test_gpu_transformer.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 246,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440000614400
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T13:48:19.355372+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign8",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 8 accepts exact-row-11 fused residual plus LayerNorm and preserves every Campaign 7 route",
+      "--details",
+      "Campaign 8 started from checkpoint 8c89d1d and fingerprint a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b. EXP-019-I1 was correct and faster but Council found its training boundary implicit; I1R added an explicit eval-mode guard and row-11 CPU, dtype, layout, shape, mask, gradient, training, and head-neighbor tests. Fingerprint 325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b passed 36 stress scenarios over 2967994368 outputs with zero failures. Retained 300-sample target medians improved 9.70 percent with 29360128-byte peak parity; integrated row-11 profile time fell 21.96 percent and residual-normalization time fell 46.28 percent. Final pair is 13 of 13 plus exact skip at 1.876167x and 1.911052x; organizer default is 1.351x, source-derived is 1.208961x, held-out pair is 1.398943x and 1.401668x, and full suite is 139 passed. EXP-020 was deliberately unrun because its fallback condition was false. Six preclosure failures remain logged. No commit, push, branch, tag, release, or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-008.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-008-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "docs/results/README.md",
+      "--path",
+      "torch_transformer_benchmark.py",
+      "--path",
+      "tests/test_gpu_transformer.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 246,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440000610304
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C6-GRAPH-006-checkpoint-handoff",
+    "hypothesis": "A durable graph handoff preserves the exact Campaign 6 resume state across sessions",
+    "scope": "Campaign 6 pause checkpoint graph event",
+    "parent_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "candidate_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN-006-CHECKPOINT-2026-08-29.md"
+    ],
+    "rollback": "Retain the repository checkpoint even if graph generation must be rerun",
+    "decision": "keep",
+    "decision_rationale": "Record current fingerprint, verified gates, known stale-evidence failures, and resume sequence",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 6 paused after approved row8 projection integration and complete benchmark gates",
+      "--details",
+      "Current fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4 on feat/jared-attempt. Final matrices pass 13/13 executable rows with zero failed elements at 1.872916x and 1.863721x. Remaining closure is Campaign6 evidence-pointer and documentation curation, full pytest rework from the retained 118-pass/5-stale-pointer failure, workflow closure, graph closure, and optional Git actions only if explicitly authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-CHECKPOINT-2026-08-29.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T17:01:27.956148+00:00",
+    "ended_at_utc": "2026-08-28T17:01:28.068807+00:00",
+    "wall_time_seconds": 0.11306989984586835,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\28\\2026-08-28T17-01-28Z-codex-campaign6-1cc726e0.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T17:01:27.861709+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 6 paused after approved row8 projection integration and complete benchmark gates",
+      "--details",
+      "Current fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4 on feat/jared-attempt. Final matrices pass 13/13 executable rows with zero failed elements at 1.872916x and 1.863721x. Remaining closure is Campaign6 evidence-pointer and documentation curation, full pytest rework from the retained 118-pass/5-stale-pointer failure, workflow closure, graph closure, and optional Git actions only if explicitly authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-CHECKPOINT-2026-08-29.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 334,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438420418560
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T17:01:28.106093+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 6 paused after approved row8 projection integration and complete benchmark gates",
+      "--details",
+      "Current fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4 on feat/jared-attempt. Final matrices pass 13/13 executable rows with zero failed elements at 1.872916x and 1.863721x. Remaining closure is Campaign6 evidence-pointer and documentation curation, full pytest rework from the retained 118-pass/5-stale-pointer failure, workflow closure, graph closure, and optional Git actions only if explicitly authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-CHECKPOINT-2026-08-29.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 334,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438420414464
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

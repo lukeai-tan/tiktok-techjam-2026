@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-005",
+  "review_stage": "composite_candidate_and_final_local_acceptance",
+  "reviewer_role": "independent composite release reviewer",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE",
+  "decision_scope": "Exact dirty and uncommitted Campaign 5 checkpoint only",
+  "base_commit": "3be02a3ebe562a89ca360b196057a2762b425ec4",
+  "implementation_sha256": "9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029",
+  "verified": [
+    "All 73 Campaign 5 attempt records recompute to 64 PASS, nine retained FAIL, zero timeouts, and 736.0358798997477 seconds of child wall time.",
+    "The pre-documentation full-suite failure remains immutable and is explained; the exact-current closure suite passed 121 tests with 14 upstream warnings.",
+    "The primary and confirmation final matrices pass 13 of 13 executable rows plus the authorized non-pass row-14 resource skip, with zero of 938885120 failed elements and 1.9119465934778328x and 1.995116575196147x geomeans.",
+    "Final backend totals are Triton 1260, SDPA 0, and reference 196 in both runs; row 6 is 56 Triton and 56 reference, row 7 is 84 Triton and 28 reference, and row 11 is 112 Triton.",
+    "The untouched organizer default passes five of five trials with zero of 2621440 failed elements, 1.397x speedup, and 1950 Triton attention calls.",
+    "The two five-seed held-out matrices pass seven of seven cases with zero failures and 1.4474773095746716x and 1.4497145430669311x geomeans; both long-causal modes exceed 1.2x in both runs and use SDPA.",
+    "The source-derived matrix passes 28 of 28 executable cases plus the authorized skip, with zero of 459776000 failed elements and 1.204814927513514x geomean.",
+    "Profiles prove row-6 20 Triton and 20 reference calls, row-7 30 Triton and 10 reference calls, row-11 40 Triton calls, and 20 SDPA calls in each long-causal mask mode.",
+    "The diff hygiene gate passes with only expected AutoCRLF warnings, and strict repository graph validation reports zero errors and zero warnings.",
+    "Documentation records dirty provenance and does not claim a clean commit, tag, push, release, or public action."
+  ],
+  "blocking_findings": [],
+  "nonblocking_findings": [
+    "Primary and confirmation final geomeans differ by 4.35 percent, within the declared five-percent reproduction bound.",
+    "Large relative-error maxima arise around near-zero denominators; the strict executable OR comparator records zero failed elements.",
+    "Performance and exact route guards are specific to the measured RTX 5070 Ti and published workload."
+  ],
+  "residual_risks": [
+    "The candidate is dirty and uncommitted.",
+    "Layer-index and exact-shape policies are intentionally narrow and require new evidence before generalization.",
+    "Row 8 remains near parity on exact reference attention.",
+    "Backward and training execution are unsupported.",
+    "Organizer dtype, padding, timing, backward, and post-workshop policies remain partly unstated; row 14 remains an authorized non-pass resource skip."
+  ],
+  "evidence": [
+    "docs/experiments/CAMPAIGN-005.md",
+    "docs/experiments/attempts/C5-CLOSE-002-full-suite.json",
+    "docs/experiments/attempts/C5-CLOSE-003-diff-check.json",
+    "docs/experiments/attempts/C5-GRAPH-006-validate.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c5-integrated-final.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c5-integrated-final-confirmation.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c5-integrated-heldout-5seed-confirmation.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c5-integrated-organizer-default.json",
+    "docs/results/rtx-5070-ti-2026-08-28-c5-integrated-source-derived.json"
+  ],
+  "git_actions_authorized": [],
+  "required_future_controls": [
+    "Do not commit, tag, push, release, or take public action without separate user authorization.",
+    "Recompute full evidence after any implementation fingerprint, organizer contract, framework, driver, hardware, or route change.",
+    "Preserve all nine failed Campaign 5 attempts and the exact authorized skip."
+  ]
+}

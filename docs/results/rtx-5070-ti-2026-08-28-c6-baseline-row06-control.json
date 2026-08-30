@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-08-28T15:29:24.913404+00:00",
+  "status": "PASS",
+  "matrix": {
+    "path": "benchmarks/final_evaluator_shapes.json",
+    "sha256": "76ace44069ed3f27b740e792dfcb6d5be745a760be4c66c9a1241c72a59b24bc",
+    "status": "organizer-published-final-shapes"
+  },
+  "organizer_sources": {
+    "manifest_path": "benchmarks/reference/organizer_downloads.json",
+    "manifest_sha256": "c272c825f805f6aa3249966a3ba4f17234860c4664770f45ceee472b1db4fbaf",
+    "runner_path": "benchmarks/run_organizer_torch.py",
+    "runner_sha256": "7f8754734e1dd029f44cc60db8a6b4eda3f1e87cb55767d383e0adfbe6309499",
+    "validation_runner_path": "benchmarks/run_organizer_validation.py",
+    "validation_runner_sha256": "b9445eb2a404eca3751899db3a22f9d1cdf0ec35206aabcc7e1961fa4b13f5e4"
+  },
+  "parameters": {
+    "device": "cuda",
+    "attention_backend": "auto",
+    "accuracy_trials": 5,
+    "rtol": 0.01,
+    "atol": 0.001,
+    "warmup": 3,
+    "repeats": 10,
+    "benchmark_rounds": 2,
+    "seed": 1234,
+    "input_scale": 1.0,
+    "case_timeout_seconds": 300,
+    "isolated_process_per_case": true,
+    "selected_case_ids": [
+      "final-06-b10000-d128-h4-s128"
+    ]
+  },
+  "environment": {
+    "captured_at_utc": "2026-08-28T15:29:23.491331+00:00",
+    "command": [
+      "python",
+      "benchmarks/run_organizer_validation.py",
+      "--matrix",
+      "benchmarks/final_evaluator_shapes.json",
+      "--device",
+      "cuda",
+      "--case-timeout-seconds",
+      "300",
+      "--out",
+      "docs/results/rtx-5070-ti-2026-08-28-c6-baseline-row06-control.json",
+      "--case",
+      "final-06-b10000-d128-h4-s128"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 171,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 430413856768
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "high",
+      "allow_tf32_matmul": true,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "summary": {
+    "requested": 1,
+    "executable": 1,
+    "passed": 1,
+    "skipped_resource": 0,
+    "skipped_counted_as_pass": false,
+    "all_executable_passed": true,
+    "counts": {
+      "ERROR": 0,
+      "FAIL": 0,
+      "OOM": 0,
+      "PASS": 1,
+      "SKIPPED_RESOURCE": 0
+    },
+    "total_compared_elements": 819200000,
+    "total_failed_elements": 0,
+    "max_abs_error": 0.000898957,
+    "max_relative_error": 76000300.0,
+    "geometric_mean_speedup": 1.496,
+    "attention_backend_counts": {
+      "triton": 56,
+      "sdpa": 0,
+      "reference": 56
+    }
+  },
+  "results": [
+    {
+      "case_id": "final-06-b10000-d128-h4-s128",
+      "description": "Organizer final shape row 6.",
+      "source_contract": "organizer-final-shape-table",
+      "source_dimensions": [
+        10000,
+        128,
+        4,
+        128,
+        4,
+        true,
+        128
+      ],
+      "config": {
+        "batch_size": 10000,
+        "seq_len": 128,
+        "d_model": 128,
+        "num_heads": 4,
+        "ffn_dim": 128,
+        "num_layers": 4,
+        "causal": true
+      },
+      "dtype": "float32",
+      "padding_ratio": 0.0,
+      "status": "PASS",
+      "duration_seconds": 22.945589100010693,
+      "organizer_arguments": [
+        "--batch-size",
+        "10000",
+        "--seq-len",
+        "128",
+        "--d-model",
+        "128",
+        "--heads",
+        "4",
+        "--ffn-dim",
+        "128",
+        "--layers",
+        "4",
+        "--device",
+        "cuda",
+        "--dtype",
+        "float32",
+        "--padding-ratio",
+        "0.0",
+        "--input-scale",
+        "1.0",
+        "--accuracy-trials",
+        "5",
+        "--rtol",
+        "0.01",
+        "--atol",
+        "0.001",
+        "--seed",
+        "1234",
+        "--warmup",
+        "3",
+        "--repeats",
+        "10",
+        "--benchmark-rounds",
+        "2",
+        "--causal"
+      ],
+      "return_code": 0,
+      "parsed": {
+        "accuracy": {
+          "status": "PASS",
+          "max_abs_error": 0.000898957,
+          "max_relative_error": 76000300.0,
+          "failed_elements": 0,
+          "total_elements": 819200000
+        },
+        "baseline": {
+          "median_ms": 434.7219,
+          "mean_ms": 431.005,
+          "p90_ms": 443.6117,
+          "min_ms": 406.9966,
+          "tokens_per_second": 2944411.17
+        },
+        "optimized": {
+          "median_ms": 290.6584,
+          "mean_ms": 291.2504,
+          "p90_ms": 298.3828,
+          "min_ms": 285.0117,
+          "tokens_per_second": 4403795.41
+        },
+        "speedup_median": 1.496
+      },
+      "attention_backend_counts": {
+        "triton": 56,
+        "sdpa": 0,
+        "reference": 56
+      },
+      "error": null,
+      "stdout": [
+        "=== Configuration ===",
+        "TransformerConfig(batch_size=10000, seq_len=128, d_model=128, num_heads=4, ffn_dim=128, num_layers=4, causal=True)",
+        "device=cuda, dtype=torch.float32, torch=2.13.0+cu130",
+        "gpu=NVIDIA GeForce RTX 5070 Ti",
+        "",
+        "=== Accuracy check ===",
+        "criterion: abs_error <= 0.001 OR relative_error <= 1.00%",
+        "trial 01/5: PASS | max_abs=0.00087703 | max_rel=3179.32 | failed=0/163840000",
+        "trial 02/5: PASS | max_abs=0.000842273 | max_rel=7.60003e+07 | failed=0/163840000",
+        "trial 03/5: PASS | max_abs=0.000873208 | max_rel=14814.1 | failed=0/163840000",
+        "trial 04/5: PASS | max_abs=0.000877798 | max_rel=9836.14 | failed=0/163840000",
+        "trial 05/5: PASS | max_abs=0.000898957 | max_rel=6613.07 | failed=0/163840000",
+        "summary: PASS | max_abs=0.000898957 | max_rel=7.60003e+07 | failed=0/819200000",
+        "",
+        "=== Performance benchmark ===",
+        "timing excludes random-data generation and uses a fixed input",
+        "CUDA latency is measured with torch.cuda.Event on the current stream",
+        "baseline : median=434.7219 ms | mean=431.0050 ms | p90=443.6117 ms | min=406.9966 ms | throughput=2944411.17 token/s",
+        "optimized: median=290.6584 ms | mean=291.2504 ms | p90=298.3828 ms | min=285.0117 ms | throughput=4403795.41 token/s",
+        "speedup  : 1.496x based on median latency"
+      ],
+      "stderr": []
+    }
+  ]
+}

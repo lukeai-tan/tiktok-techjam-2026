@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C6-EXP-015-I1-restored-fingerprint",
+    "hypothesis": "Restored I1 fingerprint uniquely binds the reviewed three-way width-1024 candidate",
+    "scope": "EXP-015 I1 restored fingerprint capture",
+    "parent_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "candidate_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+    "branch": null,
+    "changed_paths": [
+      "torch_transformer_benchmark.py"
+    ],
+    "rollback": "Restore packed-QKV maximum width to 512",
+    "decision": "keep",
+    "decision_rationale": "Review and integration must name the exact surviving candidate fingerprint",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      "python.exe",
+      "tools\\capture_environment.py",
+      "--out",
+      "rtx-5070-ti-2026-08-29-c6-exp015-i1-restored-environment.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-28T16:14:09.438463+00:00",
+    "ended_at_utc": "2026-08-28T16:14:10.944122+00:00",
+    "wall_time_seconds": 1.5058063000906259,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Downloads\\GitHub\\tiktok-techjam-2026\\docs\\results\\rtx-5070-ti-2026-08-29-c6-exp015-i1-restored-environment.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-28T16:14:09.346743+00:00",
+    "command": [
+      "python.exe",
+      "tools\\capture_environment.py",
+      "--out",
+      "rtx-5070-ti-2026-08-29-c6-exp015-i1-restored-environment.json"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 2,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "3ef105c253c0319ae80447a854a9bc700d574d1ca3212904c648504b91584797",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438385004544
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-28T16:14:10.990314+00:00",
+    "command": [
+      "python.exe",
+      "tools\\capture_environment.py",
+      "--out",
+      "rtx-5070-ti-2026-08-29-c6-exp015-i1-restored-environment.json"
+    ],
+    "git": {
+      "commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+      "dirty": true,
+      "changed_path_count": 2,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "3ef105c253c0319ae80447a854a9bc700d574d1ca3212904c648504b91584797",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": "python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 438385000448
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "b5de3aefb1e6a1fc048671564e265e0cdac8dfbc984949d1ef78790b2c4dbfbf"
+  },
+  "result_artifact": {
+    "path": "rtx-5070-ti-2026-08-29-c6-exp015-i1-restored-environment.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 2086,
+    "sha256": "7d721929e867c6b14831d36eb2ba8315608866d5d0ef51416540547d34b9327c",
+    "schema_version": null,
+    "created_at_utc": null
+  },
+  "metrics": {
+    "kind": "unknown",
+    "status": null,
+    "correctness": null,
+    "performance": null,
+    "attention_backend_counts": null,
+    "memory": null,
+    "profiler": null
+  }
+}

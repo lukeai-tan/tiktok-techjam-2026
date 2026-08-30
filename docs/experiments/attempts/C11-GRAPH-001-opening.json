@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-GRAPH-001-opening",
+    "hypothesis": "The repository memory graph records Campaign 11's exact scope, selected starting fingerprint, closed routes, and no-Git boundary before measurements.",
+    "scope": "Append Campaign 11 opening event to repository knowledge graph.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN-011.md",
+      "docs/experiments/CAMPAIGN-011-WORKFLOW.json"
+    ],
+    "rollback": "Append a corrective event if validation finds an inaccurate relation; do not rewrite history.",
+    "decision": "observation",
+    "decision_rationale": "Required graph preflight context.",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign11",
+      "--type",
+      "decision",
+      "--summary",
+      "Campaign 11 opens a bounded head-count residual-normalization survey",
+      "--details",
+      "Campaign 11 starts from selected fingerprint f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4 on checkpoint 8c89d1d. It profiles exact final rows 9, 10, and 1. At most one exact row-9 fused residual-normalization reuse is allowed; row 10 is fallback-only and row 1 observation-only. Campaign 9 width-1024 row-8 and exact row-13 arithmetic, Campaign 7 wide-head attention, Campaign 2 long-row tiles, and Campaign 10 row-7 fallback remain closed. Every command is logged; zero failed elements and about five-percent reproducible benefit are mandatory. No Git or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-011.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-011-WORKFLOW.json",
+      "--path",
+      "benchmarks/campaign11_profile_shapes.json",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T15:11:25.732792+00:00",
+    "ended_at_utc": "2026-08-29T15:11:25.850504+00:00",
+    "wall_time_seconds": 0.1176034000236541,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\29\\2026-08-29T15-11-25Z-codex-campaign11-8f6fae41.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T15:11:25.636801+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign11",
+      "--type",
+      "decision",
+      "--summary",
+      "Campaign 11 opens a bounded head-count residual-normalization survey",
+      "--details",
+      "Campaign 11 starts from selected fingerprint f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4 on checkpoint 8c89d1d. It profiles exact final rows 9, 10, and 1. At most one exact row-9 fused residual-normalization reuse is allowed; row 10 is fallback-only and row 1 observation-only. Campaign 9 width-1024 row-8 and exact row-13 arithmetic, Campaign 7 wide-head attention, Campaign 2 long-row tiles, and Campaign 10 row-7 fallback remain closed. Every command is logged; zero failed elements and about five-percent reproducible benefit are mandatory. No Git or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-011.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-011-WORKFLOW.json",
+      "--path",
+      "benchmarks/campaign11_profile_shapes.json",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 410,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439892148224
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T15:11:25.887536+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign11",
+      "--type",
+      "decision",
+      "--summary",
+      "Campaign 11 opens a bounded head-count residual-normalization survey",
+      "--details",
+      "Campaign 11 starts from selected fingerprint f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4 on checkpoint 8c89d1d. It profiles exact final rows 9, 10, and 1. At most one exact row-9 fused residual-normalization reuse is allowed; row 10 is fallback-only and row 1 observation-only. Campaign 9 width-1024 row-8 and exact row-13 arithmetic, Campaign 7 wide-head attention, Campaign 2 long-row tiles, and Campaign 10 row-7 fallback remain closed. Every command is logged; zero failed elements and about five-percent reproducible benefit are mandatory. No Git or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-011.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-011-WORKFLOW.json",
+      "--path",
+      "benchmarks/campaign11_profile_shapes.json",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 410,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439891841024
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

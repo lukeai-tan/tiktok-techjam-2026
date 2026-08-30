@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C8-REVIEW-001-council",
+    "hypothesis": "A multi-perspective review can approve EXP-019-I1R only if facts, boundaries, repeated timing, profile mechanism, memory, risks, and integration conditions are internally consistent",
+    "scope": "Campaign 8 EXP-019-I1R AI Council review",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/reviews/CAMPAIGN-008-EXP-019-REVIEW.json"
+    ],
+    "rollback": "Reject local acceptance and return to the candidate loop if the review finds a blocker or inconsistent evidence",
+    "decision": "keep",
+    "decision_rationale": "The retained candidate clears every pre-integration gate and the formal review contains no blocking finding",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib; p=pathlib.Path(r'docs/experiments/reviews/CAMPAIGN-008-EXP-019-REVIEW.json'); d=json.loads(p.read_text(encoding='utf-8')); a=d['acceptance_basis']; assert d['decision']=='APPROVE_LOCAL_ACCEPTANCE_PENDING_INTEGRATION_REBASELINE'; assert d['blocking_findings']==[]; assert d['candidate_implementation_sha256']=='325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b'; assert a['correctness_failed_elements']==0; assert a['optimized_median_latency_reduction_percent']>5; assert a['profile_model_time_reduction_percent']>5; assert a['control_optimized_incremental_peak_bytes']==a['candidate_optimized_incremental_peak_bytes']; assert a['profile_candidate_fused_calls']==240; assert a['profile_candidate_native_norm_calls']==30; print(json.dumps({'decision':d['decision'],'candidate_fingerprint':d['candidate_implementation_sha256'],'latency_reduction_percent':a['optimized_median_latency_reduction_percent'],'profile_reduction_percent':a['profile_model_time_reduction_percent'],'failed_elements':a['correctness_failed_elements'],'blocking_findings':len(d['blocking_findings'])},indent=2))"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T13:23:43.052136+00:00",
+    "ended_at_utc": "2026-08-29T13:23:43.093698+00:00",
+    "wall_time_seconds": 0.04161049984395504,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\n  \"decision\": \"APPROVE_LOCAL_ACCEPTANCE_PENDING_INTEGRATION_REBASELINE\",\n  \"candidate_fingerprint\": \"325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b\",\n  \"latency_reduction_percent\": 9.696917057586575,\n  \"profile_reduction_percent\": 20.906575478575164,\n  \"failed_elements\": 0,\n  \"blocking_findings\": 0\n}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T13:23:42.952107+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib; p=pathlib.Path(r'docs/experiments/reviews/CAMPAIGN-008-EXP-019-REVIEW.json'); d=json.loads(p.read_text(encoding='utf-8')); a=d['acceptance_basis']; assert d['decision']=='APPROVE_LOCAL_ACCEPTANCE_PENDING_INTEGRATION_REBASELINE'; assert d['blocking_findings']==[]; assert d['candidate_implementation_sha256']=='325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b'; assert a['correctness_failed_elements']==0; assert a['optimized_median_latency_reduction_percent']>5; assert a['profile_model_time_reduction_percent']>5; assert a['control_optimized_incremental_peak_bytes']==a['candidate_optimized_incremental_peak_bytes']; assert a['profile_candidate_fused_calls']==240; assert a['profile_candidate_native_norm_calls']==30; print(json.dumps({'decision':d['decision'],'candidate_fingerprint':d['candidate_implementation_sha256'],'latency_reduction_percent':a['optimized_median_latency_reduction_percent'],'profile_reduction_percent':a['profile_model_time_reduction_percent'],'failed_elements':a['correctness_failed_elements'],'blocking_findings':len(d['blocking_findings'])},indent=2))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 205,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440067014656
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T13:23:43.133805+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib; p=pathlib.Path(r'docs/experiments/reviews/CAMPAIGN-008-EXP-019-REVIEW.json'); d=json.loads(p.read_text(encoding='utf-8')); a=d['acceptance_basis']; assert d['decision']=='APPROVE_LOCAL_ACCEPTANCE_PENDING_INTEGRATION_REBASELINE'; assert d['blocking_findings']==[]; assert d['candidate_implementation_sha256']=='325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b'; assert a['correctness_failed_elements']==0; assert a['optimized_median_latency_reduction_percent']>5; assert a['profile_model_time_reduction_percent']>5; assert a['control_optimized_incremental_peak_bytes']==a['candidate_optimized_incremental_peak_bytes']; assert a['profile_candidate_fused_calls']==240; assert a['profile_candidate_native_norm_calls']==30; print(json.dumps({'decision':d['decision'],'candidate_fingerprint':d['candidate_implementation_sha256'],'latency_reduction_percent':a['optimized_median_latency_reduction_percent'],'profile_reduction_percent':a['profile_model_time_reduction_percent'],'failed_elements':a['correctness_failed_elements'],'blocking_findings':len(d['blocking_findings'])},indent=2))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 205,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440067014656
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": "docs/experiments/reviews/CAMPAIGN-008-EXP-019-REVIEW.json",
+    "expected": true,
+    "exists": true,
+    "size_bytes": 9516,
+    "sha256": "662b5d1a91485a3bf225869f6a3ba6543f895dd178fc70bd5a2e0eaf5fc3c8be",
+    "schema_version": 1,
+    "created_at_utc": null
+  },
+  "metrics": {
+    "kind": "unknown",
+    "status": null,
+    "correctness": null,
+    "performance": null,
+    "attention_backend_counts": null,
+    "memory": null,
+    "profiler": null
+  }
+}

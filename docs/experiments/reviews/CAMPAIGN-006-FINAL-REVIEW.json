@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-006",
+  "review_stage": "integrated_release_gate",
+  "reviewer_role": "release gatekeeper with AI Council perspectives",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL",
+  "decision_scope": "Campaign 6 implementation, current-fingerprint evidence, tests, notebook, and submission-facing documentation",
+  "checkpoint_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+  "facts": [
+    "The independently reviewed source change preserves packed QKV for d_model <= 512 and adds only exact d_model == 1024; a negative width-768 test protects the unmeasured interval.",
+    "Both complete final matrices pass 13/13 executable rows plus the exact authorized resource skip with zero failed elements and identical Triton 1260, SDPA 0, reference 196 backend totals.",
+    "The current final geomeans are 1.8729163311822579x and 1.8637208776955112x, within 0.491 percent of each other.",
+    "Three 300-sample row-8 candidates measure 1.022022x, 1.030071x, and 1.023827x while two contemporaneous unchanged controls measure 0.981690x and 0.993542x.",
+    "The integrated row-8 profile reduces aten::addmm calls from 240 to 160, addmm device time by 11.33 percent, and optimized-model device time by 7.91 percent.",
+    "Four packed width-1024 layers add 50380800 bytes of pre-forward derived-weight storage; the optimized incremental activation peak remains 369115136 bytes in both control and candidate.",
+    "Organizer default, two held-out matrices, and the source-derived matrix all pass their full executable correctness gates with zero failed elements.",
+    "The pre-final complete suite passes 124 tests with 14 upstream PyTorch deprecation warnings, and the added speed-memory trade-off assertion passes in the 13-test artifact suite."
+  ],
+  "council_review": {
+    "requirements": "The strict comparator, protected organizer sources, state dict, dispatch accounting, skip policy, and exact-width boundary remain intact.",
+    "architecture": "The one-condition extension reuses the existing packed-QKV cache and introduces no new dependency, public API, persisted state, or broad dispatch rule.",
+    "implementation": "The retained source hunk is the smallest candidate that removes two row-8 projection launches without retaining any rejected launch variant.",
+    "security_privacy": "No credentials, external data, production mutation, dependency change, or secret-bearing output is introduced.",
+    "testing_qa": "Positive and negative boundary tests, exact row 8, a width-1024 neighbor, two final matrices, broader matrices, profiles, and the repository suite cover the accepted behavior.",
+    "user_docs": "Current claims distinguish current-fingerprint results from Campaign 5 historical highs, disclose the approximately 48 MiB cache cost, and warn that local Colab edits are not remotely available until separately committed and pushed.",
+    "devils_advocate": "Campaign 5 has higher historical aggregate geomeans and the raw row-8 gain is modest; acceptance is justified only by contemporaneous controls and profiler evidence, not by claiming a cross-campaign aggregate win."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Run the final 125-test suite after the speed-memory assertion and final documentation edits.",
+    "Validate the completed workflow, append and validate graph closure, and run final diff hygiene through immutable Campaign 6 attempts.",
+    "Do not describe the locally edited Colab notebook as remotely reproducible until a separately authorized commit and push completes."
+  ],
+  "residual_risks": [
+    "Timing and launch policy remain specific to the recorded RTX 5070 Ti environment.",
+    "The exact-width packed cache trades about 48 MiB of persistent derived-weight memory for a modest row-8 speed benefit.",
+    "Training, backward, low precision, compilation, CPU, widths 513 through 1023, and widths above 1024 remain outside the new route.",
+    "Organizer dtype, padding, timing, tolerance, and backward requirements remain unstated."
+  ],
+  "evidence": [
+    "docs/experiments/reviews/CAMPAIGN-006-CANDIDATE-REVIEW-I1R.json",
+    "docs/experiments/attempts/C6-INTEGRATE-004-final.json",
+    "docs/experiments/attempts/C6-INTEGRATE-005-final-confirmation.json",
+    "docs/experiments/attempts/C6-INTEGRATE-006-organizer-default.json",
+    "docs/experiments/attempts/C6-INTEGRATE-007-heldout-5seed.json",
+    "docs/experiments/attempts/C6-INTEGRATE-008-heldout-5seed-confirmation.json",
+    "docs/experiments/attempts/C6-INTEGRATE-009-source-derived.json",
+    "docs/experiments/attempts/C6-INTEGRATE-012-row8-profile.json",
+    "docs/experiments/attempts/C6-CLOSE-004-full-suite.json",
+    "docs/experiments/attempts/C6-CLOSE-005-council-tradeoff-gate.json"
+  ],
+  "final_seal_evidence": [
+    "docs/experiments/attempts/C6-CLOSE-007-final-suite.json",
+    "docs/experiments/attempts/C6-CLOSE-008-workflow-final.json",
+    "docs/experiments/attempts/C6-GRAPH-009-closure.json",
+    "docs/experiments/attempts/C6-GRAPH-010-rebuild.json",
+    "docs/experiments/attempts/C6-GRAPH-011-validate.json",
+    "docs/experiments/attempts/C6-CLOSE-009-final-diff-check.json"
+  ],
+  "git_actions_authorized": []
+}

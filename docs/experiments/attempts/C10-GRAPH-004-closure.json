@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C10-GRAPH-004-closure",
+    "hypothesis": "The repository memory graph records Campaign 10's selected row-5 optimization, retained failures, measured evidence, closed routes, and no-Git boundary.",
+    "scope": "Append one dense Campaign 10 closure handoff event to the repository knowledge graph.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN-010.md",
+      "docs/experiments/CAMPAIGN-010-WORKFLOW.json",
+      "docs/experiments/reviews/CAMPAIGN-010-FINAL-REVIEW.json"
+    ],
+    "rollback": "Append a corrective graph event if validation finds an inaccurate relationship; do not rewrite event history.",
+    "decision": "keep",
+    "decision_rationale": "Required repo-memory-graph closure handoff.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign10",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 10 selects exact-row-5 residual-normalization fusion",
+      "--details",
+      "Campaign 10 started from fingerprint 325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b and selects fingerprint f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4. Fresh row-5 profiling found a 29.07 percent residual-normalization ceiling. EXP-023-I1 passed direct, boundary, 18 stress scenarios, 37 affected tests, and 150994944 outputs with zero failures. Counterbalanced unchanged controls averaged 1.325096 ms versus 1.171584 ms candidate, an 11.58 percent reduction, with 58720256-byte peak parity. Integrated row-5 long timing is 1.162976 ms and 2.001995x; its profile reduces subsystem and model device time 40.63 and 11.96 percent. Final pair is 13 of 13 plus exact skip at 1.926716x and 1.939005x; organizer default is 1.361x, source-derived is 1.214174x, held-out pair is 1.394370x and 1.378630x, and full suite is 144 passed. Candidate-path serialization, stale artifact pointers, and Council quoting failures remain logged; EXP-024 was deliberately unrun. Width-1024 row-8 and exact row-13 routes remain closed. No commit, push, branch, tag, release, deployment, or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-010.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-010-WORKFLOW.json",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-010-FINAL-REVIEW.json",
+      "--path",
+      "docs/OPTIMIZATION_LOOP_PLAN.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T15:05:36.564981+00:00",
+    "ended_at_utc": "2026-08-29T15:05:36.675746+00:00",
+    "wall_time_seconds": 0.11024679988622665,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\29\\2026-08-29T15-05-36Z-codex-campaign10-279e5991.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T15:05:36.480900+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign10",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 10 selects exact-row-5 residual-normalization fusion",
+      "--details",
+      "Campaign 10 started from fingerprint 325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b and selects fingerprint f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4. Fresh row-5 profiling found a 29.07 percent residual-normalization ceiling. EXP-023-I1 passed direct, boundary, 18 stress scenarios, 37 affected tests, and 150994944 outputs with zero failures. Counterbalanced unchanged controls averaged 1.325096 ms versus 1.171584 ms candidate, an 11.58 percent reduction, with 58720256-byte peak parity. Integrated row-5 long timing is 1.162976 ms and 2.001995x; its profile reduces subsystem and model device time 40.63 and 11.96 percent. Final pair is 13 of 13 plus exact skip at 1.926716x and 1.939005x; organizer default is 1.361x, source-derived is 1.214174x, held-out pair is 1.394370x and 1.378630x, and full suite is 144 passed. Candidate-path serialization, stale artifact pointers, and Council quoting failures remain logged; EXP-024 was deliberately unrun. Width-1024 row-8 and exact row-13 routes remain closed. No commit, push, branch, tag, release, deployment, or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-010.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-010-WORKFLOW.json",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-010-FINAL-REVIEW.json",
+      "--path",
+      "docs/OPTIMIZATION_LOOP_PLAN.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 397,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439894228992
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T15:05:36.715808+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign10",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 10 selects exact-row-5 residual-normalization fusion",
+      "--details",
+      "Campaign 10 started from fingerprint 325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b and selects fingerprint f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4. Fresh row-5 profiling found a 29.07 percent residual-normalization ceiling. EXP-023-I1 passed direct, boundary, 18 stress scenarios, 37 affected tests, and 150994944 outputs with zero failures. Counterbalanced unchanged controls averaged 1.325096 ms versus 1.171584 ms candidate, an 11.58 percent reduction, with 58720256-byte peak parity. Integrated row-5 long timing is 1.162976 ms and 2.001995x; its profile reduces subsystem and model device time 40.63 and 11.96 percent. Final pair is 13 of 13 plus exact skip at 1.926716x and 1.939005x; organizer default is 1.361x, source-derived is 1.214174x, held-out pair is 1.394370x and 1.378630x, and full suite is 144 passed. Candidate-path serialization, stale artifact pointers, and Council quoting failures remain logged; EXP-024 was deliberately unrun. Width-1024 row-8 and exact row-13 routes remain closed. No commit, push, branch, tag, release, deployment, or public action is authorized.",
+      "--path",
+      "docs/experiments/CAMPAIGN-010.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-010-WORKFLOW.json",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-010-FINAL-REVIEW.json",
+      "--path",
+      "docs/OPTIMIZATION_LOOP_PLAN.md",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 397,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439894224896
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

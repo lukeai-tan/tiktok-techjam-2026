@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-011",
+  "experiment": "EXP-025-I1",
+  "review_stage": "candidate_integration_gate",
+  "reviewer_role": "independent reviewer with AI Council perspectives",
+  "decision": "APPROVE_EXP_025_I1_FOR_INTEGRATION",
+  "decision_scope": "Exact organizer-final-row-9 residual-plus-LayerNorm fusion candidate in the isolated Campaign 11 worktree",
+  "checkpoint_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+  "starting_implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+  "candidate_implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+  "facts": [
+    "The starting active and isolated workspaces matched the selected Campaign 10 implementation fingerprint before candidate edits.",
+    "The fresh row-9 baseline profile measured 5769.588 us of residual-add plus native-LayerNorm time, 19.095 percent of 30214.766 us model device time across 30 forwards.",
+    "The candidate source change only admits exact runtime shape (64, 128, 128) with batch 64, sequence 128, width 128, one head, FFN 128, four layers, causal inference into the previously accepted fused primitive.",
+    "Direct route and boundary tests passed, all 18 seed-scale-padding stress scenarios passed, and the 40-test affected suite passed with zero correctness failures.",
+    "Two counterbalanced unchanged controls measured 0.815776 and 0.816160 ms optimized median, a 0.047 percent spread. The retained 300-sample candidate measured 0.717696 ms, 12.044 percent below their mean; normalized speedup improved 11.342 percent.",
+    "Control, candidate, and confirmation-control optimized incremental peak allocation were all 29360128 bytes.",
+    "Two baseline and two candidate profiles reduced mean residual-normalization subsystem time from 5765.324 to 3229.406 us, or 43.986 percent, while mean top-level model event time changed from 32578.855 to 32409.425 us, or minus 0.520 percent.",
+    "Both candidate profiles recorded 240 fused residual-normalization launches, 30 remaining native norms, and 120 Triton attention calls; paired attention-event timing was effectively unchanged in the recheck.",
+    "The isolated complete final matrix passed all 13 executable rows plus the one authorized resource skip with zero failed elements, a 1.948x geometric-mean speedup, a 1.633x row-9 speedup, and aggregate backend counts of 1260 Triton, zero SDPA, and 196 reference calls.",
+    "EXP-026 is not authorized to run because the declared row-10 fallback condition is false after EXP-025 cleared correctness, mechanism, memory, and reproducible performance gates."
+  ],
+  "council_review": {
+    "requirements": "The candidate preserves the organizer harness, tolerances, zero-failure comparator, resource-skip policy, backend accounting, and inference-only support contract while clearing the approximately five-percent target gate.",
+    "architecture": "Reusing the accepted fused primitive behind one exact row predicate is a bounded dispatch extension. It does not alter attention arithmetic, QKV policy, model state, public APIs, dependencies, or persistence surfaces.",
+    "implementation": "The source diff is one exact predicate and one predicate-union term. Three tests pin the selected route, unsupported boundaries, and numerical stress matrix.",
+    "security_privacy": "No credential, dependency, network, authentication, authorization, permission, telemetry, or sensitive-data surface changes.",
+    "testing_qa": "Direct, boundary, stress, affected-suite, counterbalanced timing, memory, repeated profile, and complete isolated final-matrix evidence support integration; active-worktree and broader matrices remain mandatory after transplant.",
+    "user_docs": "Candidate claims are not yet selected claims. Campaign, requirements, design, report, notebook, comparisons, and submission-facing documentation must only migrate after active-worktree confirmation.",
+    "devils_advocate": "The optimization is benchmark-specific and the first candidate top-level profiler snapshot regressed by 1.285 percent. The repeated profile pair resolves the mechanism question but shows only a 0.520 percent mean model-event reduction, so acceptance rests primarily on the tightly counterbalanced 300-sample CUDA-event latency reduction. Active remeasurement must reproduce the benefit and disclose any divergence."
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Transplant only the exact source and three test hunks into the active worktree and prove its implementation fingerprint matches the reviewed candidate.",
+    "Rerun direct, boundary, stress, affected-suite, row-9 counterbalanced timing, memory, repeated profile, two final matrices, organizer-default, held-out, source-derived, inherited-route, artifact-contract, and complete repository gates on the active worktree.",
+    "Reject or revise the selection if active row-9 timing does not reproduce an approximately five-percent benefit, any failed element appears, memory increases materially, backend routing changes, or exact boundaries fail.",
+    "Keep EXP-026 unrun because its fallback condition is false; do not use it as an additional optimization search after accepting EXP-025.",
+    "Do not perform any commit, push, tag, release, branch creation, history rewrite, deployment, or public action without a separate explicit request."
+  ],
+  "residual_risks": [
+    "Performance is specific to the recorded RTX 5070 Ti software and driver environment.",
+    "The exact organizer-row predicate adds benchmark-specific maintenance cost.",
+    "Profiler top-level model timing is noisier than the counterbalanced CUDA-event timing and must not be overstated.",
+    "The organizer does not fully specify dtype, padding, timing protocol, tolerance, backward behavior, or evaluator hardware."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C11-BASE-001-final.json",
+    "docs/experiments/attempts/C11-BASE-002-row9-profile.json",
+    "docs/experiments/attempts/C11-BASE-006-row9-long-a.json",
+    "docs/experiments/attempts/C11-BASE-007-row9-long-c.json",
+    "docs/experiments/attempts/C11-BASE-008-row9-profile-recheck.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-direct.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-stress.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-long-b.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-profile.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-profile-recheck.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-profile-analysis.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-analysis.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-affected-suite.json",
+    "docs/experiments/attempts/C11-EXP-025-I1-final.json"
+  ],
+  "git_actions_authorized": []
+}

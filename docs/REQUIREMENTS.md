@@ -1,5 +1,8 @@
 # Transformer GPU Kernel Requirements
 
+Use the [documentation hub](README.md) for the repository reading order. This
+file owns the executable contract and its unresolved organizer assumptions.
+
 Status: implementation contract reconciled with the two participant-supplied
 organizer downloads received on 2026-08-27 and the 14-row Track 3 test-shape
 table published in the organizer document's Section 3.7. PyTorch is the
@@ -10,12 +13,13 @@ requirements. `benchmarks/official_shapes.json` remains a project-owned
 held-out matrix rather than the final organizer matrix.
 
 Selected local submission entry:
-`torch_transformer_benchmark.py::UserOptimizedTransformer`. Its schema-2
+`transformer_opt/submission.py::UserOptimizedTransformer`. Its schema-2
 implementation fingerprint is
-`de768f1ff9ddee54a9ad83a67f3e1f205044c0ad5c723fc3bb4881093c97f611`.
-The 2026-08-28 submission-validation suite recomputed that identity before
-execution and ties all fresh tests, benchmarks, profiles, and source hashes to
-it. Selecting it did not modify the protected organizer downloads.
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
+The 2026-08-29 Campaign 11 integration suite recomputed that identity and ties
+the current final, confirmation, held-out, organizer-default, source-derived,
+profile, and test evidence to it. The protected organizer downloads remain
+unchanged.
 
 ## Source-of-truth order
 
@@ -25,7 +29,7 @@ it. Selecting it did not modify the protected organizer downloads.
    `benchmarks/final_evaluator_shapes.json` and its live source metadata.
 3. The older result-linked snapshot identified by
    `benchmarks/reference/manifest.json`.
-4. Track 3 in `docs/hackathon-details.md`, lines 674-780.
+4. Track 3 in `hackathon-docs/hackathon-details.md`, lines 674-780.
 5. Reproduced behavior on the target GPU.
 6. Design and explanatory documentation in this repository.
 
@@ -41,7 +45,7 @@ campaign ledgers and raw JSON remain the authority for individual executions.
 ## Organizer download reconciliation
 
 - Untouched PyTorch SHA-256:
-  `1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`.
+  `5529c96a80799b51f68092e1444a30b17994554dffdf52da98ba701489a7f36e`.
 - Untouched TensorFlow SHA-256:
   `00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798`.
 - `benchmarks/run_organizer_torch.py` injects only the submitted class into the
@@ -67,14 +71,14 @@ The files are not interchangeable evaluator specifications. PyTorch defaults
 to one configurable float32 case and the stricter 0.001/0.01 OR rule;
 TensorFlow defaults to a float16 compact dimension sweep and the prose-level
 0.002/0.02 OR rule. The final table supplies dimensions but does not resolve
-those framework-level differences. See `docs/ORGANIZER_INPUTS.md` for the exact
+those framework-level differences. See `hackathon-docs/ORGANIZER_INPUTS.md` for the exact
 differences and remaining clarifications.
 
 ## Required behavior
 
-The selected PyTorch implementation is the pre-LayerNorm Transformer in the
-untouched `benchmarks/torch_transformer_benchmark.py`; the optimized submission
-copy is `torch_transformer_benchmark.py`:
+The selected PyTorch implementation reuses the pre-LayerNorm Transformer and
+contract helpers from the untouched `benchmarks/torch_transformer_benchmark.py`.
+The optimized submission adapter is `transformer_opt/submission.py`:
 
 ```text
 for each block:
@@ -131,6 +135,12 @@ Correctness validation must cover:
   envelope; forced `triton` mode must fail clearly when unsupported.
 - Backend choice must be inspectable in tests/results. Import or compilation
   errors may not be swallowed as successful custom execution.
+- Eager CUDA float32 inference may cache a derived packed QKV projection for
+  measured `d_model <= 512` shapes and exact `d_model == 1024`. Widths 513-1023,
+  widths above 1024, CPU, low precision, compiled execution, gradients, or an
+  otherwise unsupported layout must retain separate projections. The derived
+  cache must invalidate after parameter/state/device/dtype changes, remain
+  non-persistent, and preserve strict state-dict compatibility.
 - The measured fixed launch policy uses 32x32 tiles for `head_dim == 128` only
   through sequence 128 and returns to 32x64 at sequence 129 and above. Boundary
   tests must preserve that exact guard; it changes launch geometry, not the
@@ -139,16 +149,44 @@ Correctness validation must cover:
   time dot width to 16 lanes, masking padded Q/K/V loads, storing only the real
   eight output lanes, and scaling by the real head dimension. The measured
   64x64 launch is selected for the final row-11 target. Multi-layer `auto`
-  dispatch enables this path only for exact final row 11; other width-eight
+  dispatch uses Triton in every layer for exact final row 11. Exact final row 7
+  keeps layer zero on reference math and uses the padded Triton kernel for
+  layers one through three; full four-layer execution and a first-three route
+  each failed one strict element, while this ordering passed the final matrix,
+  repeated confirmations, and seed/scale/padding stress. Other width-eight
   shapes remain on explicit reference math until separately measured.
+- Exact final row 6 (`B=10000,S=128,d_model=128,heads=4,layers=4,causal=true`)
+  keeps layers zero and one on reference math and uses Triton for layers two and
+  three. Full approximate execution failed 21 elements and a one-reference/
+  three-Triton split failed one element; the accepted 2/2 split passed three
+  complete 819,200,000-element comparisons and repeated performance runs. For
+  eval-mode CUDA float32 inference outside compilation, this exact runtime shape
+  also fuses each residual add with the following LayerNorm. Exact final row 5
+  (`B=128,S=128,d_model=128,heads=4,layers=4,causal=true`), row 9
+  (`B=64,S=128,d_model=128,heads=1,layers=4,causal=true`), and row 11
+  (`B=64,S=128,d_model=128,heads=16,layers=4,causal=true`) reuse the same
+  fused forward while retaining all four Triton attention layers. Rows 5 and 9
+  are admitted only by exact static configuration and runtime-shape guards; their
+  neighboring batches, sequence lengths, dimensions, head counts, layer counts,
+  causal modes, and feed-forward widths remain unfused. The fused
+  kernel must
+  preserve optional bias, epsilon, strict state-dict compatibility, padded-row
+  zeroing, and each shape's established attention routing. Noncontiguous masks, neighboring
+  shapes, training, CPU, other dtypes, and compiled execution retain the eager
+  PyTorch path.
+- The exact project-held-out `B=2,S=512,d_model=512,heads=8,layers=2,
+  causal=true` envelope uses SDPA for both unpadded and prefix-padded inputs.
+  Controlled screens, repeated held-out matrices, backend counts, and profiler
+  events show it removes the prior long-causal regression. This project-owned
+  route does not broaden the organizer-final claim.
 - The benchmark-default non-causal float32 custom path follows the benchmark's
   TF32 toggle. Causal custom attention uses IEEE fp32 dot products because final
   evaluator testing found rare TF32 misses under the zero-failure comparator.
   Automatic end-to-end low-precision runs, unsupported custom head widths, and
-  causal batches above 128 use the explicit reference-style path after the same
-  testing exposed rare SDPA or fused-attention misses. CPU, other unsupported
-  layouts, and training with gradients fall back unless explicitly added and
-  tested.
+  unmeasured causal batches above 128 use the explicit reference-style path
+  after testing exposed rare SDPA or fused-attention misses. The exact row-6
+  hybrid above is the sole measured exception. CPU, other unsupported layouts,
+  and training with gradients fall back unless explicitly added and tested.
 
 ## Benchmark integrity
 
@@ -203,6 +241,10 @@ dispatcher and may fall back to SDPA until measured.
   all 13 executable rows pass the untouched selected PyTorch comparator in
   isolated processes, and the exact 100000-token resource skip is excluded
   from the pass count.
+- **AC-10:** Exact-row residual/LayerNorm fusion remains limited to final rows 5,
+  6, 9, and 11 in eval-mode eager CUDA float32 inference; direct, stress, neighbor,
+  training, gradient, dtype, device, layout, mask, memory, and profiler gates
+  must remain current for the selected fingerprint.
 
 ## Deliverables
 

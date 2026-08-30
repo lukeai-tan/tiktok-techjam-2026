@@ -20,7 +20,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from tools.capture_environment import capture_environment, display_path
-from torch_transformer_benchmark import (
+from transformer_opt.submission import (
     BaselineTransformer,
     TransformerConfig,
     UserOptimizedTransformer,

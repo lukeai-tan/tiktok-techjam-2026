@@ -20,7 +20,7 @@ import torch
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 IMPLEMENTATION_PATHS = (
-    "torch_transformer_benchmark.py",
+    "transformer_opt/submission.py",
     "transformer_opt",
     "benchmarks/run_matrix.py",
     "benchmarks/profile_cases.py",

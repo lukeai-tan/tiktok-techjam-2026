@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-CLEANUP-007-postlink-diff-hygiene",
+    "hypothesis": "The final consolidation-review link introduces no tracked-diff whitespace defect.",
+    "scope": "Repeat git diff --check after the last audit-trail link.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN_RUN_THROUGH.md"
+    ],
+    "rollback": "Repair only the reported documentation whitespace defect.",
+    "decision": "keep",
+    "decision_rationale": "Final post-edit tree hygiene gate.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T16:24:22.591345+00:00",
+    "ended_at_utc": "2026-08-29T16:24:22.633363+00:00",
+    "wall_time_seconds": 0.04176789987832308,
+    "timeout_seconds": 120.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "",
+    "stderr": "warning: in the working copy of 'DEMO_RUNBOOK.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/DEVPOST_DESCRIPTION.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/KERNEL_DESIGN.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/OPTIMIZATION_LOOP_PLAN.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/ORGANIZER_INPUTS.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/REQUIREMENTS.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/TECH_REPORT.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/TRACK3_COMPLIANCE.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/BRANCH_IMPLEMENTATION_COMPARISON.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/CAMPAIGN-006-CHECKPOINT-2026-08-29.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/CAMPAIGN-006-WORKFLOW.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/CAMPAIGN-006.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/CAMPAIGN_RUN_THROUGH.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/CURRENT_VS_ORIGINAL_EVALUATION.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/OPTIMIZATION_HISTORY.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/experiments/SUBMISSION_VALIDATION.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/results/README.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'notebooks/colab_benchmark.ipynb', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'tests/test_colab_notebook.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'tests/test_gpu_transformer.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'tests/test_result_artifacts.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'torch_transformer_benchmark.py', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'transformer_opt/kernels/__init__.py', LF will be replaced by CRLF the next time Git touches it\n"
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T16:24:22.502510+00:00",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 522,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440060399616
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T16:24:22.672870+00:00",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 522,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440060399616
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

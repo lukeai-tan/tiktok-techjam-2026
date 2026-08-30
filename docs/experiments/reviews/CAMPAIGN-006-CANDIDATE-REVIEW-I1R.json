@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-006",
+  "review_stage": "reworked_preintegration_candidate_review",
+  "reviewer_role": "independent candidate reviewer",
+  "decision": "APPROVE_LOCAL_ACCEPTANCE",
+  "decision_scope": "Surgical EXP-015-I1R source hunk and two boundary tests only",
+  "base_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+  "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+  "verified": [
+    "All eight I1R attempts passed with matching before and after implementation fingerprint and matching result-artifact SHA-256 links.",
+    "The guard preserves the accepted d_model <=512 policy and adds only exact d_model 1024.",
+    "The fast gate passed three tests including positive d_model 1024 cache, correctness, and state-dict behavior plus the negative d_model 768 no-cache boundary.",
+    "Three 300-sample candidate runs passed with 1.0220223948436964x, 1.0300708592801537x, and 1.0238273749313875x internal speedups and zero failed elements.",
+    "Two contemporaneous unchanged controls passed at 0.9816900043280884x and 0.9935424067997244x, supporting a repeatable normalized candidate benefit despite raw environment drift.",
+    "The exact row-8 gate passed with zero of 41943040 failed elements and zero maximum absolute error.",
+    "The width-1024, 16-head, sequence-128 noncausal neighbor passed with zero of 1310720 failed elements, 0.0002931952476501465 maximum absolute error, 1.2317111399622378x speedup, and 310 Triton attention calls.",
+    "The contemporaneous profile reduced aten::addmm calls from 240 to 160, addmm device time from 106065.035 us to 95828.832 us, and optimized model device time from 150050.615 us to 137306.708 us."
+  ],
+  "acceptance_basis": {
+    "projection_call_reduction_percent": 33.333333333333336,
+    "profile_addmm_time_reduction_percent": 9.650874400203016,
+    "profile_model_time_reduction_percent": 8.493070918477322,
+    "correctness_failed_elements": 0,
+    "boundary": "d_model <=512 or d_model ==1024"
+  },
+  "blocking_findings": [],
+  "conditions": [
+    "Transplant only the source hunk and two new tests onto the current integration branch; never replace the stale isolated test file wholesale.",
+    "Run affected and complete post-integration matrices and tests through the immutable attempt logger under the regenerated fingerprint.",
+    "Do not claim final-suite acceptance until those post-integration gates pass."
+  ],
+  "residual_risks": [
+    "The raw latency benefit is modest and target-device specific even though the profile and launch-count benefit clears the declared gate.",
+    "Packed projection caching contributes to the optimized model's existing higher row-8 incremental peak-memory measurement.",
+    "Training, backward, low precision, compilation, CPU, widths 513 through 1023 except 1024, and widths above 1024 remain outside this route."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C6-EXP-015-I1R-fast.json",
+    "docs/experiments/attempts/C6-EXP-015-I1R-fingerprint.json",
+    "docs/experiments/attempts/C6-EXP-015-I1R-long-a.json",
+    "docs/experiments/attempts/C6-EXP-015-I1R-long-b.json",
+    "docs/experiments/attempts/C6-EXP-015-I1R-long-c.json",
+    "docs/experiments/attempts/C6-EXP-015-I1R-profile.json",
+    "docs/experiments/attempts/C6-EXP-015-I1R-row8.json",
+    "docs/experiments/attempts/C6-EXP-015-I1R-wide-model.json",
+    "docs/experiments/attempts/C6-BASE-017-row8-long-c.json",
+    "docs/experiments/attempts/C6-BASE-018-row8-long-d.json",
+    "docs/experiments/attempts/C6-BASE-019-row8-profile-c.json"
+  ],
+  "git_actions_authorized": []
+}

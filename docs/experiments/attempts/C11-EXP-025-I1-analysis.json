@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-EXP-025-I1-analysis",
+    "hypothesis": "Counterbalanced controls, candidate timing, memory, accuracy, and profiles will show whether EXP-025 clears the reproducible five-percent acceptance threshold.",
+    "scope": "Causal analysis of two active controls versus the isolated row-9 candidate.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-a.json",
+      "docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-c.json"
+    ],
+    "rollback": "Reject if candidate benefit, mechanism, correctness, or memory does not clear the declared gate.",
+    "decision": "observation",
+    "decision_rationale": "EXP-025 counterbalanced decision analysis.",
+    "review_status": "pending"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; a=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-a.json').read_text())['results'][0]; c=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-c.json').read_text())['results'][0]; b=json.loads(pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-long-b.json').read_text())['results'][0]; bp=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-profile.json').read_text()); cp=json.loads(pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-profile.json').read_text()); be={x['name']:x for x in bp['top_events'] if x['self_device_time_us']>0}; ce={x['name']:x for x in cp['top_events'] if x['self_device_time_us']>0}; controls=[a['timing']['optimized']['median_ms'],c['timing']['optimized']['median_ms']]; bs=be['aten::add']['self_device_time_us']+be['aten::native_layer_norm']['self_device_time_us']; cs=ce['_residual_layer_norm_fwd']['self_device_time_us']+ce['aten::native_layer_norm']['self_device_time_us']; out={'control_optimized_ms':controls,'control_mean_ms':statistics.mean(controls),'control_spread_pct':100*(max(controls)-min(controls))/statistics.mean(controls),'candidate_optimized_ms':b['timing']['optimized']['median_ms'],'candidate_latency_delta_pct':100*(b['timing']['optimized']['median_ms']/statistics.mean(controls)-1),'control_speedup_mean':statistics.mean([a['timing']['speedup_median'],c['timing']['speedup_median']]),'candidate_speedup':b['timing']['speedup_median'],'normalized_speedup_delta_pct':100*(b['timing']['speedup_median']/statistics.mean([a['timing']['speedup_median'],c['timing']['speedup_median']])-1),'failed_elements':sum(t['failed_elements'] for t in b['accuracy']['trials']),'optimized_incremental_peak_bytes':[a['peak_memory']['optimized']['incremental_peak_bytes'],b['peak_memory']['optimized']['incremental_peak_bytes'],c['peak_memory']['optimized']['incremental_peak_bytes']],'profile_model_delta_pct':100*(ce['optimized_transformer']['self_device_time_us']/be['optimized_transformer']['self_device_time_us']-1),'profile_subsystem_delta_pct':100*(cs/bs-1),'profile_fused_count':ce['_residual_layer_norm_fwd']['count'],'profile_native_norm_count':ce['aten::native_layer_norm']['count'],'profile_backends':cp['backend_counts']}; print(json.dumps(out,indent=2))"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T15:18:25.405137+00:00",
+    "ended_at_utc": "2026-08-29T15:18:25.450285+00:00",
+    "wall_time_seconds": 0.04438219987787306,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\n  \"control_optimized_ms\": [\n    0.815775990486145,\n    0.8161599934101105\n  ],\n  \"control_mean_ms\": 0.8159679919481277,\n  \"control_spread_pct\": 0.04706102785338983,\n  \"candidate_optimized_ms\": 0.7176960110664368,\n  \"candidate_latency_delta_pct\": -12.04360732913875,\n  \"control_speedup_mean\": 1.0253207974780658,\n  \"candidate_speedup\": 1.1416086998516146,\n  \"normalized_speedup_delta_pct\": 11.34161158727851,\n  \"failed_elements\": 0,\n  \"optimized_incremental_peak_bytes\": [\n    29360128,\n    29360128,\n    29360128\n  ],\n  \"profile_model_delta_pct\": 1.284987611686228,\n  \"profile_subsystem_delta_pct\": -44.126045048625265,\n  \"profile_fused_count\": 240,\n  \"profile_native_norm_count\": 30,\n  \"profile_backends\": {\n    \"triton\": 120,\n    \"sdpa\": 0,\n    \"reference\": 0\n  }\n}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T15:18:25.314476+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; a=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-a.json').read_text())['results'][0]; c=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-c.json').read_text())['results'][0]; b=json.loads(pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-long-b.json').read_text())['results'][0]; bp=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-profile.json').read_text()); cp=json.loads(pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-profile.json').read_text()); be={x['name']:x for x in bp['top_events'] if x['self_device_time_us']>0}; ce={x['name']:x for x in cp['top_events'] if x['self_device_time_us']>0}; controls=[a['timing']['optimized']['median_ms'],c['timing']['optimized']['median_ms']]; bs=be['aten::add']['self_device_time_us']+be['aten::native_layer_norm']['self_device_time_us']; cs=ce['_residual_layer_norm_fwd']['self_device_time_us']+ce['aten::native_layer_norm']['self_device_time_us']; out={'control_optimized_ms':controls,'control_mean_ms':statistics.mean(controls),'control_spread_pct':100*(max(controls)-min(controls))/statistics.mean(controls),'candidate_optimized_ms':b['timing']['optimized']['median_ms'],'candidate_latency_delta_pct':100*(b['timing']['optimized']['median_ms']/statistics.mean(controls)-1),'control_speedup_mean':statistics.mean([a['timing']['speedup_median'],c['timing']['speedup_median']]),'candidate_speedup':b['timing']['speedup_median'],'normalized_speedup_delta_pct':100*(b['timing']['speedup_median']/statistics.mean([a['timing']['speedup_median'],c['timing']['speedup_median']])-1),'failed_elements':sum(t['failed_elements'] for t in b['accuracy']['trials']),'optimized_incremental_peak_bytes':[a['peak_memory']['optimized']['incremental_peak_bytes'],b['peak_memory']['optimized']['incremental_peak_bytes'],c['peak_memory']['optimized']['incremental_peak_bytes']],'profile_model_delta_pct':100*(ce['optimized_transformer']['self_device_time_us']/be['optimized_transformer']['self_device_time_us']-1),'profile_subsystem_delta_pct':100*(cs/bs-1),'profile_fused_count':ce['_residual_layer_norm_fwd']['count'],'profile_native_norm_count':ce['aten::native_layer_norm']['count'],'profile_backends':cp['backend_counts']}; print(json.dumps(out,indent=2))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 432,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439883419648
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T15:18:25.489329+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; a=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-a.json').read_text())['results'][0]; c=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-c.json').read_text())['results'][0]; b=json.loads(pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-long-b.json').read_text())['results'][0]; bp=json.loads(pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-profile.json').read_text()); cp=json.loads(pathlib.Path('C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-profile.json').read_text()); be={x['name']:x for x in bp['top_events'] if x['self_device_time_us']>0}; ce={x['name']:x for x in cp['top_events'] if x['self_device_time_us']>0}; controls=[a['timing']['optimized']['median_ms'],c['timing']['optimized']['median_ms']]; bs=be['aten::add']['self_device_time_us']+be['aten::native_layer_norm']['self_device_time_us']; cs=ce['_residual_layer_norm_fwd']['self_device_time_us']+ce['aten::native_layer_norm']['self_device_time_us']; out={'control_optimized_ms':controls,'control_mean_ms':statistics.mean(controls),'control_spread_pct':100*(max(controls)-min(controls))/statistics.mean(controls),'candidate_optimized_ms':b['timing']['optimized']['median_ms'],'candidate_latency_delta_pct':100*(b['timing']['optimized']['median_ms']/statistics.mean(controls)-1),'control_speedup_mean':statistics.mean([a['timing']['speedup_median'],c['timing']['speedup_median']]),'candidate_speedup':b['timing']['speedup_median'],'normalized_speedup_delta_pct':100*(b['timing']['speedup_median']/statistics.mean([a['timing']['speedup_median'],c['timing']['speedup_median']])-1),'failed_elements':sum(t['failed_elements'] for t in b['accuracy']['trials']),'optimized_incremental_peak_bytes':[a['peak_memory']['optimized']['incremental_peak_bytes'],b['peak_memory']['optimized']['incremental_peak_bytes'],c['peak_memory']['optimized']['incremental_peak_bytes']],'profile_model_delta_pct':100*(ce['optimized_transformer']['self_device_time_us']/be['optimized_transformer']['self_device_time_us']-1),'profile_subsystem_delta_pct':100*(cs/bs-1),'profile_fused_count':ce['_residual_layer_norm_fwd']['count'],'profile_native_norm_count':ce['aten::native_layer_norm']['count'],'profile_backends':cp['backend_counts']}; print(json.dumps(out,indent=2))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 432,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439883419648
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

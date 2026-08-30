@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "status": "campaign-5-profile-subset",
+  "source": "Exact final rows 6-8 plus project-held-out long-causal cases",
+  "defaults": {
+    "dtypes": ["float32"],
+    "seeds": [1234],
+    "input_scale": 1.0,
+    "accuracy_rtol": 0.01,
+    "accuracy_atol": 0.001,
+    "warmup": 3,
+    "repeats": 10,
+    "rounds": 2
+  },
+  "cases": [
+    {
+      "id": "final-06-b10000-d128-h4-s128",
+      "source_row": 6,
+      "batch_size": 10000,
+      "seq_len": 128,
+      "d_model": 128,
+      "num_heads": 4,
+      "ffn_dim": 128,
+      "num_layers": 4,
+      "causal": true,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "final-07-b64-d32-h4-s128",
+      "source_row": 7,
+      "batch_size": 64,
+      "seq_len": 128,
+      "d_model": 32,
+      "num_heads": 4,
+      "ffn_dim": 32,
+      "num_layers": 4,
+      "causal": true,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "final-08-b64-d1024-h4-s128",
+      "source_row": 8,
+      "batch_size": 64,
+      "seq_len": 128,
+      "d_model": 1024,
+      "num_heads": 4,
+      "ffn_dim": 1024,
+      "num_layers": 4,
+      "causal": true,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "long-causal",
+      "source_row": null,
+      "batch_size": 2,
+      "seq_len": 512,
+      "d_model": 512,
+      "num_heads": 8,
+      "ffn_dim": 2048,
+      "num_layers": 2,
+      "causal": true,
+      "padding_ratio": 0.0
+    },
+    {
+      "id": "long-causal-padding",
+      "source_row": null,
+      "batch_size": 2,
+      "seq_len": 512,
+      "d_model": 512,
+      "num_heads": 8,
+      "ffn_dim": 2048,
+      "num_layers": 2,
+      "causal": true,
+      "padding_ratio": 0.3
+    }
+  ]
+}

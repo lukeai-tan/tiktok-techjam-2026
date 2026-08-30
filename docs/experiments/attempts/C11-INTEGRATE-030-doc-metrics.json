@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-INTEGRATE-030-doc-metrics",
+    "hypothesis": "A single current-artifact analysis will produce internally consistent Campaign 11 documentation metrics and bind every selected claim to the reviewed fingerprint.",
+    "scope": "Extract final, held-out, long-run, organizer, source-derived, and profile statistics for Campaign 11 documentation.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/results"
+    ],
+    "rollback": "Correct documentation inputs if any selected artifact, fingerprint, or metric assertion is inconsistent.",
+    "decision": "keep",
+    "decision_rationale": "Use one immutable metric extraction as the documentation source rather than manually inferring values.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nimport statistics\n\nroot = pathlib.Path('docs/results')\nload = lambda name: json.loads((root / name).read_text())\nevent = lambda payload, name: next(\n    item for item in payload['top_events']\n    if item['name'] == name and item['self_device_time_us'] > 0\n)\noptional = lambda payload, name: next(\n    (\n        item for item in payload['top_events']\n        if item['name'] == name and item['self_device_time_us'] > 0\n    ),\n    None,\n)\nprofile_pairs = {\n    'row5': (\n        load('rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row05-profile.json'),\n    ),\n    'row6': (\n        load('rtx-5070-ti-2026-08-29-c7-baseline-row06-profile.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row06-profile.json'),\n    ),\n    'row8': (\n        load('rtx-5070-ti-2026-08-29-c6-baseline-row08-profile-c.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row08-profile.json'),\n    ),\n    'row11': (\n        load('rtx-5070-ti-2026-08-29-c8-baseline-row11-profile-e.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row11-profile.json'),\n    ),\n}\nprofiles = {}\nfor name, (baseline, current) in profile_pairs.items():\n    if name == 'row8':\n        before = event(baseline, 'aten::addmm')\n        after = event(current, 'aten::addmm')\n        profiles[name] = {\n            'addmm_count': [before['count'], after['count']],\n            'addmm_us': [before['self_device_time_us'], after['self_device_time_us']],\n            'addmm_delta_pct': 100 * (after['self_device_time_us'] / before['self_device_time_us'] - 1),\n            'model_us': [\n                event(baseline, 'optimized_transformer')['self_device_time_us'],\n                event(current, 'optimized_transformer')['self_device_time_us'],\n            ],\n        }\n        profiles[name]['model_delta_pct'] = 100 * (\n            profiles[name]['model_us'][1] / profiles[name]['model_us'][0] - 1\n        )\n        continue\n    before_add = event(baseline, 'aten::add')\n    before_norm = event(baseline, 'aten::native_layer_norm')\n    after_fused = event(current, '_residual_layer_norm_fwd')\n    after_norm = event(current, 'aten::native_layer_norm')\n    before_subsystem = before_add['self_device_time_us'] + before_norm['self_device_time_us']\n    after_subsystem = after_fused['self_device_time_us'] + after_norm['self_device_time_us']\n    profiles[name] = {\n        'counts': {\n            'before_add': before_add['count'],\n            'before_native': before_norm['count'],\n            'after_fused': after_fused['count'],\n            'after_native': after_norm['count'],\n        },\n        'subsystem_us': [before_subsystem, after_subsystem],\n        'subsystem_delta_pct': 100 * (after_subsystem / before_subsystem - 1),\n        'model_us': [\n            event(baseline, 'optimized_transformer')['self_device_time_us'],\n            event(current, 'optimized_transformer')['self_device_time_us'],\n        ],\n    }\n    profiles[name]['model_delta_pct'] = 100 * (\n        profiles[name]['model_us'][1] / profiles[name]['model_us'][0] - 1\n    )\nbaseline_profiles = [\n    load('rtx-5070-ti-2026-08-29-c11-baseline-row09-profile.json'),\n    load('rtx-5070-ti-2026-08-29-c11-baseline-row09-profile-recheck.json'),\n]\ncurrent_profiles = [\n    load('rtx-5070-ti-2026-08-29-c11-integrated-row09-profile.json'),\n    load('rtx-5070-ti-2026-08-29-c11-integrated-row09-profile-confirmation.json'),\n]\ndef row9_values(payload):\n    add = optional(payload, 'aten::add')\n    fused = optional(payload, '_residual_layer_norm_fwd')\n    norm = event(payload, 'aten::native_layer_norm')\n    return {\n        'model_us': event(payload, 'optimized_transformer')['self_device_time_us'],\n        'subsystem_us': (\n            (add or {'self_device_time_us': 0})['self_device_time_us']\n            + (fused or {'self_device_time_us': 0})['self_device_time_us']\n            + norm['self_device_time_us']\n        ),\n        'fused_count': 0 if fused is None else fused['count'],\n        'native_count': norm['count'],\n    }\nrow9_before = [row9_values(payload) for payload in baseline_profiles]\nrow9_after = [row9_values(payload) for payload in current_profiles]\nbsub = statistics.mean(item['subsystem_us'] for item in row9_before)\nasub = statistics.mean(item['subsystem_us'] for item in row9_after)\nbmodel = statistics.mean(item['model_us'] for item in row9_before)\namodel = statistics.mean(item['model_us'] for item in row9_after)\nprofiles['row9'] = {\n    'before': row9_before,\n    'after': row9_after,\n    'subsystem_mean_us': [bsub, asub],\n    'subsystem_delta_pct': 100 * (asub / bsub - 1),\n    'model_mean_us': [bmodel, amodel],\n    'model_delta_pct': 100 * (amodel / bmodel - 1),\n}\nheldout_names = [\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed-confirmation.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-a.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-b.json',\n]\nheldout = []\nfor name in heldout_names:\n    payload = load(name)\n    by_case = {item['case_id']: item for item in payload['results']}\n    heldout.append(\n        {\n            'file': name,\n            'geomean': statistics.geometric_mean(\n                item['timing']['speedup_median'] for item in payload['results']\n            ),\n            'long_causal': by_case['long-causal']['timing']['speedup_median'],\n            'long_causal_padding': by_case['long-causal-padding']['timing']['speedup_median'],\n        }\n    )\nlong_names = {\n    'row5': 'rtx-5070-ti-2026-08-29-c11-integrated-row05-long.json',\n    'row6': 'rtx-5070-ti-2026-08-29-c11-integrated-row06-long.json',\n    'row9': 'rtx-5070-ti-2026-08-29-c11-integrated-row09-long.json',\n    'row11': 'rtx-5070-ti-2026-08-29-c11-integrated-row11-long.json',\n    'long_causal': 'rtx-5070-ti-2026-08-29-c11-integrated-long-causal-long.json',\n}\nlongs = {}\nfor name, path in long_names.items():\n    result = load(path)['results'][0]\n    longs[name] = {\n        'baseline_ms': result['timing']['baseline']['median_ms'],\n        'optimized_ms': result['timing']['optimized']['median_ms'],\n        'speedup': result['timing']['speedup_median'],\n        'failed': sum(trial['failed_elements'] for trial in result['accuracy']['trials']),\n        'peak_bytes': result['peak_memory']['optimized']['incremental_peak_bytes'],\n        'backends': result['timing']['backend_counts'],\n    }\nfinal_primary = load('rtx-5070-ti-2026-08-29-c11-integrated-final.json')\nfinal_confirmation = load('rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json')\norganizer = load('rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json')\nsource = load('rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json')\noutput = {\n    'fingerprint': final_primary['environment']['git']['implementation_sha256'],\n    'final': {\n        'primary_geomean': final_primary['summary']['geometric_mean_speedup'],\n        'confirmation_geomean': final_confirmation['summary']['geometric_mean_speedup'],\n        'primary_rows': {\n            item['case_id']: item['parsed'].get('speedup_median')\n            for item in final_primary['results']\n            if item['status'] == 'PASS'\n        },\n        'failed_elements': final_primary['summary']['total_failed_elements'],\n        'compared_elements': final_primary['summary']['total_compared_elements'],\n        'backends': final_primary['summary']['attention_backend_counts'],\n    },\n    'organizer_default_speedup': organizer['parsed']['speedup_median'],\n    'source_geomean': source['summary']['geometric_mean_speedup'],\n    'heldout': heldout,\n    'longs': longs,\n    'profiles': profiles,\n}\nprint(json.dumps(output, indent=2))\nassert output['fingerprint'] == '9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb'\nassert output['final']['failed_elements'] == 0\nassert profiles['row9']['subsystem_delta_pct'] < -40"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T15:47:18.906556+00:00",
+    "ended_at_utc": "2026-08-29T15:47:18.966752+00:00",
+    "wall_time_seconds": 0.06098379986360669,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\n  \"fingerprint\": \"9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb\",\n  \"final\": {\n    \"primary_geomean\": 1.977420208192665,\n    \"confirmation_geomean\": 1.9864990073497601,\n    \"primary_rows\": {\n      \"final-01-b64-d128-h4-s128\": 1.69,\n      \"final-02-b1-d128-h4-s128\": 1.668,\n      \"final-03-b4-d128-h4-s128\": 1.827,\n      \"final-04-b16-d128-h4-s128\": 1.768,\n      \"final-05-b128-d128-h4-s128\": 2.314,\n      \"final-06-b10000-d128-h4-s128\": 1.339,\n      \"final-07-b64-d32-h4-s128\": 1.475,\n      \"final-08-b64-d1024-h4-s128\": 1.097,\n      \"final-09-b64-d128-h1-s128\": 1.78,\n      \"final-10-b64-d128-h2-s128\": 1.579,\n      \"final-11-b64-d128-h16-s128\": 6.377,\n      \"final-12-b64-d128-h4-s32\": 1.803,\n      \"final-13-b64-d128-h4-s1024\": 4.791\n    },\n    \"failed_elements\": 0,\n    \"compared_elements\": 938885120,\n    \"backends\": {\n      \"triton\": 1260,\n      \"sdpa\": 0,\n      \"reference\": 196\n    }\n  },\n  \"organizer_default_speedup\": 1.385,\n  \"source_geomean\": 1.206504805300312,\n  \"heldout\": [\n    {\n      \"file\": \"rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json\",\n      \"geomean\": 1.3398465687073835,\n      \"long_causal\": 1.1988229681544016,\n      \"long_causal_padding\": 1.2266528065024276\n    },\n    {\n      \"file\": \"rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed-confirmation.json\",\n      \"geomean\": 1.386495408044943,\n      \"long_causal\": 1.203621279640143,\n      \"long_causal_padding\": 1.2131380617835126\n    },\n    {\n      \"file\": \"rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-a.json\",\n      \"geomean\": 1.384122345110252,\n      \"long_causal\": 1.1975307932234003,\n      \"long_causal_padding\": 1.222967180523608\n    },\n    {\n      \"file\": \"rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-b.json\",\n      \"geomean\": 1.5153764969453767,\n      \"long_causal\": 1.1993153543472919,\n      \"long_causal_padding\": 1.3353810329363671\n    }\n  ],\n  \"longs\": {\n    \"row5\": {\n      \"baseline_ms\": 2.1868319511413574,\n      \"optimized_ms\": 1.163167953491211,\n      \"speedup\": 1.8800655095230676,\n      \"failed\": 0,\n      \"peak_bytes\": 58720256,\n      \"backends\": {\n        \"triton\": 1240,\n        \"sdpa\": 0,\n        \"reference\": 0\n      }\n    },\n    \"row6\": {\n      \"baseline_ms\": 291.41725158691406,\n      \"optimized_ms\": 188.4573974609375,\n      \"speedup\": 1.5463295976339564,\n      \"failed\": 0,\n      \"peak_bytes\": 11802787840,\n      \"backends\": {\n        \"triton\": 210,\n        \"sdpa\": 0,\n        \"reference\": 210\n      }\n    },\n    \"row9\": {\n      \"baseline_ms\": 0.8253280222415924,\n      \"optimized_ms\": 0.7176479995250702,\n      \"speedup\": 1.150045736611519,\n      \"failed\": 0,\n      \"peak_bytes\": 29360128,\n      \"backends\": {\n        \"triton\": 1240,\n        \"sdpa\": 0,\n        \"reference\": 0\n      }\n    },\n    \"row11\": {\n      \"baseline_ms\": 4.1951680183410645,\n      \"optimized_ms\": 0.8906719982624054,\n      \"speedup\": 4.710115538071631,\n      \"failed\": 0,\n      \"peak_bytes\": 29360128,\n      \"backends\": {\n        \"triton\": 1240,\n        \"sdpa\": 0,\n        \"reference\": 0\n      }\n    },\n    \"long_causal\": {\n      \"baseline_ms\": 0.6808000206947327,\n      \"optimized_ms\": 0.5682560205459595,\n      \"speedup\": 1.1980515754864243,\n      \"failed\": 0,\n      \"peak_bytes\": 24117248,\n      \"backends\": {\n        \"triton\": 0,\n        \"sdpa\": 620,\n        \"reference\": 0\n      }\n    }\n  },\n  \"profiles\": {\n    \"row5\": {\n      \"counts\": {\n        \"before_add\": 240,\n        \"before_native\": 270,\n        \"after_fused\": 240,\n        \"after_native\": 30\n      },\n      \"subsystem_us\": [\n        12089.646000000019,\n        7016.653000000045\n      ],\n      \"subsystem_delta_pct\": -41.96146851611673,\n      \"model_us\": [\n        41581.111999999994,\n        69558.37700000004\n      ],\n      \"model_delta_pct\": 67.28359020316736\n    },\n    \"row6\": {\n      \"counts\": {\n        \"before_add\": 80,\n        \"before_native\": 90,\n        \"after_fused\": 80,\n        \"after_native\": 10\n      },\n      \"subsystem_us\": [\n        486023.33300000045,\n        317375.67099999933\n      ],\n      \"subsystem_delta_pct\": -34.69949908762939,\n      \"model_us\": [\n        2026089.666,\n        1884493.452\n      ],\n      \"model_delta_pct\": -6.988644993167837\n    },\n    \"row8\": {\n      \"addmm_count\": [\n        240,\n        160\n      ],\n      \"addmm_us\": [\n        106065.03500000002,\n        97349.86899999993\n      ],\n      \"addmm_delta_pct\": -8.21681339189685,\n      \"model_us\": [\n        150050.61500000002,\n        141513.54600000003\n      ],\n      \"model_delta_pct\": -5.689459520042616\n    },\n    \"row11\": {\n      \"counts\": {\n        \"before_add\": 240,\n        \"before_native\": 270,\n        \"after_fused\": 240,\n        \"after_native\": 30\n      },\n      \"subsystem_us\": [\n        5978.919999999979,\n        3220.6740000000073\n      ],\n      \"subsystem_delta_pct\": -46.13284673486151,\n      \"model_us\": [\n        41211.814,\n        32109.115999999998\n      ],\n      \"model_delta_pct\": -22.087593620605972\n    },\n    \"row9\": {\n      \"before\": [\n        {\n          \"model_us\": 30214.766000000003,\n          \"subsystem_us\": 5769.588000000009,\n          \"fused_count\": 0,\n          \"native_count\": 270\n        },\n        {\n          \"model_us\": 34942.94400000001,\n          \"subsystem_us\": 5761.059999999983,\n          \"fused_count\": 0,\n          \"native_count\": 270\n        }\n      ],\n      \"after\": [\n        {\n          \"model_us\": 36094.65800000002,\n          \"subsystem_us\": 3232.9380000000638,\n          \"fused_count\": 240,\n          \"native_count\": 30\n        },\n        {\n          \"model_us\": 30720.687999999984,\n          \"subsystem_us\": 3481.839999999962,\n          \"fused_count\": 240,\n          \"native_count\": 30\n        }\n      ],\n      \"subsystem_mean_us\": [\n        5765.323999999996,\n        3357.389000000013\n      ],\n      \"subsystem_delta_pct\": -41.76582270137784,\n      \"model_mean_us\": [\n        32578.855000000007,\n        33407.673\n      ],\n      \"model_delta_pct\": 2.544036615160339\n    }\n  }\n}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T15:47:18.814601+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nimport statistics\n\nroot = pathlib.Path('docs/results')\nload = lambda name: json.loads((root / name).read_text())\nevent = lambda payload, name: next(\n    item for item in payload['top_events']\n    if item['name'] == name and item['self_device_time_us'] > 0\n)\noptional = lambda payload, name: next(\n    (\n        item for item in payload['top_events']\n        if item['name'] == name and item['self_device_time_us'] > 0\n    ),\n    None,\n)\nprofile_pairs = {\n    'row5': (\n        load('rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row05-profile.json'),\n    ),\n    'row6': (\n        load('rtx-5070-ti-2026-08-29-c7-baseline-row06-profile.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row06-profile.json'),\n    ),\n    'row8': (\n        load('rtx-5070-ti-2026-08-29-c6-baseline-row08-profile-c.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row08-profile.json'),\n    ),\n    'row11': (\n        load('rtx-5070-ti-2026-08-29-c8-baseline-row11-profile-e.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row11-profile.json'),\n    ),\n}\nprofiles = {}\nfor name, (baseline, current) in profile_pairs.items():\n    if name == 'row8':\n        before = event(baseline, 'aten::addmm')\n        after = event(current, 'aten::addmm')\n        profiles[name] = {\n            'addmm_count': [before['count'], after['count']],\n            'addmm_us': [before['self_device_time_us'], after['self_device_time_us']],\n            'addmm_delta_pct': 100 * (after['self_device_time_us'] / before['self_device_time_us'] - 1),\n            'model_us': [\n                event(baseline, 'optimized_transformer')['self_device_time_us'],\n                event(current, 'optimized_transformer')['self_device_time_us'],\n            ],\n        }\n        profiles[name]['model_delta_pct'] = 100 * (\n            profiles[name]['model_us'][1] / profiles[name]['model_us'][0] - 1\n        )\n        continue\n    before_add = event(baseline, 'aten::add')\n    before_norm = event(baseline, 'aten::native_layer_norm')\n    after_fused = event(current, '_residual_layer_norm_fwd')\n    after_norm = event(current, 'aten::native_layer_norm')\n    before_subsystem = before_add['self_device_time_us'] + before_norm['self_device_time_us']\n    after_subsystem = after_fused['self_device_time_us'] + after_norm['self_device_time_us']\n    profiles[name] = {\n        'counts': {\n            'before_add': before_add['count'],\n            'before_native': before_norm['count'],\n            'after_fused': after_fused['count'],\n            'after_native': after_norm['count'],\n        },\n        'subsystem_us': [before_subsystem, after_subsystem],\n        'subsystem_delta_pct': 100 * (after_subsystem / before_subsystem - 1),\n        'model_us': [\n            event(baseline, 'optimized_transformer')['self_device_time_us'],\n            event(current, 'optimized_transformer')['self_device_time_us'],\n        ],\n    }\n    profiles[name]['model_delta_pct'] = 100 * (\n        profiles[name]['model_us'][1] / profiles[name]['model_us'][0] - 1\n    )\nbaseline_profiles = [\n    load('rtx-5070-ti-2026-08-29-c11-baseline-row09-profile.json'),\n    load('rtx-5070-ti-2026-08-29-c11-baseline-row09-profile-recheck.json'),\n]\ncurrent_profiles = [\n    load('rtx-5070-ti-2026-08-29-c11-integrated-row09-profile.json'),\n    load('rtx-5070-ti-2026-08-29-c11-integrated-row09-profile-confirmation.json'),\n]\ndef row9_values(payload):\n    add = optional(payload, 'aten::add')\n    fused = optional(payload, '_residual_layer_norm_fwd')\n    norm = event(payload, 'aten::native_layer_norm')\n    return {\n        'model_us': event(payload, 'optimized_transformer')['self_device_time_us'],\n        'subsystem_us': (\n            (add or {'self_device_time_us': 0})['self_device_time_us']\n            + (fused or {'self_device_time_us': 0})['self_device_time_us']\n            + norm['self_device_time_us']\n        ),\n        'fused_count': 0 if fused is None else fused['count'],\n        'native_count': norm['count'],\n    }\nrow9_before = [row9_values(payload) for payload in baseline_profiles]\nrow9_after = [row9_values(payload) for payload in current_profiles]\nbsub = statistics.mean(item['subsystem_us'] for item in row9_before)\nasub = statistics.mean(item['subsystem_us'] for item in row9_after)\nbmodel = statistics.mean(item['model_us'] for item in row9_before)\namodel = statistics.mean(item['model_us'] for item in row9_after)\nprofiles['row9'] = {\n    'before': row9_before,\n    'after': row9_after,\n    'subsystem_mean_us': [bsub, asub],\n    'subsystem_delta_pct': 100 * (asub / bsub - 1),\n    'model_mean_us': [bmodel, amodel],\n    'model_delta_pct': 100 * (amodel / bmodel - 1),\n}\nheldout_names = [\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed-confirmation.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-a.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-b.json',\n]\nheldout = []\nfor name in heldout_names:\n    payload = load(name)\n    by_case = {item['case_id']: item for item in payload['results']}\n    heldout.append(\n        {\n            'file': name,\n            'geomean': statistics.geometric_mean(\n                item['timing']['speedup_median'] for item in payload['results']\n            ),\n            'long_causal': by_case['long-causal']['timing']['speedup_median'],\n            'long_causal_padding': by_case['long-causal-padding']['timing']['speedup_median'],\n        }\n    )\nlong_names = {\n    'row5': 'rtx-5070-ti-2026-08-29-c11-integrated-row05-long.json',\n    'row6': 'rtx-5070-ti-2026-08-29-c11-integrated-row06-long.json',\n    'row9': 'rtx-5070-ti-2026-08-29-c11-integrated-row09-long.json',\n    'row11': 'rtx-5070-ti-2026-08-29-c11-integrated-row11-long.json',\n    'long_causal': 'rtx-5070-ti-2026-08-29-c11-integrated-long-causal-long.json',\n}\nlongs = {}\nfor name, path in long_names.items():\n    result = load(path)['results'][0]\n    longs[name] = {\n        'baseline_ms': result['timing']['baseline']['median_ms'],\n        'optimized_ms': result['timing']['optimized']['median_ms'],\n        'speedup': result['timing']['speedup_median'],\n        'failed': sum(trial['failed_elements'] for trial in result['accuracy']['trials']),\n        'peak_bytes': result['peak_memory']['optimized']['incremental_peak_bytes'],\n        'backends': result['timing']['backend_counts'],\n    }\nfinal_primary = load('rtx-5070-ti-2026-08-29-c11-integrated-final.json')\nfinal_confirmation = load('rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json')\norganizer = load('rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json')\nsource = load('rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json')\noutput = {\n    'fingerprint': final_primary['environment']['git']['implementation_sha256'],\n    'final': {\n        'primary_geomean': final_primary['summary']['geometric_mean_speedup'],\n        'confirmation_geomean': final_confirmation['summary']['geometric_mean_speedup'],\n        'primary_rows': {\n            item['case_id']: item['parsed'].get('speedup_median')\n            for item in final_primary['results']\n            if item['status'] == 'PASS'\n        },\n        'failed_elements': final_primary['summary']['total_failed_elements'],\n        'compared_elements': final_primary['summary']['total_compared_elements'],\n        'backends': final_primary['summary']['attention_backend_counts'],\n    },\n    'organizer_default_speedup': organizer['parsed']['speedup_median'],\n    'source_geomean': source['summary']['geometric_mean_speedup'],\n    'heldout': heldout,\n    'longs': longs,\n    'profiles': profiles,\n}\nprint(json.dumps(output, indent=2))\nassert output['fingerprint'] == '9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb'\nassert output['final']['failed_elements'] == 0\nassert profiles['row9']['subsystem_delta_pct'] < -40"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 494,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439999098880
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T15:47:19.008614+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json\nimport pathlib\nimport statistics\n\nroot = pathlib.Path('docs/results')\nload = lambda name: json.loads((root / name).read_text())\nevent = lambda payload, name: next(\n    item for item in payload['top_events']\n    if item['name'] == name and item['self_device_time_us'] > 0\n)\noptional = lambda payload, name: next(\n    (\n        item for item in payload['top_events']\n        if item['name'] == name and item['self_device_time_us'] > 0\n    ),\n    None,\n)\nprofile_pairs = {\n    'row5': (\n        load('rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row05-profile.json'),\n    ),\n    'row6': (\n        load('rtx-5070-ti-2026-08-29-c7-baseline-row06-profile.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row06-profile.json'),\n    ),\n    'row8': (\n        load('rtx-5070-ti-2026-08-29-c6-baseline-row08-profile-c.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row08-profile.json'),\n    ),\n    'row11': (\n        load('rtx-5070-ti-2026-08-29-c8-baseline-row11-profile-e.json'),\n        load('rtx-5070-ti-2026-08-29-c11-integrated-row11-profile.json'),\n    ),\n}\nprofiles = {}\nfor name, (baseline, current) in profile_pairs.items():\n    if name == 'row8':\n        before = event(baseline, 'aten::addmm')\n        after = event(current, 'aten::addmm')\n        profiles[name] = {\n            'addmm_count': [before['count'], after['count']],\n            'addmm_us': [before['self_device_time_us'], after['self_device_time_us']],\n            'addmm_delta_pct': 100 * (after['self_device_time_us'] / before['self_device_time_us'] - 1),\n            'model_us': [\n                event(baseline, 'optimized_transformer')['self_device_time_us'],\n                event(current, 'optimized_transformer')['self_device_time_us'],\n            ],\n        }\n        profiles[name]['model_delta_pct'] = 100 * (\n            profiles[name]['model_us'][1] / profiles[name]['model_us'][0] - 1\n        )\n        continue\n    before_add = event(baseline, 'aten::add')\n    before_norm = event(baseline, 'aten::native_layer_norm')\n    after_fused = event(current, '_residual_layer_norm_fwd')\n    after_norm = event(current, 'aten::native_layer_norm')\n    before_subsystem = before_add['self_device_time_us'] + before_norm['self_device_time_us']\n    after_subsystem = after_fused['self_device_time_us'] + after_norm['self_device_time_us']\n    profiles[name] = {\n        'counts': {\n            'before_add': before_add['count'],\n            'before_native': before_norm['count'],\n            'after_fused': after_fused['count'],\n            'after_native': after_norm['count'],\n        },\n        'subsystem_us': [before_subsystem, after_subsystem],\n        'subsystem_delta_pct': 100 * (after_subsystem / before_subsystem - 1),\n        'model_us': [\n            event(baseline, 'optimized_transformer')['self_device_time_us'],\n            event(current, 'optimized_transformer')['self_device_time_us'],\n        ],\n    }\n    profiles[name]['model_delta_pct'] = 100 * (\n        profiles[name]['model_us'][1] / profiles[name]['model_us'][0] - 1\n    )\nbaseline_profiles = [\n    load('rtx-5070-ti-2026-08-29-c11-baseline-row09-profile.json'),\n    load('rtx-5070-ti-2026-08-29-c11-baseline-row09-profile-recheck.json'),\n]\ncurrent_profiles = [\n    load('rtx-5070-ti-2026-08-29-c11-integrated-row09-profile.json'),\n    load('rtx-5070-ti-2026-08-29-c11-integrated-row09-profile-confirmation.json'),\n]\ndef row9_values(payload):\n    add = optional(payload, 'aten::add')\n    fused = optional(payload, '_residual_layer_norm_fwd')\n    norm = event(payload, 'aten::native_layer_norm')\n    return {\n        'model_us': event(payload, 'optimized_transformer')['self_device_time_us'],\n        'subsystem_us': (\n            (add or {'self_device_time_us': 0})['self_device_time_us']\n            + (fused or {'self_device_time_us': 0})['self_device_time_us']\n            + norm['self_device_time_us']\n        ),\n        'fused_count': 0 if fused is None else fused['count'],\n        'native_count': norm['count'],\n    }\nrow9_before = [row9_values(payload) for payload in baseline_profiles]\nrow9_after = [row9_values(payload) for payload in current_profiles]\nbsub = statistics.mean(item['subsystem_us'] for item in row9_before)\nasub = statistics.mean(item['subsystem_us'] for item in row9_after)\nbmodel = statistics.mean(item['model_us'] for item in row9_before)\namodel = statistics.mean(item['model_us'] for item in row9_after)\nprofiles['row9'] = {\n    'before': row9_before,\n    'after': row9_after,\n    'subsystem_mean_us': [bsub, asub],\n    'subsystem_delta_pct': 100 * (asub / bsub - 1),\n    'model_mean_us': [bmodel, amodel],\n    'model_delta_pct': 100 * (amodel / bmodel - 1),\n}\nheldout_names = [\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed-confirmation.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-a.json',\n    'rtx-5070-ti-2026-08-29-c11-integrated-heldout-recheck-b.json',\n]\nheldout = []\nfor name in heldout_names:\n    payload = load(name)\n    by_case = {item['case_id']: item for item in payload['results']}\n    heldout.append(\n        {\n            'file': name,\n            'geomean': statistics.geometric_mean(\n                item['timing']['speedup_median'] for item in payload['results']\n            ),\n            'long_causal': by_case['long-causal']['timing']['speedup_median'],\n            'long_causal_padding': by_case['long-causal-padding']['timing']['speedup_median'],\n        }\n    )\nlong_names = {\n    'row5': 'rtx-5070-ti-2026-08-29-c11-integrated-row05-long.json',\n    'row6': 'rtx-5070-ti-2026-08-29-c11-integrated-row06-long.json',\n    'row9': 'rtx-5070-ti-2026-08-29-c11-integrated-row09-long.json',\n    'row11': 'rtx-5070-ti-2026-08-29-c11-integrated-row11-long.json',\n    'long_causal': 'rtx-5070-ti-2026-08-29-c11-integrated-long-causal-long.json',\n}\nlongs = {}\nfor name, path in long_names.items():\n    result = load(path)['results'][0]\n    longs[name] = {\n        'baseline_ms': result['timing']['baseline']['median_ms'],\n        'optimized_ms': result['timing']['optimized']['median_ms'],\n        'speedup': result['timing']['speedup_median'],\n        'failed': sum(trial['failed_elements'] for trial in result['accuracy']['trials']),\n        'peak_bytes': result['peak_memory']['optimized']['incremental_peak_bytes'],\n        'backends': result['timing']['backend_counts'],\n    }\nfinal_primary = load('rtx-5070-ti-2026-08-29-c11-integrated-final.json')\nfinal_confirmation = load('rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json')\norganizer = load('rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json')\nsource = load('rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json')\noutput = {\n    'fingerprint': final_primary['environment']['git']['implementation_sha256'],\n    'final': {\n        'primary_geomean': final_primary['summary']['geometric_mean_speedup'],\n        'confirmation_geomean': final_confirmation['summary']['geometric_mean_speedup'],\n        'primary_rows': {\n            item['case_id']: item['parsed'].get('speedup_median')\n            for item in final_primary['results']\n            if item['status'] == 'PASS'\n        },\n        'failed_elements': final_primary['summary']['total_failed_elements'],\n        'compared_elements': final_primary['summary']['total_compared_elements'],\n        'backends': final_primary['summary']['attention_backend_counts'],\n    },\n    'organizer_default_speedup': organizer['parsed']['speedup_median'],\n    'source_geomean': source['summary']['geometric_mean_speedup'],\n    'heldout': heldout,\n    'longs': longs,\n    'profiles': profiles,\n}\nprint(json.dumps(output, indent=2))\nassert output['fingerprint'] == '9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb'\nassert output['final']['failed_elements'] == 0\nassert profiles['row9']['subsystem_delta_pct'] < -40"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 494,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439999098880
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

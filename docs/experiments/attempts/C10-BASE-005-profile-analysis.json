@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C10-BASE-005-profile-analysis",
+    "hypothesis": "Positive-device-time event accounting will rank row 5, row 7, and observation-only row 12 by residual-normalization ceiling and route cost.",
+    "scope": "Read-only Campaign 10 profile analysis.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [],
+    "rollback": "No rollback; change candidate authorization if the measured ranking contradicts the planned order.",
+    "decision": "observation",
+    "decision_rationale": "Exact profile shares determine whether EXP-023 or EXP-024 may run.",
+    "review_status": "not_required"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib; paths={'row5':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json','row7':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row07-profile.json','row12':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row12-profile.json'}; pick=lambda d:(lambda ev:{'steps':d['steps'],'model_us':ev['optimized_transformer']['self_device_time_us'],'add_us':ev.get('aten::add',{}).get('self_device_time_us',0),'norm_us':ev.get('aten::native_layer_norm',{}).get('self_device_time_us',0),'add_plus_norm_us':ev.get('aten::add',{}).get('self_device_time_us',0)+ev.get('aten::native_layer_norm',{}).get('self_device_time_us',0),'subsystem_share_percent':100*(ev.get('aten::add',{}).get('self_device_time_us',0)+ev.get('aten::native_layer_norm',{}).get('self_device_time_time_us',0))/ev['optimized_transformer']['self_device_time_us'],'attention_us':ev.get('_attention_fwd',{}).get('self_device_time_us',0),'backend_counts':d['backend_counts']})({e['name']:e for e in d['top_events'] if e['self_device_time_us']>0}); out={k:pick(json.loads(pathlib.Path(p).read_text())) for k,p in paths.items()}; print(json.dumps(out,sort_keys=True))"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T14:21:45.774231+00:00",
+    "ended_at_utc": "2026-08-29T14:21:45.812473+00:00",
+    "wall_time_seconds": 0.03819260001182556,
+    "timeout_seconds": 60.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\"row12\": {\"add_plus_norm_us\": 1758.890000000085, \"add_us\": 355.6590000000515, \"attention_us\": 2054.962000000013, \"backend_counts\": {\"reference\": 0, \"sdpa\": 0, \"triton\": 120}, \"model_us\": 31475.62900000001, \"norm_us\": 1403.2310000000334, \"steps\": 30, \"subsystem_share_percent\": 1.129950413381894}, \"row5\": {\"add_plus_norm_us\": 12089.646000000019, \"add_us\": 2299.448999999947, \"attention_us\": 12093.349999999973, \"backend_counts\": {\"reference\": 0, \"sdpa\": 0, \"triton\": 120}, \"model_us\": 41581.111999999994, \"norm_us\": 9790.197000000071, \"steps\": 30, \"subsystem_share_percent\": 5.5300324820556686}, \"row7\": {\"add_plus_norm_us\": 5157.168000000034, \"add_us\": 357.4200000000428, \"attention_us\": 2964.5560000000132, \"backend_counts\": {\"reference\": 30, \"sdpa\": 0, \"triton\": 90}, \"model_us\": 41611.310000000005, \"norm_us\": 4799.747999999991, \"steps\": 30, \"subsystem_share_percent\": 0.8589491655034238}}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T14:21:45.674745+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib; paths={'row5':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json','row7':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row07-profile.json','row12':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row12-profile.json'}; pick=lambda d:(lambda ev:{'steps':d['steps'],'model_us':ev['optimized_transformer']['self_device_time_us'],'add_us':ev.get('aten::add',{}).get('self_device_time_us',0),'norm_us':ev.get('aten::native_layer_norm',{}).get('self_device_time_us',0),'add_plus_norm_us':ev.get('aten::add',{}).get('self_device_time_us',0)+ev.get('aten::native_layer_norm',{}).get('self_device_time_us',0),'subsystem_share_percent':100*(ev.get('aten::add',{}).get('self_device_time_us',0)+ev.get('aten::native_layer_norm',{}).get('self_device_time_time_us',0))/ev['optimized_transformer']['self_device_time_us'],'attention_us':ev.get('_attention_fwd',{}).get('self_device_time_us',0),'backend_counts':d['backend_counts']})({e['name']:e for e in d['top_events'] if e['self_device_time_us']>0}); out={k:pick(json.loads(pathlib.Path(p).read_text())) for k,p in paths.items()}; print(json.dumps(out,sort_keys=True))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 334,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439960928256
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T14:21:45.849491+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib; paths={'row5':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row05-profile.json','row7':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row07-profile.json','row12':'docs/results/rtx-5070-ti-2026-08-29-c10-baseline-row12-profile.json'}; pick=lambda d:(lambda ev:{'steps':d['steps'],'model_us':ev['optimized_transformer']['self_device_time_us'],'add_us':ev.get('aten::add',{}).get('self_device_time_us',0),'norm_us':ev.get('aten::native_layer_norm',{}).get('self_device_time_us',0),'add_plus_norm_us':ev.get('aten::add',{}).get('self_device_time_us',0)+ev.get('aten::native_layer_norm',{}).get('self_device_time_us',0),'subsystem_share_percent':100*(ev.get('aten::add',{}).get('self_device_time_us',0)+ev.get('aten::native_layer_norm',{}).get('self_device_time_time_us',0))/ev['optimized_transformer']['self_device_time_us'],'attention_us':ev.get('_attention_fwd',{}).get('self_device_time_us',0),'backend_counts':d['backend_counts']})({e['name']:e for e in d['top_events'] if e['self_device_time_us']>0}); out={k:pick(json.loads(pathlib.Path(p).read_text())) for k,p in paths.items()}; print(json.dumps(out,sort_keys=True))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 334,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439960928256
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

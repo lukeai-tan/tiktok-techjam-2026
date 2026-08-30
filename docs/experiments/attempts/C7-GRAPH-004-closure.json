@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C7-GRAPH-004-closure",
+    "hypothesis": "The repository graph records the accepted Campaign 7 fusion, rejected wide-head route, exact evidence, and bounded next-step handoff",
+    "scope": "Campaign 7 knowledge-graph closure event",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN-007.md",
+      "docs/REQUIREMENTS.md",
+      "transformer_opt/kernels/residual_layer_norm.py"
+    ],
+    "rollback": "Append a superseding correction event if any graph fact is wrong; never rewrite graph history",
+    "decision": "keep",
+    "decision_rationale": "Campaign 7 has an accepted exact-row implementation and rejected route that must survive future sessions",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign7",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 7 accepts exact-row-6 fused residual plus LayerNorm and rejects head-dimension-256 attention",
+      "--details",
+      "Starting checkpoint 8c89d1d and fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4 were rebaselined. EXP-017 head-dimension-256 attention was rejected after two strict row-8 misses for 16x16 and 16x32, a 151616-byte shared-memory compile failure for 16x64, and an accurate exact-first-layer hybrid that regressed model profile time 8.50 percent. EXP-018-I2R exact-row-6 fused residual plus LayerNorm was accepted at fingerprint a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b. It passed 2.949 billion-output stress, reduced integrated row-6 model profile time 9.54 percent, measured 1.547046x over 100 samples versus 1.417307x control, and kept 11802787840-byte incremental peak parity. Final pair is 13 of 13 plus exact skip at 1.880620x and 1.927261x; full suite is 137 passed. No Git or public action is authorized. Next campaign must start with fresh profiles and must not retry EXP-017 geometry or broaden the exact fusion without new boundary evidence.",
+      "--path",
+      "docs/experiments/CAMPAIGN-007.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-007-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "transformer_opt/kernels/residual_layer_norm.py",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T12:55:37.454834+00:00",
+    "ended_at_utc": "2026-08-29T12:55:37.561450+00:00",
+    "wall_time_seconds": 0.10680509987287223,
+    "timeout_seconds": 300.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\29\\2026-08-29T12-55-37Z-codex-campaign7-1370496c.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T12:55:37.371697+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign7",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 7 accepts exact-row-6 fused residual plus LayerNorm and rejects head-dimension-256 attention",
+      "--details",
+      "Starting checkpoint 8c89d1d and fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4 were rebaselined. EXP-017 head-dimension-256 attention was rejected after two strict row-8 misses for 16x16 and 16x32, a 151616-byte shared-memory compile failure for 16x64, and an accurate exact-first-layer hybrid that regressed model profile time 8.50 percent. EXP-018-I2R exact-row-6 fused residual plus LayerNorm was accepted at fingerprint a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b. It passed 2.949 billion-output stress, reduced integrated row-6 model profile time 9.54 percent, measured 1.547046x over 100 samples versus 1.417307x control, and kept 11802787840-byte incremental peak parity. Final pair is 13 of 13 plus exact skip at 1.880620x and 1.927261x; full suite is 137 passed. No Git or public action is authorized. Next campaign must start with fresh profiles and must not retry EXP-017 geometry or broaden the exact fusion without new boundary evidence.",
+      "--path",
+      "docs/experiments/CAMPAIGN-007.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-007-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "transformer_opt/kernels/residual_layer_norm.py",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 146,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441086427136
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T12:55:37.598129+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign7",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 7 accepts exact-row-6 fused residual plus LayerNorm and rejects head-dimension-256 attention",
+      "--details",
+      "Starting checkpoint 8c89d1d and fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4 were rebaselined. EXP-017 head-dimension-256 attention was rejected after two strict row-8 misses for 16x16 and 16x32, a 151616-byte shared-memory compile failure for 16x64, and an accurate exact-first-layer hybrid that regressed model profile time 8.50 percent. EXP-018-I2R exact-row-6 fused residual plus LayerNorm was accepted at fingerprint a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b. It passed 2.949 billion-output stress, reduced integrated row-6 model profile time 9.54 percent, measured 1.547046x over 100 samples versus 1.417307x control, and kept 11802787840-byte incremental peak parity. Final pair is 13 of 13 plus exact skip at 1.880620x and 1.927261x; full suite is 137 passed. No Git or public action is authorized. Next campaign must start with fresh profiles and must not retry EXP-017 geometry or broaden the exact fusion without new boundary evidence.",
+      "--path",
+      "docs/experiments/CAMPAIGN-007.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-007-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/REQUIREMENTS.md",
+      "--path",
+      "transformer_opt/kernels/residual_layer_norm.py",
+      "--path",
+      "torch_transformer_benchmark.py"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 146,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441086418944
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

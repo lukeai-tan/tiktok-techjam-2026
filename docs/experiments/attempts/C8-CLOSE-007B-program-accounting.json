@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C8-CLOSE-007B-program-accounting",
+    "hypothesis": "The consolidated Campaign 2 through Campaign 8 failure count should match the retained nonzero attempt files and exclude the separately reported BC1 comparison.",
+    "scope": "Read-only aggregation of C2-C8 and SUBMISSION attempt JSON for cross-campaign history reconciliation.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [],
+    "rollback": "No rollback required for read-only accounting; correct prose totals if the immutable ledger differs.",
+    "decision": "keep",
+    "decision_rationale": "The comprehensive run-through must report retained failures from every campaign accurately.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections,json,pathlib,re; ps=sorted(p for p in pathlib.Path('docs/experiments/attempts').glob('*.json') if re.match(r'^(C[2-8]-|SUBMISSION-)',p.name)); ds=[(p,json.loads(p.read_text(encoding='utf-8'))) for p in ps]; failed=[p.name for p,d in ds if d.get('execution',{}).get('status')=='FAIL']; print(json.dumps({'attempts_before_this_record':len(ds),'pass':sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds),'fail':len(failed),'timeouts':sum(bool(d.get('execution',{}).get('timed_out')) for _,d in ds),'wall_time_seconds':sum(float(d.get('execution',{}).get('wall_time_seconds') or 0) for _,d in ds),'failed_attempts':failed},sort_keys=True))"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T13:55:04.534989+00:00",
+    "ended_at_utc": "2026-08-29T13:55:04.617643+00:00",
+    "wall_time_seconds": 0.08301840000785887,
+    "timeout_seconds": 60.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\"attempts_before_this_record\": 448, \"fail\": 33, \"failed_attempts\": [\"C2-EXP-003-postmerge-tests.json\", \"C2-EXP-003-postrebase-tests.json\", \"C2-EXP-004-I1-direct.json\", \"C2-LOG-HARDENING-004-focused.json\", \"C4-EXP-009-I2-fast.json\", \"C4-OBS-001-final-row11-profile.json\", \"C4-PREFLIGHT-000-default-python.json\", \"C4-PREFLIGHT-001-workflow.json\", \"C4-PREFLIGHT-003-baseline.json\", \"C5-EXP-010-I1-row7.json\", \"C5-EXP-010-I3-focused.json\", \"C5-EXP-011-I1-row6.json\", \"C5-INTEGRATE-013-full-tests-predoc.json\", \"C5-OBS-006-row7-triton.json\", \"C5-OBS-007-row7-sdpa.json\", \"C5-OBS-008-row6-triton.json\", \"C5-OBS-009-row6-sdpa.json\", \"C5-OBS-012-row8-sdpa.json\", \"C6-CLOSE-001-curated-evidence-pre-doc.json\", \"C6-INTEGRATE-016-full-tests-predoc.json\", \"C6-PREFLIGHT-001-workflow.json\", \"C7-CLOSE-004-final-council-rework.json\", \"C7-EXP-017-I1-screen.json\", \"C7-EXP-017-I2-screen.json\", \"C7-EXP-017-I3-compile-direct.json\", \"C7-EXP-018-I2R-candidate-suite.json\", \"C8-GRAPH-005A-invalid-decision.json\", \"C8-INTEGRATE-012-pre-doc-full-suite.json\", \"C8-INTEGRATE-017-artifact-contract-pre-doc.json\", \"C8-INTEGRATE-018-artifact-contract.json\", \"C8-INTEGRATE-019-artifact-contract-rework.json\", \"C8-INTEGRATE-021-full-suite.json\", \"C8-OPS-001-wrapper-argument-error.json\"], \"pass\": 415, \"timeouts\": 0, \"wall_time_seconds\": 3952.7835713003296}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T13:55:04.444187+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections,json,pathlib,re; ps=sorted(p for p in pathlib.Path('docs/experiments/attempts').glob('*.json') if re.match(r'^(C[2-8]-|SUBMISSION-)',p.name)); ds=[(p,json.loads(p.read_text(encoding='utf-8'))) for p in ps]; failed=[p.name for p,d in ds if d.get('execution',{}).get('status')=='FAIL']; print(json.dumps({'attempts_before_this_record':len(ds),'pass':sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds),'fail':len(failed),'timeouts':sum(bool(d.get('execution',{}).get('timed_out')) for _,d in ds),'wall_time_seconds':sum(float(d.get('execution',{}).get('wall_time_seconds') or 0) for _,d in ds),'failed_attempts':failed},sort_keys=True))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 258,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440018309120
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T13:55:04.655912+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import collections,json,pathlib,re; ps=sorted(p for p in pathlib.Path('docs/experiments/attempts').glob('*.json') if re.match(r'^(C[2-8]-|SUBMISSION-)',p.name)); ds=[(p,json.loads(p.read_text(encoding='utf-8'))) for p in ps]; failed=[p.name for p,d in ds if d.get('execution',{}).get('status')=='FAIL']; print(json.dumps({'attempts_before_this_record':len(ds),'pass':sum(d.get('execution',{}).get('status')=='PASS' for _,d in ds),'fail':len(failed),'timeouts':sum(bool(d.get('execution',{}).get('timed_out')) for _,d in ds),'wall_time_seconds':sum(float(d.get('execution',{}).get('wall_time_seconds') or 0) for _,d in ds),'failed_attempts':failed},sort_keys=True))"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 258,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 440018309120
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

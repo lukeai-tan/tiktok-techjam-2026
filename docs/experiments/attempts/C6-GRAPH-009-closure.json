@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C6-GRAPH-009-closure",
+    "hypothesis": "The repository graph receives a durable Campaign 6 closure handoff with the selected fingerprint, complete evidence gates, trade-off, and next-loop boundary",
+    "scope": "Campaign 6 repository-memory graph closure event",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/CAMPAIGN-006.md",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json",
+      "docs/experiments/OPTIMIZATION_HISTORY.md"
+    ],
+    "rollback": "Append a correcting graph event; do not rewrite append-only history",
+    "decision": "keep",
+    "decision_rationale": "Durable closure context is required before the next optimization campaign",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 6 locally closed with exact-width packed-QKV acceptance and complete validation",
+      "--details",
+      "Checkpoint 8c89d1d on feat/jared-attempt retains implementation fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4. Final matrices pass 13/13 executable rows with zero failed elements at 1.872916x and 1.863721x. Exact width 1024 packed QKV cuts row8 model profile time 7.91 percent and adds 50380800 bytes of derived-weight storage; widths 513-1023 remain disabled. The final repository suite passes 125 tests. Campaign 6 closes at 121 logged attempts: 118 PASS, 3 retained FAIL, zero timeouts. No post-checkpoint commit or push is authorized; a new campaign must start from a fresh profile and must not repeat the closed row6, row7, or row11 launch axes.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-006-FINAL-REVIEW.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T11:38:58.144814+00:00",
+    "ended_at_utc": "2026-08-29T11:38:58.253276+00:00",
+    "wall_time_seconds": 0.10725270002149045,
+    "timeout_seconds": 600.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "<home>\\Documents\\Codex-Graphs\\repos\\github-com--lukeai-tan--tiktok-techjam-2026\\events\\2026\\08\\29\\2026-08-29T11-38-58Z-codex-campaign6-ffb243b7.json\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T11:38:58.054032+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 6 locally closed with exact-width packed-QKV acceptance and complete validation",
+      "--details",
+      "Checkpoint 8c89d1d on feat/jared-attempt retains implementation fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4. Final matrices pass 13/13 executable rows with zero failed elements at 1.872916x and 1.863721x. Exact width 1024 packed QKV cuts row8 model profile time 7.91 percent and adds 50380800 bytes of derived-weight storage; widths 513-1023 remain disabled. The final repository suite passes 125 tests. Campaign 6 closes at 121 logged attempts: 118 PASS, 3 retained FAIL, zero timeouts. No post-checkpoint commit or push is authorized; a new campaign must start from a fresh profile and must not repeat the closed row6, row7, or row11 launch axes.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-006-FINAL-REVIEW.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 27,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441636548608
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T11:38:58.288902+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "append_event.py",
+      "--repo",
+      ".",
+      "--agent-id",
+      "codex-campaign6",
+      "--type",
+      "handoff",
+      "--summary",
+      "Campaign 6 locally closed with exact-width packed-QKV acceptance and complete validation",
+      "--details",
+      "Checkpoint 8c89d1d on feat/jared-attempt retains implementation fingerprint 54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4. Final matrices pass 13/13 executable rows with zero failed elements at 1.872916x and 1.863721x. Exact width 1024 packed QKV cuts row8 model profile time 7.91 percent and adds 50380800 bytes of derived-weight storage; widths 513-1023 remain disabled. The final repository suite passes 125 tests. Campaign 6 closes at 121 logged attempts: 118 PASS, 3 retained FAIL, zero timeouts. No post-checkpoint commit or push is authorized; a new campaign must start from a fresh profile and must not repeat the closed row6, row7, or row11 launch axes.",
+      "--path",
+      "docs/experiments/CAMPAIGN-006.md",
+      "--path",
+      "docs/experiments/CAMPAIGN-006-WORKFLOW.json",
+      "--path",
+      "docs/experiments/OPTIMIZATION_HISTORY.md",
+      "--path",
+      "docs/experiments/reviews/CAMPAIGN-006-FINAL-REVIEW.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 27,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441636544512
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

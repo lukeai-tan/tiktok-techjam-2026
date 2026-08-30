@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C6-REVIEW-003-final-council",
+    "hypothesis": "The integrated Campaign 6 release-gate review is valid structured evidence and explicitly records facts, trade-offs, objections, conditions, and residual risks",
+    "scope": "Integrated Campaign 6 AI Council and release-gate review sidecar",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/reviews/CAMPAIGN-006-FINAL-REVIEW.json"
+    ],
+    "rollback": "Correct only invalid or unsupported final-review fields",
+    "decision": "keep",
+    "decision_rationale": "Structured review is required before final workflow, graph, and test seals",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "json.tool",
+      "docs\\experiments\\reviews\\CAMPAIGN-006-FINAL-REVIEW.json"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T11:35:28.955208+00:00",
+    "ended_at_utc": "2026-08-29T11:35:29.003755+00:00",
+    "wall_time_seconds": 0.04784710006788373,
+    "timeout_seconds": 600.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\n    \"schema_version\": 1,\n    \"campaign\": \"CAMPAIGN-006\",\n    \"review_stage\": \"integrated_release_gate\",\n    \"reviewer_role\": \"release gatekeeper with AI Council perspectives\",\n    \"decision\": \"APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL\",\n    \"decision_scope\": \"Campaign 6 implementation, current-fingerprint evidence, tests, notebook, and submission-facing documentation\",\n    \"checkpoint_commit\": \"8c89d1d4170c58d16fb75d79f212e990565fba7d\",\n    \"implementation_sha256\": \"54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4\",\n    \"facts\": [\n        \"The independently reviewed source change preserves packed QKV for d_model <= 512 and adds only exact d_model == 1024; a negative width-768 test protects the unmeasured interval.\",\n        \"Both complete final matrices pass 13/13 executable rows plus the exact authorized resource skip with zero failed elements and identical Triton 1260, SDPA 0, reference 196 backend totals.\",\n        \"The current final geomeans are 1.8729163311822579x and 1.8637208776955112x, within 0.491 percent of each other.\",\n        \"Three 300-sample row-8 candidates measure 1.022022x, 1.030071x, and 1.023827x while two contemporaneous unchanged controls measure 0.981690x and 0.993542x.\",\n        \"The integrated row-8 profile reduces aten::addmm calls from 240 to 160, addmm device time by 11.33 percent, and optimized-model device time by 7.91 percent.\",\n        \"Four packed width-1024 layers add 50380800 bytes of pre-forward derived-weight storage; the optimized incremental activation peak remains 369115136 bytes in both control and candidate.\",\n        \"Organizer default, two held-out matrices, and the source-derived matrix all pass their full executable correctness gates with zero failed elements.\",\n        \"The pre-final complete suite passes 124 tests with 14 upstream PyTorch deprecation warnings, and the added speed-memory trade-off assertion passes in the 13-test artifact suite.\"\n    ],\n    \"council_review\": {\n        \"requirements\": \"The strict comparator, protected organizer sources, state dict, dispatch accounting, skip policy, and exact-width boundary remain intact.\",\n        \"architecture\": \"The one-condition extension reuses the existing packed-QKV cache and introduces no new dependency, public API, persisted state, or broad dispatch rule.\",\n        \"implementation\": \"The retained source hunk is the smallest candidate that removes two row-8 projection launches without retaining any rejected launch variant.\",\n        \"security_privacy\": \"No credentials, external data, production mutation, dependency change, or secret-bearing output is introduced.\",\n        \"testing_qa\": \"Positive and negative boundary tests, exact row 8, a width-1024 neighbor, two final matrices, broader matrices, profiles, and the repository suite cover the accepted behavior.\",\n        \"user_docs\": \"Current claims distinguish current-fingerprint results from Campaign 5 historical highs, disclose the approximately 48 MiB cache cost, and warn that local Colab edits are not remotely available until separately committed and pushed.\",\n        \"devils_advocate\": \"Campaign 5 has higher historical aggregate geomeans and the raw row-8 gain is modest; acceptance is justified only by contemporaneous controls and profiler evidence, not by claiming a cross-campaign aggregate win.\"\n    },\n    \"blocking_findings\": [],\n    \"conditions\": [\n        \"Run the final 125-test suite after the speed-memory assertion and final documentation edits.\",\n        \"Validate the completed workflow, append and validate graph closure, and run final diff hygiene through immutable Campaign 6 attempts.\",\n        \"Do not describe the locally edited Colab notebook as remotely reproducible until a separately authorized commit and push completes.\"\n    ],\n    \"residual_risks\": [\n        \"Timing and launch policy remain specific to the recorded RTX 5070 Ti environment.\",\n        \"The exact-width packed cache trades about 48 MiB of persistent derived-weight memory for a modest row-8 speed benefit.\",\n        \"Training, backward, low precision, compilation, CPU, widths 513 through 1023, and widths above 1024 remain outside the new route.\",\n        \"Organizer dtype, padding, timing, tolerance, and backward requirements remain unstated.\"\n    ],\n    \"evidence\": [\n        \"docs/experiments/reviews/CAMPAIGN-006-CANDIDATE-REVIEW-I1R.json\",\n        \"docs/experiments/attempts/C6-INTEGRATE-004-final.json\",\n        \"docs/experiments/attempts/C6-INTEGRATE-005-final-confirmation.json\",\n        \"docs/experiments/attempts/C6-INTEGRATE-006-organizer-default.json\",\n        \"docs/experiments/attempts/C6-INTEGRATE-007-heldout-5seed.json\",\n        \"docs/experiments/attempts/C6-INTEGRATE-008-heldout-5seed-confirmation.json\",\n        \"docs/experiments/attempts/C6-INTEGRATE-009-source-derived.json\",\n        \"docs/experiments/attempts/C6-INTEGRATE-012-row8-profile.json\",\n        \"docs/experiments/attempts/C6-CLOSE-004-full-suite.json\",\n        \"docs/experiments/attempts/C6-CLOSE-005-council-tradeoff-gate.json\"\n    ],\n    \"final_seal_evidence\": [\n        \"docs/experiments/attempts/C6-CLOSE-007-final-suite.json\",\n        \"docs/experiments/attempts/C6-CLOSE-008-workflow-final.json\",\n        \"docs/experiments/attempts/C6-GRAPH-009-closure.json\",\n        \"docs/experiments/attempts/C6-GRAPH-010-rebuild.json\",\n        \"docs/experiments/attempts/C6-GRAPH-011-validate.json\",\n        \"docs/experiments/attempts/C6-CLOSE-009-final-diff-check.json\"\n    ],\n    \"git_actions_authorized\": []\n}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T11:35:28.858558+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "json.tool",
+      "docs\\experiments\\reviews\\CAMPAIGN-006-FINAL-REVIEW.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 23,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441623838720
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T11:35:29.039913+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-m",
+      "json.tool",
+      "docs\\experiments\\reviews\\CAMPAIGN-006-FINAL-REVIEW.json"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 23,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "54df021e77cfed86011bae0b41e07c3f42842b54e19c139aa925eb2f0d449ff4",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441623838720
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "campaign": "CAMPAIGN-006",
+  "review_stage": "preintegration_candidate_review",
+  "reviewer_role": "independent candidate reviewer",
+  "decision": "REJECT_AND_REWORK",
+  "decision_scope": "EXP-015-I1 candidate fingerprint 3ef105c253c0319ae80447a854a9bc700d574d1ca3212904c648504b91584797",
+  "base_commit": "7f4fcba4ffb891cb876fa9ec27afa2395b99c77a",
+  "implementation_sha256": "3ef105c253c0319ae80447a854a9bc700d574d1ca3212904c648504b91584797",
+  "verified": [
+    "Both 300-sample candidate timings passed with zero of 41943040 failed elements and 13.225951671600342 ms and 13.230288028717041 ms optimized medians.",
+    "Paired Campaign 6 controls recorded 13.609855651855469 ms and 13.629776000976562 ms optimized medians, so the candidate is 2.820779 percent and 2.930994 percent faster with approximately 0.033 percent candidate repeat spread.",
+    "The exact row-8 gate passed with zero failed elements, zero maximum absolute error, and 1.072x speedup.",
+    "The profile reduced aten::addmm calls from 240 to 160, device time from 93049.693 us to 91685.808 us, and total optimized model device time from 132951.682 us to 131826.436 us.",
+    "The d_model 1024, 16-head, sequence-128 noncausal neighbor passed with zero of 1310720 failed elements, 0.000293195 maximum absolute error, 1.177526x speedup, and 310 Triton attention calls.",
+    "EXP-015-I2 was correctly rejected at 0.988851x and 14.132976 ms optimized versus 13.975408 ms baseline."
+  ],
+  "blocking_findings": [
+    "The <=1024 guard reroutes every unmeasured d_model from 513 through 1023 despite the exact-width comment, violating AC-BOUNDARY-1.",
+    "The isolated candidate test file predates Campaign 5 test additions and must not replace the integration branch test file wholesale."
+  ],
+  "required_rework": [
+    "Preserve the accepted <=512 route and add only exact d_model 1024 to the packed-QKV policy.",
+    "Add the new width-1024 positive test and a width-768 negative boundary test to the current integration test file without deleting Campaign 5 coverage.",
+    "Rerun the affected correctness, timing, profile, held-out, provenance, and independent-review gates under the new fingerprint before integration."
+  ],
+  "evidence": [
+    "docs/experiments/attempts/C6-BASE-015-row8-long-a.json",
+    "docs/experiments/attempts/C6-BASE-016-row8-long-b.json",
+    "docs/experiments/attempts/C6-EXP-015-I1-long-a.json",
+    "docs/experiments/attempts/C6-EXP-015-I1-long-b.json",
+    "docs/experiments/attempts/C6-EXP-015-I1-profile.json",
+    "docs/experiments/attempts/C6-EXP-015-I1-row8.json",
+    "docs/experiments/attempts/C6-EXP-015-I1-wide-model.json",
+    "docs/experiments/attempts/C6-EXP-015-I2-long-a.json"
+  ],
+  "git_actions_authorized": []
+}

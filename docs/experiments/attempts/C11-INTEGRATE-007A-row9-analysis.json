@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C11-INTEGRATE-007A-row9-analysis",
+    "hypothesis": "Active row-9 timing will remain at least five percent below counterbalanced controls and match the isolated candidate within ordinary noise without memory, correctness, or backend regression.",
+    "scope": "Corrected causal analysis using timing.backend_counts for two controls, isolated candidate, and active integration.",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row09-long.json"
+    ],
+    "rollback": "Reject the active selection if the causal benefit, accuracy, memory, or backend assertion fails.",
+    "decision": "keep",
+    "decision_rationale": "Corrected JSON nesting validates the active target effect; prior analysis failure was parser-only.",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; paths={'control_a':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-a.json'),'candidate_b':pathlib.Path(r'C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-long-b.json'),'control_c':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-c.json'),'integrated':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row09-long.json')}; rows={k:json.loads(p.read_text())['results'][0] for k,p in paths.items()}; controls=[rows['control_a']['timing']['optimized']['median_ms'],rows['control_c']['timing']['optimized']['median_ms']]; cm=statistics.mean(controls); failed=sum(t['failed_elements'] for t in rows['integrated']['accuracy']['trials']); delta=100*(rows['integrated']['timing']['optimized']['median_ms']/cm-1); peaks={k:v['peak_memory']['optimized']['incremental_peak_bytes'] for k,v in rows.items()}; out={'control_optimized_ms':controls,'control_mean_ms':cm,'control_spread_pct':100*(max(controls)-min(controls))/cm,'candidate_optimized_ms':rows['candidate_b']['timing']['optimized']['median_ms'],'integrated_optimized_ms':rows['integrated']['timing']['optimized']['median_ms'],'integrated_vs_control_pct':delta,'integrated_vs_candidate_pct':100*(rows['integrated']['timing']['optimized']['median_ms']/rows['candidate_b']['timing']['optimized']['median_ms']-1),'integrated_speedup':rows['integrated']['timing']['speedup_median'],'integrated_failed_elements':failed,'peak_bytes':peaks,'integrated_backend_counts':rows['integrated']['timing']['backend_counts']}; print(json.dumps(out,indent=2)); assert delta<=-5 and failed==0 and len(set(peaks.values()))==1 and rows['integrated']['timing']['backend_counts']=={'triton':1240,'sdpa':0,'reference':0}"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T15:29:17.964012+00:00",
+    "ended_at_utc": "2026-08-29T15:29:18.010790+00:00",
+    "wall_time_seconds": 0.04647569986991584,
+    "timeout_seconds": null,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "{\n  \"control_optimized_ms\": [\n    0.815775990486145,\n    0.8161599934101105\n  ],\n  \"control_mean_ms\": 0.8159679919481277,\n  \"control_spread_pct\": 0.04706102785338983,\n  \"candidate_optimized_ms\": 0.7176960110664368,\n  \"integrated_optimized_ms\": 0.7176479995250702,\n  \"integrated_vs_control_pct\": -12.049491327266171,\n  \"integrated_vs_candidate_pct\": -0.006689676496218766,\n  \"integrated_speedup\": 1.150045736611519,\n  \"integrated_failed_elements\": 0,\n  \"peak_bytes\": {\n    \"control_a\": 29360128,\n    \"candidate_b\": 29360128,\n    \"control_c\": 29360128,\n    \"integrated\": 29360128\n  },\n  \"integrated_backend_counts\": {\n    \"triton\": 1240,\n    \"sdpa\": 0,\n    \"reference\": 0\n  }\n}\n",
+    "stderr": ""
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T15:29:17.875062+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; paths={'control_a':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-a.json'),'candidate_b':pathlib.Path(r'C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-long-b.json'),'control_c':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-c.json'),'integrated':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row09-long.json')}; rows={k:json.loads(p.read_text())['results'][0] for k,p in paths.items()}; controls=[rows['control_a']['timing']['optimized']['median_ms'],rows['control_c']['timing']['optimized']['median_ms']]; cm=statistics.mean(controls); failed=sum(t['failed_elements'] for t in rows['integrated']['accuracy']['trials']); delta=100*(rows['integrated']['timing']['optimized']['median_ms']/cm-1); peaks={k:v['peak_memory']['optimized']['incremental_peak_bytes'] for k,v in rows.items()}; out={'control_optimized_ms':controls,'control_mean_ms':cm,'control_spread_pct':100*(max(controls)-min(controls))/cm,'candidate_optimized_ms':rows['candidate_b']['timing']['optimized']['median_ms'],'integrated_optimized_ms':rows['integrated']['timing']['optimized']['median_ms'],'integrated_vs_control_pct':delta,'integrated_vs_candidate_pct':100*(rows['integrated']['timing']['optimized']['median_ms']/rows['candidate_b']['timing']['optimized']['median_ms']-1),'integrated_speedup':rows['integrated']['timing']['speedup_median'],'integrated_failed_elements':failed,'peak_bytes':peaks,'integrated_backend_counts':rows['integrated']['timing']['backend_counts']}; print(json.dumps(out,indent=2)); assert delta<=-5 and failed==0 and len(set(peaks.values()))==1 and rows['integrated']['timing']['backend_counts']=={'triton':1240,'sdpa':0,'reference':0}"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 452,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439852433408
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T15:29:18.050996+00:00",
+    "command": [
+      ".\\.venv\\Scripts\\python.exe",
+      "-c",
+      "import json,pathlib,statistics; paths={'control_a':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-a.json'),'candidate_b':pathlib.Path(r'C:/Users/jared/AppData/Local/Codex/worktrees/tiktok-techjam-2026-c7-exp018/c11-exp025-i1-row09-long-b.json'),'control_c':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-baseline-row09-long-c.json'),'integrated':pathlib.Path('docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row09-long.json')}; rows={k:json.loads(p.read_text())['results'][0] for k,p in paths.items()}; controls=[rows['control_a']['timing']['optimized']['median_ms'],rows['control_c']['timing']['optimized']['median_ms']]; cm=statistics.mean(controls); failed=sum(t['failed_elements'] for t in rows['integrated']['accuracy']['trials']); delta=100*(rows['integrated']['timing']['optimized']['median_ms']/cm-1); peaks={k:v['peak_memory']['optimized']['incremental_peak_bytes'] for k,v in rows.items()}; out={'control_optimized_ms':controls,'control_mean_ms':cm,'control_spread_pct':100*(max(controls)-min(controls))/cm,'candidate_optimized_ms':rows['candidate_b']['timing']['optimized']['median_ms'],'integrated_optimized_ms':rows['integrated']['timing']['optimized']['median_ms'],'integrated_vs_control_pct':delta,'integrated_vs_candidate_pct':100*(rows['integrated']['timing']['optimized']['median_ms']/rows['candidate_b']['timing']['optimized']['median_ms']-1),'integrated_speedup':rows['integrated']['timing']['speedup_median'],'integrated_failed_elements':failed,'peak_bytes':peaks,'integrated_backend_counts':rows['integrated']['timing']['backend_counts']}; print(json.dumps(out,indent=2)); assert delta<=-5 and failed==0 and len(set(peaks.values()))==1 and rows['integrated']['timing']['backend_counts']=={'triton':1240,'sdpa':0,'reference':0}"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 452,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 439852433408
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

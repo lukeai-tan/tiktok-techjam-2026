@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "record_status": "RECORDED",
+  "attempt": {
+    "id": "C7-CLOSE-003-final-council",
+    "hypothesis": "The final Campaign 7 AI Council review is valid, evidence-linked, blocker-free, and preserves external-action holds",
+    "scope": "integrated release-gate review",
+    "parent_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "candidate_commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+    "branch": "feat/jared-attempt",
+    "changed_paths": [
+      "docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json"
+    ],
+    "rollback": "Rework the review document while retaining this failed validation record",
+    "decision": "keep",
+    "decision_rationale": "The integrated implementation has passed every current evidence gate; final seal conditions remain explicit",
+    "review_status": "approved"
+  },
+  "execution": {
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      " = Get-Content -LiteralPath 'docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json' -Raw -Encoding utf8 | ConvertFrom-Json; if (.decision -ne 'APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL') { exit 1 }; if (.blocking_findings.Count -ne 0) { exit 1 }; if (.implementation_sha256 -ne 'a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b') { exit 1 }; if (.git_actions_authorized.Count -ne 0) { exit 1 }; Write-Output 'review_valid=true'"
+    ],
+    "cwd": ".",
+    "started_at_utc": "2026-08-29T12:53:31.155217+00:00",
+    "ended_at_utc": "2026-08-29T12:53:31.429225+00:00",
+    "wall_time_seconds": 0.27451659995131195,
+    "timeout_seconds": 300.0,
+    "timed_out": false,
+    "status": "PASS",
+    "return_code": 0,
+    "launch_error": null,
+    "stdout": "review_valid=true\n",
+    "stderr": "= : The term '=' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the \nspelling of the name, or if a path was included, verify that the path is correct and try again.\nAt line:1 char:2\n+  = Get-Content -LiteralPath 'docs/experiments/reviews/CAMPAIGN-007-FI ...\n+  ~\n    + CategoryInfo          : ObjectNotFound: (=:String) [], CommandNotFoundException\n    + FullyQualifiedErrorId : CommandNotFoundException\n \n.decision : The term '.decision' is not recognized as the name of a cmdlet, function, script file, or operable \nprogram. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\nAt line:1 char:131\n+ ... W.json' -Raw -Encoding utf8 | ConvertFrom-Json; if (.decision -ne 'AP ...\n+                                                         ~~~~~~~~~\n    + CategoryInfo          : ObjectNotFound: (.decision:String) [], CommandNotFoundException\n    + FullyQualifiedErrorId : CommandNotFoundException\n \n.blocking_findings.Count : The term '.blocking_findings.Count' is not recognized as the name of a cmdlet, function, \nscript file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is \ncorrect and try again.\nAt line:1 char:208\n+ ... PENDING_FINAL_SEAL') { exit 1 }; if (.blocking_findings.Count -ne 0)  ...\n+                                          ~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : ObjectNotFound: (.blocking_findings.Count:String) [], CommandNotFoundException\n    + FullyQualifiedErrorId : CommandNotFoundException\n \n.implementation_sha256 : The term '.implementation_sha256' is not recognized as the name of a cmdlet, function, script \nfile, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct \nand try again.\nAt line:1 char:256\n+ ... _findings.Count -ne 0) { exit 1 }; if (.implementation_sha256 -ne 'a9 ...\n+                                            ~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : ObjectNotFound: (.implementation_sha256:String) [], CommandNotFoundException\n    + FullyQualifiedErrorId : CommandNotFoundException\n \n.git_actions_authorized.Count : The term '.git_actions_authorized.Count' is not recognized as the name of a cmdlet, \nfunction, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the \npath is correct and try again.\nAt line:1 char:367\n+ ... 017d8b297be8b') { exit 1 }; if (.git_actions_authorized.Count -ne 0)  ...\n+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n    + CategoryInfo          : ObjectNotFound: (.git_actions_authorized.Count:String) [], CommandNotFoundException\n    + FullyQualifiedErrorId : CommandNotFoundException\n \n"
+  },
+  "environment_before": {
+    "captured_at_utc": "2026-08-29T12:53:31.060864+00:00",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      " = Get-Content -LiteralPath 'docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json' -Raw -Encoding utf8 | ConvertFrom-Json; if (.decision -ne 'APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL') { exit 1 }; if (.blocking_findings.Count -ne 0) { exit 1 }; if (.implementation_sha256 -ne 'a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b') { exit 1 }; if (.git_actions_authorized.Count -ne 0) { exit 1 }; Write-Output 'review_valid=true'"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 143,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441165242368
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "environment_after": {
+    "captured_at_utc": "2026-08-29T12:53:31.469253+00:00",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      " = Get-Content -LiteralPath 'docs/experiments/reviews/CAMPAIGN-007-FINAL-REVIEW.json' -Raw -Encoding utf8 | ConvertFrom-Json; if (.decision -ne 'APPROVE_LOCAL_ACCEPTANCE_PENDING_FINAL_SEAL') { exit 1 }; if (.blocking_findings.Count -ne 0) { exit 1 }; if (.implementation_sha256 -ne 'a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b') { exit 1 }; if (.git_actions_authorized.Count -ne 0) { exit 1 }; Write-Output 'review_valid=true'"
+    ],
+    "git": {
+      "commit": "8c89d1d4170c58d16fb75d79f212e990565fba7d",
+      "dirty": true,
+      "changed_path_count": 143,
+      "implementation_fingerprint_schema": 2,
+      "implementation_sha256": "a994eb1c0a5a7053335adbb1a4ab13dcde1f0ea247e5f9c422c017d8b297be8b",
+      "implementation_paths": [
+        "benchmarks/official_shapes.json",
+        "benchmarks/profile_cases.py",
+        "benchmarks/reference/manifest.json",
+        "benchmarks/run_matrix.py",
+        "scripts/run-wsl.ps1",
+        "tools/capture_environment.py",
+        "tools/triton-cc",
+        "torch_transformer_benchmark.py",
+        "transformer_opt/__init__.py",
+        "transformer_opt/config.py",
+        "transformer_opt/dispatch.py",
+        "transformer_opt/kernels/__init__.py",
+        "transformer_opt/kernels/attention.py",
+        "transformer_opt/kernels/residual_layer_norm.py"
+      ]
+    },
+    "python": {
+      "version": "3.12.10",
+      "executable": ".venv/Scripts/python.exe",
+      "implementation": "CPython"
+    },
+    "os": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "release": "11",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+      "wsl_distribution": null
+    },
+    "cpu": {
+      "name": "AMD Ryzen 7 9850X3D 8-Core Processor",
+      "logical_count": 16
+    },
+    "disk": {
+      "path": ".",
+      "total_bytes": 999125151744,
+      "free_bytes": 441165242368
+    },
+    "framework": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "cuda_runtime": "13.0",
+      "cuda_available": true,
+      "matmul_precision": "highest",
+      "allow_tf32_matmul": false,
+      "allow_tf32_cudnn": true
+    },
+    "gpu": {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 5070 Ti",
+      "compute_capability": [
+        12,
+        0
+      ],
+      "total_memory_bytes": 17066033152,
+      "multiprocessor_count": 70,
+      "driver_version": "616.56"
+    }
+  },
+  "logger": {
+    "path": "benchmarks/run_optimization_attempt.py",
+    "sha256": "8a6b107f438940b5d6857745432dd0a1a68f698c29069c3af23182d7eb318e5b"
+  },
+  "result_artifact": {
+    "path": null,
+    "expected": false,
+    "exists": false
+  },
+  "metrics": null
+}

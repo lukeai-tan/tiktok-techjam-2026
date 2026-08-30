@@ -1,0 +1,198 @@
+{
+  "task_id": "track3-campaign-009",
+  "title": "Wide residual-normalization feasibility campaign",
+  "status": "complete",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": null,
+    "project_context_reviewed": false,
+    "prd_update_task_id": "task-c9-closure",
+    "contradictions": []
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "acceptance_criteria": {
+    "AC-WF-1": "Every Campaign 9 command-level test, profile, benchmark, candidate, review, and closure gate has an immutable attempt record and the workflow validates with zero errors.",
+    "AC-BASE-1": "The Campaign 8 fingerprint, protected organizer inputs, environment, final matrix, current exact fusion routes, and target profiles are verified before candidate source changes.",
+    "AC-CORRECT-1": "A retained candidate has zero failed elements with no error, OOM, unauthorized skip, unexpected attention fallback, missing packed-QKV behavior, or missing fused call in direct, exact-row, stress, neighbor, and broader gates.",
+    "AC-PERF-1": "A retained candidate provides about five-percent reproducible target or model-profile benefit, or a material launch or memory benefit, with timing drift and every cost disclosed.",
+    "AC-BOUNDARY-1": "Fusion remains exact to measured runtime and model shapes; adjacent shapes, unsupported masks, dtypes, devices, compilation, gradients, and training preserve Campaign 8 behavior.",
+    "AC-EVIDENCE-1": "Raw samples, accuracy/error totals, latency, memory, attention/fusion/projection counts, profiler events, environment, source hashes, fingerprint, and command wall time bind to the exact candidate.",
+    "AC-REVIEW-1": "Any surviving candidate receives a provenance, correctness, performance, boundary, memory, maintenance, and devil's-advocate review before integration.",
+    "AC-RELEASE-1": "Only approved winners remain and final, organizer-default, held-out, source-derived, profile, inherited-route non-regression, test, documentation, workflow, graph, and tree gates are current."
+  },
+  "roles": [
+    {"role": "Task Intake Analyst", "file": "00_Core_Orchestration/Task_Intake_Analyst.md", "why": "Bounds continuation to a fresh profiler-authorized surface"},
+    {"role": "Agentic Workflow Orchestrator", "file": "00_Core_Orchestration/Agentic_Workflow_Orchestrator.md", "why": "Owns isolation, sequencing, evidence lineage, integration, and stop rules"},
+    {"role": "Backend Performance Engineer", "file": "06_Backend_API_and_Integration_Engineering/Backend_Performance_Engineer.md", "why": "Quantifies exact-row residual-normalization ceilings and timing drift"},
+    {"role": "Machine Learning Engineer", "file": "11_Data_Analytics_and_AI/Machine_Learning_Engineer.md", "why": "Tests the accepted primitive at one new exact feature width"},
+    {"role": "Performance Test Engineer", "file": "09_Quality_Assurance_and_Testing/Performance_Test_Engineer.md", "why": "Measures strict correctness, latency, memory, projection preservation, and actual route execution"},
+    {"role": "Independent Reviewer and Critic", "file": "00_Core_Orchestration/Independent_Reviewer_and_Critic.md", "why": "Challenges width-specific numerical risk, memory pressure, timing drift, and maintenance cost"},
+    {"role": "Release Gatekeeper", "file": "00_Core_Orchestration/Release_Gatekeeper.md", "why": "Issues retain, reject, plateau, or hold decisions"}
+  ],
+  "tasks": [
+    {
+      "id": "task-c9-preflight",
+      "title": "Freeze Campaign 9 scope, identity, graph context, and candidate isolation",
+      "role": "Agentic Workflow Orchestrator",
+      "write_scope": ["docs/experiments/CAMPAIGN-009-WORKFLOW.json", "docs/experiments/CAMPAIGN-009.md", "benchmarks/campaign9_profile_shapes.json", "docs/experiments/attempts"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-WF-1", "AC-BASE-1"],
+      "validation": ["workflow validator", "fingerprint", "protected hashes", "environment", "isolated candidate identity"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision"]
+    },
+    {
+      "id": "task-c9-profile",
+      "title": "Rebaseline the final matrix and exact row-8 and row-13 profiles",
+      "role": "Backend Performance Engineer",
+      "write_scope": ["docs/results", "docs/experiments/attempts", "docs/experiments/CAMPAIGN-009.md"],
+      "depends_on": ["task-c9-preflight"],
+      "acceptance_criteria": ["AC-BASE-1", "AC-EVIDENCE-1"],
+      "validation": ["complete final matrix", "target profiles", "long timing controls", "ceiling calculations"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "finding"]
+    },
+    {
+      "id": "task-c9-exp021",
+      "title": "Test exact-row-8 width-1024 fused residual plus LayerNorm",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["transformer_opt/kernels/residual_layer_norm.py", "torch_transformer_benchmark.py", "tests", "docs/results", "docs/experiments/attempts"],
+      "depends_on": ["task-c9-profile"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-BOUNDARY-1", "AC-EVIDENCE-1"],
+      "validation": ["direct width-1024 kernel", "exact row 8", "seed scale padding stress", "runtime and mask neighbors", "packed-QKV preservation", "rows 6 and 11 non-regression", "long timing", "memory", "profile"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-c9-exp022",
+      "title": "Conditionally test exact-row-13 fused residual plus LayerNorm",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["torch_transformer_benchmark.py", "tests", "docs/results", "docs/experiments/attempts"],
+      "depends_on": ["task-c9-exp021"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-BOUNDARY-1", "AC-EVIDENCE-1"],
+      "validation": ["profile authorization", "exact row 13", "attention ordering", "stress", "long timing", "memory", "profile"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-c9-review",
+      "title": "Review every surviving Campaign 9 candidate",
+      "role": "Independent Reviewer and Critic",
+      "write_scope": ["docs/experiments/reviews", "docs/experiments/attempts"],
+      "depends_on": ["task-c9-exp022"],
+      "acceptance_criteria": ["AC-REVIEW-1"],
+      "validation": ["provenance", "correctness", "paired timing", "memory", "boundary", "maintenance"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["finding", "handoff"]
+    },
+    {
+      "id": "task-c9-integrate",
+      "title": "Retain only approved winners and regenerate complete evidence",
+      "role": "Agentic Workflow Orchestrator",
+      "write_scope": ["transformer_opt", "torch_transformer_benchmark.py", "tests", "docs/results", "docs/experiments"],
+      "depends_on": ["task-c9-review"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["two final matrices", "organizer default", "two held-out matrices", "source-derived matrix", "profiles", "full pytest"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "decision"]
+    },
+    {
+      "id": "task-c9-closure",
+      "title": "Reconcile source of truth, workflow, graph closure, and scoped tree",
+      "role": "Release Gatekeeper",
+      "write_scope": ["authoritative docs", "campaign ledger", "repo memory graph"],
+      "depends_on": ["task-c9-integrate"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["release review", "workflow validation", "graph rebuild and strict validation", "diff hygiene"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "verification", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-c9-exp021",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 2,
+      "finding_condition": "The width-1024 fusion fails compilation, numerical, route, stress, timing, profile, memory, boundary, or provenance gates",
+      "acceptance_condition": "One exact-row-8 route is reproducibly faster or materially lower-launch with zero failures, or two variants close the route",
+      "escalation_role": "Release Gatekeeper"
+    },
+    {
+      "id": "loop-c9-exp022",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 1,
+      "finding_condition": "The conditional row-13 fusion lacks profile authorization or fails correctness, performance, memory, or boundary gates",
+      "acceptance_condition": "The exact-row-13 route clears every gate or is rejected without another implementation loop",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "validation_results": [
+    {
+      "gate": "workflow_and_attempt_logging",
+      "result": "pass",
+      "evidence": "Through C9-CLOSE-002, 32 immutable attempts record 29 child PASS, 3 retained child FAIL, 0 timeouts, and 166.619647 seconds of measured child-command wall time; terminal workflow and diff records append after this accounting checkpoint"
+    },
+    {
+      "gate": "protected_contract_environment_and_identity",
+      "result": "pass",
+      "evidence": "49 protected organizer, logger, artifact, Colab, and residual-kernel tests passed; active and detached workspaces matched fingerprint 325a1e5cad70f85390ddbea438f04b60a4b0f40300826aba3991520f5b97079b on the unchanged RTX 5070 Ti environment"
+    },
+    {
+      "gate": "fresh_complete_baseline",
+      "result": "pass",
+      "evidence": "The fresh final matrix passed 13/13 executable rows plus the exact authorized resource skip with 0/938885120 failed elements and a 1.893x geomean"
+    },
+    {
+      "gate": "profile_authorization",
+      "result": "pass",
+      "evidence": "Thirty-step profiles measured row-8 residual plus norm at 41319.075 us or 10.44 percent of model time and row-13 at 71000.035 us or 9.67 percent; C9-BASE-004B is the corrected positive-device-time analysis"
+    },
+    {
+      "gate": "exp021_row8_width1024",
+      "result": "pass",
+      "evidence": "The experiment was conclusively rejected after I1 passed 150994944 stress outputs but regressed the 300-sample optimized median 0.49 percent and subsystem 1.54 percent; I2 eight-warps worsened the subsystem to 5.58 percent above control"
+    },
+    {
+      "gate": "exp022_row13_fallback",
+      "result": "pass",
+      "evidence": "The fallback was conclusively rejected after route, boundary, and 150994944-output stress gates passed but seed 1238 failed 1/8388608 elements and 1/41943040 across five trials; timing and memory correctly did not run"
+    },
+    {
+      "gate": "candidate_restoration",
+      "result": "pass",
+      "evidence": "Both rejected candidates were removed and independent environment captures restored the exact Campaign 8 fingerprint; no Campaign 9 source change was integrated"
+    },
+    {
+      "gate": "tests_and_council_review",
+      "result": "pass",
+      "evidence": "The restored complete repository suite passes 139/139 with 14 upstream warnings; CAMPAIGN-009-FINAL-REVIEW.json validates a blocker-free no-winner Council decision and no Git authorization"
+    },
+    {
+      "gate": "knowledge_graph",
+      "result": "pass",
+      "evidence": "Campaign 9 opening and closure events appended, generated notes rebuilt to 57 file notes and 91 events, and strict validation reports zero errors and zero warnings"
+    }
+  ],
+  "finalization": {
+    "prd_update_task_id": "task-c9-closure",
+    "project_context_update_task_id": null,
+    "graph_closure_task_id": "task-c9-closure",
+    "release_gatekeeper_task_id": "task-c9-closure",
+    "final_report_sections": ["What changed in code", "Every attempt and its metrics", "What changed in PRD/docs", "What was tested", "Unresolved clarification or inconsistency", "Residual risks and holds"]
+  }
+}

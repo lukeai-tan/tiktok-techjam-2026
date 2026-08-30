@@ -50,7 +50,10 @@ class _Tee(io.TextIOBase):
 
 def load_organizer_benchmark() -> ModuleType:
     """Load the supplied file without putting its directory on ``sys.path``."""
-    module_name = "_techjam_organizer_torch_benchmark"
+    module_name = "benchmarks.torch_transformer_benchmark"
+    existing = sys.modules.get(module_name)
+    if existing is not None:
+        return existing
     spec = importlib.util.spec_from_file_location(module_name, ORGANIZER_TORCH_PATH)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load organizer benchmark: {ORGANIZER_TORCH_PATH}")
@@ -62,7 +65,7 @@ def load_organizer_benchmark() -> ModuleType:
 
 def install_submission(module: ModuleType, instance_holder: Optional[dict] = None) -> None:
     """Install the optimized class at the organizer's documented extension point."""
-    from torch_transformer_benchmark import UserOptimizedTransformer
+    from transformer_opt.submission import UserOptimizedTransformer
 
     if instance_holder is None:
         module.UserOptimizedTransformer = UserOptimizedTransformer
@@ -193,7 +196,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "modified": False,
         },
         "submission": {
-            "class": "torch_transformer_benchmark.UserOptimizedTransformer",
+            "class": "transformer_opt.submission.UserOptimizedTransformer",
             "injection_point": "UserOptimizedTransformer",
             "runner_path": display_path(RUNNER_PATH),
             "runner_sha256": _text_sha256(RUNNER_PATH),

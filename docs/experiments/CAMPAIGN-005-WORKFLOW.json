@@ -1,0 +1,169 @@
+{
+  "task_id": "track3-campaign-005",
+  "title": "Extended profile-led fallback and residual-regression optimization round",
+  "status": "complete",
+  "source_of_truth": {
+    "prd_path": "docs/REQUIREMENTS.md",
+    "prd_reviewed": true,
+    "project_context_path": null,
+    "project_context_reviewed": false,
+    "prd_update_task_id": "task-sot-graph-closure",
+    "contradictions": []
+  },
+  "knowledge_graph": {
+    "skill": "repo-memory-graph",
+    "preflight_required": true,
+    "context_read_required": true,
+    "event_logging_required": true,
+    "closure_update_required": true,
+    "validation_required": true
+  },
+  "evidence_policy": {
+    "truthful_results_required": true,
+    "no_test_removal_to_pass": true,
+    "comprehensive_validation_required": true,
+    "failed_checks_must_be_reported": true
+  },
+  "acceptance_criteria": {
+    "AC-WF-1": "The workflow validates with zero errors and every executed test, profile, and benchmark has an immutable attempt record.",
+    "AC-BASE-1": "The accepted Campaign 4 fingerprint and protected organizer inputs are freshly verified and measured before candidate changes.",
+    "AC-CORRECT-1": "Every accepted candidate has zero failed elements and no unauthorized fallback, error, OOM, or skip in its required gates.",
+    "AC-PERF-1": "An accepted candidate improves paired final-matrix geomean by approximately 5 percent or supplies a clear profiler-backed kernel, memory, launch, or held-out-regression benefit, with no affected required case regressing more than 2 percent absent independent waiver.",
+    "AC-EVIDENCE-1": "Raw timings, error counts, backend counts, profiler events, environment, hashes, and wall time are linked to the exact implementation.",
+    "AC-REVIEW-1": "The best candidate receives a separate provenance, correctness, timing, boundary, and maintainability review before integration.",
+    "AC-RELEASE-1": "Only an approved winner is retained and all final, organizer-default, held-out, source-derived, profile, test, documentation, and graph gates are current."
+  },
+  "roles": [
+    {"role": "Task Intake Analyst", "file": "00_Core_Orchestration/Task_Intake_Analyst.md", "why": "Normalizes the longer campaign scope and measurable evidence gates"},
+    {"role": "Agentic Workflow Orchestrator", "file": "00_Core_Orchestration/Agentic_Workflow_Orchestrator.md", "why": "Owns isolated sequencing, rollback, evidence integration, and source-of-truth closure"},
+    {"role": "Planning and Decomposition Agent", "file": "00_Core_Orchestration/Planning_and_Decomposition_Agent.md", "why": "Defines bounded hypotheses, dependencies, loop limits, and stop conditions"},
+    {"role": "Backend Performance Engineer", "file": "06_Backend_API_and_Integration_Engineering/Backend_Performance_Engineer.md", "why": "Profiles remaining reference routes and the held-out long-causal regression"},
+    {"role": "Machine Learning Engineer", "file": "11_Data_Analytics_and_AI/Machine_Learning_Engineer.md", "why": "Implements one bounded kernel, launch, or routing candidate at a time"},
+    {"role": "Performance Test Engineer", "file": "09_Quality_Assurance_and_Testing/Performance_Test_Engineer.md", "why": "Validates strict accuracy, latency distributions, memory, and actual backend execution"},
+    {"role": "Independent Reviewer and Critic", "file": "00_Core_Orchestration/Independent_Reviewer_and_Critic.md", "why": "Challenges provenance, overfitting, correctness, and maintainability"},
+    {"role": "Release Gatekeeper", "file": "00_Core_Orchestration/Release_Gatekeeper.md", "why": "Issues the final accept, reject, plateau, or hold decision"}
+  ],
+  "tasks": [
+    {
+      "id": "task-intake-workflow",
+      "title": "Freeze and validate Campaign 5 scope",
+      "role": "Planning and Decomposition Agent",
+      "write_scope": ["docs/experiments/CAMPAIGN-005-WORKFLOW.json", "docs/experiments/CAMPAIGN-005.md", "benchmarks/campaign5_profile_shapes.json"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-WF-1", "AC-BASE-1"],
+      "validation": ["validate_workflow.py", "current fingerprint and protected-source hashes", "clean accepted starting checkpoint"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision", "verification"]
+    },
+    {
+      "id": "task-profile-rank",
+      "title": "Rebaseline and profile the remaining reference routes and held-out regression",
+      "role": "Backend Performance Engineer",
+      "write_scope": ["docs/experiments/attempts", "docs/results", "docs/experiments/CAMPAIGN-005.md"],
+      "depends_on": ["task-intake-workflow"],
+      "acceptance_criteria": ["AC-BASE-1", "AC-EVIDENCE-1"],
+      "validation": ["fresh final matrix", "fresh held-out matrix", "rows 6-8 profiles", "long-causal profiles", "controlled backend screens"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["observation", "decision"]
+    },
+    {
+      "id": "task-candidates",
+      "title": "Run up to three ranked residual-bottleneck hypotheses",
+      "role": "Machine Learning Engineer",
+      "write_scope": ["transformer_opt", "torch_transformer_benchmark.py", "tests", "docs/experiments/attempts", "docs/results"],
+      "depends_on": ["task-profile-rank"],
+      "acceptance_criteria": ["AC-CORRECT-1", "AC-PERF-1", "AC-EVIDENCE-1"],
+      "validation": ["focused direct and dispatch tests", "affected final rows", "held-out neighbors", "counterbalanced confirmation", "backend and profiler proof"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "finding"]
+    },
+    {
+      "id": "task-independent-review",
+      "title": "Review the best surviving candidate",
+      "role": "Independent Reviewer and Critic",
+      "write_scope": ["docs/experiments/reviews/CAMPAIGN-005-CANDIDATE-REVIEW.json"],
+      "depends_on": ["task-candidates"],
+      "acceptance_criteria": ["AC-REVIEW-1"],
+      "validation": ["provenance recomputation", "correctness and timing review", "route-boundary and maintainability review"],
+      "prd_impact": "read-only",
+      "knowledge_graph_events": ["finding", "handoff"]
+    },
+    {
+      "id": "task-integrate-rebaseline",
+      "title": "Retain an approved winner and regenerate complete evidence",
+      "role": "Agentic Workflow Orchestrator",
+      "write_scope": ["transformer_opt", "torch_transformer_benchmark.py", "tests", "docs/results", "docs/experiments"],
+      "depends_on": ["task-independent-review"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["two final matrices", "organizer default", "two held-out matrices", "source-derived validation", "affected profiles", "full pytest"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["implementation", "verification", "decision"]
+    },
+    {
+      "id": "task-sot-graph-closure",
+      "title": "Perform source-of-truth and graph closure",
+      "role": "Release Gatekeeper",
+      "write_scope": ["authoritative docs", "campaign ledger", "repo memory graph"],
+      "depends_on": ["task-integrate-rebaseline"],
+      "acceptance_criteria": ["AC-RELEASE-1"],
+      "validation": ["release review", "workflow validation", "graph rebuild and strict validation", "scoped working-tree review"],
+      "prd_impact": "update-required",
+      "knowledge_graph_events": ["decision", "verification", "handoff"]
+    }
+  ],
+  "parallel_groups": [],
+  "loops": [
+    {
+      "id": "loop-residual-bottleneck-candidates",
+      "sequence": ["Machine Learning Engineer", "Performance Test Engineer", "Independent Reviewer and Critic", "Machine Learning Engineer"],
+      "max_iterations": 5,
+      "finding_condition": "A reproducible correctness, provenance, performance, or maintainability gate fails",
+      "acceptance_condition": "One candidate meets all correctness and evidence gates plus the measured acceptance threshold, or all profile-authorized surfaces are truthfully declared plateaued",
+      "escalation_role": "Release Gatekeeper"
+    }
+  ],
+  "validation_results": [
+    {
+      "gate": "workflow_and_attempt_logging",
+      "result": "pass",
+      "evidence": "73 pre-validation Campaign 5 attempts plus this passing final workflow-validator record yield 74 total: 65 PASS, 9 retained FAIL, 0 timeouts, 736.085883 seconds"
+    },
+    {
+      "gate": "protected_contract_and_fingerprint",
+      "result": "pass",
+      "evidence": "Protected organizer sources and matrix hashes match; selected schema-2 implementation fingerprint is 9159177a21d039366ed4d3aef431b4b14d3bcef26d5eeaab0808efa739294029"
+    },
+    {
+      "gate": "correctness_and_final_performance",
+      "result": "pass",
+      "evidence": "Two complete final matrices pass 13/13 executable rows plus exact authorized skip with 0/938885120 failed elements and 1.911947x/1.995117x geomeans"
+    },
+    {
+      "gate": "broader_validation",
+      "result": "pass",
+      "evidence": "Organizer default 5/5 PASS at 1.397x; two five-seed held-out matrices 7/7 PASS at 1.447477x/1.449715x; source-derived 28/28 executable PASS at 1.204815x"
+    },
+    {
+      "gate": "backend_and_profiler_proof",
+      "result": "pass",
+      "evidence": "Row 6 proves 20 Triton/20 reference, row 7 30 Triton/10 reference, row 11 40 Triton, and both exact long-causal profiles 20 SDPA calls"
+    },
+    {
+      "gate": "tests_static_and_graph",
+      "result": "pass",
+      "evidence": "121 repository tests passed with 14 upstream warnings; diff hygiene passed; strict graph validation has zero errors and zero warnings"
+    },
+    {
+      "gate": "independent_review",
+      "result": "pass",
+      "evidence": "CAMPAIGN-005-CANDIDATE-REVIEW.json approves local acceptance with no blockers and no Git or public action authorization"
+    }
+  ],
+  "finalization": {
+    "prd_update_task_id": "task-sot-graph-closure",
+    "project_context_update_task_id": null,
+    "graph_closure_task_id": "task-sot-graph-closure",
+    "release_gatekeeper_task_id": "task-sot-graph-closure",
+    "final_report_sections": ["What changed in code", "Every attempt and its metrics", "What changed in PRD/docs", "What was tested", "Unresolved clarification or inconsistency", "Residual risks and holds"]
+  }
+}
