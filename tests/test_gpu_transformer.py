@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 import torch
 
-from torch_transformer_benchmark import (
+from transformer_opt.submission import (
     BaselineTransformer,
     TransformerConfig,
     UserOptimizedTransformer,

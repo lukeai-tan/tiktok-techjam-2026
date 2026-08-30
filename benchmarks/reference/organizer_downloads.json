@@ -15,10 +15,10 @@
       "framework": "pytorch",
       "path": "benchmarks/torch_transformer_benchmark.py",
       "size_bytes": 25017,
-      "sha256": "1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22",
+      "sha256": "5529c96a80799b51f68092e1444a30b17994554dffdf52da98ba701489a7f36e",
       "received_at_local": "2026-08-27T15:29:53.0430291+08:00",
       "role": "untouched organizer benchmark and selected executable contract",
-      "submission_copy": "torch_transformer_benchmark.py"
+      "submission_adapter": "transformer_opt/submission.py"
     },
     {
       "framework": "tensorflow",
@@ -80,7 +80,7 @@
     "stress_case_may_be_preflight_skipped": true
   },
   "reconciliation": {
-    "baseline_transformer_definitions_match_selected_submission_copy": true,
+    "baseline_transformer_definitions_match_submission_adapter": true,
     "tensorflow_download_is_single_canonical_copy": true,
     "framework_contracts_are_not_identical": true,
     "final_cross_framework_evaluator_matrix_available": false

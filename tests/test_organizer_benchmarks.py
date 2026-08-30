@@ -21,7 +21,8 @@ from benchmarks.run_organizer_validation import (
     result_exit_code,
     summarize_results,
 )
-from torch_transformer_benchmark import UserOptimizedTransformer
+import transformer_opt.submission as submission
+from transformer_opt.submission import UserOptimizedTransformer
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,7 +35,6 @@ FINAL_PROFILE_MATRIX = ROOT / "benchmarks" / "final_profile_shapes.json"
 CAMPAIGN4_PROFILE_MATRIX = ROOT / "benchmarks" / "campaign4_profile_shapes.json"
 CAMPAIGN5_PROFILE_MATRIX = ROOT / "benchmarks" / "campaign5_profile_shapes.json"
 OFFICIAL_MATRIX = ROOT / "benchmarks" / "official_shapes.json"
-SUBMISSION_TORCH = ROOT / "torch_transformer_benchmark.py"
 
 PROTECTED_TORCH_DEFINITIONS = (
     "TransformerConfig",
@@ -118,12 +118,21 @@ def test_supplied_organizer_downloads_match_frozen_hashes():
     assert verify_organizer_download() == artifacts["pytorch"]["sha256"]
 
 
-def test_submission_preserves_organizer_pytorch_baseline_contract():
+def test_submission_reuses_organizer_pytorch_baseline_contract():
     organizer = _top_level_definitions(ORGANIZER_TORCH)
-    submission = _top_level_definitions(SUBMISSION_TORCH)
+    submission_source = _top_level_definitions(
+        ROOT / "transformer_opt" / "submission.py"
+    )
 
+    assert "UserOptimizedTransformer" in submission_source
+    assert submission.UserOptimizedTransformer.__mro__[1] is (
+        submission.BaselineTransformer
+    )
     for name in PROTECTED_TORCH_DEFINITIONS:
-        assert organizer[name] == submission[name], name
+        assert getattr(submission, name) is getattr(
+            load_organizer_benchmark(), name
+        ), name
+        assert name in organizer, name
 
 
 def test_tensorflow_download_is_the_single_canonical_copy():

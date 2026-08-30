@@ -19,7 +19,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from benchmarks.run_matrix import DTYPES, load_manifest
 from tools.capture_environment import capture_environment
-from torch_transformer_benchmark import (
+from transformer_opt.submission import (
     BaselineTransformer,
     TransformerConfig,
     UserOptimizedTransformer,
