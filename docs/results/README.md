@@ -7,6 +7,15 @@ not a second campaign narrative.
 Curated evidence in this directory is intentionally versioned; scratch traces
 and exploratory runs stay under ignored `results/`.
 
+Campaign 11 performance artifacts remain immutable at measured fingerprint
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
+The current validation-hardened tree is
+`a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`; it changes
+profiler/evidence enforcement and corrects one source comment, but does not
+change optimized math or dispatch behavior. Fresh
+maintenance outputs belong under ignored `results/` unless a later evidence
+campaign deliberately curates them. Do not rewrite the Campaign 11 JSON.
+
 Use [the campaign run-through](../experiments/CAMPAIGN_RUN_THROUGH.md) for the
 executive flagship ranking and [the complete optimization history](../experiments/OPTIMIZATION_HISTORY.md)
 for chronology, attempt totals, and candidate decisions. This index owns
@@ -26,8 +35,9 @@ artifact purpose and reproduction.
 
 ## Current selected-submission run
 
-**Flagship:** Campaign 11. Campaign 5 remains the highest historical aggregate,
-but Campaign 11 is the current cumulative, fully revalidated submission.
+**Flagship measured snapshot:** Campaign 11. Campaign 5 remains the highest
+historical aggregate, but Campaign 11 is the selected cumulative performance
+evidence. The maintenance fingerprint above has separate current validation.
 
 All artifacts in this section independently record schema-2 implementation
 SHA-256
@@ -49,7 +59,7 @@ The actual entry is `transformer_opt/submission.py::UserOptimizedTransformer`.
   seven-case held-out runs, five accuracy seeds per case, raw alternating-order
   CUDA-event samples, backend counts, memory, and environment. Both are 7/7
   PASS with zero failed elements across 13,117,440 comparisons per run;
-  geomeans are 1.339847x and 1.386495x. Two additional current-fingerprint
+  geomeans are 1.339847x and 1.386495x. Two additional measured-fingerprint
   rechecks measure 1.384122x and a noisy 1.515376x. Across all four matrices,
   long-causal stays in a narrow 1.198x-1.204x band while padded long-causal
   spans 1.213x-1.335x. `rtx-5070-ti-2026-08-29-c11-integrated-long-causal-long.json`
@@ -93,7 +103,7 @@ The actual entry is `transformer_opt/submission.py::UserOptimizedTransformer`.
 - `rtx-5070-ti-2026-08-29-c11-integrated-row06-profile.json` proves the accepted
   row-6 hybrid with 20 Triton plus 20 reference calls over ten forwards.
 - `rtx-5070-ti-2026-08-29-c11-integrated-row08-profile.json` proves the retained
-  exact-row-8 reference-attention route on the current fingerprint. The historical
+  exact-row-8 reference-attention route on the measured fingerprint. The historical
   `rtx-5070-ti-2026-08-29-c6-integrated-row08-profile.json` versus
   `rtx-5070-ti-2026-08-29-c6-baseline-row08-profile-c.json`: same-window
   profiler proof for exact-width packed QKV. Across ten forwards, `aten::addmm`
@@ -188,7 +198,7 @@ checkpoint and the controls for Campaign 11.
 retain Campaign 11's preflight, three profile targets, counterbalanced row-9
 controls, isolated candidate, review, transplant provenance, complete active
 matrices, inherited-route rechecks, profiles, tests, launcher failures, and
-closure gates. The integrated files listed first bind the current fingerprint.
+closure gates. The integrated files listed first bind the Campaign 11 measured fingerprint.
 
 `rtx-5070-ti-2026-08-28-branchfix-*.json` files and the matching `BC1-*`
 attempt records retain the fresh comparison between the selected flagship and
@@ -213,7 +223,7 @@ environment. The final table itself omits dtype, padding, timing, tolerance,
 and backward policy, so the artifacts record the selected PyTorch assumptions
 rather than claiming unstated organizer rules or performance on another GPU.
 
-The current artifacts were generated directly with fingerprint schema 2, which
+The Campaign 11 artifacts were generated directly with fingerprint schema 2, which
 canonicalizes checkout line endings and redacts host-specific paths. They share
 implementation SHA-256
 `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
@@ -223,8 +233,11 @@ capture time no commit, tag, branch rewrite, push, or public action had been
 performed; later Git packaging does not change that recorded provenance. No
 measured field was hand-edited.
 
-Regenerate from Windows PowerShell. The wrapper records command, runtime,
-environment, fingerprint, status, and parsed result metrics for every run:
+Regenerate from Windows PowerShell. These commands deliberately write every
+reproduction artifact under ignored `results/`; promote nothing into the
+curated directories without a separate evidence-campaign decision. The wrapper
+records command, runtime, environment, fingerprint, status, and parsed result
+metrics for every run:
 
 ```powershell
 $python = ".venv\Scripts\python.exe"
@@ -235,11 +248,11 @@ $python = ".venv\Scripts\python.exe"
   --scope "Final evaluator matrix" --rollback "Discard reproduction outputs" `
   --decision observation --decision-rationale "Reproduction only" `
   --review-status not_required `
-  --out docs/experiments/attempts/REPRO-C11-FINAL.json `
-  --result-artifact docs/results/repro-c11-final.json -- `
+  --out results/REPRO-C11-FINAL-attempt.json `
+  --result-artifact results/repro-c11-final.json -- `
   $python benchmarks/run_organizer_validation.py `
   --matrix benchmarks/final_evaluator_shapes.json `
-  --out docs/results/repro-c11-final.json
+  --out results/repro-c11-final.json
 
 & $python benchmarks/run_optimization_attempt.py `
   --attempt-id REPRO-C11-HELDOUT `
@@ -247,10 +260,10 @@ $python = ".venv\Scripts\python.exe"
   --scope "Project held-out matrix" --rollback "Discard reproduction outputs" `
   --decision observation --decision-rationale "Reproduction only" `
   --review-status not_required `
-  --out docs/experiments/attempts/REPRO-C11-HELDOUT.json `
-  --result-artifact docs/results/repro-c11-heldout.json -- `
+  --out results/REPRO-C11-HELDOUT-attempt.json `
+  --result-artifact results/repro-c11-heldout.json -- `
   $python benchmarks/run_matrix.py --device cuda --attention-backend auto `
-  --accuracy-trials 5 --out docs/results/repro-c11-heldout.json
+  --accuracy-trials 5 --out results/repro-c11-heldout.json
 
 & $python benchmarks/run_optimization_attempt.py `
   --attempt-id REPRO-C11-ROW9-PROFILE `
@@ -258,13 +271,14 @@ $python = ".venv\Scripts\python.exe"
   --scope "Exact final row 9 profiler" --rollback "Discard reproduction outputs" `
   --decision observation --decision-rationale "Reproduction only" `
   --review-status not_required `
-  --out docs/experiments/attempts/REPRO-C11-ROW9-PROFILE.json `
-  --result-artifact docs/results/repro-c11-row9-profile.json -- `
+  --out results/REPRO-C11-ROW9-PROFILE-attempt.json `
+  --result-artifact results/repro-c11-row9-profile.json -- `
   $python benchmarks/profile_cases.py `
   --manifest benchmarks/campaign11_profile_shapes.json `
   --case final-09-b64-d128-h1-s128 --dtype float32 `
-  --attention-backend auto --steps 30 `
-  --out docs/results/repro-c11-row9-profile.json `
+  --attention-backend auto --expect-backend triton `
+  --expect-fused-residual-layer-norm --steps 30 `
+  --out results/repro-c11-row9-profile.json `
   --trace results/repro-c11-row9-profile-trace.json
 
 & $python benchmarks/run_optimization_attempt.py `
@@ -273,10 +287,10 @@ $python = ".venv\Scripts\python.exe"
   --scope "Untouched organizer default" --rollback "Discard reproduction outputs" `
   --decision observation --decision-rationale "Reproduction only" `
   --review-status not_required `
-  --out docs/experiments/attempts/REPRO-C11-DEFAULT.json `
-  --result-artifact docs/results/repro-c11-default.json -- `
+  --out results/REPRO-C11-DEFAULT-attempt.json `
+  --result-artifact results/repro-c11-default.json -- `
   $python benchmarks/run_organizer_torch.py --device cuda `
-  --evidence-out docs/results/repro-c11-default.json
+  --evidence-out results/repro-c11-default.json
 
 & $python benchmarks/run_optimization_attempt.py `
   --attempt-id REPRO-C11-SOURCE `
@@ -284,11 +298,17 @@ $python = ".venv\Scripts\python.exe"
   --scope "Source-derived organizer matrix" --rollback "Discard reproduction outputs" `
   --decision observation --decision-rationale "Reproduction only" `
   --review-status not_required `
-  --out docs/experiments/attempts/REPRO-C11-SOURCE.json `
-  --result-artifact docs/results/repro-c11-source.json -- `
+  --out results/REPRO-C11-SOURCE-attempt.json `
+  --result-artifact results/repro-c11-source.json -- `
   $python benchmarks/run_organizer_validation.py `
-  --out docs/results/repro-c11-source.json
+  --out results/repro-c11-source.json
 ```
 
 Do not hand-edit measured values. Rerun the command after implementation,
 manifest, framework, driver, or hardware changes.
+
+The `REPRO-C11-DEFAULT` command intentionally reproduces the untouched parser's
+runtime defaults (`atol=0.002`, `rtol=0.02`) because that is what the historical
+organizer-default artifact measured. It is not the repository-strict matrix
+gate. For fresh evidence-grade validation, pass `--atol 0.001 --rtol 0.01`;
+`--evidence-out` also rejects `--non-strict-weight-copy`.

@@ -299,8 +299,10 @@ the same low-value idea and make the final technical report honest.
    median is 0.717648 ms (-12.05%), within 0.007% of the isolated candidate,
    while repeated profiles reduce mean subsystem time 41.77%. Top-level
    profiler time is noisy and is disclosed rather than used as causal proof.
-4. The selected fingerprint is now
-   `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+4. The campaign-closing fingerprint is
+   `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`;
+   the packaged Campaign 11 evidence fingerprint is
+   `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 5. EXP-026 row-10 fusion was deliberately unrun because EXP-025 produced an
    accepted winner. The next loop must profile a materially different surface
    and must not retry Campaign 9's width-1024/row-13 arithmetic or Campaign

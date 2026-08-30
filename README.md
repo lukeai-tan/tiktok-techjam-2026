@@ -19,7 +19,7 @@ count. Under the recorded PyTorch assumptions (float32, no padding, and the
 stricter executable comparator), all 65 accuracy trials passed with **0 failed
 elements across 938,885,120 comparisons**.
 
-The selected local submission is
+The selected measured Campaign 11 submission is
 `transformer_opt/submission.py::UserOptimizedTransformer`, with schema-2
 implementation SHA-256
 `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
@@ -37,8 +37,17 @@ Backend accounting is Triton 1,260 / SDPA 0 / reference 196. The complete
 table, stdout, environment, source hashes, and fingerprint are in
 [the Campaign 11 final artifact](docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json).
 
+The current validation-hardened working tree has schema-2 fingerprint
+`a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`.
+That change hardens profiler expectations and organizer provenance checks; it
+changes one source comment but no optimized math or dispatch behavior. The
+performance numbers in this section remain attributed only to measured
+fingerprint `908a0d...` rather than being silently transferred to the
+maintenance fingerprint. Fresh strict
+organizer and profiler commands are included below for current-tree validation.
+
 Two five-seed project-owned held-out runs are **7/7 PASS at 1.340x and 1.386x**.
-Two additional current-fingerprint rechecks and a 300-sample confirmation put
+Two additional measured-fingerprint rechecks and a 300-sample confirmation put
 the exact long-causal SDPA route in a stable **1.198x-1.204x** band; the four
 padded runs span **1.213x-1.335x**. The untouched organizer default is **5/5
 PASS at 1.385x**, and the source-derived matrix is **28/28 executable PASS at
@@ -75,8 +84,9 @@ backward policy remain unstated. The exact assumptions are in the
 
 Use **Campaign 11** and fingerprint
 `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
-It is the current cumulative implementation, owns the latest complete
-zero-failure final pair, and passed the 148-test repository gate. Campaign 5
+It is the selected measured cumulative implementation, owns the latest complete
+zero-failure final pair, and its model behavior remains unchanged in the
+validation-hardened tree. The current repository gate is 164 tests. Campaign 5
 is the strongest historical broad-generalization snapshot, Campaign 7 is the
 best high-volume row-6 specialist, and the Campaign 4 plus Campaign 8 lineage
 is the strongest single-row result. The [documentation hub](docs/README.md) and
@@ -122,6 +132,83 @@ tolerance. Forced modes remain available for honest comparison.
 
 Algorithm, bounds, numerical choices, dispatch rules, and rejected
 optimizations are documented in [the kernel design](docs/KERNEL_DESIGN.md).
+
+## End-to-end code flow
+
+The easiest way to understand Track 3 is to follow one command all the way to
+the GPU. The organizer benchmark is the contract; the runner injects the
+submission into that contract; the optimized model changes selected execution
+paths while keeping the same Transformer formula and parameter names.
+
+```mermaid
+flowchart TD
+    COMMAND["PowerShell command"] --> RUNNER["run_organizer_torch.py"]
+    RUNNER --> VERIFY["Verify organizer SHA-256"]
+    VERIFY --> LOAD["Load benchmarks/torch_transformer_benchmark.py"]
+    LOAD --> INJECT["Replace UserOptimizedTransformer"]
+    INJECT --> MODEL["transformer_opt/submission.py"]
+    LOAD --> HARNESS["Organizer main(): construct, compare, time"]
+    MODEL --> DISPATCH["Model policy + attention_forward()"]
+    DISPATCH --> TRITON["Triton attention"]
+    DISPATCH --> FALLBACK["SDPA or reference fallback"]
+    MODEL --> FUSED["Guarded fused residual + LayerNorm"]
+    HARNESS --> PASS["Accuracy PASS?"]
+    PASS -->|"yes"| TIMING["Warmup + alternating CUDA-event timing"]
+    PASS -->|"no"| STOP["Exit 2; timing skipped by default"]
+    TIMING --> RESULT["Median speedup + optional evidence JSON"]
+```
+
+Here is the same path in plain English:
+
+1. `benchmarks/run_organizer_torch.py` receives the command. It checks the
+   raw SHA-256 of the canonical organizer file against
+   `benchmarks/reference/organizer_downloads.json`, so a modified benchmark
+   cannot silently produce a result.
+2. The runner loads the organizer file from `benchmarks/` and rejects a
+   preloaded module with the same name if it came from any other path. It imports
+   `transformer_opt.submission.UserOptimizedTransformer`, and assigns that
+   class to the organizer module's documented extension point. It forwards all
+   benchmark arguments unchanged to the organizer's own `main()`.
+3. The organizer parses the model dimensions and runtime settings, validates
+   the `TransformerConfig`, seeds PyTorch/CUDA, constructs its baseline and the
+   injected optimized model, and copies weights with `strict=True`. The
+   optimized class inherits the baseline structure, so the parameter names
+   remain compatible.
+4. Both models are moved to the requested device/dtype and put in evaluation
+   mode. Optional `torch.compile` happens only after construction, weight copy,
+   device transfer, and `eval()`.
+5. For each accuracy trial, the organizer generates deterministic input data
+   and an optional `[B,S]` valid-token mask. Both models receive the same
+   tensors under `torch.inference_mode()`. The comparator checks every output
+   element using `abs_error <= atol OR abs_error <= rtol * abs(reference)`.
+   Any shape mismatch, non-finite value, or failed element makes the accuracy
+   gate fail.
+6. The baseline performs explicit pre-LayerNorm attention and FFN operations.
+   The optimized model keeps that formula but may use one packed QKV GEMM,
+   tiled Triton attention, PyTorch SDPA, explicit reference attention, and on
+   exact final rows 5, 6, 9, and 11 a guarded fused residual-plus-LayerNorm
+   kernel. Every custom path has eligibility checks and the actual backend is
+   counted.
+7. If accuracy passes, the organizer creates one fixed timing input, warms up
+   both models, synchronizes CUDA, and measures each call with CUDA events. It
+   alternates which model runs first in each round, then reports median/mean/p90
+   latency, throughput, and `baseline_median / optimized_median` speedup. If
+   accuracy fails, timing is skipped unless `--benchmark-on-failure` is used.
+8. With `--evidence-out`, the runner requires strict weight copying, captures
+   the organizer stdout, and writes
+   the parsed accuracy/timing, source hashes, organizer arguments, backend
+   counts, environment, and exit code to JSON. Without it, the command simply
+   displays the organizer output and returns its exit code. The organizer's
+   `--non-strict-weight-copy` flag remains available only for diagnostics and
+   is rejected when evidence JSON is requested.
+
+The other scripts wrap this same model for different questions: the organizer
+validation runner starts an isolated organizer process for every supplied case;
+`run_matrix.py` runs project-owned cases directly and records memory plus
+backend counts; `profile_cases.py` checks predeclared backend and fused-kernel
+expectations against both counters and profiler events; and `pytest` checks the
+local contracts and regression cases. The full annotated call graph is in
+[docs/CODE_FLOW.md](docs/CODE_FLOW.md).
 
 ## Known-good target environment
 
@@ -201,11 +288,14 @@ $python = ".venv\Scripts\python.exe"
 # Entire CPU + GPU suite
 & $python -m pytest tests -q
 
-# One direct benchmark using the untouched organizer harness and submission adapter
+# Organizer parser defaults (atol 0.002, rtol 0.02), using the untouched harness
 & $python benchmarks/run_organizer_torch.py --device cuda
 
-# Strongest contract proof: untouched organizer parser/comparator/timing harness
-& $python benchmarks/run_organizer_torch.py --device cuda
+# Evidence-grade run with the repository's explicitly stricter tolerance
+& $python benchmarks/run_organizer_torch.py `
+  --device cuda `
+  --atol 0.001 --rtol 0.01 `
+  --evidence-out results/manual-organizer-evidence.json
 
 # Rigorous supplied-contract matrix: 28 executable cases plus one declared skip
 & $python benchmarks/run_organizer_validation.py `
@@ -219,9 +309,14 @@ $python = ".venv\Scripts\python.exe"
 # Full manifest: raw samples and explicit PASS/FAIL/OOM/ERROR accounting
 & $python benchmarks/run_matrix.py --device cuda --attention-backend auto --accuracy-trials 5 --out results/matrix.json
 
-# Profiler proof
-& $python benchmarks/profile_cases.py --case long-causal-padding --dtype float32 --attention-backend auto --steps 5 --out results/profile.json --trace results/profile-trace.json
+# Profiler proof for a case that auto-selects Triton attention
+& $python benchmarks/profile_cases.py --case long-attention --dtype float32 --attention-backend auto --expect-backend triton --steps 5 --out results/profile.json --trace results/profile-trace.json
 ~~~
+
+The untouched organizer file contains a stale module-level sentence naming
+0.001/0.01 as defaults, while its actual parser defaults are 0.002/0.02. The
+repository matrices and evidence-grade command above pass 0.001/0.01 explicitly;
+the organizer file itself remains byte-preserved.
 
 The Colab notebook is pinned to `feat/jared-attempt` and the Campaign 11
 fingerprint. That pin is committed on this branch; a clean GitHub reproduction
@@ -239,8 +334,8 @@ The matrix runner fails closed:
 ## Repository layout
 
 ~~~text
-transformer_opt/submission.py         optimized submission adapter
 transformer_opt/
+  submission.py                        injected optimized Transformer class and adapter
   config.py                           support envelope and launch policy
   dispatch.py                         custom/SDPA/reference routing
   kernels/attention.py                Triton fused attention
@@ -261,6 +356,7 @@ benchmarks/
 tests/                                CPU contract + direct/end-to-end GPU tests
 docs/
   README.md                             documentation map and reading order
+  CODE_FLOW.md                         end-to-end harness and model call flow
   REQUIREMENTS.md                     source-of-truth and acceptance criteria
   KERNEL_DESIGN.md                    kernel algorithm and trade-offs
   TECH_REPORT.md                      measured technical report
@@ -297,13 +393,15 @@ verified names and responsibilities here and on Devpost before submission.
 
 ## Submission status
 
-The repo-local submission entry is selected at the fingerprint above. It passes
-all 13 executable final rows, both project-held-out confirmations, the untouched
-organizer default, all 28 feasible source-derived organizer validation cases,
-and the complete **148/148-test** CPU/GPU suite. The immutable validation artifacts were
-captured before Git packaging and therefore record a dirty local candidate;
-committing or pushing this checkpoint does not relabel those measurements as a
-clean run. Organizer policy clarification and YouTube/Devpost steps remain
+The repo-local submission entry is selected at measured fingerprint `908a0d...`.
+That snapshot passes all 13 executable final rows, both project-held-out
+confirmations, the untouched organizer default, all 28 feasible source-derived
+organizer validation cases, and its **148/148-test** CPU/GPU suite. The current
+validation-hardened tree passes **164/164 tests** and fresh strict runner/profile
+checks without changing optimized-model behavior. The immutable performance
+artifacts were captured before Git packaging and therefore record a dirty local
+candidate; committing or pushing this checkpoint does not relabel those
+measurements as a clean run. Organizer policy clarification and YouTube/Devpost steps remain
 external holds. See the
 [Track 3 compliance matrix](hackathon-docs/TRACK3_COMPLIANCE.md) and follow the
 [demo runbook](docs/guides/DEMO_RUNBOOK.md).

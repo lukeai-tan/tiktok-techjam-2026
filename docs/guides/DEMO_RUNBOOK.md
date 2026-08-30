@@ -78,7 +78,9 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    & $python benchmarks/profile_cases.py `
      --manifest benchmarks/campaign11_profile_shapes.json `
      --case final-09-b64-d128-h1-s128 --dtype float32 `
-     --attention-backend auto --steps 30 --out results/demo-profile.json
+     --attention-backend auto --expect-backend triton `
+     --expect-fused-residual-layer-norm `
+     --steps 30 --out results/demo-profile.json
    ```
 
    Show 120 `_attention_fwd` Triton events and 240 fused residual/LayerNorm
@@ -103,6 +105,9 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
   previous green aggregate as the current run.
 - If the profiler has no `_attention_fwd` event while Triton dispatch is
   expected, treat the demo as failed rather than claiming custom execution.
+- For the row-9 fusion proof, also require `validation_passed: true` and a
+  positive `fused_residual_layer_norm_calls` value; the command above exits
+  nonzero if either the attention or fusion expectation is missing.
 - If the organizer publishes revised dimensions, execution policy, or script,
   update the organizer checksum manifest and rerun all curated evidence before
   recording.

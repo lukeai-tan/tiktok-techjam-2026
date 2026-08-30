@@ -6,27 +6,67 @@ for the campaign history or raw result artifacts.
 
 Status: complete through Campaign 11; approved for repo-local submission selection with external holds
 
-Date: 2026-08-29 (Asia/Singapore)
+Date: 2026-08-30 (Asia/Singapore)
 
 Base commit: `8c89d1d4170c58d16fb75d79f212e990565fba7d`
 
-Selected implementation SHA-256:
-`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`
+Packaged Campaign 11 evidence SHA-256:
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`
+
+The Campaign 11 pre-packaging candidate itself was selected under historical
+fingerprint
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+Adapter packaging and canonical benchmark relocation produced the measured
+`908a0d...` identity above without changing the optimized Transformer math.
 
 ## Selection outcome
 
-The actual submission entry remains
-`torch_transformer_benchmark.py::UserOptimizedTransformer`, which
+The actual submission entry is
+`transformer_opt/submission.py::UserOptimizedTransformer`, which
 `benchmarks/run_organizer_torch.py` injects into the byte-preserved organizer
 PyTorch harness. Campaign 11 extends the accepted fused residual/LayerNorm
 forward only to exact final row 9 while retaining the exact-shape and eval-mode boundary. The
-schema-2 fingerprint above binds the current source, final matrices, held-out
+schema-2 packaged fingerprint above binds the Campaign 11 source, final matrices, held-out
 matrices, organizer-default run, source-derived run, profiles, and tests.
 
 The untouched organizer downloads remain frozen at:
 
-- PyTorch: `1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`;
+- PyTorch: `5529c96a80799b51f68092e1444a30b17994554dffdf52da98ba701489a7f36e`;
 - TensorFlow: `00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798`.
+
+## 2026-08-30 validation hardening
+
+Documentation review found that the profiler had derived its expected Triton
+state from the backend counts it was supposed to verify. The maintenance change
+makes expectations independent command inputs, requires both a positive Triton
+dispatch count and `_attention_fwd` profiler evidence, and gives fused
+residual/LayerNorm its own required event gate. Wrapped attempt summaries now
+honor that final validation status instead of treating any attention event as a
+pass. The organizer runner rejects same-name modules loaded from another path
+and refuses diagnostic non-strict weight copying for evidence output.
+
+These tooling changes produce current schema-2 fingerprint
+`a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`;
+optimized math and dispatch behavior did not change; one source comment now
+states the packed-QKV gradient-state boundary accurately. Current validation
+recorded:
+
+- 164/164 repository tests passing with 14 upstream deprecation warnings;
+- strict organizer execution at explicit `atol=0.001`, `rtol=0.01`: 5/5 PASS,
+  zero failed elements; its maintenance timing is retained as diagnostic output
+  and does not replace the fingerprinted Campaign 11 performance artifacts;
+- positive row-9 proof: 120 Triton dispatches and `_attention_fwd` calls, 240
+  `_residual_layer_norm_fwd` calls, and `validation_passed: true`;
+- negative row-9 proof expecting reference: exit 1,
+  `validation_passed: false`, and wrapped attempt `metrics.status: FAIL`;
+- observational row-9 control with no declared expectation: exit 0,
+  `validation_passed: null`, and wrapped attempt `metrics.status: INCONCLUSIVE`;
+  and
+- evidence plus `--non-strict-weight-copy`: rejected before benchmark execution.
+
+The fresh files are disposable maintenance outputs under ignored `results/`.
+They do not overwrite or relabel Campaign 11's immutable `908a0d...` timing
+artifacts.
 
 Fifty-one preflight contract tests independently checked those hashes,
 protected baseline definitions, harness injection, final-row transcription,
@@ -40,7 +80,7 @@ logger behavior, and evidence policy before candidate integration.
 | Complete final confirmation | same zero-failure contract and backend counts | 1.986499x |
 | Untouched organizer default | 5/5 PASS; 0/2,621,440 failed | 1.385x; 1,950 Triton calls |
 | Held-out primary / confirmation | 7/7 PASS twice; 0/13,117,440 failed each | 1.339847x / 1.386495x |
-| Held-out stability | four current-fingerprint matrices plus one 300-sample target run; zero failures | long-causal 1.198x-1.204x; SDPA-only; aggregate geomean 1.340x-1.515x |
+| Held-out stability | four measured-fingerprint matrices plus one 300-sample target run; zero failures | long-causal 1.198x-1.204x; SDPA-only; aggregate geomean 1.340x-1.515x |
 | Source-derived | 28/28 executable PASS + exact non-pass skip; 0/459,776,000 failed | 1.206505x; Triton 672 / SDPA 1,344 / reference 2,688 |
 | Exact row 9 long/profile | five trials; zero failures; 240 fused calls in each profile | 0.717648 ms; controlled optimized latency -12.05%; mean subsystem time -41.77%; memory-neutral |
 | Exact row 5 long | five trials; zero failures | 1.163168 ms, 1.880066x, memory-neutral |

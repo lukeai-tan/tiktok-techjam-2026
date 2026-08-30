@@ -12,13 +12,18 @@ The canonical prose is organized below this directory by purpose: contract and
 design documents stay at the stable `docs/` paths used by the campaign records,
 campaign narratives live in `docs/experiments/`, the demo guide is in
 `docs/guides/`, and the artifact index is next to the curated results. The root
-`README.md` remains the repository landing page; the root `DEMO_RUNBOOK.md` is
-only a compatibility pointer. The benchmark-local README remains beside the
-frozen reference data so that provenance is discoverable without moving data.
-The small legacy pointers at `docs/hackathon-details.md`,
-`docs/ORGANIZER_INPUTS.md`, `docs/DEVPOST_DESCRIPTION.md`, and
-`docs/TRACK3_COMPLIANCE.md` preserve older manifest, test, and external links;
-the canonical hackathon-context prose is under `hackathon-docs/`.
+`README.md` remains the repository landing page. The canonical demo guide is
+[`docs/guides/DEMO_RUNBOOK.md`](guides/DEMO_RUNBOOK.md); there is no root-level
+compatibility copy. Hackathon context, organizer inputs, and Devpost prose live
+under [`hackathon-docs/`](../hackathon-docs/). Only
+[`docs/TRACK3_COMPLIANCE.md`](TRACK3_COMPLIANCE.md) remains as a legacy pointer
+because older artifacts still link to that path.
+
+Campaign 11 performance evidence is frozen at measured fingerprint
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
+The validation-hardened tree is
+`a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`;
+optimized-model behavior did not change, and historical timings are not relabeled.
 
 ## Current answer at a glance
 
@@ -29,7 +34,7 @@ the canonical hackathon-context prose is under `hackathon-docs/`.
 | Does it pass the published final matrix? | 13/13 executable rows PASS; 0 failed elements across 938,885,120 comparisons; one authorized resource skip | [final artifact](results/rtx-5070-ti-2026-08-29-c11-integrated-final.json) |
 | How fast is the final matrix? | 1.977420x primary geomean; 1.986499x confirmation | [result index](results/README.md#current-selected-submission-run) |
 | Does it generalize? | Two held-out 7/7 PASS runs at 1.339847x and 1.386495x; long-causal stays in the 1.198x–1.204x band | [held-out artifacts](results/README.md#current-selected-submission-run) |
-| Is the repository green? | 148/148 tests PASS; 14 upstream warnings | [submission validation](experiments/SUBMISSION_VALIDATION.md#current-campaign-11-measured-suite) |
+| Is the repository green? | 164/164 tests PASS; 14 upstream warnings | [submission validation](experiments/SUBMISSION_VALIDATION.md#current-campaign-11-measured-suite) plus current maintenance validation |
 
 ## Where to read next
 
@@ -38,7 +43,8 @@ the canonical hackathon-context prose is under `hackathon-docs/`.
 | Understand the result and the best campaigns | [Campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md) | [Campaign ledgers](experiments/) |
 | Inspect every metric, attempt, and disposition | [Optimization history](experiments/OPTIMIZATION_HISTORY.md) | [`attempts/`](experiments/attempts/) and [`results/`](results/) |
 | Reproduce the checks | [Root README](../README.md#reproduce) | [Demo runbook](guides/DEMO_RUNBOOK.md) and [result commands](results/README.md) |
-| Understand the implementation | [Kernel design](KERNEL_DESIGN.md) | [Technical report](TECH_REPORT.md) |
+| Understand the complete code and harness flow | [Code flow](CODE_FLOW.md) | [Kernel design](KERNEL_DESIGN.md) and [technical report](TECH_REPORT.md) |
+| Understand the kernel implementation | [Kernel design](KERNEL_DESIGN.md) | [Code flow](CODE_FLOW.md) and [technical report](TECH_REPORT.md) |
 | Confirm the contract and assumptions | [Requirements](REQUIREMENTS.md) | [Organizer inputs](../hackathon-docs/ORGANIZER_INPUTS.md) and [hackathon details](../hackathon-docs/hackathon-details.md) |
 | Compare optimized code with the original | [Current vs original snapshot](experiments/OPTIMIZATION_HISTORY.md#current-optimized-versus-original-snapshot) | [Current result artifacts](results/README.md) |
 | Review the other branch/PR comparison | [Branch implementation comparison](experiments/BRANCH_IMPLEMENTATION_COMPARISON.md) | Its linked immutable attempt and result files |
@@ -53,7 +59,7 @@ shape-specific wins. They are not interchangeable claims.
 
 | Label | Campaign | Why it matters | Boundary |
 | --- | --- | --- | --- |
-| Overall flagship | Campaign 11 | Current cumulative fingerprint, latest complete zero-failure final pair, and the 148-test gate | Timings are specific to the recorded RTX 5070 Ti and published assumptions |
+| Overall flagship | Campaign 11 | Selected measured fingerprint, latest complete zero-failure final pair, and the current 164-test gate | Timings are specific to the recorded RTX 5070 Ti and published assumptions |
 | Broad architecture/generalization | Campaign 5 | Added the accuracy-safe row-6/row-7 hybrids and removed both held-out long-causal regressions | Historical snapshot, not the current submission fingerprint |
 | High-volume specialist | Campaign 7 | Fused residual plus LayerNorm on exact row 6, the large-batch latency surface | Shape-specific result |
 | Strongest single-row lineage | Campaign 4 + Campaign 8 | Made width-eight attention legal, then fused exact row-11 residual/normalization work | The final gain is cumulative; it is not attributable to one campaign alone |

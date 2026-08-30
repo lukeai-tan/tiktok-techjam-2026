@@ -10,6 +10,41 @@ add and downstream LayerNorm for exact final rows 5, 6, 9, and 11. Projection an
 remains in PyTorch/cuBLAS; measured eager-fp32 shapes through `d_model=512` and
 exact `d_model=1024` combine the three Q/K/V projections into one vendor GEMM.
 
+At runtime, the model keeps the benchmark's ordinary Transformer structure and
+only replaces eligible inner operations. The high-level route is:
+
+```mermaid
+flowchart LR
+    INPUT["x: [B,S,d_model]"] --> NORM["LayerNorm"]
+    NORM --> QKV["Packed or separate Q/K/V projections"]
+    QKV --> LAYOUT["[B,S,H,D] views"]
+    LAYOUT --> DISPATCH["Model policy + dispatch"]
+    DISPATCH --> CUSTOM["Triton tiled attention"]
+    DISPATCH --> PYTORCH["SDPA or explicit reference"]
+    CUSTOM --> OUT["Output projection"]
+    PYTORCH --> OUT
+    OUT --> RESIDUAL["Residual add"]
+    RESIDUAL --> FFN["LayerNorm + FFN"]
+    FFN --> NEXT["Next block or final norm"]
+```
+
+For exact final rows 5, 6, 9, and 11, the guarded residual path combines the
+residual add with the LayerNorm that immediately consumes it:
+
+```mermaid
+flowchart TD
+    X["Block input"] --> ADD["Fused residual add"]
+    ATTENTION["Attention output"] --> ADD
+    ADD --> NORM2["Fused LayerNorm output"]
+    NORM2 --> FFN["FFN"]
+    FFN --> ADD2["Fused residual add"]
+    ADD2 --> NEXTNORM["Next LayerNorm or final LayerNorm"]
+```
+
+The guards are part of the design, not an afterthought: neighboring shapes,
+CPU, low precision, gradients, noncontiguous masks, training mode, and
+compiled execution keep the original PyTorch operations.
+
 ## Interface and layout
 
 The wrapper accepts Q, K, and V with shape `[batch, sequence, heads, head_dim]`.
@@ -32,8 +67,11 @@ The cache signature includes every source parameter's data pointer, mutation
 version, device, and dtype. A load, in-place update, or device/dtype move
 therefore rebuilds the packed tensors. The cache is a plain derived-data
 dictionary, so state-dict keys remain byte-for-byte compatible with the
-baseline. Training, compilation, CPU, low precision, widths 513-1023, and widths
-above 1024 keep the original three-projection path.
+baseline. Gradient-enabled execution, compilation, CPU, low precision, widths
+513-1023, and widths above 1024 keep the original three-projection path. Calling
+`.train()` alone does not disable packing when the forward is still wrapped in
+`torch.inference_mode()`; the guard follows gradient state for this derived
+projection cache.
 
 ## Fused residual plus LayerNorm
 

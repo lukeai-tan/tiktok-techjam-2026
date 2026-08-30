@@ -50,8 +50,12 @@ is allowed.
 
 ## Outcome
 
-EXP-025-I1 is selected. The active implementation fingerprint is
+EXP-025-I1 is selected. Its campaign-closing, pre-packaging fingerprint is
 `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+Subsequent adapter packaging and canonical benchmark relocation produced the
+Campaign 11 evidence fingerprint
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`;
+the historical attempt records remain unchanged.
 The source change adds only an exact row-9 predicate to the previously accepted
 fused residual/LayerNorm route; three tests pin the selected route, unsupported
 boundaries, and an 18-scenario numerical stress matrix. EXP-026 was deliberately

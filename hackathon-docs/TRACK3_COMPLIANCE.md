@@ -4,7 +4,7 @@ Use the [documentation hub](../docs/README.md) for the shortest route through th
 evidence. This file is the PASS/HOLD release audit, not another campaign
 narrative.
 
-Audit date: 2026-08-29 (Asia/Singapore)
+Audit date: 2026-08-30 (Asia/Singapore)
 
 ## Verdict
 
@@ -82,11 +82,19 @@ Three external items cannot be completed truthfully from repository code alone:
   13,117,440 comparisons, at 1.339847x and 1.386495x geomean. Four complete
   matrices keep long-causal in a 1.198x-1.204x band; four padded measurements
   span 1.213x-1.335x. Exact-shape SDPA removed both held-out long-causal regressions and remains the measured route.
-- Complete CPU/GPU suite: 148/148 tests passed; 14 upstream PyTorch deprecation
+- Complete CPU/GPU suite: 164/164 tests passed; 14 upstream PyTorch deprecation
   warnings were reported and no required coverage was removed.
 - Long-attention incremental peak allocation: 78 MiB to 22 MiB (71.8%).
 - Implementation fingerprint:
   `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
+
+The performance metrics above are the immutable Campaign 11 measured snapshot.
+The validation-hardened tree fingerprint is
+`a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`;
+it changes profiler/evidence enforcement and one source comment, but no
+optimized-model behavior. Current
+strict organizer and profiler reruns validate that maintenance layer without
+relabeling the historical timing samples.
 
 These values apply only to the exact fingerprinted implementation, recorded
 RTX 5070 Ti environment, published dimensions, and explicit PyTorch assumptions.

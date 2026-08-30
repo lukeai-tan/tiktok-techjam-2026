@@ -6,21 +6,29 @@ remain in `docs/`.
 
 ## Project name
 
-FlashTile: a shape-aware Triton attention kernel for Transformer inference.
+SpeedROCm: shape-aware Triton acceleration for Transformer inference.
 
 ## Overview
 
-FlashTile addresses TikTok TechJam 2026 Track 3 by implementing a
+SpeedROCm addresses TikTok TechJam 2026 Track 3 by implementing a
 repository-owned GPU kernel for the supplied PyTorch Transformer. The solution
 fuses attention score calculation, online softmax, causal/padding masks, and
 the weighted-value product into one Triton launch. It avoids the baseline's
 quadratic score/probability intermediates while preserving strict state-dict
 and output compatibility.
 
+SpeedROCm is the project name. The current prototype is implemented and
+benchmarked on NVIDIA CUDA, not AMD ROCm. The recorded platform is an NVIDIA
+GeForce RTX 5070 Ti with PyTorch and Triton on Windows; the name does not claim
+AMD affiliation, NVIDIA affiliation, or current AMD ROCm compatibility. The
+Python package remains `transformer_opt`.
+
 ## How the solution addresses the problem
 
-The reference attention launches separate QK, softmax, and P@V operations and
-stores a B x H x S x S tensor. FlashTile instead tiles Q/K/V in the natural
+The reference attention launches separate query-key scoring, softmax, and
+probability-times-value operations and stores a
+`[batch, heads, sequence, sequence]` tensor. SpeedROCm instead tiles query,
+key, and value tensors (Q/K/V) in the natural
 projection layout and maintains only per-query softmax state. Causal and valid
 token bounds are applied inside each tile, including the combined
 causal-padding path, so no dense mask is allocated.
@@ -38,7 +46,7 @@ head widths, and very large causal batches use exact reference-style math.
 Triton remains active for the organizer default and validated custom regimes.
 
 For eager CUDA float32 shapes through d_model=512 and exact d_model=1024,
-FlashTile also caches a
+SpeedROCm also caches a
 derived packed QKV weight and replaces three projection GEMMs with one. Cache
 signatures invalidate on weight, device, or dtype changes, while the original
 parameter names and strict state dict remain unchanged.
@@ -109,7 +117,7 @@ the `_attention_fwd` kernel executed.
 ## Impact and relevance
 
 Attention's quadratic intermediates create latency and memory pressure in
-real Transformer inference. On the longest held-out case, FlashTile reduced
+real Transformer inference. On the longest held-out case, SpeedROCm reduced
 incremental allocation by 71.8%; on the published final dimensions it delivered
   a 1.977x geometric mean. The same design can increase serving
 capacity, leave memory headroom for longer contexts or larger batches, and

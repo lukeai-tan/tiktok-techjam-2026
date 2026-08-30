@@ -8,8 +8,12 @@ Campaign 11 base checkpoint: `8c89d1d4170c58d16fb75d79f212e990565fba7d`
 
 Campaign 6 base commit: `7f4fcba4ffb891cb876fa9ec27afa2395b99c77a`
 
-Selected implementation SHA-256:
-`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`
+Packaged Campaign 11 evidence SHA-256:
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`
+
+Campaign 11 was originally selected at the pre-packaging fingerprint
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`;
+the packaged adapter and canonical benchmark layout produced `908a0d...`.
 
 Start with the [documentation hub](../README.md) for the reading order. This
 file is the executive campaign story and ranking; use
@@ -52,7 +56,7 @@ complete published final matrix it achieved:
 - **6.377x** on the strongest row, final row 11; and
 - 1,260 Triton attention calls, 196 explicit-reference calls, and no final-matrix SDPA calls.
 
-Across the current-fingerprint final pair, organizer default, held-out pair,
+Across the measured-fingerprint final pair, organizer default, held-out pair,
 and source-derived matrix, 345 accuracy trials compared 2,366,402,560 output
 elements with zero failures. Those matrices intentionally overlap, so this is
 an evidence-volume count, not a count of unique tensor elements or shapes.
@@ -75,14 +79,15 @@ incremental peak allocation.
 
 **Ship Campaign 11.** It is the only current cumulative implementation, carries
 every accepted predecessor change, owns the selected fingerprint, passes the
-latest 148-test repository suite, and has two complete zero-failure final runs.
+measured 148-test suite, the current 164-test maintenance gate, and two complete
+zero-failure final runs.
 Campaign 5's slightly higher 1.995117x historical observation is not a better
 submission candidate because it came from an older timing window and excludes
 later accepted, separately proven work.
 
 | Rank or use | Campaign | Why it belongs in the best few | Important limit |
 | --- | --- | --- | --- |
-| **Overall flagship** | **Campaign 11 / EXP-025-I1** | Current cumulative fingerprint; 1.977420x / 1.986499x final pair; zero of 938,885,120 failed per run; row-9 optimized median -12.05%; 148/148 tests | Target-GPU and published-shape specific; held-out geomean is lower than Campaign 5's historical pair |
+| **Overall flagship** | **Campaign 11 / EXP-025-I1** | Selected measured fingerprint; 1.977420x / 1.986499x final pair; zero of 938,885,120 failed per run; row-9 optimized median -12.05%; measured 148/148 plus current 164/164 tests | Target-GPU and published-shape specific; held-out geomean is lower than Campaign 5's historical pair |
 | **Best broad architecture/generalization campaign** | **Campaign 5** | Added the row-6/row-7 accuracy-safe hybrids and fixed both long-causal regressions; 1.911947x / 1.995117x final and 1.447477x / 1.449715x held-out | Historical snapshot, not the current implementation or evidence fingerprint |
 | **Best high-volume latency specialist** | **Campaign 7 / EXP-018-I2R** | Row-6 fusion attacks the 10,000-batch case; current inherited long timing is 291.417252 -> 188.457397 ms (35.33% lower), with no peak-memory increase | Exact-row optimization; whole-matrix movement is much smaller than the target-row saving |
 | **Best single-row lineage** | **Campaign 4 + Campaign 8 on row 11** | Campaign 4 made width-eight Triton legal; Campaign 8 added exact residual/normalization fusion. Current row 11 is 4.710116x over 300 samples and 6.377x in the final matrix | Most of the gain is shape-specific and cumulative, so it should not be attributed to Campaign 8 alone |
@@ -447,8 +452,8 @@ exact local fingerprint.
 
 ## Selected-submission validation
 
-The requested SHA-256 was not a file to copy into a registry. The live root
-entry, `torch_transformer_benchmark.py::UserOptimizedTransformer`, already
+The requested SHA-256 was not a file to copy into a registry. The packaged
+entry, `transformer_opt/submission.py::UserOptimizedTransformer`, already
 recomputed to the requested schema-2 fingerprint across all 13 implementation
 paths. Rewriting it would have changed the identity or created a false selector,
 so the validation round froze the existing bytes and tested them directly.
@@ -576,7 +581,7 @@ five-seed matrices reproduced 7/7 PASS with zero failures at 1.447477x and
 1.449715x. Non-padded/padded primary speedups are 1.247x/1.280x; confirmation
 is 1.216x/1.423x.
 
-### Composite outcome
+### Campaign 5 composite outcome
 
 | Gate | Result |
 | --- | --- |
@@ -621,7 +626,7 @@ width-768 test make that boundary executable. The integrated row-8 profile
 recorded 160 rather than 240 `aten::addmm` calls over ten forwards, 11.33% less
 `addmm` device time, and 7.91% less model device time.
 
-### Composite outcome
+### Campaign 6 composite outcome
 
 | Gate | Result |
 | --- | --- |
@@ -674,7 +679,7 @@ final 100-sample run measured 293.910400 ms baseline, 189.981712 ms optimized,
 and 1.547046x. Candidate and control both used an 11,802,787,840-byte optimized
 incremental peak. Independent review approved local integration.
 
-### Composite outcome
+### Campaign 7 composite outcome
 
 | Gate | Result |
 | --- | --- |
@@ -723,7 +728,7 @@ EXP-020 was deliberately not run: its workflow condition allowed row-7 fusion
 only if EXP-019 closed without a winner. Reopening it after I1R cleared every
 gate would have violated the campaign stop rule.
 
-### Composite outcome
+### Campaign 8 composite outcome
 
 | Gate | Result |
 | --- | --- |
