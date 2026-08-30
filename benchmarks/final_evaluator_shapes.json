@@ -30,7 +30,7 @@
   "execution_assumptions": [
     "PyTorch is the selected framework, so the untouched PyTorch harness remains authoritative.",
     "The table omits dtype and padding; validation uses the selected PyTorch harness defaults of float32 and no padding.",
-    "The stricter supplied PyTorch comparator remains authoritative: atol 0.001 OR rtol 0.01, with zero failed elements.",
+    "The repository validation policy explicitly passes atol 0.001 OR rtol 0.01, with zero failed elements; the untouched PyTorch parser itself defaults to 0.002 and 0.02.",
     "Row 14's batch, QKV-dimension, head-count, and 100000-token sequence axes match the supplied TensorFlow stress case; that source's explicit resource-preflight authorization is retained and the skip is not counted as a pass.",
     "The table omits timing policy; warmup 3, repeats 10, and benchmark rounds 2 are repository validation settings, not organizer-specified values."
   ],

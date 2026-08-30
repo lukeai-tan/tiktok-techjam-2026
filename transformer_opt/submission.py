@@ -158,9 +158,10 @@ class UserOptimizedTransformer(BaselineTransformer):
 
         # Campaign 6 I1 rechecks the cached combined projection on the exact
         # vendor-GEMM-dominated width-1024 target while preserving the earlier
-        # measured <=512 envelope. Training, CPU, low precision, compilation,
-        # unmeasured intermediate widths, and wider models retain the exact
-        # three projection calls.
+        # measured <=512 envelope. Gradient-enabled execution, CPU, low
+        # precision, compilation, unmeasured intermediate widths, and wider
+        # models retain the exact three projection calls. The cache follows
+        # gradient state rather than the module's training flag.
         use_packed = (
             x.is_cuda
             and x.dtype == torch.float32

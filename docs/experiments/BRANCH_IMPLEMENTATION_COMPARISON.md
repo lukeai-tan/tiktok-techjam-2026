@@ -10,16 +10,19 @@ Hardware: NVIDIA GeForce RTX 5070 Ti, compute capability 12.0
 Verdict: retain the flagship implementation. The alternate branch is not an
 accuracy-valid or evidence-complete submission candidate.
 
-Current-selection note (2026-08-29): the frozen comparison below remains the
+Current-selection note (2026-08-30): the frozen comparison below remains the
 authoritative apples-to-apples branch evaluation, while the retained branch has
-  since advanced through Campaign 11 to schema-2 fingerprint
-  `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb` on
+  since advanced through Campaign 11 to packaged schema-2 evidence fingerprint
+  `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9` on
 `feat/jared-attempt`. The alternate branch was not rerun because its published
   accuracy failures already disqualify it. Campaigns 8, 10, and 11 add exact
   row-11, row-5, and row-9 fused residual/LayerNorm routes only to the retained
   implementation. Those later additions do not rehabilitate the alternate
   branch; the quantitative branch gaps below remain the frozen comparison rather
   than a claim that the alternate was freshly rerun against Campaign 11.
+The campaign-closing pre-packaging fingerprint was
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`;
+immutable historical records keep that value.
 
 ## Outcome
 

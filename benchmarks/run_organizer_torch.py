@@ -53,6 +53,15 @@ def load_organizer_benchmark() -> ModuleType:
     module_name = "benchmarks.torch_transformer_benchmark"
     existing = sys.modules.get(module_name)
     if existing is not None:
+        existing_file = getattr(existing, "__file__", None)
+        if (
+            existing_file is None
+            or Path(existing_file).resolve() != ORGANIZER_TORCH_PATH.resolve()
+        ):
+            raise RuntimeError(
+                "organizer module name is already bound to a different file: "
+                f"expected {ORGANIZER_TORCH_PATH}, got {existing_file!r}"
+            )
         return existing
     spec = importlib.util.spec_from_file_location(module_name, ORGANIZER_TORCH_PATH)
     if spec is None or spec.loader is None:
@@ -153,9 +162,28 @@ def _wrapper_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _validate_evidence_arguments(
+    evidence_out: Optional[Path], organizer_args: Sequence[str]
+) -> None:
+    """Keep evidence-grade runs on the organizer's strict weight-copy path."""
+    non_strict_option = "--non-strict-weight-copy"
+    uses_non_strict_copy = any(
+        argument != "--"
+        and argument.startswith("--")
+        and non_strict_option.startswith(argument.partition("=")[0])
+        for argument in organizer_args
+    )
+    if evidence_out is not None and uses_non_strict_copy:
+        raise ValueError(
+            "--non-strict-weight-copy is diagnostic-only and cannot be used "
+            "with --evidence-out"
+        )
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     supplied_argv = list(sys.argv[1:] if argv is None else argv)
     wrapper_args, organizer_args = _wrapper_parser().parse_known_args(supplied_argv)
+    _validate_evidence_arguments(wrapper_args.evidence_out, organizer_args)
     organizer_sha256 = verify_organizer_download()
     module = load_organizer_benchmark()
     holder: dict[str, object] = {}

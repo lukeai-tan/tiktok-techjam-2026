@@ -2,13 +2,18 @@
 
 Status: canonical cross-campaign history, reconciled through Campaign 11 closure on 2026-08-30
 
-Current accepted implementation: Campaign 11 is integrated on
-`feat/jared-attempt` with the selected fingerprint below. Its immutable evidence
+Current measured implementation snapshot: Campaign 11 is integrated on
+`feat/jared-attempt` with the packaged fingerprint below. Its immutable evidence
 was captured from the pre-packaging checkpoint `8c89d1d`; the artifacts retain
 that historical dirty-state provenance even though the implementation is now
 checked in.
 
-Implementation SHA-256: `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`
+Packaged evidence SHA-256: `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`
+
+Historical Campaign 11 candidate SHA-256:
+`9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`.
+Packaging the adapter and canonical benchmark layout produced `908a0d...`;
+the immutable attempt records retain whichever identity they actually ran.
 
 Start with the [documentation hub](../README.md) or the
 [campaign run-through](CAMPAIGN_RUN_THROUGH.md). This file is the detailed
@@ -23,7 +28,8 @@ attempt records, measured result JSON, campaign ledgers, or review sidecars.
 
 ## Verdict
 
-The selected implementation is the Campaign 11 fingerprint above. Its
+The selected measured implementation is the packaged Campaign 11 fingerprint
+above. Its
 primary organizer-final run is **13/13 executable PASS** plus the one exact
 authorized resource skip, with **0 failed elements across 938,885,120
 comparisons** and **1.977420208192665x** geometric-mean end-to-end speedup. A
@@ -34,7 +40,7 @@ dedicated long runs put row 5 at **1.880x**, row 6 at **1.546x**, row 9 at
 
 The fresh organizer default is **1.385x**, source-derived geomean is
 **1.206505x**, and two five-seed held-out runs are **1.339847x** and
-**1.386495x**. Four current-fingerprint held-out matrices plus a dedicated long
+**1.386495x**. Four measured-fingerprint held-out matrices plus a dedicated long
 run place non-padded long-causal at **1.198x-1.204x**.
 
 Campaign 5 retains the highest historical full-matrix observation at 1.995117x,
@@ -51,7 +57,8 @@ is silently rewritten.
 
 The submission/flagship choice is **Campaign 11**, not the single run with the
 largest historical geomean. Campaign 11 is the current cumulative fingerprint,
-has the latest complete zero-failure final pair and 148-test gate, and isolates
+has the latest complete zero-failure final pair, the measured 148-test gate,
+the current 164-test maintenance gate, and isolates
 its new row-9 benefit against contemporaneous unchanged controls. Campaign 5 is
 the best broad architectural and historical-generalization campaign; Campaign
 7 is the best high-volume row-6 latency specialist; and the Campaign 4 plus
@@ -260,9 +267,11 @@ forwards. The same change set routed a narrow, short, unmasked float32 corner to
 PyTorch SDPA. The provisional geomean rose from 1.359647x to 1.497835x while all
 seven cases remained correct.
 
-Packing is deliberately disabled for training, CPU, low precision,
-`torch.compile`, and wider models. QKV/output/FFN arithmetic otherwise remains
-in vendor GEMMs; no custom GEMM was accepted.
+Packing is deliberately disabled for gradient-enabled execution, CPU, low
+precision, `torch.compile`, and wider models. `.train()` under
+`torch.inference_mode()` can still use the derived cache because this guard
+tracks gradient state. QKV/output/FFN arithmetic otherwise remains in vendor
+GEMMs; no custom GEMM was accepted.
 
 ### 4. Organizer reconciliation and precision repair
 

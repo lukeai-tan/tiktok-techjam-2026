@@ -308,19 +308,45 @@ def _summarize_organizer_default(payload: dict[str, Any]) -> dict[str, Any]:
 
 def _summarize_profile(payload: dict[str, Any]) -> dict[str, Any]:
     custom_events = payload.get("custom_kernel_events")
+    fused_events = payload.get("fused_residual_layer_norm_events")
     top_events = payload.get("top_events")
+    validation_passed = payload.get("validation_passed")
+    if isinstance(validation_passed, bool):
+        status = "PASS" if validation_passed else "FAIL"
+    elif payload.get("schema_version") == 2:
+        status = "INCONCLUSIVE"
+    else:
+        # Schema-1 profiles predate explicit expectations. Preserve their
+        # historical classification without applying new semantics retroactively.
+        status = (
+            "PASS"
+            if payload.get("custom_kernel_profiler_proven")
+            else "INCONCLUSIVE"
+        )
     return {
         "kind": "profile",
-        "status": "PASS" if payload.get("custom_kernel_profiler_proven") else "INCONCLUSIVE",
+        "status": status,
         "correctness": None,
         "performance": None,
         "attention_backend_counts": payload.get("backend_counts"),
         "memory": None,
         "profiler": {
             "steps": payload.get("steps"),
+            "backend_expected": payload.get("backend_expected"),
             "custom_kernel_expected": payload.get("custom_kernel_expected"),
             "custom_kernel_profiler_proven": payload.get("custom_kernel_profiler_proven"),
             "custom_kernel_events": custom_events if isinstance(custom_events, list) else [],
+            "fused_residual_layer_norm_expected": payload.get(
+                "fused_residual_layer_norm_expected"
+            ),
+            "fused_residual_layer_norm_calls": payload.get(
+                "fused_residual_layer_norm_calls"
+            ),
+            "fused_residual_layer_norm_events": (
+                fused_events if isinstance(fused_events, list) else []
+            ),
+            "expectation_checks": payload.get("expectation_checks"),
+            "validation_passed": validation_passed,
             "top_events": top_events if isinstance(top_events, list) else [],
         },
     }

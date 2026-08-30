@@ -13,13 +13,21 @@ requirements. `benchmarks/official_shapes.json` remains a project-owned
 held-out matrix rather than the final organizer matrix.
 
 Selected local submission entry:
-`transformer_opt/submission.py::UserOptimizedTransformer`. Its schema-2
-implementation fingerprint is
+`transformer_opt/submission.py::UserOptimizedTransformer`. Its measured
+Campaign 11 schema-2 fingerprint is
 `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 The 2026-08-29 Campaign 11 integration suite recomputed that identity and ties
-the current final, confirmation, held-out, organizer-default, source-derived,
+the recorded final, confirmation, held-out, organizer-default, source-derived,
 profile, and test evidence to it. The protected organizer downloads remain
 unchanged.
+
+The validation-hardened working tree has schema-2 fingerprint
+`a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`.
+Optimized math and dispatch behavior did not change: the new identity comes
+from hardening the fingerprinted profiler/evidence tools and correcting one
+source comment. Historical performance artifacts remain immutable
+and attributable to `908a0d...`; current strict organizer, profiler, and test
+runs validate the maintenance tree without relabeling old timings.
 
 ## Source-of-truth order
 
@@ -64,15 +72,18 @@ campaign ledgers and raw JSON remain the authority for individual executions.
   remains an authorized skip and is not counted as a pass. Its layer, causal,
   and FFN values remain the distinct values published in the final table.
 - The final table does not state dtype or padding. Until the organizer says
-  otherwise, final-shape validation uses the selected PyTorch harness defaults:
-  float32 and no padding, with the stricter executable comparator below.
+  otherwise, final-shape validation uses the selected PyTorch parser defaults
+  of float32 and no padding, then explicitly selects the stricter executable
+  comparator below.
 
 The files are not interchangeable evaluator specifications. PyTorch defaults
-to one configurable float32 case and the stricter 0.001/0.01 OR rule;
-TensorFlow defaults to a float16 compact dimension sweep and the prose-level
-0.002/0.02 OR rule. The final table supplies dimensions but does not resolve
-those framework-level differences. See `hackathon-docs/ORGANIZER_INPUTS.md` for the exact
-differences and remaining clarifications.
+to one configurable float32 case. Its untouched module docstring names the
+0.001/0.01 OR rule, but its parser actually defaults to 0.002/0.02; repository
+evidence matrices explicitly pass the stricter 0.001/0.01 values. TensorFlow
+defaults to a float16 compact dimension sweep and the prose-level 0.002/0.02 OR
+rule. The final table supplies dimensions but does not resolve those
+framework-level differences. See `hackathon-docs/ORGANIZER_INPUTS.md` for the
+exact differences and remaining clarifications.
 
 ## Required behavior
 

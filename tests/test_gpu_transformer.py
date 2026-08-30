@@ -104,6 +104,30 @@ def test_packed_qkv_cache_is_reused_and_invalidated():
     assert compare_outputs(reference, actual, rtol=0.01, atol=0.001).passed
 
 
+def test_packed_qkv_boundary_follows_gradient_state_not_training_flag():
+    config = TransformerConfig(1, 16, 64, 4, 256, 1, False)
+    x = torch.randn(1, 16, 64, device="cuda", dtype=torch.float32)
+
+    training_model = UserOptimizedTransformer(
+        config, attention_backend="auto"
+    ).cuda().train()
+    training_attention_id = id(training_model.layers[0].attention)
+    with torch.inference_mode():
+        training_output = training_model(x)
+
+    assert training_output.shape == x.shape
+    assert training_attention_id in training_model._packed_qkv_cache
+
+    gradient_model = UserOptimizedTransformer(
+        config, attention_backend="auto"
+    ).cuda().eval()
+    gradient_attention_id = id(gradient_model.layers[0].attention)
+    gradient_output = gradient_model(x)
+
+    assert gradient_output.shape == x.shape
+    assert gradient_attention_id not in gradient_model._packed_qkv_cache
+
+
 def test_wide_model_uses_campaign6_packed_qkv_candidate():
     config = TransformerConfig(2, 16, 1024, 4, 1024, 1, True)
     baseline = BaselineTransformer(config).cuda().eval()

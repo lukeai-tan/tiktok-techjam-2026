@@ -3,7 +3,9 @@ from __future__ import annotations
 import ast
 import hashlib
 import json
+import sys
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 import torch
@@ -12,6 +14,7 @@ from benchmarks.run_organizer_torch import (
     _text_sha256 as organizer_runner_text_sha256,
     install_submission,
     load_organizer_benchmark,
+    main as run_organizer_torch,
     verify_organizer_download,
 )
 from benchmarks.run_organizer_validation import (
@@ -111,11 +114,45 @@ def test_supplied_organizer_downloads_match_frozen_hashes():
     manifest = _manifest()
     artifacts = {artifact["framework"]: artifact for artifact in manifest["artifacts"]}
 
+    assert manifest["source"]["challenge_brief_path"] == (
+        "hackathon-docs/hackathon-details.md"
+    )
     assert _sha256(ORGANIZER_TORCH) == artifacts["pytorch"]["sha256"]
     assert ORGANIZER_TORCH.stat().st_size == artifacts["pytorch"]["size_bytes"]
     assert _sha256(ORGANIZER_TENSORFLOW) == artifacts["tensorflow"]["sha256"]
     assert ORGANIZER_TENSORFLOW.stat().st_size == artifacts["tensorflow"]["size_bytes"]
     assert verify_organizer_download() == artifacts["pytorch"]["sha256"]
+
+
+def test_organizer_loader_rejects_same_name_bound_to_foreign_file(
+    monkeypatch, tmp_path
+):
+    foreign = ModuleType("benchmarks.torch_transformer_benchmark")
+    foreign.__file__ = str(tmp_path / "torch_transformer_benchmark.py")
+    monkeypatch.setitem(sys.modules, foreign.__name__, foreign)
+
+    with pytest.raises(RuntimeError, match="already bound to a different file"):
+        load_organizer_benchmark()
+
+
+@pytest.mark.parametrize(
+    "non_strict_argument",
+    ["--non-strict-weight-copy", "--non-strict-weight-cop"],
+)
+def test_evidence_output_rejects_non_strict_weight_copy(
+    tmp_path, non_strict_argument
+):
+    evidence_path = tmp_path / "evidence.json"
+    with pytest.raises(ValueError, match="diagnostic-only"):
+        run_organizer_torch(
+            [
+                "--evidence-out",
+                str(evidence_path),
+                non_strict_argument,
+            ]
+        )
+
+    assert not evidence_path.exists()
 
 
 def test_submission_reuses_organizer_pytorch_baseline_contract():
@@ -212,6 +249,7 @@ def test_validation_matrix_covers_every_feasible_supplied_shape_and_dtype():
 def test_validation_matrix_exercises_pytorch_modes_under_strict_contract():
     matrix, cases = load_and_expand_matrix(VALIDATION_MATRIX)
     pytorch_cases = [case for case in cases if case["source_contract"] == "pytorch"]
+    parser_defaults = _argparse_defaults(ORGANIZER_TORCH)
 
     assert {case["dtype"] for case in pytorch_cases} == {
         "float32",
@@ -222,6 +260,8 @@ def test_validation_matrix_exercises_pytorch_modes_under_strict_contract():
     assert {case["padding_ratio"] for case in pytorch_cases} == {0.0, 0.3}
     assert matrix["defaults"]["atol"] == 0.001
     assert matrix["defaults"]["rtol"] == 0.01
+    assert parser_defaults["--atol"] == 0.002
+    assert parser_defaults["--rtol"] == 0.02
 
     causal_case = next(case for case in pytorch_cases if case["config"]["causal"])
     arguments = organizer_arguments(causal_case, matrix["defaults"], "cuda")

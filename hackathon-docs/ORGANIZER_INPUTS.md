@@ -4,7 +4,7 @@ Use the [documentation hub](../docs/README.md) for the repository reading order.
 This file records the supplied organizer resources and their provenance; the
 optimization narratives live under `docs/experiments/`.
 
-Audit date: 2026-08-28 (Asia/Singapore)
+Audit date: 2026-08-30 (Asia/Singapore)
 
 ## Received and frozen
 
@@ -13,12 +13,21 @@ workspace and are preserved byte-for-byte under `benchmarks/`:
 
 | Resource | SHA-256 | Use |
 | --- | --- | --- |
-| `benchmarks/torch_transformer_benchmark.py` | `1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22` | Selected organizer contract and untouched test harness. |
+| `benchmarks/torch_transformer_benchmark.py` | `5529c96a80799b51f68092e1444a30b17994554dffdf52da98ba701489a7f36e` | Current canonical organizer contract and untouched test harness. |
 | `benchmarks/tensorflow_transformer_benchmark.py` | `00e99b6e1d19e961039b66eb3d3c055b36cc50f0436da2558f5f1fbe292ef798` | Alternative-framework contract and dimension-scope cross-check. |
 
 The signed Lark transport query strings are deliberately not stored. Sanitized
 origin evidence and exact sizes/checksums are in
 `benchmarks/reference/organizer_downloads.json`.
+That current manifest points to `hackathon-docs/hackathon-details.md`. The older
+result-linked `benchmarks/reference/manifest.json` retains its historical
+`docs/hackathon-details.md` string because changing that frozen snapshot would
+invalidate prior fingerprints; it is not the current navigation source.
+
+Earlier immutable result artifacts preserve the historical
+`1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`
+input they actually executed. Those records are not rewritten; current-facing
+commands and claims use the canonical `5529c9...` file above.
 
 ## How the two files are used
 
@@ -35,8 +44,16 @@ and delegates argument parsing, accuracy checks, and timing to the organizer's
 code:
 
 ```powershell
-& $python benchmarks/run_organizer_torch.py --device cuda
+& $python benchmarks/run_organizer_torch.py `
+  --device cuda --atol 0.001 --rtol 0.01 `
+  --evidence-out results/organizer-strict-evidence.json
 ```
+
+The untouched PyTorch file contains conflicting default descriptions: its
+module docstring says 0.001/0.01, while its parser defaults are 0.002/0.02.
+Evidence-grade repository commands therefore pass 0.001/0.01 explicitly. The
+runner also rejects the diagnostic `--non-strict-weight-copy` option whenever
+`--evidence-out` is requested.
 
 The TensorFlow file is not a second implementation requirement. It is retained
 untouched as the single canonical copy under `benchmarks/` and used to audit
@@ -71,8 +88,8 @@ authorized by the source and excluded from the pass count. Reproduce with:
 ```
 
 The versioned policy is `benchmarks/organizer_validation_matrix.json`; the
-fresh selected-submission evidence is
-`docs/results/rtx-5070-ti-2026-08-29-c7-integrated-source-derived.json`.
+selected Campaign 11 evidence is
+`docs/results/rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json`.
 
 ## Published final shape table
 
@@ -99,8 +116,9 @@ order to `benchmarks/final_evaluator_shapes.json`:
 | 14 | 32 | 1024 | 16 | 100000 | 2 | true | 1024 |
 
 The selected PyTorch harness is used for execution. Because the table omits
-dtype and padding, the final-shape run uses that harness's float32 and no-padding
-defaults plus its stricter 0.001 absolute OR 0.01 relative comparator. Row 14's
+dtype and padding, the final-shape run uses that parser's float32 and no-padding
+defaults and explicitly passes the repository's stricter 0.001 absolute OR
+0.01 relative comparator. Row 14's
 batch, QKV-dimension, head-count, and sequence-length axes exactly match the
 supplied TensorFlow harness's designated 100000-token quadratic stress case, so
 its source-authorized resource preflight is retained and excluded from the pass
@@ -118,14 +136,15 @@ Run the final rows independently from the broader source-derived validation:
   --out results/final-evaluator-validation.json
 ```
 
-The selected-submission run passed all 13 executable rows across five
+The selected Campaign 11 run passed all 13 executable rows across five
 accuracy trials each, with zero failures in 938,885,120 comparisons. It recorded
-a 1.880620x geometric-mean speedup, 1,260 Triton attention calls, 196 explicit
+a 1.977420x geometric-mean speedup, 1,260 Triton attention calls, 196 explicit
 reference calls, zero SDPA calls, and the one authorized row-14 resource skip.
 The curated evidence is
-`docs/results/rtx-5070-ti-2026-08-29-c7-integrated-final.json`; a
+`docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json`; a
 complete confirmation is
-`rtx-5070-ti-2026-08-29-c7-integrated-final-confirmation.json` at 1.927261x.
+`docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final-confirmation.json` at
+1.986499x.
 
 ## Still needed from the organizer
 

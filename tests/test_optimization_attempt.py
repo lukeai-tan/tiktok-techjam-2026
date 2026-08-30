@@ -162,6 +162,64 @@ def test_profile_summary_keeps_custom_events_and_backend_counts():
     assert summary["profiler"]["custom_kernel_events"][0]["count"] == 40
 
 
+def test_profile_summary_respects_explicit_failed_expectation():
+    payload = {
+        "schema_version": 2,
+        "backend_counts": {"triton": 4, "sdpa": 0, "reference": 0},
+        "backend_expected": "reference",
+        "custom_kernel_expected": False,
+        "custom_kernel_profiler_proven": True,
+        "custom_kernel_events": [
+            {"name": "_attention_fwd", "count": 4, "self_device_time_us": 1.0}
+        ],
+        "fused_residual_layer_norm_expected": False,
+        "fused_residual_layer_norm_calls": 8,
+        "fused_residual_layer_norm_events": [
+            {"name": "_residual_layer_norm_fwd", "count": 8}
+        ],
+        "expectation_checks": [
+            {
+                "kind": "attention_backend",
+                "expected": "reference",
+                "dispatch_count": 0,
+                "passed": False,
+            }
+        ],
+        "validation_passed": False,
+        "top_events": [],
+        "steps": 1,
+    }
+
+    summary = summarize_result_artifact(payload)
+
+    assert summary["status"] == "FAIL"
+    assert summary["profiler"]["validation_passed"] is False
+    assert summary["profiler"]["backend_expected"] == "reference"
+    assert summary["profiler"]["fused_residual_layer_norm_calls"] == 8
+
+
+def test_profile_summary_keeps_schema2_observation_inconclusive():
+    payload = {
+        "schema_version": 2,
+        "backend_counts": {"triton": 4, "sdpa": 0, "reference": 0},
+        "backend_expected": None,
+        "custom_kernel_expected": False,
+        "custom_kernel_profiler_proven": True,
+        "custom_kernel_events": [
+            {"name": "_attention_fwd", "count": 4, "self_device_time_us": 1.0}
+        ],
+        "expectation_checks": [],
+        "validation_passed": None,
+        "top_events": [],
+        "steps": 1,
+    }
+
+    summary = summarize_result_artifact(payload)
+
+    assert summary["status"] == "INCONCLUSIVE"
+    assert summary["profiler"]["validation_passed"] is None
+
+
 def test_failed_command_is_captured_instead_of_disappearing():
     result = run_logged_command(
         [

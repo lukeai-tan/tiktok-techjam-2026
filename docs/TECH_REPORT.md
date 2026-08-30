@@ -19,8 +19,12 @@ from 1.097x to 6.377x. A complete confirmation measured 1.986x with identical
 correctness and backend counts. The source-authorized 100,000-token resource row was
 preflight-skipped and was not counted as a pass.
 
-Campaign 11 is the flagship because it is the current cumulative fingerprint
-and owns the latest full validation. Campaign 5's 1.995117x confirmation remains
+Campaign 11 is the flagship measured snapshot at schema-2 fingerprint
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`
+and owns the latest complete performance validation. The validation-hardened
+tree is `a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`;
+it changes evidence tooling and one source comment but no optimized behavior,
+so the timing claims below remain attributed only to `908a0d...`. Campaign 5's 1.995117x confirmation remains
 the highest historical aggregate and strongest broad-generalization snapshot,
 but it is not the current submission. The ranked decision and specialist picks
 are in the [campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md#flagship-and-strongest-specialist-campaigns).
@@ -225,8 +229,11 @@ Target-device measurements found the combined projection bit-identical for the
 tested float32 shapes and beneficial through width 512. Campaign 6's longer
 row-8 recheck established an exact-width-1024 benefit: the integrated profile
 reduced `addmm` device time 11.33% and ten-forward model device time 7.91%.
-Training, low precision, CPU, compiled paths, widths 513-1023, and widths above
-1024 remain on separate projections.
+Gradient-enabled execution, low precision, CPU, compiled paths, widths
+513-1023, and widths above 1024 remain on separate projections. Calling
+`.train()` alone does not disable packing when the forward is still wrapped in
+`torch.inference_mode()`; this derived cache follows gradient state, not the
+module's training flag.
 
 ### 5.3 Fused residual plus LayerNorm
 
@@ -324,8 +331,10 @@ are excluded from steady-state forward latency for both sides.
 ### Untouched organizer PyTorch default
 
 The downloaded script with SHA-256
-`1bd12523657f338c09b53f0bb9052d9d16f728a71bd22bc8298567e1a4d78c22`
-ran unchanged through `benchmarks/run_organizer_torch.py`:
+`5529c96a80799b51f68092e1444a30b17994554dffdf52da98ba701489a7f36e`
+ran unchanged through `benchmarks/run_organizer_torch.py`. This historical
+"organizer default" artifact used the parser's actual 0.002/0.02 defaults;
+the repository matrices below explicitly pass 0.001/0.01:
 
 | metric | baseline | optimized |
 | --- | ---: | ---: |
@@ -396,7 +405,7 @@ Summary:
 - Timing dispatch: SDPA for tiny/medium unmasked and the exact two long-causal
   cases; Triton for padding-only, long-attention, and wide-model cases; no
   reference timing fallback.
-- Four complete current-fingerprint matrices put the exact long-causal route at
+- Four complete measured-fingerprint matrices put the exact long-causal route at
   1.198x-1.204x without padding and 1.213x-1.335x with padding. Their geomeans
   span 1.340x-1.515x because unrelated short cases are noisy. A separate
   300-sample run is 1.198x with 620 SDPA calls and zero failed elements.
@@ -411,11 +420,12 @@ The isolated exact-harness matrix produced:
 - sequence lengths 32, 128, and 1,024;
 - widths 32, 128, 512, and 1,024; heads 1, 2, 4, 8, and 16;
 - float32, float16, bfloat16, causal, non-causal, and prefix-padding coverage;
-- overall geometric-mean speedup 1.208961x; and
+- overall geometric-mean speedup 1.206505x; and
 - aggregate dispatch counts Triton 672, SDPA 1,344, reference 2,688.
 
-The matrix uses the selected PyTorch executable tolerance of atol=0.001 OR
-rtol=0.01, which is stricter than the TensorFlow download's defaults. Its
+The matrix explicitly passes the repository tolerance of `atol=0.001` OR
+`rtol=0.01`, which is stricter than both the untouched PyTorch parser's actual
+0.002/0.02 defaults and the TensorFlow download's defaults. Its
 machine-readable policy and full stdout/evidence are stored with SHA-256
 fingerprints; a crash, OOM, numerical failure, unauthorized skip, or empty run
 returns nonzero.
