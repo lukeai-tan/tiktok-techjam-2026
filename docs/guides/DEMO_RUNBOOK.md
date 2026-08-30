@@ -91,7 +91,7 @@ Confirm the branch/revision, RTX 5070 Ti, CUDA PyTorch, and Triton are visible.
    it proves packed-QKV projection work fell from 240 to 160 `addmm` calls and
    model device time fell 7.91%, while attention correctly remains reference.
 
-8. Finish on `docs/TECH_REPORT.md`: the fresh untouched organizer default is 1.385x,
+8. Finish on `deliverables/03_TECHNICAL_REPORT.md`: the fresh untouched organizer default is 1.385x,
    and the published final matrix is 13/13 executable PASS with zero failed
    elements and a 1.977420x geometric-mean speedup. Show the source-derived and
    four held-out artifacts as broader correctness and anti-overfitting evidence,

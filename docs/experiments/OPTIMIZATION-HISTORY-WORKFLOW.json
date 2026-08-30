@@ -90,7 +90,7 @@
       "id": "task-sot-navigation",
       "title": "Clean up source-of-truth navigation",
       "role": "Agentic Workflow Orchestrator",
-      "write_scope": ["README.md", "docs/REQUIREMENTS.md", "docs/OPTIMIZATION_LOOP_PLAN.md", "docs/TECH_REPORT.md", "docs/results/README.md", "docs/experiments"],
+      "write_scope": ["README.md", "docs/REQUIREMENTS.md", "docs/OPTIMIZATION_LOOP_PLAN.md", "docs/IMPLEMENTATION_EVIDENCE.md", "docs/results/README.md", "docs/experiments"],
       "depends_on": ["task-history"],
       "acceptance_criteria": ["AC-NAV-1"],
       "validation": ["link target existence", "current-versus-historical wording review", "no raw evidence deletion or rename"],

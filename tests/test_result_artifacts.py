@@ -268,9 +268,9 @@ def test_submission_docs_select_campaign11_evidence_and_disclose_removed_regress
     result_index = (ROOT / "docs" / "results" / "README.md").read_text(
         encoding="utf-8"
     )
-    technical_report = (ROOT / "docs" / "TECH_REPORT.md").read_text(
-        encoding="utf-8"
-    )
+    implementation_evidence = (
+        ROOT / "docs" / "IMPLEMENTATION_EVIDENCE.md"
+    ).read_text(encoding="utf-8")
     compliance = (ROOT / "docs" / "TRACK3_COMPLIANCE.md").read_text(
         encoding="utf-8"
     )
@@ -285,9 +285,9 @@ def test_submission_docs_select_campaign11_evidence_and_disclose_removed_regress
     for artifact in SUBMISSION_ATTEMPT_RESULT_MAP.values():
         assert artifact.name in result_index
     assert FINAL_EVALUATOR_PATH.name in readme
-    assert FINAL_EVALUATOR_PATH.name in technical_report
-    assert ORGANIZER_DEFAULT_PATH.name in technical_report
-    assert ORGANIZER_VALIDATION_PATH.name in technical_report
+    assert FINAL_EVALUATOR_PATH.name in implementation_evidence
+    assert ORGANIZER_DEFAULT_PATH.name in implementation_evidence
+    assert ORGANIZER_VALIDATION_PATH.name in implementation_evidence
     assert "long-causal" in result_index
     assert "1.198x" in result_index
     assert "1.213x" in result_index

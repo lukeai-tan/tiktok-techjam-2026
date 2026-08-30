@@ -1921,7 +1921,7 @@ verified names and responsibilities before publishing a team submission.
 
 - Implementation contract: [`../docs/REQUIREMENTS.md`](../docs/REQUIREMENTS.md)
 - Kernel algorithm: [`../docs/KERNEL_DESIGN.md`](../docs/KERNEL_DESIGN.md)
-- Existing full technical narrative: [`../docs/TECH_REPORT.md`](../docs/TECH_REPORT.md)
+- Supporting implementation and benchmark evidence: [`../docs/IMPLEMENTATION_EVIDENCE.md`](../docs/IMPLEMENTATION_EVIDENCE.md)
 - Campaign chronology: [`../docs/experiments/CAMPAIGN_RUN_THROUGH.md`](../docs/experiments/CAMPAIGN_RUN_THROUGH.md)
 - Complete optimization history: [`../docs/experiments/OPTIMIZATION_HISTORY.md`](../docs/experiments/OPTIMIZATION_HISTORY.md)
 - Final primary artifact: [`../docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json`](../docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json)

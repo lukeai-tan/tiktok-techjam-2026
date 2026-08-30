@@ -1,10 +1,32 @@
-# Technical Report — Transformer Layer GPU Kernel
+# Implementation and Benchmark Evidence
 
-For a quick orientation, use the [documentation hub](README.md). This report is
-the implementation and measurement narrative; the [campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md)
-owns the shorter optimization outcome and ranking.
+> **Document role:** This is the repository's engineering evidence reference,
+> not the submission-facing technical report. Use the
+> [SpeedROCm technical report](../deliverables/03_TECHNICAL_REPORT.md) for the
+> organized submission narrative.
 
-## 1. Executive summary
+**Audience:** maintainers, reviewers, and readers auditing implementation or
+benchmark claims.
+
+**Update this reference when:** the executable contract, selected implementation
+fingerprint, measured environment, validated results, or evidence set changes.
+
+For a quick orientation, use the [documentation hub](README.md). This reference
+explains how the implementation works and how its claims were measured. The
+[campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md) owns the shorter
+optimization outcome and ranking.
+
+## Quick navigation
+
+| If you need to... | Use this source |
+| --- | --- |
+| Read the submission-ready technical narrative | [SpeedROCm technical report](../deliverables/03_TECHNICAL_REPORT.md) |
+| Confirm requirements and evaluator assumptions | [Requirements](REQUIREMENTS.md) |
+| Study the kernel algorithm and dispatch design | [Kernel design](KERNEL_DESIGN.md) |
+| Review campaign decisions and rejected alternatives | [Campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md) and [optimization history](experiments/OPTIMIZATION_HISTORY.md) |
+| Inspect raw, fingerprint-bound measurements | [Result index](results/README.md) |
+
+## 1. Summary
 
 This project implements a forward fused-attention GPU kernel in Triton for the
 Track 3 PyTorch Transformer benchmark. The kernel performs tiled QK, online
@@ -39,7 +61,7 @@ preflight-skipped and was not counted as a pass. The final table publishes
 dimensions but omits dtype, padding, timing, tolerance, and backward policy;
 the final-shape evidence therefore records the selected PyTorch assumptions.
 
-## 2. Executable contract
+## 2. Executable contract and acceptance basis
 
 The benchmark implements a multi-layer pre-LayerNorm Transformer with separate
 Q/K/V/output projections, exact GELU, optional causal attention, prefix padding,
@@ -62,7 +84,7 @@ benchmarks/reference/organizer_downloads.json. The older
 benchmarks/reference/manifest.json remains frozen because it is part of the
 existing result-artifact fingerprint.
 
-## 3. Environment
+## 3. Measured environment
 
 | component | measured target |
 | --- | --- |
@@ -91,7 +113,7 @@ capability, driver, disk bytes, Git state, command, raw samples, fingerprint
 schema, and an implementation-content SHA-256 so an uncommitted benchmark
 cannot be mistaken for the base commit.
 
-## 4. Baseline and bottleneck analysis
+## 4. Baseline and bottleneck findings
 
 The reference attention explicitly allocates B x H x S x S scores, applies
 softmax, and launches a second matmul for context. Its memory traffic and
@@ -206,7 +228,7 @@ profiles preserve 240 fused launches, 30 native norms, and 120 Triton calls and
 reduce mean subsystem time 41.77%. Top-level profiler time remains noisy, so
 the counterbalanced 300-sample CUDA-event result is the causal speed evidence.
 
-## 5. Kernel implementation
+## 5. Implemented optimizations
 
 ### 5.1 Layout
 
@@ -299,7 +321,7 @@ rejected path is supported.
 
 Full algorithm and launch details are in docs/KERNEL_DESIGN.md.
 
-## 6. Benchmark method
+## 6. Benchmark and validation method
 
 - Organizer proof: untouched downloaded PyTorch parser, baseline, comparator,
   and timer with only `UserOptimizedTransformer` injected.
@@ -326,7 +348,7 @@ Full algorithm and launch details are in docs/KERNEL_DESIGN.md.
 Random-data generation, model construction, and first-use Triton compilation
 are excluded from steady-state forward latency for both sides.
 
-## 7. Results
+## 7. Validated results
 
 ### Untouched organizer PyTorch default
 
@@ -450,7 +472,7 @@ The largest gains occur when attention or mask materialization is a larger share
 of the block. Wide-model performance is dominated by projection/FFN GEMMs, so
 attention fusion has less leverage.
 
-## 8. Optimization campaign and rejected alternatives
+## 8. Campaign decisions and rejected alternatives
 
 This section is the submission-facing narrative. The canonical cross-campaign
 ledger, including the pre-ledger foundation and every immutable attempt record,
@@ -608,9 +630,9 @@ the profile did not justify competing with mature matrix-multiplication code.
 A causal loop-frontier prune and alternate tile/stage policies were also tested
 and rejected after they failed to improve the full end-to-end matrix.
 
-## 9. AI-assisted development
+## 9. AI-assisted engineering process
 
-The initial repository report attributed the prototype SDPA and optional
+The initial repository documentation attributed the prototype SDPA and optional
 LayerNorm work to Claude Code. This revision was audited and implemented with
 OpenAI Codex, which was used to:
 
@@ -626,7 +648,7 @@ OpenAI Codex, which was used to:
 - reject slower LayerNorm and causal-pruning paths; and
 - produce provenance-linked documentation and demo instructions.
 
-AI output was not accepted as evidence by itself. Claims in this report come
+AI output was not accepted as evidence by itself. Claims in this reference come
 from executable tests, raw CUDA-event samples, profiler events, and captured
 environment metadata.
 
@@ -634,7 +656,7 @@ Human/team contribution attribution is not established by repository evidence;
 the submitter must add any additional participant attribution to Devpost if
 applicable.
 
-## 10. Limitations and next work
+## 10. Limitations and next steps
 
 - Clarify the final table's omitted dtype, padding, timing, tolerance, and
   backward policy, and reconcile any later benchmark revision. The two local
@@ -650,30 +672,34 @@ applicable.
 - A public demo video and Devpost submission remain external human deliverables;
   `guides/DEMO_RUNBOOK.md` gives the verified recording sequence.
 
-## 11. Evidence
+## 11. Evidence and reproduction index
 
-- Executive run-through and flagship ranking:
-  docs/experiments/CAMPAIGN_RUN_THROUGH.md
-- Canonical optimization history:
-  docs/experiments/OPTIMIZATION_HISTORY.md
-- Final organizer-shape matrix:
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json
-- Foundational and short-head decisions: docs/experiments/CAMPAIGN_RUN_THROUGH.md
-- Integrated Campaign 11 profiles:
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row05-profile.json,
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row06-profile.json,
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row08-profile.json,
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row09-profile.json,
-  and docs/results/rtx-5070-ti-2026-08-29-c11-integrated-row11-profile.json
-- Held-out matrix:
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json
-- Untouched organizer default:
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json
-- Supplied-contract validation matrix:
-  docs/results/rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json
-- Organizer inputs: hackathon-docs/ORGANIZER_INPUTS.md
-- Organizer checksums: benchmarks/reference/organizer_downloads.json
-- Requirements: docs/REQUIREMENTS.md
-- Kernel design: docs/KERNEL_DESIGN.md
-- Track 3 compliance: hackathon-docs/TRACK3_COMPLIANCE.md
-- Demo procedure: guides/DEMO_RUNBOOK.md
+### Narrative and decisions
+
+- [Campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md): readable outcome,
+  flagship ranking, and foundational decisions.
+- [Optimization history](experiments/OPTIMIZATION_HISTORY.md): complete campaign
+  chronology and attempt accounting.
+- [Kernel design](KERNEL_DESIGN.md): algorithm, launch policy, numerical choices,
+  and dispatch boundaries.
+
+### Measured results
+
+- [Final organizer-shape matrix](results/rtx-5070-ti-2026-08-29-c11-integrated-final.json)
+- [Held-out matrix](results/rtx-5070-ti-2026-08-29-c11-integrated-heldout-5seed.json)
+- [Untouched organizer default](results/rtx-5070-ti-2026-08-29-c11-integrated-organizer-default.json)
+- [Supplied-contract validation matrix](results/rtx-5070-ti-2026-08-29-c11-integrated-source-derived.json)
+- Integrated Campaign 11 profiles for
+  [row 5](results/rtx-5070-ti-2026-08-29-c11-integrated-row05-profile.json),
+  [row 6](results/rtx-5070-ti-2026-08-29-c11-integrated-row06-profile.json),
+  [row 8](results/rtx-5070-ti-2026-08-29-c11-integrated-row08-profile.json),
+  [row 9](results/rtx-5070-ti-2026-08-29-c11-integrated-row09-profile.json),
+  and [row 11](results/rtx-5070-ti-2026-08-29-c11-integrated-row11-profile.json)
+
+### Contract, provenance, and operations
+
+- [Requirements](REQUIREMENTS.md)
+- [Organizer inputs](../hackathon-docs/ORGANIZER_INPUTS.md)
+- [Organizer checksums](../benchmarks/reference/organizer_downloads.json)
+- [Track 3 compliance](../hackathon-docs/TRACK3_COMPLIANCE.md)
+- [Demo procedure](guides/DEMO_RUNBOOK.md)

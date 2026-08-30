@@ -60,7 +60,7 @@ Use these sources in this order:
    `benchmarks/final_evaluator_shapes.json`.
 3. `docs/REQUIREMENTS.md`, `hackathon-docs/hackathon-details.md`, and the checked-in executable comparator.
 4. Measured behavior on the target GPU.
-5. `docs/KERNEL_DESIGN.md`, `docs/TECH_REPORT.md`, and README claims.
+5. `docs/KERNEL_DESIGN.md`, `docs/IMPLEMENTATION_EVIDENCE.md`, and README claims.
 
 The benchmark harness, comparator, tolerance, timing protocol, and frozen source
 files are not optimization targets. They may only change through an explicit
@@ -285,7 +285,7 @@ must still produce a record. A later review decision may be stored in a linked
 immutable sidecar, but measured fields are never hand-edited.
 
 Keep rejected and inconclusive records. They prevent the agents from repeating
-the same low-value idea and make the final technical report honest.
+the same low-value idea and make the final submission report honest.
 
 ## Most recent campaign
 

@@ -118,7 +118,7 @@ Evidence is read in this order:
 3. Immutable Campaign 2-11 and selected-submission attempt JSON, including
    nonzero commands.
 4. Campaign and experiment decision records plus independent review sidecars.
-5. This curated history, the technical report, and README summaries.
+5. This curated history, the implementation evidence reference, and README summaries.
 
 At the terminal Campaign 11 checkpoint the working tree contains **361 curated
 result JSON files** and **668 immutable attempt JSON files** with **616 passing
@@ -776,7 +776,8 @@ is implied by the optimization approval.
 
 - Contract: [requirements](../REQUIREMENTS.md)
 - Loop controls: [optimization loop plan](../AGENT_OPTIMIZATION_LOOP_PLAN.md)
-- Public technical narrative: [technical report](../TECH_REPORT.md)
+- Submission-facing technical report: [SpeedROCm technical report](../../deliverables/03_TECHNICAL_REPORT.md)
+- Repository evidence reference: [implementation and benchmark evidence](../IMPLEMENTATION_EVIDENCE.md)
 - Foundational short-head decisions: [campaign run-through](CAMPAIGN_RUN_THROUGH.md#foundational-phase-from-prototype-to-a-defensible-baseline)
 - Campaign 2 short-head decisions: [CAMPAIGN-002](CAMPAIGN-002.md)
 - Campaign 3: [CAMPAIGN-003](CAMPAIGN-003.md)

@@ -81,7 +81,7 @@
       "id": "task-submission-close",
       "title": "Publish local submission evidence, perform graph closure, and close all gates",
       "role": "Release Gatekeeper",
-      "write_scope": ["README.md", "docs/REQUIREMENTS.md", "docs/TECH_REPORT.md", "docs/TRACK3_COMPLIANCE.md", "docs/results/README.md", "docs/experiments/SUBMISSION_VALIDATION.md", "docs/experiments/SUBMISSION-VALIDATION-WORKFLOW.json", "repo memory graph"],
+      "write_scope": ["README.md", "docs/REQUIREMENTS.md", "docs/IMPLEMENTATION_EVIDENCE.md", "docs/TRACK3_COMPLIANCE.md", "docs/results/README.md", "docs/experiments/SUBMISSION_VALIDATION.md", "docs/experiments/SUBMISSION-VALIDATION-WORKFLOW.json", "repo memory graph"],
       "depends_on": ["task-submission-review"],
       "acceptance_criteria": ["AC-REVIEW-1"],
       "validation": ["curated artifact tests", "workflow validation", "AI Council review", "graph rebuild and validation", "scoped diff review"],

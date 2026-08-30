@@ -2,7 +2,10 @@
 
 This folder contains the submission-facing Markdown package for TikTok TechJam
 2026 Track 3. The repository root and `docs/` remain the technical source of
-truth; these files are organized for copy/paste, review, and recording.
+truth; these files are organized for copy/paste, review, and recording. The
+submission-facing technical report is `03_TECHNICAL_REPORT.md`.
+`docs/IMPLEMENTATION_EVIDENCE.md` is its supporting repository reference, not a
+second submission report.
 
 ## Start here
 
@@ -77,6 +80,8 @@ diagram legend used by the submission.
   [`../transformer_opt/kernels/attention.py`](../transformer_opt/kernels/attention.py),
   and [`../transformer_opt/kernels/residual_layer_norm.py`](../transformer_opt/kernels/residual_layer_norm.py).
 - Implementation contract: [`../docs/REQUIREMENTS.md`](../docs/REQUIREMENTS.md).
+- Supporting implementation and benchmark evidence:
+  [`../docs/IMPLEMENTATION_EVIDENCE.md`](../docs/IMPLEMENTATION_EVIDENCE.md).
 - Current selected-submission result:
   [`../docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json`](../docs/results/rtx-5070-ti-2026-08-29-c11-integrated-final.json).
 - Independent final confirmation:

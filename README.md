@@ -359,7 +359,7 @@ docs/
   CODE_FLOW.md                         end-to-end harness and model call flow
   REQUIREMENTS.md                     source-of-truth and acceptance criteria
   KERNEL_DESIGN.md                    kernel algorithm and trade-offs
-  TECH_REPORT.md                      measured technical report
+  IMPLEMENTATION_EVIDENCE.md          implementation and benchmark evidence
   experiments/                         campaign narratives, ledgers, and attempts
   guides/                              operational demo procedure
   results/                            curated raw evidence
@@ -388,8 +388,10 @@ notebooks/colab_benchmark.ipynb       fingerprint-pinned full-suite Colab workfl
 
 Repository evidence does not establish additional human team members. If this
 is a solo submission, the submitter owns the human contribution and the AI-tool
-roles are documented in the technical report. If a team applies, add only
-verified names and responsibilities here and on Devpost before submission.
+roles are documented in the
+[submission technical report](deliverables/03_TECHNICAL_REPORT.md). If a team
+applies, add only verified names and responsibilities here and on Devpost before
+submission.
 
 ## Submission status
 

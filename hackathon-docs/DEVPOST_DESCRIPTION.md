@@ -181,7 +181,8 @@ the measured projection-time reduction.
 ## Links and submission notes
 
 - Code: https://github.com/lukeai-tan/tiktok-techjam-2026
-- Technical evidence: `docs/TECH_REPORT.md` and `docs/results/`
+- Submission technical report: `deliverables/03_TECHNICAL_REPORT.md`
+- Supporting implementation evidence: `docs/IMPLEMENTATION_EVIDENCE.md` and `docs/results/`
 - Requirement audit: `hackathon-docs/TRACK3_COMPLIANCE.md`
 - Demo: follow `docs/guides/DEMO_RUNBOOK.md`; add the final public YouTube URL to Devpost
   after the human recording/upload step.

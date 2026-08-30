@@ -14,8 +14,13 @@ campaign narratives live in `docs/experiments/`, the demo guide is in
 `docs/guides/`, and the artifact index is next to the curated results. The root
 `README.md` remains the repository landing page. The canonical demo guide is
 [`docs/guides/DEMO_RUNBOOK.md`](guides/DEMO_RUNBOOK.md); there is no root-level
-compatibility copy. Hackathon context, organizer inputs, and Devpost prose live
-under [`hackathon-docs/`](../hackathon-docs/). Only
+compatibility copy. Submission-facing files live under
+[`deliverables/`](../deliverables/):
+[`deliverables/03_TECHNICAL_REPORT.md`](../deliverables/03_TECHNICAL_REPORT.md)
+is the submission technical report, while
+[`docs/IMPLEMENTATION_EVIDENCE.md`](IMPLEMENTATION_EVIDENCE.md) is its detailed
+repository evidence reference. Hackathon context, organizer inputs, and Devpost
+prose live under [`hackathon-docs/`](../hackathon-docs/). Only
 [`docs/TRACK3_COMPLIANCE.md`](TRACK3_COMPLIANCE.md) remains as a legacy pointer
 because older artifacts still link to that path.
 
@@ -43,14 +48,14 @@ optimized-model behavior did not change, and historical timings are not relabele
 | Understand the result and the best campaigns | [Campaign run-through](experiments/CAMPAIGN_RUN_THROUGH.md) | [Campaign ledgers](experiments/) |
 | Inspect every metric, attempt, and disposition | [Optimization history](experiments/OPTIMIZATION_HISTORY.md) | [`attempts/`](experiments/attempts/) and [`results/`](results/) |
 | Reproduce the checks | [Root README](../README.md#reproduce) | [Demo runbook](guides/DEMO_RUNBOOK.md) and [result commands](results/README.md) |
-| Understand the complete code and harness flow | [Code flow](CODE_FLOW.md) | [Kernel design](KERNEL_DESIGN.md) and [technical report](TECH_REPORT.md) |
-| Understand the kernel implementation | [Kernel design](KERNEL_DESIGN.md) | [Code flow](CODE_FLOW.md) and [technical report](TECH_REPORT.md) |
+| Understand the complete code and harness flow | [Code flow](CODE_FLOW.md) | [Kernel design](KERNEL_DESIGN.md) and [implementation evidence](IMPLEMENTATION_EVIDENCE.md) |
+| Understand the kernel implementation | [Kernel design](KERNEL_DESIGN.md) | [Code flow](CODE_FLOW.md) and [implementation evidence](IMPLEMENTATION_EVIDENCE.md) |
 | Confirm the contract and assumptions | [Requirements](REQUIREMENTS.md) | [Organizer inputs](../hackathon-docs/ORGANIZER_INPUTS.md) and [hackathon details](../hackathon-docs/hackathon-details.md) |
 | Compare optimized code with the original | [Current vs original snapshot](experiments/OPTIMIZATION_HISTORY.md#current-optimized-versus-original-snapshot) | [Current result artifacts](results/README.md) |
 | Review the other branch/PR comparison | [Branch implementation comparison](experiments/BRANCH_IMPLEMENTATION_COMPARISON.md) | Its linked immutable attempt and result files |
 | Check submission readiness and open holds | [Track 3 compliance](../hackathon-docs/TRACK3_COMPLIANCE.md) | [Selected submission validation](experiments/SUBMISSION_VALIDATION.md) |
 | Understand how optimization was controlled | [Bounded optimization loop](AGENT_OPTIMIZATION_LOOP_PLAN.md) | Campaign ledgers and review sidecars |
-| Prepare the public explanation | [Technical report](TECH_REPORT.md) | [Devpost draft](../hackathon-docs/DEVPOST_DESCRIPTION.md) and [demo runbook](guides/DEMO_RUNBOOK.md) |
+| Prepare the public explanation | [Submission technical report](../deliverables/03_TECHNICAL_REPORT.md) | [Devpost draft](../hackathon-docs/DEVPOST_DESCRIPTION.md) and [demo runbook](guides/DEMO_RUNBOOK.md) |
 
 ## Flagship and strongest specialists
 
