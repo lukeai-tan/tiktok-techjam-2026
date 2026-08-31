@@ -4,7 +4,7 @@ Use the [documentation hub](../docs/README.md) for the shortest route through th
 evidence. This file is the PASS/HOLD release audit, not another campaign
 narrative.
 
-Audit date: 2026-08-30 (Asia/Singapore)
+Audit date: 2026-09-01 (Asia/Singapore)
 
 ## Verdict
 
@@ -18,10 +18,14 @@ Three external items cannot be completed truthfully from repository code alone:
 1. the organizer's final dimensions are published, but dtype, padding, timing,
    tolerance, backward policy, and current attachment-byte identity remain
    unconfirmed;
-2. the GitHub URL returned HTTP 404 to an unauthenticated check on the prior audit
-   date, so it is not yet a verified public repository; and
+2. the final participant list and individual contribution split must be
+   confirmed by the submitter; and
 3. a human must record/upload the public YouTube demo and publish the Devpost
    entry.
+
+The GitHub URL returned HTTP 200 to an anonymous request on 2026-09-01, and
+remote `main` matched the pre-edit local HEAD. Recheck it after this local
+documentation pass is published and immediately before submission.
 
 `PASS` below means the requirement has executable or documentary evidence.
 `HOLD` means an external artifact or organizer input is still required.
@@ -44,9 +48,9 @@ Three external items cannot be completed truthfully from repository code alone:
 
 | Deliverable | Status | Evidence | Remaining action |
 | --- | --- | --- | --- |
-| Devpost project description: problem, tools, APIs, libraries, data/assets | PASS as draft | `hackathon-docs/DEVPOST_DESCRIPTION.md` contains every requested section and measured claims. | Paste/publish it on Devpost and add the final video URL. |
-| Public, structured, commented code repository | HOLD | Source, tests, CI, setup, reproduction, limitations, and contribution guidance are present. The configured GitHub URL was not publicly reachable during this audit. | Make the repository public and verify it while signed out. |
-| README overview, setup, reproduction, limitations, team contributions | PASS | `README.md` contains all five topics; it does not invent contributor names not established by repository evidence. | Replace the solo/team statement only if verified team details apply. |
+| Devpost project description: problem, tools, APIs, libraries, data/assets | PASS as draft | `deliverables/01_PROJECT_DESCRIPTION_DEVPOST.md` contains every requested section and measured claim; `hackathon-docs/DEVPOST_DESCRIPTION.md` is a compatibility pointer. | Paste/publish it on Devpost and add the final video URL. |
+| Public, structured, commented code repository | PASS at audit time | Source, tests, CI, setup, reproduction, limitations, and contribution guidance are present. The configured GitHub URL returned HTTP 200 anonymously on 2026-09-01. | Publish this local documentation pass, then recheck the URL and intended paths while signed out immediately before submission. |
+| README overview, setup, reproduction, limitations, team contributions | PASS / HOLD | `README.md` contains the first four topics and explains the team-voice convention without inventing contributor names. | Confirm whether the entry is solo or a team, then add the verified participant names and responsibilities. |
 | Short public YouTube end-to-end demo linked from Devpost | HOLD | `docs/guides/DEMO_RUNBOOK.md` gives a verified 3-5 minute recording sequence with tests, benchmark, profiler proof, and content-safety guidance. | Human records, uploads publicly, checks signed-out playback, and adds the link. |
 | No unauthorized trademarks or copyrighted content in the demo | READY | The runbook restricts the recording to owned code/terminal output and permitted challenge material, with no third-party music, logos, or unrelated assets. | Follow the runbook during recording. |
 

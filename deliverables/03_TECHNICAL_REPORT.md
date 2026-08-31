@@ -1,5 +1,9 @@
 # SpeedROCm technical report
 
+We use first-person plural for our engineering choices, measured results, and
+limitations. Equations, code paths, and immutable artifacts stay in neutral
+technical language so the subject remains unambiguous.
+
 ## Code scope: SpeedROCm optimization candidates
 
 > **Start here:** The primary SpeedROCm model entry point is
@@ -29,16 +33,16 @@ algorithms.
 
 ## 1. Executive summary
 
-SpeedROCm is a forward/inference implementation of the supplied pre-LayerNorm
-Transformer in PyTorch and Triton. The reference attention explicitly creates a
-quadratic score tensor, applies softmax, and performs a second matrix multiply.
-SpeedROCm keeps Q/K/V in projection-friendly `[B, S, H, D]` layout and uses a
-repository-owned Triton kernel that streams K/V tiles while maintaining fp32
-online-softmax state. Causal and prefix-padding masks are applied in the score
-tile, so no dense `[B, H, S, S]` score, probability, or combined-mask tensor is
-materialized by the custom path.
+We built SpeedROCm as a forward/inference implementation of the supplied
+pre-LayerNorm Transformer in PyTorch and Triton. The reference attention
+explicitly creates a quadratic score tensor, applies softmax, and performs a
+second matrix multiply. We keep Q/K/V in projection-friendly `[B, S, H, D]`
+layout and use a repository-owned Triton kernel that streams K/V tiles while
+maintaining fp32 online-softmax state. We apply causal and prefix-padding masks
+inside each score tile, so our custom path does not materialize a dense
+`[B, H, S, S]` score, probability, or combined-mask tensor.
 
-The selected model is
+We selected
 `transformer_opt/submission.py::UserOptimizedTransformer`. Its measured
 Campaign 11 schema-2 implementation fingerprint is
 `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
@@ -49,7 +53,7 @@ It includes maintenance-tooling and source-comment hardening; historical
 performance numbers remain bound to the measured Campaign 11 fingerprint and
 are not relabeled as measurements of the maintenance tree.
 
-The primary final artifact recorded on the target GPU:
+Our primary final artifact recorded on the target GPU:
 
 - **13/13 executable published rows passed**; the source-authorized
   `B=32, S=100000` resource case was recorded as a skip and excluded from the
@@ -1882,17 +1886,19 @@ changes, regenerate the affected artifact.
 ## 14. AI-assisted development and human contribution
 
 The initial repository history attributes an SDPA/optional-LayerNorm prototype
-to Claude Code. OpenAI Codex was used for repository-contract tracing, kernel
+to Claude Code. We used OpenAI Codex for repository-contract tracing, kernel
 implementation, WSL/native Windows environment diagnosis, correctness and
 negative-path tests, profiling, bounded optimization campaigns, evidence
 reconciliation, and documentation.
 
-AI output was not treated as proof. Acceptance decisions used source code,
-strict tests, raw CUDA-event samples, profiler events, result artifacts, and
-recorded environment metadata.
+We did not treat AI output as proof. We based acceptance decisions on source
+code, strict tests, raw CUDA-event samples, profiler events, result artifacts,
+and recorded environment metadata.
 
-Repository evidence does not establish additional human team members. Add only
-verified names and responsibilities before publishing a team submission.
+We use team voice in this report, but that choice does not establish team size
+or individual credit. Add only verified participant names and responsibilities
+before publishing; for a solo entry, change the short public copy to `I` and
+state the solo contribution directly.
 
 ## 15. Limitations and next work
 
@@ -1913,9 +1919,9 @@ verified names and responsibilities before publishing a team submission.
 - The source-authorized 100,000-token row is skipped because its explicit dense
   baseline is a resource case; it is not a claim of successful execution at that
   length.
-- Public repository visibility and a public YouTube upload are external human
-  gates. This report supplies evidence and a recording script, but it does not
-  claim those actions are complete.
+- The GitHub URL was anonymously reachable on 2026-09-01. These local
+  documentation edits still need to be published, and the public YouTube upload
+  plus Devpost publication remain external human gates.
 
 ## 16. Evidence index
 

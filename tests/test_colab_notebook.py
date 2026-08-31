@@ -5,7 +5,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK_PATH = REPO_ROOT / "notebooks" / "colab_benchmark.ipynb"
 EXPECTED_IMPLEMENTATION_SHA256 = (
-    "9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb"
+    "a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf"
 )
 
 
@@ -27,7 +27,7 @@ def test_colab_notebook_is_clean_runnable_and_targets_current_branch() -> None:
         compile("".join(cell["source"]), f"colab-code-cell-{index}", "exec")
 
     required_markers = (
-        "repo_ref = 'feat/jared-attempt'",
+        "repo_ref = 'main'",
         f"expected_implementation_sha256 = '{EXPECTED_IMPLEMENTATION_SHA256}'",
         "implementation_fingerprint()",
         "benchmarks/final_evaluator_shapes.json",

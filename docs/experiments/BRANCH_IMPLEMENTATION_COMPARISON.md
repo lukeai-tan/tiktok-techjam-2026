@@ -10,16 +10,17 @@ Hardware: NVIDIA GeForce RTX 5070 Ti, compute capability 12.0
 Verdict: retain the flagship implementation. The alternate branch is not an
 accuracy-valid or evidence-complete submission candidate.
 
-Current-selection note (2026-08-30): the frozen comparison below remains the
+Current-selection note (updated 2026-09-01): the frozen comparison below remains the
 authoritative apples-to-apples branch evaluation, while the retained branch has
-  since advanced through Campaign 11 to packaged schema-2 evidence fingerprint
-  `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9` on
-`feat/jared-attempt`. The alternate branch was not rerun because its published
-  accuracy failures already disqualify it. Campaigns 8, 10, and 11 add exact
-  row-11, row-5, and row-9 fused residual/LayerNorm routes only to the retained
-  implementation. Those later additions do not rehabilitate the alternate
-  branch; the quantitative branch gaps below remain the frozen comparison rather
-  than a claim that the alternate was freshly rerun against Campaign 11.
+since advanced through Campaign 11 to packaged schema-2 evidence fingerprint
+`908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9` and
+has been merged to `main`. The alternate branch was not rerun because its
+published accuracy failures already disqualify it. Campaigns 8, 10, and 11 add
+exact row-11, row-5, and row-9 fused residual/LayerNorm routes only to the
+retained implementation. Those later additions do not rehabilitate the
+alternate branch; the quantitative branch gaps below remain the frozen
+comparison rather than a claim that the alternate was freshly rerun against
+Campaign 11.
 The campaign-closing pre-packaging fingerprint was
 `9c326536ea27cfc619f01531152b2c82986d9dc3f4274691d3e8191bbb0804eb`;
 immutable historical records keep that value.
@@ -216,9 +217,12 @@ affected.
 
 ## Colab update
 
-`notebooks/colab_benchmark.ipynb` now targets `feat/jared-attempt`
-and fails before testing if its implementation fingerprint differs from
+At this comparison checkpoint, `notebooks/colab_benchmark.ipynb` targeted
+`feat/jared-attempt` and fingerprint
 `f7ad2a86a68f95736241ddde992500073ee75738982af4a81c0c658cd64538d4`.
+After the retained implementation was merged and the feature branch removed,
+the notebook was repinned to public `main` and validation-hardened fingerprint
+`a186b679885e9e787b3deba0ad710855ae4c2486ae491b53e4e64bfa13e7f9cf`.
 It also rejects a reused clone with local changes, preserves the temporary
 `GIT_ASKPASS` token flow, runs the full pytest suite, organizer default,
 published-final matrix, source-derived matrix, project held-out matrix, and six

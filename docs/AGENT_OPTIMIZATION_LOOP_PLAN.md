@@ -319,10 +319,12 @@ This optimization loop cannot complete the following submission tasks by itself:
 
 - obtaining clarification for the final table's unstated dtype, padding, timing,
   tolerance, framework, and backward policy;
-- making the repository publicly reachable and verifying it signed out;
 - recording/uploading the public demo and publishing the Devpost entry.
 
-These remain explicit release holds even if every local optimization gate passes.
+Anonymous access to the GitHub URL was verified on 2026-09-01. It must still be
+rechecked after local changes are published and immediately before submission.
+The organizer clarifications and public video/Devpost work remain explicit
+release holds even if every local optimization gate passes.
 
 ## Final decision rule
 

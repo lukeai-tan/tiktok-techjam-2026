@@ -78,8 +78,8 @@ Complete these checks before pressing record:
 - [ ] Keep the repository's own diagrams, code, terminal output, and authorized
       challenge material only. Do not add third-party music, logos, stock
       footage, unrelated screenshots, or copyrighted clips.
-- [ ] Prepare the final public repository URL and leave the YouTube URL blank
-      until the upload and signed-out playback check are complete.
+- [ ] Recheck the public repository URL and leave the YouTube URL blank until
+      the upload and signed-out playback check are complete.
 
 ## Shot list and narration
 

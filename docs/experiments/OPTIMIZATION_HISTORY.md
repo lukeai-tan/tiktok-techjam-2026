@@ -2,8 +2,8 @@
 
 Status: canonical cross-campaign history, reconciled through Campaign 11 closure on 2026-08-30
 
-Current measured implementation snapshot: Campaign 11 is integrated on
-`feat/jared-attempt` with the packaged fingerprint below. Its immutable evidence
+Current measured implementation snapshot: Campaign 11 was integrated and
+measured on `feat/jared-attempt`, then merged to `main`. Its immutable evidence
 was captured from the pre-packaging checkpoint `8c89d1d`; the artifacts retain
 that historical dirty-state provenance even though the implementation is now
 checked in.

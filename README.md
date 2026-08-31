@@ -1,9 +1,9 @@
 # Transformer Layer GPU Kernel — TikTok TechJam 2026
 
-A repository-owned Triton attention kernel for the Track 3 Transformer
-benchmark. It fuses QK, online softmax, masking, and P@V without materializing
-the quadratic attention matrix, then routes unsupported cases to explicit,
-auditable fallbacks.
+We built a repository-owned Triton attention kernel for the Track 3 Transformer
+benchmark. Our kernel fuses QK, online softmax, masking, and P@V without
+materializing the quadratic attention matrix, then routes unsupported cases to
+explicit, auditable fallbacks.
 
 For the shortest path through the repository, start with the
 [documentation hub](docs/README.md). It separates the executive campaign
@@ -12,14 +12,14 @@ holds.
 
 ## Verified result
 
-On an NVIDIA GeForce RTX 5070 Ti under native Windows 11, the
+On our NVIDIA GeForce RTX 5070 Ti under native Windows 11, the
 organizer-published final shape table completed **13/13 executable PASS**, with
 the one source-authorized 100,000-token resource case excluded from the pass
 count. Under the recorded PyTorch assumptions (float32, no padding, and the
 stricter executable comparator), all 65 accuracy trials passed with **0 failed
 elements across 938,885,120 comparisons**.
 
-The selected measured Campaign 11 submission is
+We selected the measured Campaign 11 submission implemented by
 `transformer_opt/submission.py::UserOptimizedTransformer`, with schema-2
 implementation SHA-256
 `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
@@ -318,10 +318,11 @@ The untouched organizer file contains a stale module-level sentence naming
 repository matrices and evidence-grade command above pass 0.001/0.01 explicitly;
 the organizer file itself remains byte-preserved.
 
-The Colab notebook is pinned to `feat/jared-attempt` and the Campaign 11
-fingerprint. That pin is committed on this branch; a clean GitHub reproduction
-still requires access to the branch and a matching CUDA environment. The
-notebook test proves its structure and pinning locally, not remote availability.
+The Colab notebook is pinned to the public `main` branch and validation-hardened
+fingerprint `a186b679...`. Anonymous access to that branch was verified on
+2026-09-01. The notebook stops before testing if the implementation fingerprint
+differs; any fresh Colab timing describes the assigned Colab GPU and does not
+inherit the RTX 5070 Ti measurements above.
 
 The matrix runner fails closed:
 
@@ -386,12 +387,14 @@ notebooks/colab_benchmark.ipynb       fingerprint-pinned full-suite Colab workfl
 
 ## Team contributions
 
-Repository evidence does not establish additional human team members. If this
-is a solo submission, the submitter owns the human contribution and the AI-tool
-roles are documented in the
-[submission technical report](deliverables/03_TECHNICAL_REPORT.md). If a team
-applies, add only verified names and responsibilities here and on Devpost before
-submission.
+We use `we` and `our` in the public-facing narrative so it reads as the project
+team's account. Technical references use neutral language when the code or a
+measured artifact is the subject. This voice choice does not establish team size
+or assign individual credit. Before submission, list each verified participant
+and responsibility here and on Devpost; for a solo entry, change the short
+public copy to `I` and state the solo contribution directly. AI-tool roles are
+documented in the
+[submission technical report](deliverables/03_TECHNICAL_REPORT.md).
 
 ## Submission status
 
@@ -403,7 +406,10 @@ validation-hardened tree passes **164/164 tests** and fresh strict runner/profil
 checks without changing optimized-model behavior. The immutable performance
 artifacts were captured before Git packaging and therefore record a dirty local
 candidate; committing or pushing this checkpoint does not relabel those
-measurements as a clean run. Organizer policy clarification and YouTube/Devpost steps remain
-external holds. See the
+measurements as a clean run. On 2026-09-01, the repository URL returned HTTP 200
+to an anonymous request and remote `main` matched the pre-edit local HEAD. These
+documentation edits still need to be published before they appear there.
+Organizer policy clarification and the YouTube/Devpost steps remain external
+holds. See the
 [Track 3 compliance matrix](hackathon-docs/TRACK3_COMPLIANCE.md) and follow the
 [demo runbook](docs/guides/DEMO_RUNBOOK.md).

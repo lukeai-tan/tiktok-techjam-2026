@@ -4,21 +4,22 @@
 
 **Repository:** <https://github.com/lukeai-tan/tiktok-techjam-2026>
 
-The repository is structured and locally validated, but public visibility is a
-submission-time human gate. Verify the URL in a signed-out browser before
-putting it on Devpost. This documentation task does not change GitHub
-visibility, publish a release, or push code.
+We verified anonymous access to this URL on 2026-09-01: the page returned HTTP
+200, and remote `main` matched the pre-edit local HEAD. Recheck it after these
+local documentation edits are published and immediately before putting it on
+Devpost. This handoff does not push code, publish a release, or change repository
+visibility.
 
 ## Project overview
 
-SpeedROCm replaces explicit quadratic attention intermediates in the supplied
-PyTorch Transformer with a guarded Triton online-softmax kernel. It also uses
-measured packed QKV projections, exact-shape residual/LayerNorm fusion, and
-shape-aware Triton/SDPA/reference routing. The optimized class inherits the
-organizer baseline, so the reference parameter names and `strict=True` weight
-copy contract remain intact.
+We replace explicit quadratic attention intermediates in the supplied PyTorch
+Transformer with a guarded Triton online-softmax kernel. We also use measured
+packed QKV projections, exact-shape residual/LayerNorm fusion, and shape-aware
+Triton/SDPA/reference routing. Our optimized class inherits the organizer
+baseline, so the reference parameter names and `strict=True` weight-copy
+contract remain intact.
 
-The primary result on the recorded RTX 5070 Ti is a 1.977× geometric-mean
+Our primary result on the recorded RTX 5070 Ti is a 1.977× geometric-mean
 speedup across the 13 executable published final rows with zero failed output
 elements. The [technical report](03_TECHNICAL_REPORT.md) explains why the
 attention arithmetic remains quadratic while attention-specific intermediate
@@ -26,10 +27,10 @@ memory becomes linear in sequence length.
 
 ### Name and platform note
 
-SpeedROCm is the public project title. The current code and the recorded results
-use NVIDIA CUDA on an RTX 5070 Ti; they do not establish AMD ROCm compatibility.
-The install commands below therefore install the CUDA build of PyTorch and
-`triton-windows`. The Python package remains `transformer_opt`.
+We use SpeedROCm as the public project title. Our current code and recorded
+results use NVIDIA CUDA on an RTX 5070 Ti; they do not establish AMD ROCm
+compatibility. The install commands below therefore install the CUDA build of
+PyTorch and `triton-windows`. The Python package remains `transformer_opt`.
 
 ### Reviewer reading order
 
@@ -185,26 +186,27 @@ public repository changes.
   `d_model <= 512` and exact `d_model == 1024` eager CUDA float32 shapes.
 - The 100,000-token published row is an authorized resource skip, not a
   successful execution.
-- The public GitHub and YouTube/Devpost steps require action outside this local
-  repository.
+- These local documentation edits must be published before the public copy
+  reflects them. The YouTube/Devpost steps still require action outside this
+  local repository.
 
 ## Contributions
 
-The code and documentation history records AI-assisted development with
-OpenAI Codex and a pre-existing Claude Code prototype attribution. It does not
-establish additional human team members. Replace the following only after
-verification:
-
-```text
-Human team members: [add verified names]
-Contributions: [add verified responsibilities per person]
-```
+We used OpenAI Codex during repository audit, implementation, testing,
+profiling, evidence reconciliation, and documentation; the history also records
+a pre-existing Claude Code prototype. We did not treat AI output as proof: the
+acceptance basis is source review, tests, profiler events, and fingerprint-bound
+result artifacts. Public-facing copy uses `we` and `our` as the project voice,
+but Git history alone does not establish the final team list or contribution
+split. Add only verified participant names and responsibilities before
+submission.
 
 ## Public-release checklist
 
-- [ ] Repository URL opens while signed out.
-- [ ] The public repository contains source, tests, benchmark manifests,
-      README, and the intended evidence/docs paths.
+- [x] Repository URL opened anonymously on 2026-09-01.
+- [ ] After these local edits are published, verify that the public repository
+      contains the intended source, tests, benchmark manifests, README, and
+      evidence/docs paths.
 - [ ] No secrets, local `.env` values, machine-specific credentials, or
       unintended scratch artifacts are committed.
 - [ ] The final public repository link is pasted into Devpost.
@@ -214,4 +216,4 @@ Contributions: [add verified responsibilities per person]
 - [ ] The organizer has confirmed that the **SpeedROCm** project title is
       acceptable under the event's trademark rule; use plain text and no AMD,
       ROCm, NVIDIA, CUDA, PyTorch, Triton, or TikTok logos without permission.
-- [ ] Verified human/team contributions replace the placeholder if applicable.
+- [ ] Add the verified participant names and responsibilities, if applicable.

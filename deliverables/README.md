@@ -1,8 +1,8 @@
 # SpeedROCm submission deliverables
 
-This folder contains the submission-facing Markdown package for TikTok TechJam
-2026 Track 3. The repository root and `docs/` remain the technical source of
-truth; these files are organized for copy/paste, review, and recording. The
+We prepared this submission-facing Markdown package for TikTok TechJam 2026
+Track 3. The repository root and `docs/` remain the technical source of truth;
+these files are organized for copy/paste, review, and recording. The
 submission-facing technical report is `03_TECHNICAL_REPORT.md`.
 `docs/IMPLEMENTATION_EVIDENCE.md` is its supporting repository reference, not a
 second submission report.
@@ -21,14 +21,23 @@ second submission report.
 
 ## Project name and platform scope
 
-**SpeedROCm** is the public project name. The current implementation is not an
-AMD ROCm build: it uses PyTorch and Triton on NVIDIA CUDA, and the recorded
-performance evidence comes from an NVIDIA GeForce RTX 5070 Ti. The name is
-branding only and does not claim AMD affiliation, NVIDIA affiliation, or
-current AMD ROCm runtime compatibility.
+We use **SpeedROCm** as the public project name. Our current implementation is
+not an AMD ROCm build: it uses PyTorch and Triton on NVIDIA CUDA, and we recorded
+the performance evidence on an NVIDIA GeForce RTX 5070 Ti. The name is branding
+only and does not claim AMD affiliation, NVIDIA affiliation, or current AMD
+ROCm runtime compatibility.
 
 The Python package and import paths remain `transformer_opt`; they are code
 identifiers, not a second project name.
+
+## Voice and authorship
+
+We use `we` and `our` for decisions, results, and limitations in the public
+submission copy. We keep equations, code behavior, and artifact descriptions in
+neutral technical language where that is clearer. References to Codex and
+Claude Code are required provenance disclosures, not a substitute for measured
+evidence or human ownership. Add the verified participant names and individual
+responsibilities before submitting.
 
 ## Quick reading legend
 
@@ -57,21 +66,21 @@ diagram legend used by the submission.
 
 ## Submission state
 
-- The written description, repository handoff, technical report, and video
-  script are prepared as repository artifacts.
-- The intended code URL is
-  <https://github.com/lukeai-tan/tiktok-techjam-2026>. Public visibility must
-  still be checked while signed out before submission.
-- The YouTube video must be recorded, uploaded with public visibility, played
-  back while signed out, and then added to Devpost. No public upload was
-  performed by this documentation task.
+- We have prepared the written description, repository handoff, technical
+  report, and video script.
+- The code URL is <https://github.com/lukeai-tan/tiktok-techjam-2026>. It
+  returned HTTP 200 to an anonymous request on 2026-09-01, and remote `main`
+  matched the pre-edit local HEAD. Recheck after these local documentation
+  changes are published and immediately before submission.
+- We still need to record the YouTube video, upload it with public visibility,
+  verify signed-out playback, and add it to Devpost.
 - Because `ROCm` is also a third-party platform name and the video rules mention
   trademarks, the team should confirm that the **SpeedROCm** title itself is
   acceptable to the organizer before public submission. The script uses plain
   text and no third-party logos, but this local documentation review is not
   legal or organizer approval.
-- Replace the team-contribution placeholder only with verified participant
-  names and responsibilities.
+- Add only verified participant names and responsibilities to the contribution
+  sections.
 
 ## Evidence anchors
 

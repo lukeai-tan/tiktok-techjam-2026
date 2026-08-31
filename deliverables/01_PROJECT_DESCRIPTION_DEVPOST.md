@@ -2,37 +2,38 @@
 
 ## Overview
 
-SpeedROCm is a PyTorch/Triton implementation for TikTok TechJam 2026 Track 3.
-It accelerates the supplied pre-LayerNorm Transformer inference workload with
-repository-owned GPU kernels while preserving the reference model's parameter
-names, strict weight loading, masks, causal behavior, and output contract.
+We built SpeedROCm for TikTok TechJam 2026 Track 3. It is a PyTorch/Triton
+implementation that accelerates the supplied pre-LayerNorm Transformer
+inference workload with repository-owned GPU kernels while preserving the
+reference model's parameter names, strict weight loading, masks, causal
+behavior, and output contract.
 
-In plain language, SpeedROCm performs the same Transformer calculation as the
-supplied model but changes how selected GPU operations are scheduled and how
-temporary attention data is stored. The goal is lower latency and lower memory
-use without changing the model's learned weights or accepted outputs.
+In plain language, we keep the same Transformer calculation and change how
+selected GPU operations are scheduled and how temporary attention data is
+stored. Our goal is lower latency and memory use without changing the model's
+learned weights or accepted outputs.
 
 The baseline explicitly constructs attention scores, applies softmax, and
-multiplies the probabilities by values. SpeedROCm instead processes attention in
-tiles, keeps the softmax state in fp32, applies causal and prefix-padding rules
-inside the tile, and produces the context output without materializing a dense
+multiplies the probabilities by values. We instead process attention in tiles,
+keep the softmax state in fp32, apply causal and prefix-padding rules inside the
+tile, and produce the context output without materializing a dense
 `[batch, heads, sequence, sequence]` score or probability tensor.
 
 ## Project name and measured-platform scope
 
-**SpeedROCm** is the project name. Despite the `ROCm` text in the name, this
-prototype is currently implemented and benchmarked with NVIDIA CUDA, not the
-AMD ROCm runtime. The recorded target is an NVIDIA GeForce RTX 5070 Ti using
-PyTorch and Triton on Windows. The name does not claim AMD or NVIDIA affiliation
-and must not be read as a claim of current AMD GPU support.
+We call the project **SpeedROCm**. Despite the `ROCm` text in the name, we
+currently implement and benchmark it with NVIDIA CUDA, not the AMD ROCm runtime.
+Our recorded target is an NVIDIA GeForce RTX 5070 Ti using PyTorch and Triton on
+Windows. The name does not claim AMD or NVIDIA affiliation and must not be read
+as a claim of current AMD GPU support.
 
 The repository's Python package remains `transformer_opt`; that is an internal
 code identifier rather than the public project title.
 
 ## How the solution addresses the problem
 
-The core design has five parts. Each part is guarded so unsupported inputs keep
-a correctness-first path:
+We made five main changes. Each one is guarded so unsupported inputs keep a
+correctness-first path:
 
 1. **Fused tiled attention.** A Triton `_attention_fwd` program works on a
    small group of query rows at a time and streams key/value groups through it.
@@ -59,18 +60,17 @@ a correctness-first path:
    sensitive cases. Forced custom mode fails clearly when its contract is not
    met; it does not silently report fallback as custom execution.
 
-This approach addresses both sides of the benchmark: it removes the dominant
-quadratic attention allocation for long sequences, and it avoids trading away
-correctness in shapes where a fused implementation accumulates small rounding
-differences across many layers.
+Together, these changes remove the dominant quadratic attention allocation for
+long sequences without trading away correctness on shapes where small rounding
+differences accumulate across many layers.
 
 ## Measured outcome
 
-The selected measured implementation is
+We selected
 `transformer_opt/submission.py::UserOptimizedTransformer`, fingerprinted as
 `908a0d708cd8f70f44d5f14fda93d3cafb1cc18345f43914e715594cfa7b7ef9`.
 
-On the recorded NVIDIA GeForce RTX 5070 Ti environment:
+On our recorded NVIDIA GeForce RTX 5070 Ti environment:
 
 - all 13 executable rows in the published final shape table passed five
   accuracy trials each;
@@ -132,8 +132,8 @@ and optimization diagrams are in the [technical report](03_TECHNICAL_REPORT.md).
 
 ## APIs and runtime interfaces used
 
-There is no external hosted model or web API required at runtime. The runtime
-interfaces are:
+Our submission does not require an external hosted model or web API at runtime.
+Its runtime interfaces are:
 
 - PyTorch `torch.nn` and `torch.nn.functional` for the reference-compatible
   Transformer, vendor linear/GEMM operations, GELU, LayerNorm, and the
@@ -161,8 +161,8 @@ submission. No API key or external service is needed to reproduce inference.
 
 ## Datasets and assets
 
-This is a kernel-optimization submission rather than a trained-data model.
-There is no external training dataset and no third-party model-weight download.
+This is a kernel-optimization submission rather than a trained-data model. We
+use no external training dataset or third-party model-weight download.
 
 - Accuracy inputs are deterministic synthetic tensors generated from recorded
   seeds, input scales, causal flags, and prefix-padding ratios.
@@ -189,9 +189,9 @@ There is no external training dataset and no third-party model-weight download.
 - Current requirement audit:
   [`../hackathon-docs/TRACK3_COMPLIANCE.md`](../hackathon-docs/TRACK3_COMPLIANCE.md)
 
-The GitHub URL and the final YouTube URL are last-mile submission fields. The
-repository must be verified public while signed out, and the human-recorded
-YouTube URL must be added to Devpost after playback is checked.
+The GitHub URL returned HTTP 200 to an anonymous request on 2026-09-01. Before
+submission, we will recheck the repository and add the human-recorded YouTube
+URL to Devpost after verifying signed-out playback.
 
 ## Limitations and future work
 
@@ -199,7 +199,7 @@ YouTube URL must be added to Devpost after playback is checked.
   tolerance, or backward policy. The recorded evidence therefore states its
   PyTorch float32/no-padding assumptions and the stricter executable comparator
   explicitly.
-- The custom path is forward/inference only and is tuned to the RTX 5070 Ti.
+- Our custom path is forward/inference only and is tuned to the RTX 5070 Ti.
 - Automatic deep-stack low-precision execution chooses exact reference math;
   direct fp16 kernel checks pass, but fused low-precision differences can
   compound beyond the strict full-model tolerance.
@@ -213,8 +213,9 @@ YouTube URL must be added to Devpost after playback is checked.
 
 ## Team contributions
 
-Repository evidence does not establish additional human team members. For a
-solo submission, the submitter owns the human contribution and the AI-tool
-roles are documented in the technical report. If this is a team submission,
-replace this paragraph with only verified names and responsibilities before
-publishing on Devpost.
+We use first-person plural here so the description reads as the project team's
+account. This wording does not establish team size or individual credit. Before
+publishing on Devpost, replace this note with the verified participant names and
+their responsibilities. For a solo entry, change the short public narrative to
+`I` and state the solo contribution directly. AI-tool roles remain disclosed in
+the technical report.

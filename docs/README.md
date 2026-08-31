@@ -1,7 +1,7 @@
 # Track 3 documentation hub
 
-Status: current on `feat/jared-attempt`, reconciled through Campaign 11 closure
-on 2026-08-30.
+Status: current on `main`, documentation reviewed on 2026-09-01 and reconciled
+through Campaign 11 closure.
 
 This page is the short map for the repository. Read the executive documents for
 the conclusion, then follow the evidence links when a number or decision needs
@@ -19,8 +19,11 @@ compatibility copy. Submission-facing files live under
 [`deliverables/03_TECHNICAL_REPORT.md`](../deliverables/03_TECHNICAL_REPORT.md)
 is the submission technical report, while
 [`docs/IMPLEMENTATION_EVIDENCE.md`](IMPLEMENTATION_EVIDENCE.md) is its detailed
-repository evidence reference. Hackathon context, organizer inputs, and Devpost
-prose live under [`hackathon-docs/`](../hackathon-docs/). Only
+repository evidence reference. The canonical Devpost copy is
+[`deliverables/01_PROJECT_DESCRIPTION_DEVPOST.md`](../deliverables/01_PROJECT_DESCRIPTION_DEVPOST.md).
+Hackathon context and organizer inputs live under
+[`hackathon-docs/`](../hackathon-docs/); its Devpost file is now a compatibility
+pointer to the canonical copy. Only
 [`docs/TRACK3_COMPLIANCE.md`](TRACK3_COMPLIANCE.md) remains as a legacy pointer
 because older artifacts still link to that path.
 
@@ -55,7 +58,16 @@ optimized-model behavior did not change, and historical timings are not relabele
 | Review the other branch/PR comparison | [Branch implementation comparison](experiments/BRANCH_IMPLEMENTATION_COMPARISON.md) | Its linked immutable attempt and result files |
 | Check submission readiness and open holds | [Track 3 compliance](../hackathon-docs/TRACK3_COMPLIANCE.md) | [Selected submission validation](experiments/SUBMISSION_VALIDATION.md) |
 | Understand how optimization was controlled | [Bounded optimization loop](AGENT_OPTIMIZATION_LOOP_PLAN.md) | Campaign ledgers and review sidecars |
-| Prepare the public explanation | [Submission technical report](../deliverables/03_TECHNICAL_REPORT.md) | [Devpost draft](../hackathon-docs/DEVPOST_DESCRIPTION.md) and [demo runbook](guides/DEMO_RUNBOOK.md) |
+| Prepare the public explanation | [Devpost project description](../deliverables/01_PROJECT_DESCRIPTION_DEVPOST.md) | [Submission technical report](../deliverables/03_TECHNICAL_REPORT.md) and [demo script](../deliverables/04_DEMO_VIDEO_SCRIPT.md) |
+
+## Voice convention
+
+The submission-facing files use `we` and `our` for project choices, results,
+and limitations. Technical reference pages use neutral language when they
+describe code, equations, or immutable evidence. Historical campaign ledgers
+retain their factual record style. AI tools remain named only where provenance
+or the Track 3 reporting requirement calls for that disclosure; their output is
+not presented as evidence.
 
 ## Flagship and strongest specialists
 
@@ -131,8 +143,10 @@ do not copy a prior number into a new claim.
 
 - The published final table still omits dtype, padding, timing, tolerance,
   backward policy, and confirmation that live attachment bytes are unchanged.
-- Public repository verification and the YouTube/Devpost publication steps are
-  external human actions.
+- The GitHub URL was anonymously reachable on 2026-09-01. Recheck it after these
+  local documentation edits are published and again immediately before
+  submission.
+- The YouTube/Devpost publication steps are external human actions.
 - Performance is measured on the recorded RTX 5070 Ti. A different evaluator
   GPU requires a fresh run and does not inherit these speedups.
 
